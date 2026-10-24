@@ -12,6 +12,7 @@ import { appendActivity, exec, factsFor, Rejection, simDate, type Tx } from './k
 import { llmJson, type ProcCtx } from './llm';
 import { addFact, applyToInvoice, createInvoice, openWork } from './world';
 import { statFor } from './reliability';
+import { AP_CLERK } from './packs/payables';
 
 export const CASH: Principal = { kind: 'seat', id: 'seat:cash_app', role: 'cash_app' };
 export const COLL: Principal = { kind: 'seat', id: 'seat:collections', role: 'collections' };
@@ -474,7 +475,8 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
       }
       return;
     case 'routing_change':
-      requestRoutingChange(tx, CASH, entityCode, x, obsId, senderMatches);
+      // A vendor's bank details belong to the payables desk; a customer's to cash application.
+      requestRoutingChange(tx, tx.db.entity.code.find(entityCode)?.kind === 'vendor' ? AP_CLERK : CASH, entityCode, x, obsId, senderMatches);
       return;
     case 'dispute':
       if (entityCode) {
