@@ -88,7 +88,7 @@ async function call({ db, as, fn, args }) {
   const company = db === 'charter-a' ? 'companyA' : 'companyB';
   const ids = JSON.parse(readFileSync(new URL(`../../data/${company}/identities.json`, import.meta.url), 'utf8'));
   const token = ids[as]?.token;
-  const res = await fetch(`http://127.0.0.1:3000/v1/database/${db}/call/${fn}`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+  const res = await fetch(`${process.env.STDB_URL ?? 'http://127.0.0.1:3000'}/v1/database/${db}/call/${fn}`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
   if (!res.ok) console.log(`  ${fn}: ${res.status} ${(await res.text()).slice(0, 200)}`);
 }
 

@@ -1,5 +1,5 @@
 """Build the demo video from live recordings of the UI: each scene is narrated
-with macOS text-to-speech, recorded while record.mjs does what a person would
+(tts.py, or macOS text-to-speech with TTS=say), recorded while record.mjs does what a person would
 do for as long as the narration runs, captioned, and joined.
   python3 tools/video/walkthrough.py tools/video/walkthrough.json docs/video/charter.mp4
 A scene is {"say", "caption"?, "url"?, "ready"?, "before"?, "steps"?} (see record.mjs)
@@ -11,7 +11,10 @@ import sys
 import tempfile
 import textwrap
 
-VOICE = os.environ.get("VOICE", "Samantha")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from tts import speak  # noqa: E402
+
+VOICE = os.environ.get("VOICE", "Samantha")  # macOS voice when TTS=say
 FONT = "/System/Library/Fonts/Supplemental/Arial.ttf"
 W, H = 1920, 1080
 PAGE_H = 930  # the browser viewport; the caption bar fills the rest of the frame
@@ -63,9 +66,14 @@ def main(spec_path, out_path):
     scenes = json.load(open(spec_path))
     work = tempfile.mkdtemp(prefix="charter-walkthrough-")
     for i, sc in enumerate(scenes):
-        audio = os.path.join(work, f"s{i}.aiff")
-        run(["say", "-v", VOICE, "-r", str(sc.get("rate", 186)), "-o", audio, sc["say"]])
-        sc["audio"], sc["seconds"] = audio, round(duration(audio) + float(sc.get("hold", 0.8)), 2)
+        if os.environ.get("TTS") == "say":
+            audio = os.path.join(work, f"s{i}.aiff")
+            run(["say", "-v", VOICE, "-r", str(sc.get("rate", 186)), "-o", audio, sc["say"]])
+        else:
+            audio = os.path.join(work, f"s{i}.wav")
+            speak(sc["say"], audio, rate=sc.get("tts_rate"))
+        # The model's audio carries its own short silences at both ends; hold a little less after it.
+        sc["audio"], sc["seconds"] = audio, round(duration(audio) + float(sc.get("hold", 0.8 if os.environ.get("TTS") == "say" else 0.5)), 2)
     timed = os.path.join(work, "scenes.json")
     json.dump(scenes, open(timed, "w"))
     subprocess.run(["node", os.path.join(os.path.dirname(os.path.abspath(__file__)), "record.mjs"), timed, work], check=True)
