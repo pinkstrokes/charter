@@ -148,6 +148,7 @@ export const Decision = __t.object("Decision", {
   shadow: __t.bool(),
   label: __t.string(),
   labelSource: __t.string(),
+  treatments: __t.string(),
 });
 export type Decision = __Infer<typeof Decision>;
 

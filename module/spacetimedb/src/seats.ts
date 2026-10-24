@@ -1,9 +1,9 @@
 // The seats. Each seat is code that gathers features, runs the team's active
 // skill for the decision, and asks the kernel to act. The LLM only reads email.
 import type { ContractTerms, EmailPayload, InvoiceKind } from './core/contracts';
-import { DOMAINS, ESCALATING, run, type FeatureMap, type SkillProgram } from './core/dsl';
+import { DOMAINS, ESCALATING, run, sameTreatment, type FeatureMap, type SkillProgram, type Treatments } from './core/dsl';
 import { sha256Hex } from './core/hash';
-import { labelBreach } from './core/labels';
+import { labelBreach, landing } from './core/labels';
 import { allocationsForSubset, applyByTerms, findSubsets, type OpenItem } from './core/matching';
 import { nameTokens } from './core/names';
 import { addDays, bpOf, daysBetween } from './core/money';
@@ -55,21 +55,21 @@ export interface Decided {
 // the mistake: it takes the case to a person instead (the precedent tier).
 const ASK_OUTCOME: Record<string, string> = { underreport: 'ask_consultant', pre_chase: 'escalate_controller', allocation: 'leave_unapplied_ask', bill_match: 'hold_exception' };
 
-function correctedPrecedent(tx: Tx, domain: string, features: FeatureMap, outcome: string): { id: bigint; text: string } | null {
+function correctedPrecedent(tx: Tx, domain: string, features: FeatureMap, outcome: string, treatments: Treatments): { id: bigint; text: string } | null {
   if (!ASK_OUTCOME[domain]) return null;
   for (const a of tx.db.ask.status.filter('answered')) {
-    if (a.kind !== `correction:${domain}` || a.answer === outcome) continue;
+    if (a.kind !== `correction:${domain}` || sameTreatment(domain, a.answer, outcome, treatments)) continue;
     const past = (JSON.parse(a.evidence || '{}') as { features?: FeatureMap }).features;
     if (past && featureDistance(features, past) < 0.08) return { id: a.id, text: `${a.answeredBy} corrected a near-identical case on ${a.answeredAt} to "${a.answer}": ${a.reason}` };
   }
   return null;
 }
 
-export function decide(tx: Tx, seat: string, domain: string, subject: string, features: FeatureMap): Decided {
+export function decide(tx: Tx, seat: string, domain: string, subject: string, features: FeatureMap, treatments: Treatments = {}): Decided {
   const s = skillFor(tx, domain, subject);
   if (!s) return { id: 0n, key: 'none', decide: 'ask', note: 'no active skill', askRole: 'controller', used: {} };
   let { outcome, trace } = run(s.program, features);
-  const prior = correctedPrecedent(tx, domain, features, outcome.decide);
+  const prior = correctedPrecedent(tx, domain, features, outcome.decide, treatments);
   if (prior) {
     outcome = { decide: ASK_OUTCOME[domain], askRole: domain === 'underreport' ? 'consultant' : 'controller', note: prior.text };
     trace = { ruleIndex: -2, used: { precedent: Number(prior.id) } };
@@ -87,7 +87,7 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
   }
   tx.db.ruleStat.key.update({ ...stat, decisions: stat.decisions + 1 });
   const at = simDate(tx);
-  const row = tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: JSON.stringify(features), skillKey, outcome: outcome.decide, ruleIndex: trace.ruleIndex, note: outcome.note ?? '', shadow: false, label: '', labelSource: '' });
+  const row = tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: JSON.stringify(features), skillKey, outcome: outcome.decide, ruleIndex: trace.ruleIndex, note: outcome.note ?? '', shadow: false, label: '', labelSource: '', treatments: JSON.stringify(treatments) });
   if (spotCheck) {
     const spec = DOMAINS[domain as keyof typeof DOMAINS];
     openAsk(tx, {
@@ -96,7 +96,7 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
       toRole: domain === 'underreport' ? 'consultant' : 'controller',
       question: `Spot check (${stat.state} inspection of ${stat.key}, ${Math.round(stat.sampleRate * 100)}% of its decisions): the seat decided "${outcome.decide}" on ${subject}. Was that right?`,
       options: ['correct', ...spec.outcomes.filter(o => o !== outcome.decide)],
-      evidence: { features, decided: outcome.decide, skill: skillKey, rule: trace.ruleIndex, stat: stat.key, decision: Number(row.id) },
+      evidence: { features, treatments, decided: outcome.decide, skill: skillKey, rule: trace.ruleIndex, stat: stat.key, decision: Number(row.id) },
       confidence: 0.9,
       by: seat,
     });
@@ -105,7 +105,7 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
   for (const sh of [...tx.db.skill.domain.filter(domain)]) {
     if (sh.status !== 'shadow') continue;
     const r = run(JSON.parse(sh.program) as SkillProgram, features);
-    tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: '{}', skillKey: sh.key, outcome: r.outcome.decide, ruleIndex: r.trace.ruleIndex, note: r.outcome.note ?? '', shadow: true, label: '', labelSource: '' });
+    tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: '{}', skillKey: sh.key, outcome: r.outcome.decide, ruleIndex: r.trace.ruleIndex, note: r.outcome.note ?? '', shadow: true, label: '', labelSource: '', treatments: JSON.stringify(treatments) });
   }
   return { id: row.id, key: s.key, decide: outcome.decide, note: outcome.note ?? '', askRole: outcome.askRole ?? 'controller', used: trace.used };
 }
@@ -755,28 +755,32 @@ function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: Recei
     closeWork(tx, workId, 'waiting');
     return;
   }
-  // When a person corrected an automatic application of this receipt, they decide where it goes.
-  const d = ask ? null : decide(tx, CASH.id, 'allocation', `receipt:${r.id}`, features);
-  let allocations: { id: string; cents: number }[] = [];
-  if (d?.decide === 'apply_unique' && (remitConsistent || named.length === 1 || search.solutions.length >= 1)) {
-    // The payer's word, when it is consistent, decides which invoices are paid.
-    if (remitConsistent && perLine) allocations = remitLines.map(l => ({ id: l.ref, cents: l.cents }));
-    else allocations = allocationsForSubset(remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0], items);
-  } else if (d?.decide === 'apply_to_reference' && mentioned.length === 1) {
+  // What each outcome would do with this receipt. The decision records all of
+  // them, so a later check compares where the money goes, not what it was called.
+  const allocationsFor = (outcome: string): { id: string; cents: number }[] => {
+    if (outcome === 'apply_unique' && (remitConsistent || named.length === 1 || search.solutions.length >= 1)) {
+      // The payer's word, when it is consistent, decides which invoices are paid.
+      if (remitConsistent && perLine) return remitLines.map(l => ({ id: l.ref, cents: l.cents }));
+      return allocationsForSubset(remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0], items);
+    }
     // Short payments stay open on the invoice the payer named; extra cash stays unapplied.
-    allocations = [{ id: mentioned[0].id, cents: Math.min(amount, mentioned[0].openCents) }];
-  } else if (d?.decide === 'apply_by_terms') {
-    allocations = applyByTerms(amount, items, terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations;
-  }
+    if (outcome === 'apply_to_reference' && mentioned.length === 1) return [{ id: mentioned[0].id, cents: Math.min(amount, mentioned[0].openCents) }];
+    if (outcome === 'apply_by_terms') return applyByTerms(amount, items, terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations;
+    return [];
+  };
+  const treatments: Treatments = Object.fromEntries(DOMAINS.allocation.outcomes.map(o => [o, landing(allocationsFor(o))]));
+  // When a person corrected an automatic application of this receipt, they decide where it goes.
+  const d = ask ? null : decide(tx, CASH.id, 'allocation', `receipt:${r.id}`, features, treatments);
+  const allocations = d ? allocationsFor(d.decide) : [];
   if (!d || !allocations.length) {
     openAsk(tx, {
       kind: 'allocation',
       subject: `receipt:${r.id}`,
       toRole: d?.askRole ?? 'controller',
       question: `${money(amount)} from ${r.payerName} ${d ? `can be explained by ${search.solutions.length} different sets of invoices` : 'was applied automatically and a person said it should not have been'}. Which should it pay?`,
-      // The payer's own words first, then the sets that add up, then any single open invoice (oldest first).
-      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + ')), ...[...items].sort((x, y) => x.dueDate.localeCompare(y.dueDate)).slice(0, 12).map(i => i.id)])].concat(['apply oldest first', 'leave unapplied']),
-      evidence: { features, solutions: search.solutions, skill: d?.key ?? '', referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: d ? Number(d.id) : 0 },
+      // The payer's own words first, then the sets that add up, then every open invoice (oldest first).
+      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + ')), ...[...items].sort((x, y) => x.dueDate.localeCompare(y.dueDate)).map(i => i.id)])].concat(['apply oldest first', 'leave unapplied']),
+      evidence: { features, treatments, solutions: search.solutions, skill: d?.key ?? '', referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: d ? Number(d.id) : 0 },
       confidence: 0.3,
       workItemId: workId,
       by: CASH.id,

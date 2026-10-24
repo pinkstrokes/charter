@@ -1,23 +1,48 @@
 {
  "db": "charter-b",
- "generatedAt": "2026-10-24T12:16:28.795Z",
- "answerKeyEntries": 1298,
+ "generatedAt": "2026-10-24T17:05:36.011Z",
+ "answerKeyEntries": 1308,
  "outcomes": {
   "train": {
    "payment_prompt": {
-    "n": 397,
-    "right": 396,
-    "missing": 0
+    "n": 305,
+    "right": 300,
+    "missing": 4
    },
    "payment_parent": {
-    "n": 58,
-    "right": 58,
+    "n": 57,
+    "right": 57,
     "missing": 0
    },
    "payment_late": {
-    "n": 95,
-    "right": 79,
-    "missing": 16
+    "n": 89,
+    "right": 75,
+    "missing": 14
+   },
+   "payment_two_invoices": {
+    "n": 15,
+    "right": 13,
+    "missing": 0
+   },
+   "payment_bank_charge": {
+    "n": 41,
+    "right": 34,
+    "missing": 1
+   },
+   "payment_on_account": {
+    "n": 17,
+    "right": 17,
+    "missing": 0
+   },
+   "payment_fx_difference": {
+    "n": 19,
+    "right": 17,
+    "missing": 1
+   },
+   "payment_on_account_balance": {
+    "n": 13,
+    "right": 11,
+    "missing": 1
    },
    "payment_duplicate": {
     "n": 5,
@@ -32,14 +57,19 @@
   },
   "val": {
    "payment_prompt": {
-    "n": 203,
-    "right": 201,
+    "n": 164,
+    "right": 162,
     "missing": 2
    },
    "payment_parent": {
-    "n": 31,
-    "right": 30,
+    "n": 30,
+    "right": 29,
     "missing": 1
+   },
+   "payment_two_invoices": {
+    "n": 4,
+    "right": 4,
+    "missing": 0
    },
    "payment_duplicate": {
     "n": 2,
@@ -47,9 +77,29 @@
     "missing": 0
    },
    "payment_late": {
-    "n": 44,
-    "right": 39,
+    "n": 40,
+    "right": 35,
     "missing": 5
+   },
+   "payment_bank_charge": {
+    "n": 18,
+    "right": 18,
+    "missing": 0
+   },
+   "payment_on_account_balance": {
+    "n": 7,
+    "right": 7,
+    "missing": 0
+   },
+   "payment_on_account": {
+    "n": 6,
+    "right": 6,
+    "missing": 0
+   },
+   "payment_fx_difference": {
+    "n": 6,
+    "right": 6,
+    "missing": 0
    },
    "payment_statement_with_remittance": {
     "n": 44,
@@ -59,23 +109,48 @@
   },
   "test": {
    "payment_prompt": {
-    "n": 199,
-    "right": 199,
-    "missing": 0
+    "n": 148,
+    "right": 144,
+    "missing": 3
    },
    "payment_parent": {
-    "n": 32,
-    "right": 31,
+    "n": 31,
+    "right": 30,
     "missing": 1
    },
    "payment_late": {
-    "n": 47,
+    "n": 45,
     "right": 34,
-    "missing": 13
+    "missing": 11
    },
-   "payment_duplicate": {
+   "payment_on_account_balance": {
+    "n": 15,
+    "right": 15,
+    "missing": 0
+   },
+   "payment_bank_charge": {
+    "n": 24,
+    "right": 22,
+    "missing": 1
+   },
+   "payment_two_invoices": {
     "n": 5,
     "right": 5,
+    "missing": 0
+   },
+   "payment_fx_difference": {
+    "n": 6,
+    "right": 5,
+    "missing": 1
+   },
+   "payment_duplicate": {
+    "n": 4,
+    "right": 4,
+    "missing": 0
+   },
+   "payment_on_account": {
+    "n": 12,
+    "right": 11,
     "missing": 0
    },
    "payment_statement_with_remittance": {
@@ -88,16 +163,36 @@
  "cashLanded": {
   "train": {
    "payment_prompt": {
-    "n": 397,
-    "right": 396
+    "n": 305,
+    "right": 304
    },
    "payment_parent": {
-    "n": 58,
-    "right": 58
+    "n": 57,
+    "right": 57
    },
    "payment_late": {
-    "n": 79,
-    "right": 79
+    "n": 75,
+    "right": 75
+   },
+   "payment_two_invoices": {
+    "n": 15,
+    "right": 13
+   },
+   "payment_bank_charge": {
+    "n": 40,
+    "right": 34
+   },
+   "payment_on_account": {
+    "n": 17,
+    "right": 17
+   },
+   "payment_fx_difference": {
+    "n": 18,
+    "right": 17
+   },
+   "payment_on_account_balance": {
+    "n": 12,
+    "right": 11
    },
    "payment_duplicate": {
     "n": 5,
@@ -110,20 +205,40 @@
   },
   "val": {
    "payment_prompt": {
-    "n": 201,
-    "right": 201
+    "n": 162,
+    "right": 162
    },
    "payment_parent": {
-    "n": 31,
-    "right": 31
+    "n": 30,
+    "right": 30
+   },
+   "payment_two_invoices": {
+    "n": 4,
+    "right": 4
    },
    "payment_duplicate": {
     "n": 2,
     "right": 2
    },
    "payment_late": {
-    "n": 39,
-    "right": 39
+    "n": 35,
+    "right": 35
+   },
+   "payment_bank_charge": {
+    "n": 18,
+    "right": 18
+   },
+   "payment_on_account_balance": {
+    "n": 7,
+    "right": 7
+   },
+   "payment_on_account": {
+    "n": 6,
+    "right": 6
+   },
+   "payment_fx_difference": {
+    "n": 6,
+    "right": 6
    },
    "payment_statement_with_remittance": {
     "n": 37,
@@ -132,20 +247,40 @@
   },
   "test": {
    "payment_prompt": {
-    "n": 199,
-    "right": 199
+    "n": 148,
+    "right": 147
    },
    "payment_parent": {
-    "n": 32,
-    "right": 32
+    "n": 31,
+    "right": 31
    },
    "payment_late": {
     "n": 34,
     "right": 34
    },
-   "payment_duplicate": {
+   "payment_on_account_balance": {
+    "n": 15,
+    "right": 15
+   },
+   "payment_bank_charge": {
+    "n": 23,
+    "right": 22
+   },
+   "payment_two_invoices": {
     "n": 5,
     "right": 5
+   },
+   "payment_fx_difference": {
+    "n": 5,
+    "right": 5
+   },
+   "payment_duplicate": {
+    "n": 4,
+    "right": 4
+   },
+   "payment_on_account": {
+    "n": 12,
+    "right": 11
    },
    "payment_statement_with_remittance": {
     "n": 40,
@@ -156,9 +291,9 @@
  "learnedPolicies": [],
  "knowingWhenToAsk": {
   "allocation": {
-   "handledAlone": 299,
-   "wrong": 0,
-   "upper95": 0.009969146792899508
+   "handledAlone": 266,
+   "wrong": 3,
+   "upper95": 0.028889541242180447
   }
  },
  "generations": [
@@ -169,19 +304,39 @@
    "activatedAt": null,
    "test": {
     "payment_prompt": {
-     "n": 199,
-     "right": 186
+     "n": 145,
+     "right": 133
     },
     "payment_parent": {
-     "n": 31,
-     "right": 31
+     "n": 30,
+     "right": 29
     },
     "payment_late": {
      "n": 34,
      "right": 34
     },
-    "payment_duplicate": {
+    "payment_on_account_balance": {
+     "n": 15,
+     "right": 14
+    },
+    "payment_bank_charge": {
+     "n": 23,
+     "right": 0
+    },
+    "payment_two_invoices": {
      "n": 5,
+     "right": 5
+    },
+    "payment_fx_difference": {
+     "n": 5,
+     "right": 0
+    },
+    "payment_duplicate": {
+     "n": 4,
+     "right": 0
+    },
+    "payment_on_account": {
+     "n": 12,
      "right": 0
     },
     "payment_statement_with_remittance": {
@@ -197,20 +352,40 @@
    "activatedAt": "2011-01-02",
    "test": {
     "payment_prompt": {
-     "n": 199,
-     "right": 190
+     "n": 145,
+     "right": 138
     },
     "payment_parent": {
-     "n": 31,
-     "right": 31
+     "n": 30,
+     "right": 30
     },
     "payment_late": {
      "n": 34,
      "right": 34
     },
-    "payment_duplicate": {
+    "payment_on_account_balance": {
+     "n": 15,
+     "right": 14
+    },
+    "payment_bank_charge": {
+     "n": 23,
+     "right": 0
+    },
+    "payment_two_invoices": {
+     "n": 5,
+     "right": 5
+    },
+    "payment_fx_difference": {
      "n": 5,
      "right": 1
+    },
+    "payment_duplicate": {
+     "n": 4,
+     "right": 0
+    },
+    "payment_on_account": {
+     "n": 12,
+     "right": 0
     },
     "payment_statement_with_remittance": {
      "n": 40,
@@ -220,85 +395,49 @@
   },
   {
    "key": "allocation@3",
-   "status": "retired",
-   "createdAt": "2011-02-20",
-   "activatedAt": "2011-02-20",
+   "status": "active",
+   "createdAt": "2011-01-09",
+   "activatedAt": "2011-01-09",
    "test": {
     "payment_prompt": {
-     "n": 199,
-     "right": 190
+     "n": 145,
+     "right": 138
     },
     "payment_parent": {
-     "n": 31,
-     "right": 31
+     "n": 30,
+     "right": 30
     },
     "payment_late": {
      "n": 34,
      "right": 34
     },
-    "payment_duplicate": {
+    "payment_on_account_balance": {
+     "n": 15,
+     "right": 14
+    },
+    "payment_bank_charge": {
+     "n": 23,
+     "right": 0
+    },
+    "payment_two_invoices": {
+     "n": 5,
+     "right": 5
+    },
+    "payment_fx_difference": {
      "n": 5,
      "right": 1
     },
-    "payment_statement_with_remittance": {
-     "n": 40,
-     "right": 33
-    }
-   }
-  },
-  {
-   "key": "allocation@4",
-   "status": "retired",
-   "createdAt": "2011-03-27",
-   "activatedAt": "2011-03-27",
-   "test": {
-    "payment_prompt": {
-     "n": 199,
-     "right": 190
-    },
-    "payment_parent": {
-     "n": 31,
-     "right": 31
-    },
-    "payment_late": {
-     "n": 34,
-     "right": 34
-    },
     "payment_duplicate": {
-     "n": 5,
-     "right": 5
+     "n": 4,
+     "right": 1
+    },
+    "payment_on_account": {
+     "n": 12,
+     "right": 0
     },
     "payment_statement_with_remittance": {
      "n": 40,
      "right": 33
-    }
-   }
-  },
-  {
-   "key": "allocation@5",
-   "status": "active",
-   "createdAt": "2011-05-08",
-   "activatedAt": "2011-05-08",
-   "test": {
-    "payment_prompt": {
-     "n": 199,
-     "right": 190
-    },
-    "payment_parent": {
-     "n": 31,
-     "right": 31
-    },
-    "payment_late": {
-     "n": 34,
-     "right": 34
-    },
-    "payment_duplicate": {
-     "n": 5,
-     "right": 5
-    },
-    "payment_statement_with_remittance": {
-     "n": 40,
-     "right": 40
     }
    }
   },
@@ -336,12 +475,12 @@
    "month": "2010-12",
    "domains": {
     "allocation": {
-     "decisions": 19,
+     "decisions": 18,
      "alone": 13,
      "aloneGraded": 13,
      "aloneRight": 12,
-     "questions": 6,
-     "aloneShare": 0.6842105263157895,
+     "questions": 5,
+     "aloneShare": 0.7222222222222222,
      "aloneAccuracy": 0.9230769230769231
     }
    }
@@ -350,17 +489,17 @@
    "month": "2011-01",
    "domains": {
     "allocation": {
-     "decisions": 208,
-     "alone": 202,
-     "aloneGraded": 202,
-     "aloneRight": 199,
-     "questions": 13,
-     "aloneShare": 0.9711538461538461,
-     "aloneAccuracy": 0.9851485148514851
+     "decisions": 200,
+     "alone": 191,
+     "aloneGraded": 191,
+     "aloneRight": 178,
+     "questions": 25,
+     "aloneShare": 0.955,
+     "aloneAccuracy": 0.9319371727748691
     },
     "pre_chase": {
-     "decisions": 1309,
-     "alone": 1309,
+     "decisions": 1512,
+     "alone": 1512,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -373,17 +512,17 @@
    "month": "2011-02",
    "domains": {
     "allocation": {
-     "decisions": 161,
-     "alone": 161,
-     "aloneGraded": 161,
-     "aloneRight": 159,
-     "questions": 4,
-     "aloneShare": 1,
-     "aloneAccuracy": 0.9875776397515528
+     "decisions": 159,
+     "alone": 133,
+     "aloneGraded": 133,
+     "aloneRight": 133,
+     "questions": 28,
+     "aloneShare": 0.8364779874213837,
+     "aloneAccuracy": 1
     },
     "pre_chase": {
-     "decisions": 1335,
-     "alone": 1335,
+     "decisions": 1659,
+     "alone": 1659,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -396,17 +535,17 @@
    "month": "2011-03",
    "domains": {
     "allocation": {
-     "decisions": 185,
-     "alone": 183,
-     "aloneGraded": 183,
-     "aloneRight": 182,
-     "questions": 4,
-     "aloneShare": 0.9891891891891892,
-     "aloneAccuracy": 0.994535519125683
+     "decisions": 191,
+     "alone": 156,
+     "aloneGraded": 156,
+     "aloneRight": 156,
+     "questions": 36,
+     "aloneShare": 0.8167539267015707,
+     "aloneAccuracy": 1
     },
     "pre_chase": {
-     "decisions": 1590,
-     "alone": 1590,
+     "decisions": 1995,
+     "alone": 1995,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -419,17 +558,17 @@
    "month": "2011-04",
    "domains": {
     "allocation": {
-     "decisions": 208,
-     "alone": 201,
-     "aloneGraded": 201,
-     "aloneRight": 201,
-     "questions": 10,
-     "aloneShare": 0.9663461538461539,
-     "aloneAccuracy": 1
+     "decisions": 212,
+     "alone": 177,
+     "aloneGraded": 177,
+     "aloneRight": 176,
+     "questions": 38,
+     "aloneShare": 0.8349056603773585,
+     "aloneAccuracy": 0.9943502824858758
     },
     "pre_chase": {
-     "decisions": 1529,
-     "alone": 1529,
+     "decisions": 1944,
+     "alone": 1944,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -442,17 +581,17 @@
    "month": "2011-05",
    "domains": {
     "allocation": {
-     "decisions": 206,
-     "alone": 200,
-     "aloneGraded": 200,
-     "aloneRight": 200,
-     "questions": 9,
-     "aloneShare": 0.970873786407767,
+     "decisions": 208,
+     "alone": 176,
+     "aloneGraded": 176,
+     "aloneRight": 176,
+     "questions": 35,
+     "aloneShare": 0.8461538461538461,
      "aloneAccuracy": 1
     },
     "pre_chase": {
-     "decisions": 1484,
-     "alone": 1484,
+     "decisions": 2000,
+     "alone": 2000,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -465,17 +604,17 @@
    "month": "2011-06",
    "domains": {
     "allocation": {
-     "decisions": 244,
-     "alone": 244,
-     "aloneGraded": 244,
-     "aloneRight": 244,
-     "questions": 0,
-     "aloneShare": 1,
-     "aloneAccuracy": 1
+     "decisions": 247,
+     "alone": 221,
+     "aloneGraded": 221,
+     "aloneRight": 218,
+     "questions": 28,
+     "aloneShare": 0.8947368421052632,
+     "aloneAccuracy": 0.9864253393665159
     },
     "pre_chase": {
-     "decisions": 1295,
-     "alone": 1295,
+     "decisions": 1853,
+     "alone": 1853,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -494,9 +633,9 @@
  },
  "security": {},
  "attempts": {
-  "total": 9146,
+  "total": 9889,
   "denied": 0,
-  "rejected": 0
+  "rejected": 2
  },
  "invariants": {
   "trialBalance": true,
@@ -507,9 +646,9 @@
   "cashEqualsBank": true
  },
  "chain": {
-  "rows": 9146,
-  "verified": 9146,
+  "rows": 9889,
+  "verified": 9889,
   "firstBreak": null,
-  "head": "5aa6be62e195c7032dc3321dfcb30cdbae53203092de1cc7420cb304a7ebde46"
+  "head": "924c831406ac7691912a47e382b3d307b80e13b68cc4f8ca6c9bf12d54b6e23d"
  }
 }

@@ -2,7 +2,7 @@
 // people may do: release refunds, endorse bank changes, waive or credit charges.
 // Every path goes through the kernel, so a person is bound by the same policies.
 import type { CallbackPayload } from './core/contracts';
-import { DOMAINS } from './core/dsl';
+import { DOMAINS, parseTreatments, sameTreatment } from './core/dsl';
 import { allocationLabel, labelBreach } from './core/labels';
 import { applyByTerms, allocationsForSubset } from './core/matching';
 import { addDays, bpOf } from './core/money';
@@ -55,7 +55,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
         toRole: who.role,
         question: `On ${a.subject} you said "${correct}". Rule ${clean.rule} decided "${clean.decided}", and all ${clean.checked} of its decisions checked so far were confirmed. Was that a slip, or does "${correct}" stand?`,
         options: ['a slip: the decision was right', `"${correct}" stands`],
-        evidence: { domain, decided: clean.decided, verdict: correct, rule: clean.rule, spotCheck: Number(a.id), features: JSON.parse(clean.features) },
+        evidence: { domain, decided: clean.decided, verdict: correct, rule: clean.rule, spotCheck: Number(a.id), features: JSON.parse(clean.features), treatments: JSON.parse(clean.treatments || '{}') },
         confidence: 0.5,
       });
       return `spot check of ${a.subject}: asked ${who.id} to confirm "${correct}" against a rule with a clean record`;
@@ -389,7 +389,7 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
       raisedBy: who.id,
       id: 0n, createdAt: d.at, kind: `correction:${d.domain}`, subject: d.subject, toRole: who.role,
       question: `${who.id} says the ${d.domain} decision on ${d.subject} should have been "${outcome}", not "${d.outcome}"`,
-      options: JSON.stringify(spec.outcomes), evidence: JSON.stringify({ features: JSON.parse(d.features), decision: Number(decisionId), was: d.outcome, skill: d.skillKey }),
+      options: JSON.stringify(spec.outcomes), evidence: JSON.stringify({ features: JSON.parse(d.features), treatments: JSON.parse(d.treatments || '{}'), decision: Number(decisionId), was: d.outcome, skill: d.skillKey }),
       confidence: 1, precedent: '', status: 'answered', answer: outcome, reason, answeredBy: who.id, answeredAt: today, deadline: today, workItemId: 0n,
     });
     recordCheck(tx, d.domain, d.subject, outcome, 'correction', who.id);
@@ -397,7 +397,7 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
   });
   // Correcting a decision undoes what it did, through the kernel like everything else.
   if (res.ok && d.domain === 'bill_match' && outcome === 'reject') return rejectBill(tx, who, d.subject.replace('bill:', ''), reason).summary;
-  if (res.ok && d.domain === 'allocation' && outcome !== d.outcome) {
+  if (res.ok && d.domain === 'allocation' && !sameTreatment(d.domain, outcome, d.outcome, parseTreatments(d.treatments))) {
     const receiptId = d.subject.replace('receipt:', '');
     const undone = reverseApplications(tx, who, receiptId, reason);
     const r = tx.db.receipt.id.find(receiptId);

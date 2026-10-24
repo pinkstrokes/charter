@@ -24,4 +24,5 @@ export default __t.row({
   shadow: __t.bool(),
   label: __t.string(),
   labelSource: __t.string().name("label_source"),
+  treatments: __t.string(),
 });

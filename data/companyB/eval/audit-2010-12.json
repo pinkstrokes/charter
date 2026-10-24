@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 496,
+   "population": 492,
    "exceptions": 0,
    "examples": []
   },
@@ -69,7 +69,7 @@
   {
    "id": "DECISIONS",
    "name": "recorded decisions re-run to the same outcome",
-   "population": 19,
+   "population": 18,
    "exceptions": 0,
    "examples": []
   }

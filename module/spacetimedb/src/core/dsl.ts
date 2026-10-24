@@ -135,10 +135,24 @@ export const ESCALATING: Record<DomainName, string[]> = {
   bill_match: ['hold_exception'],
 };
 
+// What each outcome would do with one case, recorded with the decision when the
+// seat can work it out: for cash, the invoices each outcome would pay ('ask' when
+// it would hand the receipt to a person). Customer with one open invoice: paying
+// it "by terms" and paying "the invoice the payer named" are the same decision.
+export type Treatments = Record<string, string>;
+export const ASKS = 'ask';
+
 // Two outcomes agree when they lead to the same treatment of the case.
-export function sameTreatment(domain: string, a: string, b: string): boolean {
+export function sameTreatment(domain: string, a: string, b: string, treatments?: Treatments): boolean {
   if (domain === 'underreport') return ESCALATING.underreport.includes(a) === ESCALATING.underreport.includes(b);
+  if (treatments && a in treatments && b in treatments) return treatments[a] === treatments[b];
   return a === b;
+}
+
+export function parseTreatments(json: string | undefined): Treatments | undefined {
+  if (!json) return undefined;
+  const t = JSON.parse(json) as Treatments;
+  return Object.keys(t).length ? t : undefined;
 }
 
 export interface Trace {

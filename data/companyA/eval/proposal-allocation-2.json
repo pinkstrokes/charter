@@ -124,7 +124,7 @@
         {
           "subject": "receipt:WIRE-260424-5099",
           "label": "leave_unapplied_ask",
-          "source": "ask #306 answered by controller:Dana",
+          "source": "ask #311 answered by controller:Dana",
           "reason": "The ledger shows no matching terms for receipt WIRE-260424-5099, so the seat wrongly applied it instead of leaving it unapplied for inquiry.",
           "handled": true
         }
@@ -152,10 +152,10 @@
     "robustness": 0.9230769230769231,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule before the solution_count=0 fallback to leave unapplied when no subset matches and the payment reference points to an already-paid invoice, fixing WIRE-260424-5099. The earlier mistake case WIRE-260105-4137 was actually correct per the controller's own admission, so existing rules remain unchanged.",
+    "rationale": "Added a rule before the solution_count=0 fallback to leave unapplied when no subset matches and the payment reference points to an already-paid invoice, fixing WIRE-260424-5099. The controller's note on WIRE-260105-4137 confirms their ask was itself a misread, so the existing apply_unique logic for that case remains correct.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 12.1,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -225,6 +225,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T12:29:32.667Z"
+    "evaluatedAt": "2026-10-24T16:54:58.338Z"
   }
 }

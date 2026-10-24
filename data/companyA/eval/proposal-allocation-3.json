@@ -57,7 +57,7 @@
         },
         "then": {
           "decide": "leave_unapplied_ask",
-          "note": "exact match but reference is already paid, likely duplicate receipt"
+          "note": "exact match but reference is already paid, likely duplicate collection"
         }
       },
       {
@@ -155,14 +155,14 @@
         {
           "subject": "receipt:WIRE-260424-5099",
           "label": "leave_unapplied_ask",
-          "source": "ask #337 answered by controller:Dana",
+          "source": "ask #338 answered by controller:Dana",
           "reason": "Per the ledger, this wire duplicates a debit already collected, so it must remain unapplied pending refund.",
           "handled": true
         },
         {
           "subject": "receipt:WIRE-260505-5247",
           "label": "apply_by_terms",
-          "source": "ask #347 answered by controller:Dana",
+          "source": "ask #343 answered by controller:Dana",
           "reason": "The ledger shows PATEL BREWS INC remitted $3,578.13 under the contract-order option, so apply oldest first per standard allocation rules.",
           "handled": false
         }
@@ -188,12 +188,31 @@
     "safetyViolations": 0,
     "complexity": 28,
     "robustness": 0.8666666666666667,
-    "alternatives": [],
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+        "robustness": 0.8666666666666667,
+        "newLeads": 0,
+        "complexity": 28
+      },
+      {
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.8666666666666667,
+        "newLeads": 0,
+        "complexity": 36
+      },
+      {
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.8666666666666667,
+        "newLeads": 0,
+        "complexity": 36
+      }
+    ],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule before the general exact-match case to leave unapplied when solution_count=1 and exact_match=true but reference_paid=true, catching duplicate receipts like WIRE-260424-5099. Dana's self-correction on WIRE-260105-4137 confirms the existing apply_unique behavior was correct for that pattern, so no other changes are needed.",
-    "candidatesTried": 3,
-    "candidatesPassed": 1,
-    "seconds": 14.6,
+    "rationale": "Added a rule before the general exact-match case to leave unapplied when solution_count=1 and exact_match=true but reference_paid=true, catching duplicate collections like WIRE-260424-5099. The controller's mistaken escalation on WIRE-260105-4137 (where reference_paid=false) correctly falls through to apply_unique, preserving all other labeled cases.",
+    "candidatesTried": 6,
+    "candidatesPassed": 4,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -273,6 +292,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T12:31:16.086Z"
+    "evaluatedAt": "2026-10-24T16:55:24.587Z"
   }
 }

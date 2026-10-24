@@ -165,7 +165,7 @@
     "rationale": "Added a rule to flag cases where supply-implied gross is more than 30% above reported gross and the store's cash share is less than half the peer median, which catches S22:2026-02-16 where massive underreporting was hidden by matching card figures. This pattern correctly distinguishes genuine low-cash stores like S36 (whose own history matches) from stores suppressing cash revenue.",
     "candidatesTried": 7,
     "candidatesPassed": 6,
-    "seconds": 0.3,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -225,6 +225,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T12:24:32.670Z"
+    "evaluatedAt": "2026-10-24T16:49:55.429Z"
   }
 }

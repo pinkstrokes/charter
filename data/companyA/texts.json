@@ -665,5 +665,13 @@
  "reason:Dana:spot_check:pre_chase:entity:F03:2026-05-12:escalate_controller#94285b11ef": "The ledger confirms the seat incorrectly flagged this for escalation, so I am overriding that error to hold.",
  "reason:Dana:spot_check:pre_chase:entity:F07:2026-05-12:escalate_controller#52673443df": "I misread the case and thought 'escalate_controller'.",
  "reason:Dana:dispute:entity:F09:uphold#d6a969ca38": "The fuel surcharge is explicitly listed in FA-2022 schedule B, which SoCal Sip Group LLC signed.",
- "reason:Dana:spot_check:allocation:receipt:WIRE-260602-5543:leave_unapplied_ask#fac060eea9": "I misread the case and thought 'leave_unapplied_ask'."
+ "reason:Dana:spot_check:allocation:receipt:WIRE-260602-5543:leave_unapplied_ask#fac060eea9": "I misread the case and thought 'leave_unapplied_ask'.",
+ "reason:Dana:dispute:entity:F04:credit the invoice#f5bb619ab7": "The ledger confirms torn pearl bags, so credit the $92.40 deduction immediately.",
+ "reason:Dana:spot_check:allocation:receipt:WIRE-260512-5321:apply_to_reference#0b7a6857dd": "The ledger confirms this receipt requires apply_to_reference, so the seat’s unique allocation is incorrect and must be reversed.",
+ "reason:Lee:audit:store:S03:2026-02-02:request audit#82681cbe23": "I saw the numbers don’t add up and cash is missing, so I’m requesting an audit to find where that money went.",
+ "reason:Priya:audit:store:S38:2026-05-18:explained — accept report#c80816938b": "The $3,600 gap is fully explained by a bulk inventory purchase and the cash share remains consistent with historical norms, confirming reported figures are accurate.",
+ "reason:Lee:audit:store:S03:2026-06-08:explained — accept report#a7334af801": "I know this owner is honest, so the gap is just a bulk buy or promo; no audit needed.",
+ "reason:Priya:audit:store:S26:2026-06-08:explained — accept report#16c7ee1839": "The 26% cash share aligns perfectly with historical norms, confirming the reported figure is accurate and the supply gap reflects normal inventory variance rather than underreporting.",
+ "reason:Lee:label_check:store:S31:2026-06-08:\"flag_audit\" stands#434239b028": "I looked again and stand by it; the rule’s perfect record doesn’t change what I saw on the floor that day.",
+ "reason:Priya:audit:store:S20:2026-06-08:explained — accept report#9ac47e324d": "The 31% cash share aligns perfectly with historical norms, confirming the reported figures are accurate despite the supply variance."
 }

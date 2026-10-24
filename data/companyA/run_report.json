@@ -4,11 +4,11 @@
   "2026-01-05",
   "2026-06-28"
  ],
- "wall_seconds": 1090,
+ "wall_seconds": 1116,
  "seat_runs": 175,
  "llm": {
-  "world_prose_cached_texts": 348,
-  "world_prose_calls_last_run": 12,
+  "world_prose_cached_texts": 356,
+  "world_prose_calls_last_run": 8,
   "module_calls": 154,
   "module_calls_cached": 0,
   "module_failures": 0,
@@ -101,8 +101,8 @@
      "case": "PC-F12-2026-06-03",
      "split": "train",
      "expected": "chase",
-     "first": "chase (pre_chase@3, 2026-06-03)",
-     "latest": "chase (pre_chase@3, 2026-06-03)"
+     "first": "chase (pre_chase@2, 2026-06-03)",
+     "latest": "chase (pre_chase@2, 2026-06-03)"
     }
    ]
   },
@@ -284,15 +284,15 @@
      "case": "AL-WIRE-260526-5469",
      "split": "val",
      "expected": "apply_unique",
-     "first": "apply_unique (allocation@4, 2026-05-26)",
-     "latest": "apply_unique (allocation@4, 2026-05-26)"
+     "first": "apply_unique (allocation@3, 2026-05-26)",
+     "latest": "apply_unique (allocation@3, 2026-05-26)"
     },
     {
      "case": "AL-WIRE-260602-5543",
      "split": "train",
      "expected": "apply_unique",
-     "first": "apply_unique (allocation@4, 2026-06-02)",
-     "latest": "apply_unique (allocation@4, 2026-06-02)"
+     "first": "apply_unique (allocation@3, 2026-06-02)",
+     "latest": "apply_unique (allocation@3, 2026-06-02)"
     }
    ]
   },
@@ -355,8 +355,8 @@
      "case": "AL-WIRE-260602-5580",
      "split": "train",
      "expected": "apply_unique",
-     "first": "apply_unique (allocation@4, 2026-06-02)",
-     "latest": "apply_unique (allocation@4, 2026-06-02)"
+     "first": "apply_unique (allocation@3, 2026-06-02)",
+     "latest": "apply_unique (allocation@3, 2026-06-02)"
     }
    ]
   },
@@ -415,10 +415,10 @@
    "asks": {},
    "money": {
     "receipt_cents": 895710,
-    "applied_where_meant_cents": 425978,
+    "applied_where_meant_cents": 228320,
     "receipts_landed_right": 1,
-    "applied_elsewhere_cents": 469732,
-    "left_unapplied_cents": 0,
+    "applied_elsewhere_cents": 666242,
+    "left_unapplied_cents": 1148,
     "disputed_credited_cents": 237560,
     "disputed_paid_cents": 698580
    },
@@ -435,14 +435,14 @@
      "split": "val",
      "expected": "apply_to_reference",
      "first": "apply_unique (allocation@3, 2026-05-12)",
-     "latest": "apply_unique (allocation@3, 2026-05-12)"
+     "latest": "apply_unique (allocation@3, 2026-05-14)"
     },
     {
      "case": "AL-CHK-260519-3318",
      "split": "test",
      "expected": "apply_to_reference",
-     "first": "apply_by_terms (allocation@4, 2026-05-19)",
-     "latest": "apply_by_terms (allocation@4, 2026-05-19)"
+     "first": "apply_by_terms (allocation@3, 2026-05-19)",
+     "latest": "apply_by_terms (allocation@3, 2026-05-19)"
     }
    ]
   },
@@ -457,11 +457,11 @@
     },
     "pre_chase": {
      "n": 13,
-     "first_right": 6,
-     "latest_right": 6,
-     "latest:chase": 6,
+     "first_right": 9,
+     "latest_right": 9,
+     "latest:chase": 3,
      "latest:escalate_controller": 1,
-     "latest:hold": 6
+     "latest:hold": 9
     }
    },
    "asks": {},
@@ -492,8 +492,8 @@
      "case": "AL-CHK-260609-1185",
      "split": "val",
      "expected": "apply_unique",
-     "first": "apply_unique (allocation@4, 2026-06-09)",
-     "latest": "apply_unique (allocation@4, 2026-06-09)"
+     "first": "apply_unique (allocation@3, 2026-06-09)",
+     "latest": "apply_unique (allocation@3, 2026-06-09)"
     },
     {
      "case": "PC-F08-2026-03-02",
@@ -527,22 +527,22 @@
      "case": "PC-F10-2026-04-13",
      "split": "train",
      "expected": "hold",
-     "first": "chase (pre_chase@2, 2026-04-13)",
-     "latest": "chase (pre_chase@2, 2026-04-13)"
+     "first": "hold (pre_chase@2, 2026-04-13)",
+     "latest": "hold (pre_chase@2, 2026-04-13)"
     },
     {
      "case": "PC-F10-2026-04-14",
      "split": "val",
      "expected": "hold",
-     "first": "chase (pre_chase@2, 2026-04-14)",
-     "latest": "chase (pre_chase@2, 2026-04-14)"
+     "first": "hold (pre_chase@2, 2026-04-14)",
+     "latest": "hold (pre_chase@2, 2026-04-14)"
     },
     {
      "case": "PC-F10-2026-04-15",
      "split": "train",
      "expected": "hold",
-     "first": "chase (pre_chase@2, 2026-04-15)",
-     "latest": "chase (pre_chase@2, 2026-04-15)"
+     "first": "hold (pre_chase@2, 2026-04-15)",
+     "latest": "hold (pre_chase@2, 2026-04-15)"
     },
     {
      "case": "PC-F10-2026-04-16",
@@ -555,36 +555,36 @@
      "case": "PC-F12-2026-06-04",
      "split": "train",
      "expected": "hold",
-     "first": "hold (pre_chase@3, 2026-06-04)",
-     "latest": "hold (pre_chase@3, 2026-06-04)"
+     "first": "hold (pre_chase@2, 2026-06-04)",
+     "latest": "hold (pre_chase@2, 2026-06-04)"
     },
     {
      "case": "PC-F12-2026-06-05",
      "split": "train",
      "expected": "hold",
-     "first": "hold (pre_chase@3, 2026-06-05)",
-     "latest": "hold (pre_chase@3, 2026-06-05)"
+     "first": "hold (pre_chase@2, 2026-06-05)",
+     "latest": "hold (pre_chase@2, 2026-06-05)"
     },
     {
      "case": "PC-F12-2026-06-06",
      "split": "train",
      "expected": "hold",
-     "first": "hold (pre_chase@3, 2026-06-06)",
-     "latest": "hold (pre_chase@3, 2026-06-06)"
+     "first": "hold (pre_chase@2, 2026-06-06)",
+     "latest": "hold (pre_chase@2, 2026-06-06)"
     },
     {
      "case": "PC-F12-2026-06-07",
      "split": "train",
      "expected": "hold",
-     "first": "hold (pre_chase@3, 2026-06-07)",
-     "latest": "hold (pre_chase@3, 2026-06-07)"
+     "first": "hold (pre_chase@2, 2026-06-07)",
+     "latest": "hold (pre_chase@2, 2026-06-07)"
     },
     {
      "case": "PC-F12-2026-06-08",
      "split": "val",
      "expected": "hold",
-     "first": "hold (pre_chase@3, 2026-06-08)",
-     "latest": "hold (pre_chase@3, 2026-06-08)"
+     "first": "hold (pre_chase@2, 2026-06-08)",
+     "latest": "hold (pre_chase@2, 2026-06-08)"
     }
    ]
   },
@@ -693,9 +693,10 @@
    "decisions": {
     "underreport": {
      "n": 18,
-     "first_right": 18,
-     "latest_right": 18,
-     "latest:accept": 18
+     "first_right": 15,
+     "latest_right": 14,
+     "latest:accept": 14,
+     "latest:flag_audit": 4
     }
    },
    "asks": {},
@@ -708,17 +709,17 @@
     "underreport": {
      "n": 12,
      "first_right": 4,
-     "latest_right": 6,
-     "latest:flag_audit": 6,
-     "latest:accept": 6
+     "latest_right": 8,
+     "latest:flag_audit": 8,
+     "latest:accept": 4
     }
    },
    "asks": {},
    "money": {
     "royalty_hidden_cents": 186404,
-    "audit_billed_cents": 144957,
-    "audit_collected_cents": 144957,
-    "weeks_audited": 9
+    "audit_billed_cents": 173703,
+    "audit_collected_cents": 157018,
+    "weeks_audited": 11
    },
    "cases": [
     {
@@ -740,7 +741,7 @@
      "split": "val",
      "expected": "flag_audit",
      "first": "accept (underreport@1, 2026-02-09)",
-     "latest": "accept (underreport@1, 2026-02-09)"
+     "latest": "flag_audit (underreport@3, 2026-05-31)"
     },
     {
      "case": "UR-S03-2026-02-09",
@@ -788,22 +789,22 @@
      "case": "UR-S31-2026-06-01",
      "split": "live",
      "expected": "flag_audit",
-     "first": "flag_audit (underreport@2, 2026-06-08)",
-     "latest": "flag_audit (underreport@2, 2026-06-08)"
+     "first": "flag_audit (underreport@3, 2026-06-08)",
+     "latest": "flag_audit (underreport@3, 2026-06-08)"
     },
     {
      "case": "UR-S31-2026-06-08",
      "split": "live",
      "expected": "flag_audit",
-     "first": "accept (underreport@2, 2026-06-15)",
-     "latest": "accept (underreport@2, 2026-06-15)"
+     "first": "accept (underreport@3, 2026-06-15)",
+     "latest": "accept (underreport@3, 2026-06-15)"
     },
     {
      "case": "UR-S31-2026-06-15",
      "split": "live",
      "expected": "flag_audit",
-     "first": "accept (underreport@2, 2026-06-22)",
-     "latest": "accept (underreport@2, 2026-06-22)"
+     "first": "accept (underreport@3, 2026-06-22)",
+     "latest": "flag_audit (underreport@4, 2026-06-28)"
     }
    ]
   },
@@ -813,8 +814,9 @@
     "underreport": {
      "n": 48,
      "first_right": 48,
-     "latest_right": 48,
-     "latest:accept": 48
+     "latest_right": 41,
+     "latest:accept": 41,
+     "latest:flag_audit": 7
     }
    },
    "asks": {},
@@ -1478,29 +1480,29 @@
      "case": "ap-V04:BAD/34861",
      "split": "train",
      "expected": "approve",
-     "first": "approve (bill_match@3, 2026-06-22)",
-     "latest": "approve (bill_match@3, 2026-06-22)"
+     "first": "approve (bill_match@2, 2026-06-22)",
+     "latest": "approve (bill_match@2, 2026-06-22)"
     },
     {
      "case": "ap-V02:PC-38392",
      "split": "train",
      "expected": "approve",
-     "first": "approve (bill_match@3, 2026-06-26)",
-     "latest": "approve (bill_match@3, 2026-06-26)"
+     "first": "approve (bill_match@2, 2026-06-26)",
+     "latest": "approve (bill_match@2, 2026-06-26)"
     },
     {
      "case": "ap-V03:GT35323",
      "split": "train",
      "expected": "approve",
-     "first": "approve (bill_match@3, 2026-06-28)",
-     "latest": "approve (bill_match@3, 2026-06-28)"
+     "first": "approve (bill_match@2, 2026-06-28)",
+     "latest": "approve (bill_match@2, 2026-06-28)"
     },
     {
      "case": "ap-V04:BAD/34863",
      "split": "train",
      "expected": "approve",
-     "first": "approve (bill_match@3, 2026-06-27)",
-     "latest": "approve (bill_match@3, 2026-06-27)"
+     "first": "approve (bill_match@2, 2026-06-27)",
+     "latest": "approve (bill_match@2, 2026-06-27)"
     }
    ]
   },
@@ -1690,31 +1692,32 @@
  },
  "asks": {
   "by_kind_status": {
-   "allocation:answered": 4,
-   "audit:answered": 8,
+   "allocation:answered": 3,
+   "audit:answered": 13,
+   "audit:open": 8,
    "bill_exception:answered": 13,
    "callback:answered": 5,
    "collections:answered": 2,
-   "correction:answered": 7,
+   "correction:answered": 6,
    "dispute:answered": 5,
    "finding:answered": 2,
    "identify_payer:answered": 2,
-   "label_check:answered": 7,
+   "label_check:answered": 8,
    "payment_release:answered": 88,
    "reading_conflict:answered": 1,
    "refund_release:answered": 2,
    "royalty_decrease:answered": 1,
-   "spot_check:answered": 366,
-   "spot_check:open": 3,
+   "spot_check:answered": 362,
+   "spot_check:open": 2,
    "unapplied_cash:answered": 2
   },
   "answered_by": {
-   "controller:Dana": 385,
-   "consultant:Lee": 80,
-   "consultant:Priya": 48,
+   "controller:Dana": 379,
+   "consultant:Lee": 82,
+   "consultant:Priya": 52,
    "controller:Sam": 2
   },
-  "staff_answers": 507,
+  "staff_answers": 508,
   "human_errors_realized": [
    {
     "day": "2026-01-06",
@@ -1858,7 +1861,7 @@
    },
    {
     "day": "2026-04-15",
-    "ask": 282,
+    "ask": 281,
     "kind": "spot_check:pre_chase",
     "subject": "entity:F09:2026-04-14",
     "answer": "escalate_controller",
@@ -1868,7 +1871,7 @@
    },
    {
     "day": "2026-04-16",
-    "ask": 283,
+    "ask": 282,
     "kind": "collections",
     "subject": "entity:F13",
     "answer": "chase",
@@ -1878,7 +1881,7 @@
    },
    {
     "day": "2026-04-21",
-    "ask": 296,
+    "ask": 293,
     "kind": "spot_check:pre_chase",
     "subject": "entity:F03:2026-04-19",
     "answer": "escalate_controller",
@@ -1887,20 +1890,10 @@
     "human_error": true
    },
    {
-    "day": "2026-04-24",
-    "ask": 307,
+    "day": "2026-04-21",
+    "ask": 305,
     "kind": "spot_check:pre_chase",
-    "subject": "entity:F07:2026-04-24",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-04-28",
-    "ask": 325,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F06:2026-04-27",
+    "subject": "entity:F06:2026-04-21",
     "answer": "escalate_controller",
     "by": "Dana",
     "ok": true,
@@ -1908,17 +1901,7 @@
    },
    {
     "day": "2026-05-05",
-    "ask": 344,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F01:2026-05-04",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-05-05",
-    "ask": 347,
+    "ask": 343,
     "kind": "allocation",
     "subject": "receipt:WIRE-260505-5247",
     "answer": "apply oldest first",
@@ -1927,58 +1910,8 @@
     "human_error": true
    },
    {
-    "day": "2026-05-11",
-    "ask": 365,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F14:2026-05-10",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-05-12",
-    "ask": 362,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F01:2026-05-10",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-05-13",
-    "ask": 371,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F03:2026-05-12",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-05-13",
-    "ask": 374,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F07:2026-05-12",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-05-18",
-    "ask": 389,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F14:2026-05-16",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
     "day": "2026-05-19",
-    "ask": 395,
+    "ask": 370,
     "kind": "spot_check:underreport",
     "subject": "store:S27:2026-05-11",
     "answer": "flag_audit",
@@ -1987,28 +1920,8 @@
     "human_error": true
    },
    {
-    "day": "2026-05-19",
-    "ask": 406,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F12:2026-05-19",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
     "day": "2026-05-26",
-    "ask": 420,
-    "kind": "spot_check:pre_chase",
-    "subject": "entity:F09:2026-05-24",
-    "answer": "escalate_controller",
-    "by": "Dana",
-    "ok": true,
-    "human_error": true
-   },
-   {
-    "day": "2026-05-26",
-    "ask": 432,
+    "ask": 393,
     "kind": "spot_check:underreport",
     "subject": "store:S12:2026-05-18",
     "answer": "flag_audit",
@@ -2017,28 +1930,68 @@
     "human_error": true
    },
    {
-    "day": "2026-06-03",
-    "ask": 454,
-    "kind": "spot_check:underreport",
-    "subject": "store:S23:2026-05-25",
-    "answer": "flag_audit",
-    "by": "Lee",
+    "day": "2026-05-27",
+    "ask": 395,
+    "kind": "spot_check:pre_chase",
+    "subject": "entity:F10:2026-05-26",
+    "answer": "escalate_controller",
+    "by": "Dana",
     "ok": true,
     "human_error": true
    },
    {
-    "day": "2026-06-03",
+    "day": "2026-06-02",
+    "ask": 406,
+    "kind": "spot_check:pre_chase",
+    "subject": "entity:F06:2026-05-31",
+    "answer": "escalate_controller",
+    "by": "Dana",
+    "ok": true,
+    "human_error": true
+   },
+   {
+    "day": "2026-06-02",
+    "ask": 417,
+    "kind": "spot_check:pre_chase",
+    "subject": "entity:F06:2026-06-01",
+    "answer": "escalate_controller",
+    "by": "Dana",
+    "ok": true,
+    "human_error": true
+   },
+   {
+    "day": "2026-06-08",
+    "ask": 437,
+    "kind": "spot_check:pre_chase",
+    "subject": "entity:F09:2026-06-06",
+    "answer": "escalate_controller",
+    "by": "Dana",
+    "ok": true,
+    "human_error": true
+   },
+   {
+    "day": "2026-06-08",
+    "ask": 446,
+    "kind": "spot_check:pre_chase",
+    "subject": "entity:F01:2026-06-08",
+    "answer": "escalate_controller",
+    "by": "Dana",
+    "ok": true,
+    "human_error": true
+   },
+   {
+    "day": "2026-06-12",
     "ask": 457,
-    "kind": "spot_check:allocation",
-    "subject": "receipt:WIRE-260602-5543",
-    "answer": "leave_unapplied_ask",
+    "kind": "spot_check:pre_chase",
+    "subject": "entity:F12:2026-06-12",
+    "answer": "escalate_controller",
     "by": "Dana",
     "ok": true,
     "human_error": true
    },
    {
     "day": "2026-06-16",
-    "ask": 493,
+    "ask": 480,
     "kind": "spot_check:pre_chase",
     "subject": "entity:F10:2026-06-16",
     "answer": "escalate_controller",
@@ -2047,17 +2000,27 @@
     "human_error": true
    },
    {
-    "day": "2026-06-23",
-    "ask": 501,
+    "day": "2026-06-18",
+    "ask": 479,
     "kind": "spot_check:pre_chase",
-    "subject": "entity:F14:2026-06-21",
+    "subject": "entity:F09:2026-06-16",
     "answer": "escalate_controller",
     "by": "Dana",
     "ok": true,
     "human_error": true
+   },
+   {
+    "day": "2026-06-25",
+    "ask": 504,
+    "kind": "spot_check:underreport",
+    "subject": "store:S23:2026-06-15",
+    "answer": "flag_audit",
+    "by": "Lee",
+    "ok": true,
+    "human_error": true
    }
   ],
-  "human_error_rate": 0.067
+  "human_error_rate": 0.059
  },
  "payables": {
   "bills": {
@@ -2123,29 +2086,21 @@
   {
    "key": "allocation@3#2",
    "domain": "allocation",
-   "decisions": 1,
-   "checked": 1,
+   "decisions": 14,
+   "checked": 3,
    "errors": 0,
    "state": "probation"
   },
   {
    "key": "allocation@3#3",
    "domain": "allocation",
-   "decisions": 1,
-   "checked": 1,
-   "errors": 1,
+   "decisions": 2,
+   "checked": 2,
+   "errors": 2,
    "state": "tightened"
   },
   {
-   "key": "allocation@4#3",
-   "domain": "allocation",
-   "decisions": 12,
-   "checked": 5,
-   "errors": 1,
-   "state": "tightened"
-  },
-  {
-   "key": "allocation@4#4",
+   "key": "allocation@3#4",
    "domain": "allocation",
    "decisions": 1,
    "checked": 0,
@@ -2187,7 +2142,7 @@
   {
    "key": "bill_match@2#-1",
    "domain": "bill_match",
-   "decisions": 30,
+   "decisions": 34,
    "checked": 7,
    "errors": 0,
    "state": "probation"
@@ -2209,17 +2164,9 @@
    "state": "probation"
   },
   {
-   "key": "bill_match@2#3",
+   "key": "bill_match@2#5",
    "domain": "bill_match",
    "decisions": 2,
-   "checked": 0,
-   "errors": 0,
-   "state": "probation"
-  },
-  {
-   "key": "bill_match@3#-1",
-   "domain": "bill_match",
-   "decisions": 4,
    "checked": 0,
    "errors": 0,
    "state": "probation"
@@ -2251,24 +2198,24 @@
   {
    "key": "pre_chase@2#-1",
    "domain": "pre_chase",
-   "decisions": 7,
-   "checked": 3,
-   "errors": 2,
-   "state": "tightened"
+   "decisions": 5,
+   "checked": 1,
+   "errors": 0,
+   "state": "probation"
   },
   {
    "key": "pre_chase@2#0",
    "domain": "pre_chase",
-   "decisions": 226,
-   "checked": 53,
-   "errors": 8,
-   "state": "tightened"
+   "decisions": 613,
+   "checked": 154,
+   "errors": 17,
+   "state": "normal"
   },
   {
    "key": "pre_chase@2#1",
    "domain": "pre_chase",
-   "decisions": 1,
-   "checked": 0,
+   "decisions": 9,
+   "checked": 2,
    "errors": 0,
    "state": "probation"
   },
@@ -2277,30 +2224,6 @@
    "domain": "pre_chase",
    "decisions": 1,
    "checked": 0,
-   "errors": 0,
-   "state": "probation"
-  },
-  {
-   "key": "pre_chase@3#-1",
-   "domain": "pre_chase",
-   "decisions": 1,
-   "checked": 0,
-   "errors": 0,
-   "state": "probation"
-  },
-  {
-   "key": "pre_chase@3#0",
-   "domain": "pre_chase",
-   "decisions": 392,
-   "checked": 103,
-   "errors": 12,
-   "state": "tightened"
-  },
-  {
-   "key": "pre_chase@3#1",
-   "domain": "pre_chase",
-   "decisions": 5,
-   "checked": 1,
    "errors": 0,
    "state": "probation"
   },
@@ -2339,10 +2262,10 @@
   {
    "key": "underreport@2#-1",
    "domain": "underreport",
-   "decisions": 337,
-   "checked": 71,
+   "decisions": 258,
+   "checked": 51,
    "errors": 0,
-   "state": "reduced"
+   "state": "tightened"
   },
   {
    "key": "underreport@2#0",
@@ -2355,7 +2278,31 @@
   {
    "key": "underreport@2#1",
    "domain": "underreport",
-   "decisions": 4,
+   "decisions": 3,
+   "checked": 0,
+   "errors": 0,
+   "state": "probation"
+  },
+  {
+   "key": "underreport@3#-1",
+   "domain": "underreport",
+   "decisions": 76,
+   "checked": 20,
+   "errors": 2,
+   "state": "tightened"
+  },
+  {
+   "key": "underreport@3#1",
+   "domain": "underreport",
+   "decisions": 1,
+   "checked": 0,
+   "errors": 0,
+   "state": "probation"
+  },
+  {
+   "key": "underreport@3#2",
+   "domain": "underreport",
+   "decisions": 3,
    "checked": 0,
    "errors": 0,
    "state": "probation"
@@ -2452,7 +2399,7 @@
   }
  ],
  "security_events": {
-  "prompt_injection_ignored": 5,
+  "prompt_injection_ignored": 4,
   "routing_fraud_stopped": 2,
   "lookalike_sender": 4
  },
@@ -2537,13 +2484,6 @@
   },
   {
    "day": "2026-04-19",
-   "kind": "skill",
-   "key": "pre_chase@3",
-   "ok": true,
-   "result": ""
-  },
-  {
-   "day": "2026-04-19",
    "kind": "policy",
    "key": "P-1@1",
    "text": "No debit is initiated while a bank-account change is pending and has not been confirmed out of band.",
@@ -2588,16 +2528,16 @@
    "result": ""
   },
   {
-   "day": "2026-05-17",
+   "day": "2026-05-31",
    "kind": "skill",
-   "key": "allocation@4",
+   "key": "underreport@3",
    "ok": true,
    "result": ""
   },
   {
-   "day": "2026-06-21",
+   "day": "2026-06-28",
    "kind": "skill",
-   "key": "bill_match@3",
+   "key": "underreport@4",
    "ok": true,
    "result": ""
   }
@@ -2606,7 +2546,7 @@
   {
    "day": "2026-01-11",
    "status": "ok",
-   "seconds": 2.5,
+   "seconds": 1.5,
    "lines": [
     "underreport: nothing new to learn (0 labeled cases, all handled)",
     "pre_chase: nothing new to learn (0 labeled cases, all handled)",
@@ -2619,7 +2559,7 @@
   {
    "day": "2026-01-18",
    "status": "ok",
-   "seconds": 2.1,
+   "seconds": 0.8,
    "lines": [
     "underreport: nothing new to learn (3 labeled cases, all handled)",
     "pre_chase: nothing new to learn (3 labeled cases, all handled)",
@@ -2632,11 +2572,11 @@
   {
    "day": "2026-01-25",
    "status": "ok",
-   "seconds": 2.1,
+   "seconds": 0.5,
    "lines": [
     "underreport: nothing new to learn (8 labeled cases, all handled)",
     "pre_chase: nothing new to learn (11 labeled cases, all handled)",
-    "allocation: 3 candidates in 0.1s, none passed: gets 1 case(s) wrong that the current version gets right",
+    "allocation: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right",
     "routing_change: nothing new to learn (0 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
     "policies: searched 48 tightening rules over 28 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
@@ -2645,7 +2585,7 @@
   {
    "day": "2026-02-01",
    "status": "ok",
-   "seconds": 1.8,
+   "seconds": 0.5,
    "lines": [
     "underreport: nothing new to learn (12 labeled cases, all handled)",
     "pre_chase: nothing new to learn (16 labeled cases, all handled)",
@@ -2658,24 +2598,24 @@
   {
    "day": "2026-02-08",
    "status": "ok",
-   "seconds": 3.3,
+   "seconds": 0.6,
    "lines": [
     "underreport: nothing new to learn (14 labeled cases, all handled)",
     "pre_chase: nothing new to learn (29 labeled cases, all handled)",
-    "allocation: 3 candidates in 0.1s, none passed: gets 2 case(s) wrong that the current version gets right; changes 14.3% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: gets 2 case(s) wrong that the current version gets right; changes 14.3% of past decisions (limit 10%)",
     "routing_change: proposed v2 in 0.0s (3/3 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
-    "bill_match: 3 candidates in 0.1s, none passed: takes over none of the cases people said could be settled",
+    "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
     "policies: searched 48 tightening rules over 60 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-02-15",
    "status": "ok",
-   "seconds": 16.4,
+   "seconds": 0.7,
    "lines": [
     "underreport: nothing new to learn (19 labeled cases, all handled)",
     "pre_chase: nothing new to learn (31 labeled cases, all handled)",
-    "allocation: 3 candidates in 14.6s, none passed: gets 3 case(s) wrong that the current version gets right; changes 22.2% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: gets 3 case(s) wrong that the current version gets right; changes 22.2% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
     "policies: searched 48 tightening rules over 78 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
@@ -2684,7 +2624,7 @@
   {
    "day": "2026-02-22",
    "status": "ok",
-   "seconds": 0.7,
+   "seconds": 0.5,
    "lines": [
     "underreport: nothing new to learn (20 labeled cases, all handled)",
     "pre_chase: nothing new to learn (33 labeled cases, all handled)",
@@ -2697,9 +2637,9 @@
   {
    "day": "2026-03-01",
    "status": "ok",
-   "seconds": 1.2,
+   "seconds": 0.7,
    "lines": [
-    "underreport: proposed v2 in 0.3s (6/7 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 1)",
+    "underreport: proposed v2 in 0.1s (6/7 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 1)",
     "pre_chase: nothing new to learn (39 labeled cases, all handled)",
     "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; gets 6 case(s) wrong that the current version gets right; changes 26.7% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
@@ -2710,7 +2650,7 @@
   {
    "day": "2026-03-08",
    "status": "ok",
-   "seconds": 1.0,
+   "seconds": 0.5,
    "lines": [
     "underreport: nothing new to learn (33 labeled cases, all handled)",
     "pre_chase: proposed v2 in 0.0s (3/3 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
@@ -2723,11 +2663,11 @@
   {
    "day": "2026-03-15",
    "status": "ok",
-   "seconds": 16.1,
+   "seconds": 0.5,
    "lines": [
     "underreport: nothing new to learn (35 labeled cases, all handled)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 15.1s, none passed: gets 3 case(s) wrong that the current version gets right; changes 26.3% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: gets 3 case(s) wrong that the current version gets right; changes 26.3% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 150 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
@@ -2736,10 +2676,10 @@
   {
    "day": "2026-03-22",
    "status": "ok",
-   "seconds": 10.2,
+   "seconds": 0.6,
    "lines": [
     "underreport: nothing new to learn (37 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 9.1s, none passed: gets 3 case(s) wrong that the current version gets right",
+    "pre_chase: 3 candidates in 0.0s, none passed: gets 3 case(s) wrong that the current version gets right",
     "allocation: 3 candidates in 0.0s, none passed: gets 9 case(s) wrong that the current version gets right; changes 34.8% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
@@ -2749,10 +2689,10 @@
   {
    "day": "2026-03-29",
    "status": "ok",
-   "seconds": 1.1,
+   "seconds": 0.6,
    "lines": [
     "underreport: nothing new to learn (42 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 0.1s, none passed: gets 3 case(s) wrong that the current version gets right",
+    "pre_chase: 3 candidates in 0.0s, none passed: gets 3 case(s) wrong that the current version gets right",
     "allocation: 3 candidates in 0.0s, none passed: gets 9 case(s) wrong that the current version gets right; changes 36.0% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
@@ -2762,10 +2702,10 @@
   {
    "day": "2026-04-05",
    "status": "ok",
-   "seconds": 2.5,
+   "seconds": 0.7,
    "lines": [
-    "underreport: 3 candidates in 0.4s, none passed: gets 2 case(s) wrong that the current version gets right; would send 10.0% of store-weeks to audit (limit 6%)",
-    "pre_chase: 3 candidates in 0.1s, none passed: handles none of the cases people just taught",
+    "underreport: 3 candidates in 0.1s, none passed: gets 2 case(s) wrong that the current version gets right; would send 10.0% of store-weeks to audit (limit 6%)",
+    "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "allocation: 3 candidates in 0.0s, none passed: gets 10 case(s) wrong that the current version gets right; changes 34.6% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
@@ -2775,9 +2715,9 @@
   {
    "day": "2026-04-12",
    "status": "ok",
-   "seconds": 2.7,
+   "seconds": 0.6,
    "lines": [
-    "underreport: 3 candidates in 0.6s, none passed: handles none of the cases people just taught; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
+    "underreport: 3 candidates in 0.1s, none passed: handles none of the cases people just taught; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "allocation: 3 candidates in 0.0s, none passed: gets 10 case(s) wrong that the current version gets right; changes 37.0% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
@@ -2788,10 +2728,10 @@
   {
    "day": "2026-04-19",
    "status": "ok",
-   "seconds": 13.7,
+   "seconds": 0.7,
    "lines": [
     "underreport: nothing new to learn (55 labeled cases, all handled)",
-    "pre_chase: proposed v3 in 13.0s (1/3 candidates passed; handles 2/9 lessons, fixes 2, breaks 0, new leads 0)",
+    "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "allocation: 3 candidates in 0.0s, none passed: gets 4 case(s) wrong that the current version gets right; changes 26.7% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
@@ -2803,130 +2743,130 @@
   {
    "day": "2026-04-26",
    "status": "ok",
-   "seconds": 36.9,
+   "seconds": 1.0,
    "lines": [
     "underreport: nothing new to learn (57 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 13.5s, none passed: handles none of the cases people just taught",
-    "allocation: proposed v2 in 12.1s (1/3 candidates passed; handles 1/2 lessons, fixes 1, breaks 0, new leads 0)",
+    "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
+    "allocation: proposed v2 in 0.0s (1/3 candidates passed; handles 1/2 lessons, fixes 1, breaks 0, new leads 0)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: proposed v2 in 10.7s (1/3 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
+    "bill_match: proposed v2 in 0.2s (6/8 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
     "policies: searched 48 tightening rules over 257 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-03",
    "status": "ok",
-   "seconds": 21.5,
+   "seconds": 0.6,
    "lines": [
     "underreport: nothing new to learn (58 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 21.0s, none passed: handles none of the cases people just taught",
+    "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "allocation: 3 candidates in 0.0s, none passed: gets 5 case(s) wrong that the current version gets right; changes 26.5% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 5 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 274 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-10",
    "status": "ok",
-   "seconds": 45.1,
+   "seconds": 0.8,
    "lines": [
     "underreport: nothing new to learn (59 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 30.0s, none passed: handles none of the cases people just taught",
-    "allocation: proposed v3 in 14.6s (1/3 candidates passed; handles 1/2 lessons, fixes 1, breaks 0, new leads 0)",
+    "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
+    "allocation: proposed v3 in 0.0s (4/6 candidates passed; handles 1/2 lessons, fixes 1, breaks 0, new leads 0)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 4 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 293 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-17",
    "status": "ok",
-   "seconds": 27.2,
+   "seconds": 29.7,
    "lines": [
     "underreport: nothing new to learn (59 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 12.7s, none passed: handles none of the cases people just taught; changes or drops the default (\"chase\") of the current version though no labeled case shows it was wrong",
-    "allocation: proposed v4 in 14.0s (2/4 candidates passed; handles 1/2 lessons, fixes 1, breaks 0, new leads 0)",
+    "pre_chase: 3 candidates in 14.6s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 14.3s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 4 (\"bill exceeds both received value and PO amount, indicating overbilling\") of the current version though no labeled case shows it was wrong; rule 4 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 311 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-24",
    "status": "ok",
-   "seconds": 43.3,
+   "seconds": 47.6,
    "lines": [
-    "underreport: 3 candidates in 15.6s, none passed: gets 2 case(s) wrong that the current version gets right",
-    "pre_chase: 3 candidates in 13.5s, none passed: handles none of the cases people just taught; changes or drops the default (\"chase\") of the current version though no labeled case shows it was wrong",
-    "allocation: 3 candidates in 13.6s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
+    "underreport: 3 candidates in 19.2s, none passed: gets 2 case(s) wrong that the current version gets right",
+    "pre_chase: 3 candidates in 14.7s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 12.9s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 4 (\"bill exceeds both received value and PO amount, indicating overbilling\") of the current version though no labeled case shows it was wrong; rule 4 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 329 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-31",
    "status": "ok",
-   "seconds": 61.0,
+   "seconds": 43.4,
    "lines": [
-    "underreport: 2 candidates in 33.6s, none passed: handles none of the cases people just taught; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
-    "pre_chase: 3 candidates in 14.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 12.9s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
+    "underreport: proposed v3 in 14.0s (2/4 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 2)",
+    "pre_chase: 3 candidates in 13.5s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 15.2s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 4 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 348 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-07",
    "status": "ok",
-   "seconds": 53.5,
+   "seconds": 139.5,
    "lines": [
-    "underreport: 3 candidates in 15.5s, none passed: handles none of the cases people just taught; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
-    "pre_chase: 3 candidates in 14.3s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 14.6s, none passed: handles none of the cases people just taught; rule 3 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
+    "underreport: 3 candidates in 13.9s, none passed: takes over none of the cases people said could be settled; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
+    "pre_chase: 3 candidates in 18.4s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 106.6s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 8.6s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 5 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 364 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-14",
    "status": "ok",
-   "seconds": 45.0,
+   "seconds": 66.2,
    "lines": [
-    "underreport: nothing new to learn (85 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 14.6s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 15.3s, none passed: gets 1 case(s) wrong that the current version gets right; changes 15.9% of past decisions (limit 10%)",
+    "underreport: 3 candidates in 15.4s, none passed: takes over none of the cases people said could be settled; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
+    "pre_chase: 3 candidates in 13.7s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 36.4s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 14.6s, none passed: gets 1 case(s) wrong that the current version gets right; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 5 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 382 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-21",
    "status": "ok",
-   "seconds": 29.8,
+   "seconds": 28.6,
    "lines": [
-    "underreport: nothing new to learn (85 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 14.6s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 14.6s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
+    "underreport: 3 candidates in 12.6s, none passed: takes over none of the cases people said could be settled; changes or drops rule 1 (\"supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales\") of the current version though no labeled case shows it was wrong",
+    "pre_chase: 3 candidates in 15.3s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: proposed v3 in 0.1s (2/5 candidates passed; handles 0/0 lessons, fixes 4, breaks 0, new leads 0)",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 5 would take over work people did on the strength of 5 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 400 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-28",
    "status": "ok",
-   "seconds": 36.5,
+   "seconds": 36.4,
    "lines": [
-    "underreport: nothing new to learn (86 labeled cases, all handled)",
-    "pre_chase: 3 candidates in 12.1s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 14.3s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, unanimous)",
+    "underreport: proposed v4 in 13.2s (2/4 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 4)",
+    "pre_chase: 3 candidates in 22.5s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
-    "bill_match: 3 candidates in 9.7s, none passed: takes over none of the cases people said could be settled",
+    "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 5 would take over work people did on the strength of 5 labeled case(s), 1 of which disagree (needs 3, unanimous)",
     "policies: searched 48 tightening rules over 418 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   }

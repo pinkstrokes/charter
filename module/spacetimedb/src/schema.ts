@@ -304,6 +304,7 @@ export const decision = table(
     shadow: t.bool(), // decided by a shadow version; never acted on
     label: t.string(), // the outcome a later check established ('' until checked)
     labelSource: t.string(),
+    treatments: t.string(), // JSON Treatments: what each outcome would have done here ('{}' when unknown)
   }
 );
 

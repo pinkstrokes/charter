@@ -4,7 +4,7 @@
 // rule starts on probation, a proven one gets reduced inspection, a recent error
 // tightens it, and a rule we are 95% sure is worse than the tolerable error rate
 // is suspended, so its cases go to a person until a new version replaces it.
-import { ESCALATING, sameTreatment } from './core/dsl';
+import { ESCALATING, parseTreatments, sameTreatment } from './core/dsl';
 import { labelBreach } from './core/labels';
 import { lower95, upper95 } from './core/stats';
 
@@ -44,13 +44,13 @@ export function nextState(s: { domain: string; checked: number; errors: number; 
 // A spot-check verdict against a rule whose every checked decision so far was
 // confirmed deserves a second look before it counts: people slip too.
 export const CLEAN_RECORD = 5;
-export function contestable(tx: Tx, domain: string, subject: string, verdict: string): { rule: string; checked: number; decided: string; features: string } | null {
+export function contestable(tx: Tx, domain: string, subject: string, verdict: string): { rule: string; checked: number; decided: string; features: string; treatments: string } | null {
   let d: NonNullable<ReturnType<Tx['db']['decision']['id']['find']>> | null = null;
   for (const x of tx.db.decision.subject.filter(subject)) if (x.domain === domain && !x.shadow && (!d || x.id > d.id)) d = x;
-  if (!d || d.label || (ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome) || sameTreatment(domain, d.outcome, verdict)) return null;
+  if (!d || d.label || (ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome) || sameTreatment(domain, d.outcome, verdict, parseTreatments(d.treatments))) return null;
   const stat = tx.db.ruleStat.key.find(`${d.skillKey}#${d.ruleIndex}`);
   if (!stat || stat.errors > 0 || stat.checked < CLEAN_RECORD) return null;
-  return { rule: stat.key, checked: stat.checked, decided: d.outcome, features: d.features };
+  return { rule: stat.key, checked: stat.checked, decided: d.outcome, features: d.features, treatments: d.treatments };
 }
 
 // Returns why a check was not counted, when the verdict itself breaks the agreement.
@@ -63,7 +63,8 @@ export function recordCheck(tx: Tx, domain: string, subject: string, correct: st
     appendActivity(tx, { principal: 'kernel', role: 'system', kind: 'reliability', command: 'verdict_declined', params: { decision: Number(d.id), subject, decided: d.outcome, verdict: correct, by, source }, used: [`decision:${d.id}`], outcome: 'kept', reasons: [breach] });
     return breach;
   }
-  const wrong = sameTreatment(domain, d.outcome, correct) ? 0 : 1;
+  const treatments = parseTreatments(d.treatments);
+  const wrong = sameTreatment(domain, d.outcome, correct, treatments) ? 0 : 1;
   const stat = statFor(tx, domain, d.skillKey, d.ruleIndex);
   if ((ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome)) {
     // An escalation is never a risk; when a person finds it unnecessary it is a false alarm.
@@ -78,7 +79,7 @@ export function recordCheck(tx: Tx, domain: string, subject: string, correct: st
     const prev = d.labelSource.split(':')[0];
     if ((STRENGTH[source] ?? 0) <= (STRENGTH[prev] ?? 0)) return null;
     // A stronger check of an already-checked decision replaces the earlier verdict.
-    const was = sameTreatment(domain, d.outcome, d.label) ? 0 : 1;
+    const was = sameTreatment(domain, d.outcome, d.label, treatments) ? 0 : 1;
     errors += wrong - was;
     if (wrong !== was) recent.push(wrong);
   } else {

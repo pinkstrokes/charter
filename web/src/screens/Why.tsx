@@ -10,7 +10,7 @@ import { actor, answerWords, askLabel, commandLabel, day, money, num, prettyText
 import { parseArr, parseLoose, parseObj, present } from '../lib/json';
 import { actionsOf, decisionFor, planPolicies, subjectLabel } from '../lib/lineage';
 import { factText, template } from '../lib/policies';
-import { askDomain, DOMAINS, domainOf, explainComparisons, exprText, featureLabel, outcomeText, parseProgram, run, sameTreatment, type FeatureMap } from '../lib/rules';
+import { askDomain, DOMAINS, domainOf, explainComparisons, exprText, featureLabel, outcomeText, parseProgram, parseTreatments, run, sameTreatment, type FeatureMap } from '../lib/rules';
 import { summarize } from '../lib/summary';
 import { useAction } from '../stdb/actions';
 import { charter } from '../stdb/client';
@@ -684,7 +684,7 @@ const CHECK_SOURCE: Record<string, string> = {
 function CheckedLater({ d }: { d: Decision }) {
   const [source, ...who] = d.labelSource.split(':');
   const by = who.length >= 2 ? who[1] : who.join(':');
-  const right = sameTreatment(d.domain, d.outcome, d.label);
+  const right = sameTreatment(d.domain, d.outcome, d.label, parseTreatments(d.treatments));
   return (
     <div className="row" style={{ marginTop: 8, fontSize: 13, gap: 6, flexWrap: 'nowrap', alignItems: 'baseline' }}>
       {right ? <Check size={13} className="tick" /> : <X size={13} />}

@@ -27,7 +27,7 @@
   {
    "id": "HUMAN_ONLY",
    "name": "only people endorsed bank changes, activated knowledge or closed books",
-   "population": 18,
+   "population": 17,
    "exceptions": 0,
    "examples": []
   },
@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 4359,
+   "population": 4269,
    "exceptions": 0,
    "examples": []
   },
@@ -121,12 +121,13 @@
      ]
     },
     {
-     "id": "SUP-24353",
-     "kind": "invoice:supply",
-     "book": 264960,
-     "audited": 264960,
+     "id": "R-S22-2026-04-27",
+     "kind": "invoice:royalty",
+     "book": 75999,
+     "audited": 75999,
      "notes": [
-      "traced to sup:SUP-24353, hash verified"
+      "traced to email:md45e458baa, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
@@ -139,12 +140,12 @@
      ]
     },
     {
-     "id": "SUP-24356",
+     "id": "SUP-24357",
      "kind": "invoice:supply",
-     "book": 264030,
-     "audited": 264030,
+     "book": 255340,
+     "audited": 255340,
      "notes": [
-      "traced to sup:SUP-24356, hash verified"
+      "traced to sup:SUP-24357, hash verified"
      ]
     },
     {
@@ -225,12 +226,12 @@
      ]
     },
     {
-     "id": "SUP-24352",
+     "id": "SUP-24372",
      "kind": "invoice:supply",
-     "book": 264360,
-     "audited": 264360,
+     "book": 278170,
+     "audited": 278170,
      "notes": [
-      "traced to sup:SUP-24352, hash verified"
+      "traced to sup:SUP-24372, hash verified"
      ]
     },
     {
@@ -243,39 +244,41 @@
      ]
     },
     {
-     "id": "SUP-24380",
-     "kind": "invoice:supply",
-     "book": 203200,
-     "audited": 203200,
+     "id": "R-S34-2026-05-04",
+     "kind": "invoice:royalty",
+     "book": 89802,
+     "audited": 89802,
      "notes": [
-      "traced to sup:SUP-24380, hash verified"
+      "traced to email:m3664b40ab1, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
-     "id": "SUP-24373",
-     "kind": "invoice:supply",
-     "book": 285710,
-     "audited": 285710,
+     "id": "R-S09-2026-05-04",
+     "kind": "invoice:royalty",
+     "book": 59152,
+     "audited": 59152,
      "notes": [
-      "traced to sup:SUP-24373, hash verified"
+      "traced to email:m2be6c784ae, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
-     "id": "SUP-24362",
+     "id": "SUP-24363",
      "kind": "invoice:supply",
-     "book": 222820,
-     "audited": 222820,
+     "book": 270460,
+     "audited": 270460,
      "notes": [
-      "traced to sup:SUP-24362, hash verified"
+      "traced to sup:SUP-24363, hash verified"
      ]
     },
     {
-     "id": "SUP-24370",
+     "id": "SUP-24366",
      "kind": "invoice:supply",
-     "book": 151810,
-     "audited": 151810,
+     "book": 219220,
+     "audited": 219220,
      "notes": [
-      "traced to sup:SUP-24370, hash verified"
+      "traced to sup:SUP-24366, hash verified"
      ]
     },
     {
@@ -297,12 +300,12 @@
      ]
     },
     {
-     "id": "SUP-24388",
+     "id": "SUP-24385",
      "kind": "invoice:supply",
-     "book": 278090,
-     "audited": 278090,
+     "book": 206680,
+     "audited": 206680,
      "notes": [
-      "traced to sup:SUP-24388, hash verified"
+      "traced to sup:SUP-24385, hash verified"
      ]
     },
     {
@@ -324,13 +327,12 @@
      ]
     },
     {
-     "id": "R-S34-2026-05-18",
-     "kind": "invoice:royalty",
-     "book": 91362,
-     "audited": 91362,
+     "id": "SUP-24395",
+     "kind": "invoice:supply",
+     "book": 364100,
+     "audited": 364100,
      "notes": [
-      "traced to email:m7737b8ec9c, hash verified",
-      "royalty recomputed from csv re-read: agrees"
+      "traced to sup:SUP-24395, hash verified"
      ]
     },
     {
@@ -343,12 +345,12 @@
      ]
     },
     {
-     "id": "SUP-24400",
+     "id": "SUP-24392",
      "kind": "invoice:supply",
-     "book": 283690,
-     "audited": 283690,
+     "book": 269740,
+     "audited": 269740,
      "notes": [
-      "traced to sup:SUP-24400, hash verified"
+      "traced to sup:SUP-24392, hash verified"
      ]
     },
     {
@@ -388,12 +390,13 @@
      ]
     },
     {
-     "id": "SUP-24378",
-     "kind": "invoice:supply",
-     "book": 271370,
-     "audited": 271370,
+     "id": "R-S18-2026-05-11",
+     "kind": "invoice:royalty",
+     "book": 41374,
+     "audited": 41374,
      "notes": [
-      "traced to sup:SUP-24378, hash verified"
+      "traced to email:mf03177b79a, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
@@ -415,75 +418,75 @@
      ]
     },
     {
-     "id": "SUP-24401",
+     "id": "SUP-24402",
      "kind": "invoice:supply",
-     "book": 225800,
-     "audited": 225800,
+     "book": 220960,
+     "audited": 220960,
      "notes": [
-      "traced to sup:SUP-24401, hash verified"
+      "traced to sup:SUP-24402, hash verified"
      ]
     },
     {
-     "id": "SUP-24404",
+     "id": "SUP-24405",
      "kind": "invoice:supply",
-     "book": 226700,
-     "audited": 226700,
+     "book": 171710,
+     "audited": 171710,
      "notes": [
-      "traced to sup:SUP-24404, hash verified"
+      "traced to sup:SUP-24405, hash verified"
      ]
     },
     {
-     "id": "SUP-24406",
+     "id": "SUP-24407",
      "kind": "invoice:supply",
-     "book": 228530,
-     "audited": 228530,
+     "book": 189560,
+     "audited": 189560,
      "notes": [
-      "traced to sup:SUP-24406, hash verified"
+      "traced to sup:SUP-24407, hash verified"
      ]
     },
     {
-     "id": "SUP-24408",
+     "id": "SUP-24409",
      "kind": "invoice:supply",
-     "book": 261680,
-     "audited": 261680,
+     "book": 198900,
+     "audited": 198900,
      "notes": [
-      "traced to sup:SUP-24408, hash verified"
+      "traced to sup:SUP-24409, hash verified"
      ]
     },
     {
-     "id": "SUP-24411",
+     "id": "SUP-24412",
      "kind": "invoice:supply",
-     "book": 176730,
-     "audited": 176730,
+     "book": 290970,
+     "audited": 290970,
      "notes": [
-      "traced to sup:SUP-24411, hash verified"
+      "traced to sup:SUP-24412, hash verified"
      ]
     },
     {
-     "id": "SUP-24413",
+     "id": "SUP-24414",
      "kind": "invoice:supply",
-     "book": 262410,
-     "audited": 262410,
+     "book": 246550,
+     "audited": 246550,
      "notes": [
-      "traced to sup:SUP-24413, hash verified"
+      "traced to sup:SUP-24414, hash verified"
      ]
     },
     {
-     "id": "SUP-24415",
+     "id": "SUP-24416",
      "kind": "invoice:supply",
-     "book": 243310,
-     "audited": 243310,
+     "book": 290670,
+     "audited": 290670,
      "notes": [
-      "traced to sup:SUP-24415, hash verified"
+      "traced to sup:SUP-24416, hash verified"
      ]
     },
     {
-     "id": "SUP-24417",
+     "id": "SUP-24418",
      "kind": "invoice:supply",
-     "book": 322810,
-     "audited": 322810,
+     "book": 292010,
+     "audited": 292010,
      "notes": [
-      "traced to sup:SUP-24417, hash verified"
+      "traced to sup:SUP-24418, hash verified"
      ]
     },
     {
@@ -496,32 +499,30 @@
      ]
     },
     {
-     "id": "R-S12-2026-05-11",
-     "kind": "invoice:royalty",
-     "book": 76890,
-     "audited": 76890,
-     "notes": [
-      "traced to email:m6fbdca0983, hash verified",
-      "royalty recomputed from csv re-read: agrees"
-     ]
-    },
-    {
-     "id": "SUP-24383",
+     "id": "SUP-24399",
      "kind": "invoice:supply",
-     "book": 342430,
-     "audited": 342430,
+     "book": 237850,
+     "audited": 237850,
      "notes": [
-      "traced to sup:SUP-24383, hash verified"
+      "traced to sup:SUP-24399, hash verified"
      ]
     },
     {
-     "id": "R-S22-2026-05-11",
-     "kind": "invoice:royalty",
-     "book": 85146,
-     "audited": 85146,
+     "id": "SUP-24398",
+     "kind": "invoice:supply",
+     "book": 266540,
+     "audited": 266540,
      "notes": [
-      "traced to email:md91d11add3, hash verified",
-      "royalty recomputed from csv re-read: agrees"
+      "traced to sup:SUP-24398, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24400",
+     "kind": "invoice:supply",
+     "book": 283690,
+     "audited": 283690,
+     "notes": [
+      "traced to sup:SUP-24400, hash verified"
      ]
     },
     {

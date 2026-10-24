@@ -1,11 +1,11 @@
 // Reading skills: the module's own DSL types and interpreter (core/dsl.ts), plus
 // a display layer that turns expressions into sentences and shows, for a given
 // case, what each side of each comparison evaluated to.
-import { DOMAINS, ESCALATING, run, sameTreatment, type Expr, type FeatureMap, type SkillProgram, type Value } from '@module/core/dsl';
+import { DOMAINS, ESCALATING, parseTreatments, run, sameTreatment, type Expr, type FeatureMap, type SkillProgram, type Value } from '@module/core/dsl';
 import { money, pct, sentence } from './format';
 import { parseLoose } from './json';
 
-export { DOMAINS, ESCALATING, run, sameTreatment };
+export { DOMAINS, ESCALATING, parseTreatments, run, sameTreatment };
 
 // The domain an ask is about: by kind, or by the suffix of spot_check:/correction: kinds.
 export function askDomain(kind: string, evidence?: string | Record<string, unknown>): string | undefined {

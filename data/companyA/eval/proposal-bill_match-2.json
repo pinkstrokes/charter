@@ -12,12 +12,42 @@
           },
           "b": {
             "op": "num",
-            "v": 1
+            "v": 0.9
           }
         },
         "then": {
           "decide": "reject",
-          "note": "exact duplicate bill detected"
+          "note": "near-certain duplicate of an existing bill"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "po_found"
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "duplicate_score"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "no purchase order and possible duplicate requires manual review"
         }
       },
       {
@@ -48,6 +78,41 @@
       },
       {
         "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "amount_vs_received"
+              },
+              "b": {
+                "op": "num",
+                "v": 1.02
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "amount_vs_po"
+              },
+              "b": {
+                "op": "num",
+                "v": 1.09
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "reject",
+          "note": "bill exceeds both received value and PO amount, indicating overbilling"
+        }
+      },
+      {
+        "when": {
           "op": "cmp",
           "c": "gt",
           "a": {
@@ -61,7 +126,7 @@
         },
         "then": {
           "decide": "hold_exception",
-          "note": "billed for more than was received"
+          "note": "billed for more than was received, needs verification"
         }
       }
     ],
@@ -87,7 +152,7 @@
         {
           "subject": "bill:V04:BAD-34842",
           "label": "reject",
-          "source": "ask #303 answered by controller:Dana",
+          "source": "ask #308 answered by controller:Dana",
           "reason": "The ledger confirms this is a duplicate of V02:PC-38355, so reject it immediately.",
           "handled": true
         },
@@ -143,7 +208,7 @@
         {
           "subject": "bill:V02:PC-38366",
           "label": "reject",
-          "source": "ask #309 answered by controller:Dana",
+          "source": "ask #312 answered by controller:Dana",
           "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount as billed.",
           "handled": false
         }
@@ -167,14 +232,33 @@
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 15,
-    "robustness": 0.75,
-    "alternatives": [],
-    "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule at the top to reject bills with a duplicate_score of 1 or higher, fixing the mistake where an exact duplicate was incorrectly approved. All other rules remain unchanged to preserve existing behavior.",
-    "candidatesTried": 3,
-    "candidatesPassed": 1,
-    "seconds": 10.7,
+    "complexity": 30,
+    "robustness": 0.760752688172043,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.7526881720430108,
+        "newLeads": 0,
+        "complexity": 30
+      },
+      {
+        "origin": "qwen3.8-max style 0",
+        "robustness": 0.75,
+        "newLeads": 0,
+        "complexity": 15
+      },
+      {
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+        "robustness": 0.75,
+        "newLeads": 0,
+        "complexity": 22
+      }
+    ],
+    "origin": "qwen3.8-max style 1, constants tuned by replay",
+    "rationale": "Added a high duplicate_score rule to reject confirmed duplicates (fixing V04:BAD-34842) and require two independent signals—exceeding both the PO and received amounts—before rejecting over-billed invoices, which safely escalates ambiguous cases like authorized price increases or short shipments for human review. Non-PO bills with any duplicate signal are held rather than auto-approved, preserving the safety rule while allowing clean non-PO bills to continue routing to exception holds.",
+    "candidatesTried": 8,
+    "candidatesPassed": 6,
+    "seconds": 0.2,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -234,6 +318,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T12:29:43.426Z"
+    "evaluatedAt": "2026-10-24T16:54:58.572Z"
   }
 }

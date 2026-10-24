@@ -7,9 +7,9 @@
 //   npx tsx tools/evolve/evolve.ts --db charter-a --once
 //   npx tsx tools/evolve/evolve.ts --db charter-a --watch      (live demo)
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
-import { run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
+import { parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
-import { agrees, center, evaluate, examplesFor, latestBySubject, loadHistory, propose, prune, repair, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
+import { center, evaluate, examplesFor, graded, latestBySubject, loadHistory, propose, prune, repair, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
 import { searchPolicies } from './policies';
 
 const args = new Map<string, string>();
@@ -28,6 +28,7 @@ interface KeyEntry {
   split: string;
   subject: string;
   expected: string;
+  truth?: { invoices?: string[] };
 }
 
 function answerKey(): KeyEntry[] {
@@ -55,10 +56,11 @@ function grade(domain: Domain, current: SkillProgram, candidate: SkillProgram, k
     const d = latest.get(e.subject);
     if (!d) continue;
     const f = parseJson<FeatureMap>(d.features, {});
+    const t = parseTreatments(d.treatments);
     const cell = ((out[e.split] ??= {})[e.family] ??= { n: 0, current: 0, candidate: 0 });
     cell.n++;
-    cell.current += agrees(domain, run(current, f).outcome.decide, e.expected) ? 1 : 0;
-    cell.candidate += agrees(domain, run(candidate, f).outcome.decide, e.expected) ? 1 : 0;
+    cell.current += graded(domain, run(current, f).outcome.decide, e.expected, e.truth?.invoices, t) ? 1 : 0;
+    cell.candidate += graded(domain, run(candidate, f).outcome.decide, e.expected, e.truth?.invoices, t) ? 1 : 0;
   }
   return out;
 }

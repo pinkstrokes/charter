@@ -4,11 +4,11 @@
 // invariants, and an independent re-verification of the activity hash chain.
 //   npx tsx tools/evolve/report.ts --db charter-a
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
+import { parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { chainHash } from '../../module/spacetimedb/src/core/hash';
 import { upper95 } from '../../module/spacetimedb/src/core/stats';
 import { Db, evolverToken, parseJson, type Row } from './lib';
-import { agrees, type Domain } from './skills';
+import { agrees, graded, type Domain } from './skills';
 
 const args = new Map<string, string>();
 for (let i = 2; i < process.argv.length; i++) if (process.argv[i].startsWith('--')) args.set(process.argv[i].slice(2), process.argv[i + 1] ?? 'true');
@@ -36,9 +36,9 @@ async function main(): Promise<void> {
   const db = new Db(DB, await evolverToken(DB));
   const keyPath = `${DIR}/answer_key.json`;
   const keyRaw = existsSync(keyPath) ? JSON.parse(readFileSync(keyPath, 'utf8')) : [];
-  const key = (Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { caseId: string; family: string; split: string; subject: string; expected: string }[];
+  const key = (Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { caseId: string; family: string; split: string; subject: string; expected: string; truth?: { invoices?: string[] } }[];
   const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications, policies, asks, bills, receipts] = await Promise.all([
-    db.sql('SELECT id, at, domain, subject, features, skill_key, outcome, shadow FROM decision'),
+    db.sql('SELECT id, at, domain, subject, features, skill_key, outcome, shadow, treatments FROM decision'),
     db.sql('SELECT key, domain, version, status, program, created_at FROM skill'),
     db.sql('SELECT id, at, principal, role, kind, command, params, used, plan, outcome, reasons, claims, context, prev_hash, hash FROM activity'),
     db.sql('SELECT account, debit_cents, credit_cents FROM gl_balance'),
@@ -101,14 +101,22 @@ async function main(): Promise<void> {
     .sort((a, b) => a.domain.localeCompare(b.domain) || a.version - b.version)
     .map(s => {
       const program = JSON.parse(s.program) as SkillProgram;
-      const byFamily: Record<string, { n: number; right: number }> = {};
+      // Right as graded; alone when the version settles the case without a person, wrong when alone and not right.
+      const byFamily: Record<string, { n: number; right: number; alone: number; wrong: number }> = {};
+      const domain = s.domain as Domain;
       for (const e of key) {
-        if (e.split !== 'test' || domainOf(e.subject) !== s.domain) continue;
+        if (e.split !== 'test' || domainOf(e.subject) !== domain) continue;
         const d = latest.get(e.subject);
         if (!d) continue;
-        const c = (byFamily[e.family] ??= { n: 0, right: 0 });
+        const c = (byFamily[e.family] ??= { n: 0, right: 0, alone: 0, wrong: 0 });
         c.n++;
-        if (agrees(s.domain as Domain, run(program, parseJson<FeatureMap>(d.features, {})).outcome.decide, e.expected)) c.right++;
+        const out = run(program, parseJson<FeatureMap>(d.features, {})).outcome.decide;
+        const right = graded(domain, out, e.expected, e.truth?.invoices, parseTreatments(d.treatments));
+        if (right) c.right++;
+        if (!ESCALATE[domain].includes(out)) {
+          c.alone++;
+          if (!right) c.wrong++;
+        }
       }
       const live = activity.find(a => a.command === 'activate_skill' && a.outcome === 'committed' && parseJson<{ key?: string; to?: string }>(a.params, {}).key === s.key && parseJson<{ to?: string }>(a.params, {}).to === 'active');
       return { key: s.key, status: s.status, createdAt: s.created_at, activatedAt: live?.at ?? null, test: byFamily };

@@ -344,8 +344,12 @@ class Staff:
             sw = self.k["store_weeks"].get(":".join(a["subject"].split(":")[1:]), {})
             if sw.get("human_error") and decided == "accept" and "flag_audit" in options:
                 return who, "flag_audit", "the cash share looked low to you and you did not check the store's history first", None
-        expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
-        right = expected is None or decided is None or same_treatment(domain, decided, expected)
+        cash = self._cash_truth(a["subject"], ev) if domain == "allocation" else None
+        if cash:  # cash is right when the money went where the payer meant, whatever the outcome is called
+            expected, right = cash[1], ev["treatments"].get(decided) == cash[0]
+        else:
+            expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
+            right = expected is None or decided is None or same_treatment(domain, decided, expected)
         if spot_check_slip(domain, a["subject"]):  # the pre-registered slip
             wrong = "correct" if not right else wrong_turn(decided, ev.get("features", {}))
             if wrong in options:
@@ -367,10 +371,24 @@ class Staff:
         who = store(a["subject"].split(":")[1])["consultant"] if domain == "underreport" else "Dana"
         if spot_check_slip(domain, a["subject"]):
             return who, options[0], "you look again: you had misread the case and the seat was right", None
+        cash = self._cash_truth(a["subject"], ev) if domain == "allocation" else None
         expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
-        if expected is not None and same_treatment(domain, decided, expected) and not self.k["store_weeks"].get(":".join(a["subject"].split(":")[1:]), {}).get("human_error"):
+        right = ev["treatments"].get(decided) == cash[0] if cash else expected is not None and same_treatment(domain, decided, expected)
+        if right and not self.k["store_weeks"].get(":".join(a["subject"].split(":")[1:]), {}).get("human_error"):
             return who, options[0], "you look again: the seat was right", None
         return who, options[1], "you look again and stand by it", None
+
+    def _cash_truth(self, subject: str, ev: dict):
+        """Where a receipt's money belongs, in the seat's spelling of what each outcome would do ('ask' when no
+        outcome would put it there), and an outcome that does that. None when the seat recorded no treatments."""
+        rc = self.receipts.get(subject.split(":", 1)[1])
+        t = ev.get("treatments") or {}
+        if not rc or not t:
+            return None
+        want = "ask" if rc.get("family") == "duplicate_payment" else " + ".join(sorted(rc.get("intended") or [])) or "ask"
+        if want not in t.values():
+            want = "ask"
+        return want, next(o for o in t if t[o] == want)
 
     def expected_outcome(self, domain: str, subject: str, features: dict) -> str | None:
         """What the staff know to be right for a seat decision."""

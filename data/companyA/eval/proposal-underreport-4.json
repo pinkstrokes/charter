@@ -1,0 +1,376 @@
+{
+  "program": {
+    "domain": "underreport",
+    "rules": [
+      {
+        "when": {
+          "op": "cmp",
+          "c": "lt",
+          "a": {
+            "op": "feat",
+            "name": "reported_card"
+          },
+          "b": {
+            "op": "arith",
+            "f": "mul",
+            "args": [
+              {
+                "op": "feat",
+                "name": "card_settled"
+              },
+              {
+                "op": "num",
+                "v": 0.98
+              }
+            ]
+          }
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "reported card sales below what the processor settled"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "supply_implied_gross"
+              },
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "reported_gross"
+                  },
+                  {
+                    "op": "num",
+                    "v": 1.209
+                  }
+                ]
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "lt",
+              "a": {
+                "op": "feat",
+                "name": "cash_share"
+              },
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "peer_cash_share"
+                  },
+                  {
+                    "op": "num",
+                    "v": 0.505
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "supply_implied_gross"
+              },
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "reported_gross"
+                  },
+                  {
+                    "op": "num",
+                    "v": 1.3
+                  }
+                ]
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "le",
+              "a": {
+                "op": "feat",
+                "name": "cash_share"
+              },
+              "b": {
+                "op": "feat",
+                "name": "own_cash_share_history"
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "supply-implied gross vastly exceeds reported and cash share matches history, indicating consistent underreporting pattern"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "lt",
+              "a": {
+                "op": "feat",
+                "name": "cash_share"
+              },
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "peer_cash_share"
+                  },
+                  {
+                    "op": "num",
+                    "v": 0.5
+                  }
+                ]
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "weeks_of_history"
+              },
+              "b": {
+                "op": "num",
+                "v": 20
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "cash share is less than half of peers with substantial history, strongly suggesting unreported cash sales"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "accept"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "underreport",
+    "parent": "underreport@3",
+    "lesson": {
+      "subjects": [
+        "store:S23:2026-06-15"
+      ],
+      "required": 1,
+      "handled": [
+        "store:S23:2026-06-15"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 4,
+      "cases": [
+        {
+          "subject": "store:S23:2026-06-15",
+          "label": "flag_audit",
+          "source": "ask #504 answered by consultant:Lee",
+          "reason": "I missed checking S23's history first, and that low cash share felt off to me personally, so I’m flagging it for a deeper audit.",
+          "handled": true
+        },
+        {
+          "subject": "store:S12:2026-05-18",
+          "label": "accept",
+          "source": "field audit by consultant:Lee",
+          "reason": "Glad to see Pearl Lane #12 Downtown San Mateo balanced perfectly for the week of 2026-05-18, with actual sales and reported figures both at $12,877.75.",
+          "handled": false
+        },
+        {
+          "subject": "store:S38:2026-05-18",
+          "label": "accept",
+          "source": "ask #411 answered by consultant:Priya",
+          "reason": "The $3,600 gap is fully explained by a bulk inventory purchase and the cash share remains consistent with historical norms, confirming reported figures are accurate.",
+          "handled": false
+        },
+        {
+          "subject": "store:S03:2026-06-08",
+          "label": "accept",
+          "source": "ask #476 answered by consultant:Lee",
+          "reason": "I know this owner is honest, so the gap is just a bulk buy or promo; no audit needed.",
+          "handled": false
+        },
+        {
+          "subject": "store:S20:2026-06-08",
+          "label": "accept",
+          "source": "ask #485 answered by consultant:Priya",
+          "reason": "The 31% cash share aligns perfectly with historical norms, confirming the reported figures are accurate despite the supply variance.",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 86,
+      "correctBefore": 81,
+      "correctAfter": 82,
+      "fixed": [
+        "store:S23:2026-06-15"
+      ],
+      "broken": []
+    },
+    "budget": {
+      "flagged": 15,
+      "total": 365,
+      "rate": 0.0410958904109589,
+      "limit": 0.06
+    },
+    "changed": {
+      "n": 4,
+      "total": 365,
+      "rate": 0.010958904109589041,
+      "limit": 0.1
+    },
+    "newLeads": [
+      "store:S36:2026-05-25",
+      "store:S23:2026-05-25",
+      "store:S36:2026-06-01",
+      "store:S36:2026-06-08"
+    ],
+    "safetyViolations": 0,
+    "complexity": 39,
+    "robustness": 0.6143410852713178,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 0, thresholds centred by replay",
+        "robustness": 0.6143410852713178,
+        "newLeads": 4,
+        "complexity": 39
+      }
+    ],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a rule to flag stores whose cash share falls below half the peer median when they have at least 20 weeks of history, which correctly catches S23's extremely low cash share (0.087 vs peer 0.285). This threshold safely avoids false positives on all accepted cases since none have a cash share below 50% of their peer median.",
+    "candidatesTried": 4,
+    "candidatesPassed": 2,
+    "seconds": 13.2,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "val": {
+        "clean": {
+          "n": 103,
+          "current": 103,
+          "candidate": 103
+        },
+        "clean_bulk_buy": {
+          "n": 5,
+          "current": 4,
+          "candidate": 4
+        },
+        "underreported_cash": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "prompt_injection": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "clean_low_cash": {
+          "n": 16,
+          "current": 16,
+          "candidate": 13
+        }
+      },
+      "train": {
+        "clean": {
+          "n": 204,
+          "current": 204,
+          "candidate": 204
+        },
+        "clean_bulk_buy": {
+          "n": 8,
+          "current": 5,
+          "candidate": 5
+        },
+        "card_underreport": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "underreported_cash": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "revised_report": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "clean_low_cash": {
+          "n": 18,
+          "current": 18,
+          "candidate": 16
+        }
+      },
+      "test": {
+        "clean": {
+          "n": 88,
+          "current": 88,
+          "candidate": 88
+        },
+        "underreported_cash": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "clean_bulk_buy": {
+          "n": 5,
+          "current": 4,
+          "candidate": 4
+        },
+        "prompt_injection": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "clean_low_cash": {
+          "n": 14,
+          "current": 14,
+          "candidate": 11
+        }
+      },
+      "live": {
+        "underreported_cash": {
+          "n": 3,
+          "current": 1,
+          "candidate": 3
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T17:04:58.223Z"
+  }
+}
