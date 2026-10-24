@@ -10,3 +10,6 @@ data/*/identities.json
 .venv/
 data/.*.json
 data/companyB/identities.json
+docs/video/*.mp4
+tools/video/node_modules/
+tools/video/shots/
