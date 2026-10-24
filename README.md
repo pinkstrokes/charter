@@ -10,10 +10,14 @@ A UK wholesaler's real invoices. On 28 December 2010 a customer's parent company
 
 Charter does not file the £30 as a duplicate. It works out that 536792 was paid by its own guess on the 28th, while the payer had named a different invoice, and asks the controller with that evidence. One answer: the earlier application is reversed, both payments land where the customer said, and the rule that guessed loses its autonomy until it proves itself again. Every step is a hash-chained row a person can open.
 
+![The team finds that an earlier application of its own was a guess and asks the controller](docs/img/b1_question.png)
+
 Two other moments the judges can trigger themselves:
 
 - **It pushes back.** Tell it, on a spot check, that it should have chased a franchisee on day 5 of a 10-day grace period. It keeps its decision, says the agreement forbids that, does not count your verdict against the rule, and does not learn from it.
 - **It cannot be talked into moving money.** Email new bank details for Formosa Leaf the day before its $92,400 payment run. Two models read it, the change is held, the controller is asked to call the number already on file, and on Friday the release is refused — for the controller too — by a policy nobody wrote: the team learned it in April from a debit that bounced during an unverified bank change, and extended it from debits to refunds and vendor payments.
+
+![Friday's release is refused for both controllers by a policy learned in April](docs/img/a2_refused.png)
 
 ## Would you hire it?
 
@@ -55,6 +59,8 @@ Two other moments the judges can trigger themselves:
 
 Four new versions of the cash-application skill went live, each after a replay over every past decision; between the first and the last, the skill's own decisions on the test split went from 0 to 5 of 5 duplicates held and from 33 to 40 of 40 statements applied line by line. Twice in January a later payment showed an earlier application was a guess, and the team undid it.
 
+![Company B month by month: settled alone 68% to 100%, questions to people 6 to 0](docs/img/b6_proof.png)
+
 **A franchisor's six months (company A).** Twenty stores, six vendors, and people who make mistakes on purpose (34 of 507 answers were wrong). On the locked test split, from the day-0 skills to the versions people approved:
 
 | Desk | What changed | Day 0 → now | Learned from |
@@ -80,6 +86,8 @@ Audits recovered $1,449.57 of $1,864.04 in hidden royalties; $89,242 of duplicat
 4. **A lesson is a pull request with a replay proof.** A person's one-line correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision: it must fix the lesson, break nothing people labeled, take over work only on three agreeing precedents, stay inside a change budget and never break a safety rule. New rules no known case supports are dropped, failing candidates are repaired by removing the rules behind the failure, and new thresholds are centred between the nearest known cases so they generalise.
 5. **Sources disagree; the team weighs them.** Who paid is voted by the account on file, the invoice the payer named and the payer's name; masked account numbers collide, so one source loses to two and a tie goes to a person with every reading. Two model families read every email that could move money; a disagreement waits for a person.
 6. **Skills travel, data does not — and the target decides.** A skill learned at one company is offered to another as a program; the target replays it over its own history, and a skill that would break the target's labeled cases or drop rules its people never faulted is refused there.
+
+![One consultant's answer becomes a new version, replayed over every past decision, that catches weeks the old one accepted](docs/img/a5_skill.png)
 
 ## How it works
 
