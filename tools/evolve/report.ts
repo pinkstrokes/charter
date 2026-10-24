@@ -58,8 +58,8 @@ async function main(): Promise<void> {
   const keyPath = `${DIR}/answer_key.json`;
   const keyRaw = existsSync(keyPath) ? JSON.parse(readFileSync(keyPath, 'utf8')) : [];
   const key = (Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { caseId: string; family: string; split: string; subject: string; expected: string }[];
-  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications, policies] = await Promise.all([
-    db.sql('SELECT id, domain, subject, features, skill_key, outcome, shadow FROM decision'),
+  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications, policies, asks, bills] = await Promise.all([
+    db.sql('SELECT id, at, domain, subject, features, skill_key, outcome, shadow FROM decision'),
     db.sql('SELECT key, domain, version, status, program, created_at FROM skill'),
     db.sql('SELECT id, at, principal, role, kind, command, params, used, plan, outcome, reasons, claims, context, prev_hash, hash FROM activity'),
     db.sql('SELECT account, debit_cents, credit_cents FROM gl_balance'),
@@ -69,6 +69,8 @@ async function main(): Promise<void> {
     db.sql('SELECT entity_code, amount_cents, bank_account, status FROM refund'),
     db.sql('SELECT receipt_id, invoice_id, reversed FROM application'),
     db.sql('SELECT key, policy_id, status, text, template, source_skill, approved_by, approved_at, proof FROM policy'),
+    db.sql('SELECT id, created_at, kind, status FROM ask'),
+    db.sql('SELECT id, amount_cents, status FROM bill'),
   ]);
   const latest = new Map<string, Row>();
   for (const d of decisions.sort((a, b) => a.id - b.id)) if (!d.shadow) latest.set(d.subject, d);
@@ -172,6 +174,35 @@ async function main(): Promise<void> {
         blocked: blocked.map(a => ({ activity: a.id, at: a.at, by: a.principal, action: a.command })),
       };
     });
+  // How the team changes month by month: what it settles alone, how often it needs a person,
+  // and how often its own decisions were right where the answer key knows.
+  const keyBySubject = new Map(key.map(e => [e.subject, e]));
+  type Cell = { decisions: number; alone: number; aloneGraded: number; aloneRight: number; questions: number };
+  const blank = (): Cell => ({ decisions: 0, alone: 0, aloneGraded: 0, aloneRight: 0, questions: 0 });
+  const trend: Record<string, Record<string, Cell>> = {};
+  const ASK_DOMAIN: Record<string, string> = { audit: 'underreport', allocation: 'allocation', identify_payer: 'allocation', unapplied_cash: 'allocation', collections: 'pre_chase', callback: 'routing_change', bill_exception: 'bill_match', payment_release: 'payments', refund_release: 'refunds' };
+  for (const d of decisions) {
+    if (d.shadow) continue;
+    const m = String(d.at).slice(0, 7);
+    const t = ((trend[m] ??= {})[d.domain] ??= blank());
+    t.decisions++;
+    const domain = d.domain as Domain;
+    if ((ESCALATE[domain] ?? []).includes(d.outcome)) continue;
+    t.alone++;
+    const e = keyBySubject.get(d.subject);
+    if (e && latest.get(d.subject)?.id === d.id) {
+      t.aloneGraded++;
+      const right = domain === 'allocation' && (e as { truth?: { invoices?: string[] } }).truth?.invoices ? landedRight(e as never) : agrees(domain, d.outcome, e.expected);
+      if (right) t.aloneRight++;
+    }
+  }
+  for (const a of asks) {
+    const dom = ASK_DOMAIN[a.kind];
+    if (!dom) continue;
+    const m = String(a.created_at).slice(0, 7);
+    ((trend[m] ??= {})[dom] ??= blank()).questions++;
+  }
+  const duplicateBills = new Set(key.filter(e => e.family === 'bill_duplicate').map(e => e.subject.slice(5)));
   const report = {
     db: DB,
     generatedAt: new Date().toISOString(),
@@ -181,7 +212,15 @@ async function main(): Promise<void> {
     learnedPolicies: learned,
     knowingWhenToAsk,
     generations,
+    trend: Object.entries(trend)
+      .sort()
+      .map(([month, byDomain]) => ({
+        month,
+        domains: Object.fromEntries(Object.entries(byDomain).map(([dom, t]) => [dom, { ...t, aloneShare: t.decisions ? t.alone / t.decisions : 0, aloneAccuracy: t.aloneGraded ? t.aloneRight / t.aloneGraded : null }])),
+      })),
     money: {
+      duplicateBillsStoppedCents: bills.filter(b => duplicateBills.has(b.id) && b.status !== 'paid').reduce((s, b) => s + b.amount_cents, 0),
+      duplicateBillsPaidCents: bills.filter(b => duplicateBills.has(b.id) && b.status === 'paid').reduce((s, b) => s + b.amount_cents, 0),
       auditInvoicesCents: invoices.filter(i => i.kind === 'audit').reduce((s, i) => s + i.amount_cents, 0),
       auditInvoices: invoices.filter(i => i.kind === 'audit').length,
       refundsReleased: refunds.filter(r => r.status === 'released').length,
