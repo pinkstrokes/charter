@@ -48,7 +48,7 @@ async function main(): Promise<void> {
     db.sql('SELECT entity_code, amount_cents, bank_account, status FROM refund'),
     db.sql('SELECT receipt_id, invoice_id, activity_id, reversed FROM application'),
     db.sql('SELECT key, policy_id, status, text, template, source_skill, approved_by, approved_at, proof FROM policy'),
-    db.sql('SELECT id, created_at, kind, status FROM ask'),
+    db.sql('SELECT id, created_at, kind, status, evidence FROM ask'),
     db.sql('SELECT id, amount_cents, status FROM bill'),
     db.sql('SELECT id FROM receipt'),
   ]);
@@ -194,7 +194,7 @@ async function main(): Promise<void> {
     if (right) t.aloneRight++;
   }
   for (const a of asks) {
-    const dom = ASK_DOMAIN[a.kind];
+    const dom = a.kind === 'label_check' ? parseJson<{ domain?: string }>(a.evidence, {}).domain : ASK_DOMAIN[a.kind];
     if (!dom) continue;
     const m = String(a.created_at).slice(0, 7);
     ((trend[m] ??= {})[dom] ??= blank()).questions++;
