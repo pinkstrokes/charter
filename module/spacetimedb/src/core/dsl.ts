@@ -264,7 +264,18 @@ export function complexity(program: SkillProgram): number {
 // features only, enum literals from the declared set, outcomes from the domain,
 // bounded size, and numeric constants that cannot encode an identifier.
 export function validate(program: SkillProgram): string[] {
+  // A model can hand back anything; malformed structure is a problem, not a crash.
+  try {
+    return validateShape(program);
+  } catch (e) {
+    return [`malformed program: ${(e as Error).message}`];
+  }
+}
+
+function validateShape(program: SkillProgram): string[] {
   const problems: string[] = [];
+  if (!program || !Array.isArray(program.rules) || !program.otherwise || typeof program.otherwise.decide !== 'string') return ['program needs rules[] and an otherwise outcome'];
+  if (program.rules.some(r => !r || !r.when || !r.then || typeof r.then.decide !== 'string')) return ['every rule needs a when and a then.decide'];
   const spec = DOMAINS[program.domain] as DomainSpec | undefined;
   if (!spec) return [`unknown domain ${String(program.domain)}`];
   const outcomes = new Set(spec.outcomes);
@@ -299,6 +310,8 @@ export function validate(program: SkillProgram): string[] {
       case 'not':
         check(e.a);
         return;
+      default:
+        problems.push(`unknown expression ${JSON.stringify(e).slice(0, 60)}`);
     }
   };
   if (program.rules.length > 12) problems.push('more than 12 rules');

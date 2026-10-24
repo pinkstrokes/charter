@@ -87,7 +87,12 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   type Scored = { program: SkillProgram; ev: Evaluation; origin: string; rationale: string };
   const scored: Scored[] = [];
   for (const p of proposals) {
-    const ev = evaluate(domain, current, p.program, examples, lesson, h, hidden, optional);
+    let ev: Evaluation;
+    try {
+      ev = evaluate(domain, current, p.program, examples, lesson, h, hidden, optional);
+    } catch (e) {
+      continue; // a candidate the evaluator cannot even read is simply not a candidate
+    }
     scored.push({ program: p.program, ev, origin: `${MODEL} style ${p.style}`, rationale: p.rationale });
     // Constants are tuned only to rescue a candidate that fails, never to shave flags:
     // a threshold fitted tightly around one case is exactly how a skill overfits.
