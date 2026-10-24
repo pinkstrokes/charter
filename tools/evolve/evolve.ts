@@ -9,7 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
-import { agrees, evaluate, examplesFor, latestBySubject, loadHistory, propose, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
+import { agrees, evaluate, examplesFor, latestBySubject, loadHistory, propose, prune, repair, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
 import { searchPolicies } from './policies';
 
 const args = new Map<string, string>();
@@ -86,9 +86,11 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   const proposals = await propose(MODEL, domain, current, lesson, examples, h, optional);
   type Scored = { program: SkillProgram; ev: Evaluation; origin: string; rationale: string };
   const scored: Scored[] = [];
-  for (const p of proposals) {
+  for (const proposal of proposals) {
     let ev: Evaluation;
+    let p: typeof proposal;
     try {
+      p = { ...proposal, program: prune(domain, current, proposal.program, examples, h, hidden) };
       ev = evaluate(domain, current, p.program, examples, lesson, h, hidden, optional);
     } catch (e) {
       continue; // a candidate the evaluator cannot even read is simply not a candidate
@@ -96,7 +98,10 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     scored.push({ program: p.program, ev, origin: `${MODEL} style ${p.style}`, rationale: p.rationale });
     // Constants are tuned only to rescue a candidate that fails, never to shave flags:
     // a threshold fitted tightly around one case is exactly how a skill overfits.
-    if (ev.gate === 'fail') for (const v of tune(domain, current, p.program, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, constants tuned by replay`, rationale: p.rationale });
+    if (ev.gate === 'fail') {
+      for (const v of tune(domain, current, p.program, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, constants tuned by replay`, rationale: p.rationale });
+      for (const v of repair(domain, current, p.program, ev, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, unsupported rules removed by replay`, rationale: p.rationale });
+    }
   }
   const passing = scored.filter(s => s.ev.gate === 'pass');
   passing.sort((a, b) => b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity);

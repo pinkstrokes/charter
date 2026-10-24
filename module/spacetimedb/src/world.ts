@@ -3,6 +3,7 @@
 // email is stored as untrusted text for the quarantined extractor.
 import { TRUSTED_SOURCES, type BankTxnPayload, type CallbackPayload, type CreditNotePayload, type ProcessorSettlementPayload, type SupplyInvoicePayload, type TradeInvoicePayload } from './core/contracts';
 import { sha256Hex } from './core/hash';
+import { nameTokens } from './core/names';
 import type { Action, Principal } from './core/policy';
 import { AR_ACCOUNT_BY_KIND, appendActivity, bumpControl, exec, post, Rejection, simDate, type Tx } from './kernel';
 
@@ -137,15 +138,40 @@ function ingestCreditNote(tx: Tx, obsId: bigint, p: CreditNotePayload): void {
   });
 }
 
-function resolvePayer(tx: Tx, p: BankTxnPayload): string {
+// Who paid. Our own debit instruction settles it, and so does a person's earlier
+// answer about this payer name. Otherwise three sources vote: the bank account
+// on file, the invoice the payer's reference names, and the payer's name.
+// Masked account numbers collide, so one source against two loses; a tie goes
+// to a person with every source's reading.
+export function identifyPayer(tx: Tx, p: BankTxnPayload): { code: string; evidence: string[]; candidates: string[] } {
   if (p.debitId) {
     const d = tx.db.debitInstruction.id.find(p.debitId);
-    if (d) return d.entityCode;
+    if (d) return { code: d.entityCode, evidence: [`settles our debit ${d.id}`], candidates: [d.entityCode] };
   }
-  for (const e of tx.db.entity.iter()) if (e.bankAccount === p.counterpartyAccount && e.bankAccountTrusted) return e.code;
-  // Payer names a person already matched to a customer (see answers.ts identify_payer).
-  for (const f of tx.db.fact.subject.filter(aliasSubject(p.counterpartyName))) if (f.attr === 'payer_alias' && f.trusted) return JSON.parse(f.value).entityCode;
-  return '';
+  for (const f of tx.db.fact.subject.filter(aliasSubject(p.counterpartyName)))
+    if (f.attr === 'payer_alias' && f.trusted) {
+      const v = JSON.parse(f.value) as { entityCode: string; by?: string };
+      return { code: v.entityCode, evidence: [`${v.by ?? 'a person'} said "${p.counterpartyName}" is ${v.entityCode}`], candidates: [v.entityCode] };
+    }
+  const votes = new Map<string, string[]>();
+  const vote = (code: string, why: string) => (votes.get(code) ?? votes.set(code, []).get(code)!).push(why);
+  for (const e of tx.db.entity.iter()) if (p.counterpartyAccount && e.bankAccount === p.counterpartyAccount && e.bankAccountTrusted) vote(e.code, `account ${p.counterpartyAccount} is on file for ${e.code}`);
+  for (const token of new Set([p.reference, ...p.reference.split(/[\s,;:#]+/)])) {
+    const inv = token ? tx.db.invoice.id.find(token) : undefined;
+    if (inv) vote(inv.entityCode, `the reference names ${inv.entityCode}'s invoice ${inv.id}`);
+  }
+  const words = nameTokens(p.counterpartyName);
+  if (words.size)
+    for (const e of tx.db.entity.iter()) {
+      const t = nameTokens(e.name);
+      if ([...words].every(w => t.has(w))) vote(e.code, `"${p.counterpartyName}" matches ${e.code}'s name`);
+    }
+  const ranked = [...votes.entries()].sort((a, b) => b[1].length - a[1].length);
+  const candidates = ranked.map(([c]) => c);
+  if (!ranked.length) return { code: '', evidence: [], candidates };
+  const evidence = ranked.flatMap(([, w]) => w);
+  if (ranked.length === 1 || ranked[0][1].length > ranked[1][1].length) return { code: ranked[0][0], evidence, candidates };
+  return { code: '', evidence, candidates };
 }
 
 export function aliasSubject(payerName: string): string {
@@ -155,8 +181,9 @@ export function aliasSubject(payerName: string): string {
 function ingestBankTxn(tx: Tx, obsId: bigint, p: BankTxnPayload): void {
   const inflow = p.type === 'ach_debit_settled' || p.type === 'wire_in' || p.type === 'ach_credit_in' || p.type === 'check_deposit';
   if (inflow) {
-    const entityCode = resolvePayer(tx, p);
-    exec(tx, { principal: { kind: 'system', id: 'bank-feed', role: 'cash_app' }, action: 'apply_receipt', params: { txnId: p.txnId, amount: p.amountCents, type: p.type }, used: [`obs:${obsId}`] }, activityId => {
+    const payer = identifyPayer(tx, p);
+    const entityCode = payer.code;
+    exec(tx, { principal: { kind: 'system', id: 'bank-feed', role: 'cash_app' }, action: 'apply_receipt', params: { txnId: p.txnId, amount: p.amountCents, type: p.type, payer }, used: [`obs:${obsId}`] }, activityId => {
       tx.db.receipt.insert({
         id: p.txnId,
         entityCode,
@@ -178,7 +205,7 @@ function ingestBankTxn(tx: Tx, obsId: bigint, p: BankTxnPayload): void {
     });
     if (p.type === 'ach_debit_settled' && p.debitId) settleDebit(tx, obsId, p);
     else if (entityCode) openWork(tx, 'cash_app', 'apply_receipt', `entity:${entityCode}`, { receiptId: p.txnId }, 'bank feed');
-    else openWork(tx, 'cash_app', 'identify_payer', `receipt:${p.txnId}`, { receiptId: p.txnId }, 'bank feed');
+    else openWork(tx, 'cash_app', 'identify_payer', `receipt:${p.txnId}`, { receiptId: p.txnId, payer }, 'bank feed');
     return;
   }
   if (p.type === 'ach_debit_returned') {

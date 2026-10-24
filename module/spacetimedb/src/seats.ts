@@ -4,6 +4,7 @@ import type { ContractTerms, EmailPayload, InvoiceKind } from './core/contracts'
 import { DOMAINS, ESCALATING, run, type FeatureMap, type SkillProgram } from './core/dsl';
 import { sha256Hex } from './core/hash';
 import { allocationsForSubset, applyByTerms, findSubsets, type OpenItem } from './core/matching';
+import { nameTokens } from './core/names';
 import { addDays, bpOf, daysBetween } from './core/money';
 import type { Principal } from './core/policy';
 import { appendActivity, exec, factsFor, Rejection, simDate, type Tx } from './kernel';
@@ -390,9 +391,6 @@ export function resolveStore(tx: Tx, ref: string | undefined): string {
   return byName.length === 1 ? byName[0].code : '';
 }
 
-const STOP = new Set(['co', 'inc', 'llc', 'ltd', 'the', 'and', 'company', 'corp', 'group', 'holdings', 'billing', 'accounts', 'ar', 'ap']);
-const tokens = (s: string) => new Set(s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').split(' ').filter(w => w.length > 1 && !STOP.has(w)));
-
 function editDistance(a: string, b: string): number {
   const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
   for (let j = 1; j <= b.length; j++) d[0][j] = j;
@@ -419,10 +417,10 @@ function entityForEmail(tx: Tx, p: EmailPayload, x: Extracted): string {
   const store = resolveStore(tx, x.store_code);
   if (store) return tx.db.store.code.find(store)!.entityCode;
   // The business named in the email, when exactly one counterparty fits.
-  const named = tokens(`${x.counterparty_name ?? ''} ${p.fromName}`);
+  const named = nameTokens(`${x.counterparty_name ?? ''} ${p.fromName}`);
   if (named.size) {
     const hits = [...tx.db.entity.iter()].filter(e => {
-      const t = tokens(e.name);
+      const t = nameTokens(e.name);
       return t.size > 0 && [...t].filter(w => named.has(w)).length >= Math.min(2, t.size);
     });
     if (hits.length === 1) return hits[0].code;
@@ -545,7 +543,7 @@ export function cashAppCycle(ctx: ProcCtx): string {
         processWeeklyReport(tx, w.id, JSON.parse(w.payload));
         reports++;
       } else if (w.kind === 'apply_receipt' || w.kind === 'identify_payer') {
-        processReceipt(tx, w.id, JSON.parse(w.payload).receiptId);
+        processReceipt(tx, w.id, JSON.parse(w.payload));
         receipts++;
       }
     }
@@ -648,14 +646,25 @@ export function openItemsFor(tx: Tx, entityCode: string): OpenItem[] {
     .map(i => ({ id: i.id, kind: i.kind as InvoiceKind, openCents: Number(i.openCents), dueDate: i.dueAt }));
 }
 
-function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
+// A receipt to apply. `payer` carries the sources' readings when they could not
+// agree on who paid; `ask` is set when a person said this one needs a person.
+interface ReceiptWork {
+  receiptId: string;
+  payer?: { candidates: string[]; evidence: string[] };
+  ask?: boolean;
+}
+
+function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: ReceiptWork): void {
   const r = tx.db.receipt.id.find(receiptId);
   if (!r || r.unappliedCents === 0n) {
     closeWork(tx, workId);
     return;
   }
   if (!r.entityCode) {
-    openAsk(tx, { kind: 'identify_payer', subject: `receipt:${r.id}`, toRole: 'controller', question: `${money(Number(r.amountCents))} arrived from "${r.payerName}" (reference "${r.reference}"). Which customer is this?`, options: [...tx.db.entity.iter()].slice(0, 6).map(e => e.code), evidence: { receipt: r.id }, confidence: 0.2, workItemId: workId });
+    const candidates = payer?.candidates ?? [];
+    const options = [...new Set([...candidates, ...[...tx.db.entity.iter()].map(e => e.code)])].slice(0, Math.max(6, candidates.length));
+    const why = payer?.evidence.length ? ` The sources disagree: ${payer.evidence.join('; ')}.` : ' Nothing on file identifies the payer.';
+    openAsk(tx, { kind: 'identify_payer', subject: `receipt:${r.id}`, toRole: 'controller', question: `${money(Number(r.amountCents))} arrived from "${r.payerName}" (reference "${r.reference}").${why} Which customer is this?`, options, evidence: { receipt: r.id, payer }, confidence: 0.2, workItemId: workId });
     closeWork(tx, workId, 'waiting');
     return;
   }
@@ -725,25 +734,27 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
     closeWork(tx, workId, 'waiting');
     return;
   }
-  const d = decide(tx, CASH.id, 'allocation', `receipt:${r.id}`, features);
+  // When a person corrected an automatic application of this receipt, they decide where it goes.
+  const d = ask ? null : decide(tx, CASH.id, 'allocation', `receipt:${r.id}`, features);
   let allocations: { id: string; cents: number }[] = [];
-  if (d.decide === 'apply_unique' && (remitConsistent || named.length === 1 || search.solutions.length >= 1)) {
+  if (d?.decide === 'apply_unique' && (remitConsistent || named.length === 1 || search.solutions.length >= 1)) {
     // The payer's word, when it is consistent, decides which invoices are paid.
     if (remitConsistent && perLine) allocations = remitLines.map(l => ({ id: l.ref, cents: l.cents }));
     else allocations = allocationsForSubset(remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0], items);
-  } else if (d.decide === 'apply_to_reference' && mentioned.length === 1) {
+  } else if (d?.decide === 'apply_to_reference' && mentioned.length === 1) {
     // Short payments stay open on the invoice the payer named; extra cash stays unapplied.
     allocations = [{ id: mentioned[0].id, cents: Math.min(amount, mentioned[0].openCents) }];
-  } else if (d.decide === 'apply_by_terms') {
+  } else if (d?.decide === 'apply_by_terms') {
     allocations = applyByTerms(amount, items, terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations;
-  } else {
+  }
+  if (!d || !allocations.length) {
     openAsk(tx, {
       kind: 'allocation',
       subject: `receipt:${r.id}`,
-      toRole: d.askRole,
-      question: `${money(amount)} from ${r.payerName} can be explained by ${search.solutions.length} different sets of invoices. Which should it pay?`,
+      toRole: d?.askRole ?? 'controller',
+      question: `${money(amount)} from ${r.payerName} ${d ? `can be explained by ${search.solutions.length} different sets of invoices` : 'was applied automatically and a person said it should not have been'}. Which should it pay?`,
       options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first', 'leave unapplied']),
-      evidence: { features, solutions: search.solutions, skill: d.key, referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: Number(d.id) },
+      evidence: { features, solutions: search.solutions, skill: d?.key ?? '', referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: d ? Number(d.id) : 0 },
       confidence: 0.3,
       workItemId: workId,
       by: CASH.id,

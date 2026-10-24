@@ -160,9 +160,10 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       let undone: string;
       if (d && d.outcome !== should && d.outcome !== 'leave_unapplied_ask') undone = correctDecision(tx, who, d.id, should, reason);
       else {
+        // The earlier application was a person's choice: a person places it again.
         undone = reverseApplications(tx, who, evidence.earlier, reason)?.summary ?? `nothing of ${evidence.earlier} left to undo`;
         const e = tx.db.receipt.id.find(evidence.earlier);
-        if (e && e.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${e.entityCode}`, { receiptId: e.id }, who.id);
+        if (e && e.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${e.entityCode}`, { receiptId: e.id, ask: true }, who.id);
       }
       const inv = tx.db.invoice.id.find(evidence.invoice);
       if (!inv || inv.openCents === 0n) return `${undone}; ${evidence.invoice} is still paid`;
@@ -354,7 +355,8 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
     const receiptId = d.subject.replace('receipt:', '');
     const undone = reverseApplications(tx, who, receiptId, reason);
     const r = tx.db.receipt.id.find(receiptId);
-    if (r && r.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${r.entityCode}`, { receiptId }, who.id);
+    // Re-applied by the seat, unless the person said a person should have decided.
+    if (r && r.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${r.entityCode}`, { receiptId, ask: outcome === 'leave_unapplied_ask' }, who.id);
     return undone ? `${res.summary}; ${undone.summary}` : res.summary;
   }
   return res.summary;

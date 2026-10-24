@@ -156,6 +156,7 @@ export interface Evaluation {
   robustness: number; // share of ±10% perturbations of labeled cases still decided as people said
   gate: 'pass' | 'fail';
   why: string[];
+  offenders: number[]; // candidate rules behind a failure: thin takeovers, broken cases, safety violations
 }
 
 // Continuous features only: money amounts and shares, not counts or flags.
@@ -227,6 +228,8 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     takeovers.set(r.rule, t);
   }
   const thin = [...takeovers.entries()].filter(([, t]) => t.n < MIN_SUPPORT || t.disagree > 0);
+  const offenders = new Set<number>(thin.map(([rule]) => rule));
+  for (const e of examples) if (broken.includes(e.subject)) offenders.add(runRule(candidate, e.features)?.rule ?? -1);
   const lessonFixed = lesson.length ? lesson.every(e => agrees(domain, decide(candidate, e.features), e.label)) : optionalFixed > 0;
   const past = [...latestBySubject(h, domain).values()].filter(d => !hidden.has(d.subject));
   const labeledSubjects = new Set(examples.map(e => e.subject));
@@ -244,6 +247,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     if (domain === 'underreport' && ESCALATE.has(o) && !ESCALATE.has(c) && !labeledSubjects.has(d.subject)) newLeads.push(d.subject);
     const s = SAFETY[domain](f, o);
     if (s) safety.push(`${d.subject}: ${s}`);
+    if (s) offenders.add(runRule(candidate, f)?.rule ?? -1);
     if (o.startsWith('error')) safety.push(`${d.subject}: ${o}`);
   }
   const total = past.length || 1;
@@ -269,7 +273,36 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     robustness: problems.length ? 0 : robustness(domain, candidate, examples),
     gate: why.length === 0 ? 'pass' : 'fail',
     why,
+    offenders: [...offenders].filter(r => r >= 0).sort((a, b) => a - b),
   };
+}
+
+// No evidence, no new rule: a rule the candidate adds or changes that decides
+// none of the cases the organization has seen would act only on cases nobody
+// has checked, so it is dropped before the gate. Dropping it changes no
+// replayed decision. Rules carried over from the current version stay.
+export function prune(domain: Domain, current: SkillProgram, cand: SkillProgram, examples: Example[], h: History, hidden: Set<string>): SkillProgram {
+  const sig = (r: SkillProgram['rules'][number]) => JSON.stringify([r.when, r.then?.decide]);
+  const inherited = new Set(current.rules.map(sig));
+  const fired = new Set<number>();
+  const mark = (f: FeatureMap) => {
+    const r = runRule(cand, f);
+    if (r) fired.add(r.rule);
+  };
+  for (const e of examples) mark(e.features);
+  for (const d of latestBySubject(h, domain).values()) if (!hidden.has(d.subject)) mark(parseJson<FeatureMap>(d.features, {}));
+  const rules = cand.rules.filter((r, i) => fired.has(i) || inherited.has(sig(r)));
+  return rules.length === cand.rules.length ? cand : { ...cand, rules };
+}
+
+// A whole program can fail on one rule the evidence does not support. Dropping
+// the rules behind the failure, together or one at a time, keeps what the
+// lesson needs; the result goes through the same gate.
+export function repair(domain: Domain, current: SkillProgram, cand: SkillProgram, ev: Evaluation, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[] = []): SkillProgram[] {
+  if (!ev.offenders.length || ev.offenders.length >= cand.rules.length) return [];
+  const without = (drop: number[]) => ({ ...cand, rules: cand.rules.filter((_, i) => !drop.includes(i)) });
+  const variants = [without(ev.offenders), ...(ev.offenders.length > 1 ? ev.offenders.map(r => without([r])) : [])];
+  return variants.filter(v => evaluate(domain, current, v, examples, lesson, h, hidden, optional).gate === 'pass');
 }
 
 function escalatingOf(domain: Domain): string[] {
