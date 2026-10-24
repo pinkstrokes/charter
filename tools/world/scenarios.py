@@ -308,24 +308,30 @@ class Plan:
         f = {"solution_count": min(len(sols), 3), "exact_match": bool(residuals) and residuals[0] == 0, "residual_cents": residuals[0] if residuals else rc["amount"],
              "remittance_present": bool(remit), "remittance_consistent": consistent, "receipt_amount": rc["amount"],
              "reference_paid": bool(referenced) and all(i.open == 0 for i in referenced), "open_items": len(items)}
+        named = [i for i in items if i.id in rc["reference"] and abs(i.open - rc["amount"]) <= 100]
+        mentioned = [i for i in items if i.id in rc["reference"]]
+        f.update(reference_matches_open=len(named) == 1, reference_names_open=len(mentioned) == 1,
+                 reference_gap_cents=mentioned[0].open - rc["amount"] if len(mentioned) == 1 else 0)
         n = f["solution_count"]
         day0 = "apply_unique" if n == 1 else "apply_by_terms" if n == 0 else "leave_unapplied_ask"
         self.receipts[rc["txn"]].update(planned_features=f, predicted_day0=day0, solutions=[" + ".join(s) for s in sols])
         if day0 == "apply_unique":
-            chosen = next(s for s in sols if all(x in remit for x in s)) if consistent else sols[0]
+            chosen = remit if consistent else [named[0].id] if len(named) == 1 else sols[0]
             if sum(L.inv[i].open for i in chosen) <= rc["amount"]:
                 L.apply_set(chosen)
         elif day0 == "apply_by_terms":
             for inv_id, cents in apply_by_terms(rc["amount"], items, terms_for_entity(ent)["applicationOrder"]):
                 L.apply(inv_id, cents)
-        else:
+        else:  # the person's answer to the allocation question
             want = sorted(rc["intended"])
             match = next((s for s in sols if sorted(s) == want), None)
-            if match and rc.get("ask_answer") != "apply oldest first":
-                L.apply_set(match)
-            elif rc.get("ask_answer") == "apply oldest first":
+            if rc.get("ask_answer") == "apply oldest first":
                 for inv_id, cents in apply_by_terms(rc["amount"], items, terms_for_entity(ent)["applicationOrder"]):
                     L.apply(inv_id, cents)
+            elif len(want) == 1 and len(mentioned) == 1 and mentioned[0].id == want[0]:
+                L.apply(want[0], min(rc["amount"], mentioned[0].open))
+            elif match:
+                L.apply_set(match)
 
     def _announced(self, entity_code: str, day: str) -> int:
         """seats.ts announcedPayment: promises from the last 10 days not yet matched by money that arrived."""
@@ -520,36 +526,36 @@ class Plan:
             s = self.sup_of("S05", "2026-02-20")
             short = 9_240
             rc = self.receipt(d, self.txn_id("WIRE", d), "wire_in", s["totalCents"] - short, "F04", reference=f"{s['invoiceNo']} LESS DAMAGED",
-                              family="short_payment", intended=[s["invoiceNo"]], ask_answer="apply oldest first")
-            self._key_receipt(rc, "apply_by_terms", why="a single open invoice; contract order puts the cash where the owner meant and leaves the disputed $92.40 open")
+                              family="short_payment", intended=[s["invoiceNo"]], ask_answer=s["invoiceNo"])
+            self._key_receipt(rc, "apply_to_reference", why="the reference names the invoice; the cash goes there and the disputed $92.40 stays open")
             self._dispute("SP1", "2026-02-27", "F04", [s["invoiceNo"]], "credit the invoice", "2026-02-27",
                           f"Three bags of tapioca pearls on {s['invoiceNo']} arrived torn and unusable; they paid {money(s['totalCents'] - short)} and deducted {money(short)}. "
                           "Ask for a credit for the deduction; photos available.", family="short_payment", valid=True)
         self.hooks["2026-02-26"].append(sp1)
 
         def sp2(d):  # fuel surcharge the owner thinks is not in the agreement (it is: FA-2022 schedule B)
-            refs = [self.sup_of("S22", "2026-05-01")["invoiceNo"], self.sup_of("S38", "2026-05-01")["invoiceNo"]]
-            short = 18_500
-            amount = sum(self.L.inv[r].open for r in refs) - short
-            rc = self.receipt(d, self.txn_id("WIRE", d), "wire_in", amount, "F09", reference=f"{refs[0]}/{refs[1]} LESS FUEL SURCH", family="short_payment",
-                              intended=refs, ask_answer="apply oldest first")
-            self._key_receipt(rc, "leave_unapplied_ask", why="no invoice set matches; contract order would pay royalties the owner did not mean to pay")
-            self._dispute("SP2", "2026-05-13", "F09", refs, "uphold", "2026-05-14",
-                          f"They deducted the $92.50 fuel surcharge from each of {refs[0]} and {refs[1]} ({money(short)} total) and wired {money(amount)}; "
-                          "they say their franchise agreement does not allow freight surcharges.", family="short_payment", valid=False)
+            inv = self.sup_of("S22", "2026-05-01")["invoiceNo"]
+            short = 9_250
+            amount = self.L.inv[inv].open - short
+            rc = self.receipt(d, self.txn_id("WIRE", d), "wire_in", amount, "F09", reference=f"{inv} LESS FUEL SURCH", family="short_payment",
+                              intended=[inv], ask_answer=inv)
+            self._key_receipt(rc, "apply_to_reference", why="no invoice set matches; the reference names the invoice and the dispute explains the $92.50 gap")
+            self._dispute("SP2", "2026-05-13", "F09", [inv], "uphold", "2026-05-14",
+                          f"They deducted the $92.50 fuel surcharge from {inv} and wired {money(amount)}; they say their franchise agreement does not allow "
+                          "freight surcharges.", family="short_payment", valid=False)
+            self.corrections.append({"date": "2026-05-13", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "apply_to_reference",
+                                     "why": f"the wire names {inv} and is short only by the disputed surcharge; it belonged on that invoice, not on royalties by contract order"})
         self.hooks["2026-05-12"].append(sp2)
 
         def sp3(d):  # missing goods the delivery receipt shows were signed for
             s = self.sup_of("S01", "2026-05-15")
             short = 2 * 6_120 + 5 * 1_940
             rc = self.receipt(d, f"CHK-{d[2:4]}{d[5:7]}{d[8:10]}-3318", "check_deposit", s["totalCents"] - short, "F01", reference=f"CK 3318 {s['invoiceNo']}",
-                              family="short_payment", intended=[s["invoiceNo"]], ask_answer="apply oldest first")
-            self._key_receipt(rc, "leave_unapplied_ask", why="no invoice set matches; contract order puts the check on royalties first")
+                              family="short_payment", intended=[s["invoiceNo"]], ask_answer=s["invoiceNo"])
+            self._key_receipt(rc, "apply_to_reference", why="no invoice set matches; the check names the invoice, and contract order would put it on royalties first")
             self._dispute("SP3", "2026-05-20", "F01", [s["invoiceNo"]], "uphold", "2026-05-21",
                           f"Two cases of 22 oz cups and five bags of pearls on {s['invoiceNo']} never arrived, so the check is {money(short)} short.",
                           family="short_payment", valid=False)
-            self.corrections.append({"date": "2026-05-21", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "leave_unapplied_ask",
-                                     "why": "short check with a dispute; applied to royalties by contract order instead of being held for a person"})
         self.hooks["2026-05-19"].append(sp3)
 
     def _dispute(self, cid: str, day: str, ent: str, refs: list[str], answer: str, answer_on: str, facts: str, *, family: str, valid: bool) -> None:
@@ -735,8 +741,9 @@ class Plan:
 
     def _key_receipt(self, rc: dict, expected: str, *, why: str, human_error: bool = False, injection: bool = False) -> None:
         rc["expected"] = expected
+        lands_on = [] if rc["family"] == "duplicate_payment" else list(rc["intended"])  # a duplicate should stay unapplied until it is refunded
         self.entry(f"AL-{rc['txn']}", rc["family"], f"receipt:{rc['txn']}",
-                   {"entity": rc["entity"], "amount_cents": rc["amount"], "intended": " + ".join(rc["intended"]), "payer": rc["payer"], "why": why,
+                   {"entity": rc["entity"], "amount_cents": rc["amount"], "invoices": lands_on, "payer": rc["payer"], "why": why,
                     "human_error": human_error, **({"injection": True} if injection else {})}, expected)
 
     def finish_key(self) -> None:

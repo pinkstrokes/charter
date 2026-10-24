@@ -93,7 +93,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       if (!r || !e) throw new Rejection('unknown receipt or customer');
       tx.db.receipt.id.update({ ...r, entityCode: e.code });
       addFact(tx, aliasSubject(r.payerName), 'payer_alias', { entityCode: e.code, payerName: r.payerName, by: who.id }, today, 0n, true);
-      openWork(tx, 'cash_app', 'apply_receipt', `entity:${e.code}`, { receiptId });
+      openWork(tx, 'cash_app', 'apply_receipt', `entity:${e.code}`, { receiptId }, who.id);
       return `"${r.payerName}" is ${e.name}; remembered for next time`;
     }
     case 'collections': {
@@ -130,7 +130,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       const r = tx.db.receipt.id.find(a.subject.replace('receipt:', ''));
       if (!r) return 'unknown receipt';
       if (answer === 'refund') {
-        openWork(tx, 'refunds', 'refund_request', `entity:${r.entityCode}`, { amount: Number(r.unappliedCents), obs: 0, newAccount: '', receipt: r.id });
+        openWork(tx, 'refunds', 'refund_request', `entity:${r.entityCode}`, { amount: Number(r.unappliedCents), obs: 0, newAccount: '', receipt: r.id }, who.id);
         return `refund of ${money(Number(r.unappliedCents))} handed to the refunds seat`;
       }
       return `${money(Number(r.unappliedCents))} kept as credit for ${r.entityCode}`;
@@ -260,6 +260,7 @@ export function raiseConcern(tx: Tx, who: Principal, store: string, week: string
   const res = exec(tx, { principal: who, action: 'answer_ask', params: { concern: subject, note }, used: [`fact:${f.reportFactId}`] }, () => {
     const today = simDate(tx);
     tx.db.ask.insert({
+      raisedBy: who.id,
       id: 0n, createdAt: today, kind: 'audit', subject, toRole: who.role,
       question: `${who.id} raised a concern about ${s.name}, week of ${week}`,
       options: JSON.stringify(['request audit', 'explained — accept report']),
@@ -304,6 +305,7 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
   const res = exec(tx, { principal: who, action: 'answer_ask', params: { correction: Number(decisionId), domain: d.domain, subject: d.subject, was: d.outcome, should: outcome, reason }, used: [`decision:${decisionId}`] }, () => {
     const today = simDate(tx);
     tx.db.ask.insert({
+      raisedBy: who.id,
       id: 0n, createdAt: d.at, kind: `correction:${d.domain}`, subject: d.subject, toRole: who.role,
       question: `${who.id} says the ${d.domain} decision on ${d.subject} should have been "${outcome}", not "${d.outcome}"`,
       options: JSON.stringify(spec.outcomes), evidence: JSON.stringify({ features: JSON.parse(d.features), decision: Number(decisionId), was: d.outcome, skill: d.skillKey }),

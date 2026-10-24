@@ -37,6 +37,7 @@ function bucket(subject: string): number {
 }
 
 export interface Decided {
+  id: bigint;
   key: string;
   decide: string;
   note: string;
@@ -63,7 +64,7 @@ function correctedPrecedent(tx: Tx, domain: string, features: FeatureMap, outcom
 
 export function decide(tx: Tx, seat: string, domain: string, subject: string, features: FeatureMap): Decided {
   const s = skillFor(tx, domain, subject);
-  if (!s) return { key: 'none', decide: 'ask', note: 'no active skill', askRole: 'controller', used: {} };
+  if (!s) return { id: 0n, key: 'none', decide: 'ask', note: 'no active skill', askRole: 'controller', used: {} };
   let { outcome, trace } = run(s.program, features);
   const prior = correctedPrecedent(tx, domain, features, outcome.decide);
   if (prior) {
@@ -83,7 +84,7 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
   }
   tx.db.ruleStat.key.update({ ...stat, decisions: stat.decisions + 1 });
   const at = simDate(tx);
-  tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: JSON.stringify(features), skillKey, outcome: outcome.decide, ruleIndex: trace.ruleIndex, note: outcome.note ?? '', shadow: false, label: '', labelSource: '' });
+  const row = tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: JSON.stringify(features), skillKey, outcome: outcome.decide, ruleIndex: trace.ruleIndex, note: outcome.note ?? '', shadow: false, label: '', labelSource: '' });
   if (spotCheck) {
     const spec = DOMAINS[domain as keyof typeof DOMAINS];
     openAsk(tx, {
@@ -92,8 +93,9 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
       toRole: domain === 'underreport' ? 'consultant' : 'controller',
       question: `Spot check (${stat.state} inspection of ${stat.key}, ${Math.round(stat.sampleRate * 100)}% of its decisions): the seat decided "${outcome.decide}" on ${subject}. Was that right?`,
       options: ['correct', ...spec.outcomes.filter(o => o !== outcome.decide)],
-      evidence: { features, decided: outcome.decide, skill: skillKey, rule: trace.ruleIndex, stat: stat.key },
+      evidence: { features, decided: outcome.decide, skill: skillKey, rule: trace.ruleIndex, stat: stat.key, decision: Number(row.id) },
       confidence: 0.9,
+      by: seat,
     });
   }
   // Shadow versions decide the same case on the record but never act.
@@ -102,7 +104,7 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
     const r = run(JSON.parse(sh.program) as SkillProgram, features);
     tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: '{}', skillKey: sh.key, outcome: r.outcome.decide, ruleIndex: r.trace.ruleIndex, note: r.outcome.note ?? '', shadow: true, label: '', labelSource: '' });
   }
-  return { key: s.key, decide: outcome.decide, note: outcome.note ?? '', askRole: outcome.askRole ?? 'controller', used: trace.used };
+  return { id: row.id, key: s.key, decide: outcome.decide, note: outcome.note ?? '', askRole: outcome.askRole ?? 'controller', used: trace.used };
 }
 
 export function termsForEntity(tx: Tx, entityCode: string): ContractTerms | null {
@@ -127,7 +129,7 @@ function factsOf(tx: Tx, subject: string, attr: string): { id: bigint; value: an
 
 export function openAsk(
   tx: Tx,
-  a: { kind: string; subject: string; toRole: string; question: string; options: string[]; evidence: unknown; confidence: number; precedent?: string; workItemId?: bigint; deadlineDays?: number }
+  a: { kind: string; subject: string; toRole: string; question: string; options: string[]; evidence: unknown; confidence: number; precedent?: string; workItemId?: bigint; deadlineDays?: number; by?: string }
 ): bigint {
   for (const existing of tx.db.ask.status.filter('open')) if (existing.kind === a.kind && existing.subject === a.subject) return existing.id;
   const today = simDate(tx);
@@ -149,6 +151,7 @@ export function openAsk(
     answeredAt: '',
     deadline: addDays(today, a.deadlineDays ?? 2),
     workItemId: a.workItemId ?? 0n,
+    raisedBy: a.by ?? 'kernel',
   });
   appendActivity(tx, { principal: 'kernel', role: 'system', kind: 'ask', command: a.kind, params: { ask: Number(row.id), toRole: a.toRole, question: a.question }, outcome: 'asked' });
   return row.id;
@@ -353,6 +356,7 @@ function holdForReading(tx: Tx, obsId: bigint, p: EmailPayload, c: { a: Extracte
     options: ['reading A', 'reading B', 'ignore the email'],
     evidence: { observation: Number(obsId), readingA: c.a, readingB: c.b, checker: c.checker, diff: c.diff },
     confidence: 0.3,
+    by: 'seat:mailroom',
   });
 }
 
@@ -449,7 +453,7 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
         return;
       }
       addFact(tx, `store:${store}`, 'sales_report', { week: x.week_start, card: centsFrom(x.card_sales), cash: centsFrom(x.cash_sales), gross: centsFrom(x.gross_sales), revised: !!x.revised, senderMatches }, x.week_start ?? today, obsId, false);
-      openWork(tx, 'cash_app', 'weekly_report', `store:${store}`, { store, week: x.week_start, obs: Number(obsId) });
+      openWork(tx, 'cash_app', 'weekly_report', `store:${store}`, { store, week: x.week_start, obs: Number(obsId) }, 'seat:mailroom');
       return;
     }
     case 'remittance':
@@ -464,14 +468,14 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
           const inv = tx.db.invoice.id.find(ref);
           if (inv && inv.entityCode === entityCode && inv.openCents > 0n) tx.db.invoice.id.update({ ...inv, status: 'disputed' });
         }
-        openWork(tx, 'collections', 'dispute', `entity:${entityCode}`, { refs: x.invoice_refs ?? [], reason: x.reason ?? '', obs: Number(obsId) });
+        openWork(tx, 'collections', 'dispute', `entity:${entityCode}`, { refs: x.invoice_refs ?? [], reason: x.reason ?? '', obs: Number(obsId) }, 'seat:mailroom');
       }
       return;
     case 'promise_to_pay':
       if (entityCode) addFact(tx, `entity:${entityCode}`, 'promise', { amount: centsFrom(x.amount), reason: x.reason ?? '' }, today, obsId, false);
       return;
     case 'refund_request':
-      if (entityCode) openWork(tx, 'refunds', 'refund_request', `entity:${entityCode}`, { amount: centsFrom(x.amount), obs: Number(obsId), senderMatches, newAccount: x.new_account_last4 ?? '' });
+      if (entityCode) openWork(tx, 'refunds', 'refund_request', `entity:${entityCode}`, { amount: centsFrom(x.amount), obs: Number(obsId), senderMatches, newAccount: x.new_account_last4 ?? '' }, 'seat:mailroom');
       if (x.new_account_last4) requestRoutingChange(tx, CASH, entityCode, x, obsId, senderMatches);
       return;
     default:
@@ -498,7 +502,7 @@ function requestRoutingChange(tx: Tx, who: Principal, entityCode: string, x: Ext
   };
   const refKey = tx.db.observation.id.find(obsId)?.refKey ?? String(obsId);
   const d = decide(tx, who.id, 'routing_change', `routing:${entityCode}:${refKey}`, features);
-  exec(tx, { principal: who, action: 'request_routing_change', params: { entityCode, requested: `****${x.new_account_last4 ?? '????'}`, decision: d.decide }, used: [`obs:${obsId}`], plan: [d.key] }, () => {
+  exec(tx, { principal: who, action: 'request_routing_change', params: { entityCode, requested: `****${x.new_account_last4 ?? '????'}`, decision: d.decide }, used: [`obs:${obsId}`, `decision:${d.id}`], plan: [d.key] }, () => {
     const status = d.decide === 'reject' ? 'rejected' : 'held';
     const rr = tx.db.routingRequest.insert({ id: 0n, entityCode, requestedAccount: `****${x.new_account_last4 ?? '????'}`, sourceObs: obsId, status, createdAt: simDate(tx), callbackStatus: 'none', decidedBy: '' });
     if (status === 'held') {
@@ -508,8 +512,9 @@ function requestRoutingChange(tx: Tx, who: Principal, entityCode: string, x: Ext
         toRole: e.kind === 'vendor' ? 'controller' : 'consultant',
         question: `${e.name} asked by email to move money to account ${rr.requestedAccount}. Please call the number on file before the request (${e.phoneOnFile}) — not any number in the email — and record whether the owner confirms.`,
         options: ['confirmed', 'denied', 'no_answer'],
-        evidence: { observation: Number(obsId), features, skill: d.key, note: d.note },
+        evidence: { observation: Number(obsId), features, skill: d.key, note: d.note, decision: Number(d.id) },
         confidence: senderMatches ? 0.5 : 0.15,
+        by: who.id,
       });
     }
     return `routing change for ${entityCode} ${status}`;
@@ -596,7 +601,7 @@ function processWeeklyReport(tx: Tx, workId: bigint, payload: { store: string; w
   const gross = Number(f.features.reported_gross);
   const royalty = bpOf(gross, terms.royaltyBp);
   const invId = `R-${payload.store}-${payload.week}`;
-  const used = [`obs:${payload.obs}`, `fact:${f.reportFactId}`];
+  const used = [`obs:${payload.obs}`, `fact:${f.reportFactId}`, `decision:${d.id}`];
   const billed = [...tx.db.invoice.entityCode.filter(store.entityCode)].filter(i => i.kind === 'royalty' && i.id.startsWith(invId)).reduce((s, i) => s + Number(i.amountCents), 0);
   if (billed === 0) {
     createInvoice(tx, CASH, { id: invId, kind: 'royalty', entityCode: store.entityCode, storeCode: store.code, period: payload.week, issuedAt: simDate(tx), dueAt: addDays(simDate(tx), terms.paymentTermsDays), amountCents: royalty, source: `report obs:${payload.obs}` }, used, [d.key], '4000');
@@ -613,11 +618,12 @@ function processWeeklyReport(tx: Tx, workId: bigint, payload: { store: string; w
         kind: 'audit',
         subject,
         toRole: 'consultant',
-        question: `${store.name} reported ${money(Number(fx.reported_gross))} for the week of ${payload.week} (${money(Number(fx.reported_cash))} cash). The processor settled ${money(Number(fx.card_settled))} in card sales and supplies imply about ${money(Number(fx.supply_implied_gross))}. ${d.note || 'The sources disagree.'} Request a sales audit?`,
+        question: `${store.name} reported ${money(Number(fx.reported_gross))} for the week of ${payload.week} (${money(Number(fx.reported_cash))} cash). The processor settled ${money(Number(fx.card_settled))} in card sales and supplies imply about ${money(Number(fx.supply_implied_gross))}. ${d.note || 'The sources disagree.'}  Request a sales audit?`,
         options: ['request audit', 'explained — accept report'],
-        evidence: { features: fx, skill: d.key, used: d.used, report: f.reportFactId.toString() },
+        evidence: { features: fx, skill: d.key, used: d.used, report: f.reportFactId.toString(), decision: Number(d.id) },
         confidence: 0.35,
         workItemId: workId,
+        by: CASH.id,
       });
       return `audit requested for ${store.code} week ${payload.week}`;
     });
@@ -701,18 +707,19 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
       toRole: d.askRole,
       question: `${money(amount)} from ${r.payerName} can be explained by ${search.solutions.length} different sets of invoices. Which should it pay?`,
       options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first']),
-      evidence: { features, solutions: search.solutions, skill: d.key, referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs },
+      evidence: { features, solutions: search.solutions, skill: d.key, referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, decision: Number(d.id) },
       confidence: 0.3,
       workItemId: workId,
+      by: CASH.id,
     });
     closeWork(tx, workId, 'waiting');
     return;
   }
-  applyAllocations(tx, CASH, r.id, allocations, [d.key], features);
+  applyAllocations(tx, CASH, r.id, allocations, [d.key], features, [`decision:${d.id}`]);
   closeWork(tx, workId, 'done', { decision: d.decide });
 }
 
-export function applyAllocations(tx: Tx, who: Principal, receiptId: string, allocations: { id: string; cents: number }[], plan: string[], features: FeatureMap = {}): boolean {
+export function applyAllocations(tx: Tx, who: Principal, receiptId: string, allocations: { id: string; cents: number }[], plan: string[], features: FeatureMap = {}, extraUsed: string[] = []): boolean {
   const r = tx.db.receipt.id.find(receiptId)!;
   const applied = allocations.reduce((s, a) => s + a.cents, 0);
   const res = exec(
@@ -721,7 +728,7 @@ export function applyAllocations(tx: Tx, who: Principal, receiptId: string, allo
       principal: who,
       action: 'apply_receipt',
       params: { receiptId, allocations, features },
-      used: [`receipt:${receiptId}`, ...allocations.map(a => `invoice:${a.id}`)],
+      used: [`receipt:${receiptId}`, ...allocations.map(a => `invoice:${a.id}`), ...extraUsed],
       plan,
     },
     activityId => {
@@ -841,9 +848,9 @@ export function collectionsCycle(ctx: ProcCtx): string {
       const d = decide(tx, COLL.id, 'pre_chase', `entity:${e.code}:${today}`, features);
       if (d.decide === 'chase') {
         if (Number(features.notices_last_30d) >= 1 && daysBetween(lastNotice(tx, e.code), today) < 7) continue;
-        if (sendNotice(tx, e.code, features, [d.key])) notices++;
+        if (sendNotice(tx, e.code, features, [d.key], [`decision:${d.id}`])) notices++;
       } else if (d.decide === 'ask_consultant' || d.decide === 'escalate_controller') {
-        openAsk(tx, { kind: 'collections', subject: `entity:${e.code}`, toRole: d.askRole, question: `${e.name} is ${features.days_past_due} days past due on ${money(Number(features.open_amount))}. ${d.note} How should we proceed?`, options: ['chase', 'hold 7 days', 'escalate'], evidence: { features, skill: d.key }, confidence: 0.4 });
+        openAsk(tx, { kind: 'collections', subject: `entity:${e.code}`, toRole: d.askRole, question: `${e.name} is ${features.days_past_due} days past due on ${money(Number(features.open_amount))}. ${d.note} How should we proceed?`, options: ['chase', 'hold 7 days', 'escalate'], evidence: { features, skill: d.key, decision: Number(d.id) }, confidence: 0.4, by: COLL.id });
       } else {
         appendActivity(tx, { principal: COLL.id, role: COLL.role, kind: 'decision', command: 'hold_collection', params: { entity: e.code, features }, plan: [d.key], outcome: d.decide, reasons: [d.note] });
       }
@@ -853,11 +860,11 @@ export function collectionsCycle(ctx: ProcCtx): string {
   });
 }
 
-export function sendNotice(tx: Tx, entityCode: string, features: FeatureMap, plan: string[]): boolean {
+export function sendNotice(tx: Tx, entityCode: string, features: FeatureMap, plan: string[], extraUsed: string[] = []): boolean {
   const e = tx.db.entity.code.find(entityCode);
   if (!e) return false;
   const today = simDate(tx);
-  const res = exec(tx, { principal: COLL, action: 'send_notice', params: { entity: e.code, open: features.open_amount, daysPastDue: features.days_past_due }, used: [`entity:${e.code}`], plan, facts: factsFor(tx, e.code) }, activityId => {
+  const res = exec(tx, { principal: COLL, action: 'send_notice', params: { entity: e.code, open: features.open_amount, daysPastDue: features.days_past_due }, used: [`entity:${e.code}`, ...extraUsed], plan, facts: factsFor(tx, e.code) }, activityId => {
     addFact(tx, `entity:${e.code}`, 'notice_sent', { open: features.open_amount, daysPastDue: features.days_past_due, plan }, today, 0n, true, activityId);
     return `past-due notice to ${e.name} for ${money(Number(features.open_amount))}`;
   });
@@ -925,6 +932,7 @@ export function refundsCycle(ctx: ProcCtx): string {
           evidence: { refund: Number(rf.id), overpaid, facts },
           confidence: 0.5,
           workItemId: w.id,
+          by: REFUNDS.id,
         });
         return `refund of ${money(amount)} prepared for ${e.name}; waiting for release`;
       });

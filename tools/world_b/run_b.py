@@ -171,8 +171,13 @@ def answer(admin, dana, truth):
             dana.call("answer_ask", a["id"], t.get("customer", opts[0] if opts else ""), "parent company pays for this customer")
         elif k == "unapplied_cash":
             dana.call("answer_ask", a["id"], "keep as credit", "customer paid twice; keep it against the next invoice")
+        elif k == "spot_check:allocation":
+            # Check where the money actually landed against what the customer paid for.
+            rid = subj.replace("receipt:", "")
+            got = sorted(x["invoice_id"] for x in admin.sql(f"SELECT invoice_id, reversed FROM application WHERE receipt_id = '{rid}'") if not x["reversed"])
+            right = got == sorted(t.get("invoices", [])) if t else True
+            dana.call("answer_ask", a["id"], "correct" if right else "leave_unapplied_ask", "the money landed on the invoices the customer paid" if right else f"landed on {', '.join(got) or 'nothing'}, the customer paid {', '.join(t.get('invoices', [])) or 'nothing open'}")
         elif k.startswith("spot_check:"):
-            ev = json.loads(a["evidence"] or "{}")
             dana.call("answer_ask", a["id"], "correct", "checked against the remittance and the bank line")
         elif k == "collections":
             dana.call("answer_ask", a["id"], "chase", "overdue")

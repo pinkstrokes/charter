@@ -72,6 +72,12 @@ async function main(): Promise<void> {
   const latest = new Map<string, Row>();
   for (const d of decisions.sort((a, b) => a.id - b.id)) if (!d.shadow) latest.set(d.subject, d);
 
+  // Where cash actually landed, for receipts the answer key knows the truth of.
+  const appliedTo = new Map<string, Set<string>>();
+  for (const a of applications) if (!a.reversed) (appliedTo.get(a.receipt_id) ?? appliedTo.set(a.receipt_id, new Set()).get(a.receipt_id)!).add(a.invoice_id);
+  const landedRight = (e: { subject: string; truth?: { invoices?: string[] } }) =>
+    [...(appliedTo.get(e.subject.slice(8)) ?? new Set<string>())].sort().join(',') === [...(e.truth?.invoices ?? [])].sort().join(',');
+
   // 1. How the team actually decided, by split and family.
   const outcomes: Record<string, Record<string, { n: number; right: number; missing: number }>> = {};
   const auto: Record<string, { n: number; wrong: number }> = {};
@@ -85,7 +91,8 @@ async function main(): Promise<void> {
       cell.missing++;
       continue;
     }
-    const right = agrees(domain, d.outcome, e.expected);
+    // Cash application is right when the money landed on the right invoices.
+    const right = domain === 'allocation' && (e as { truth?: { invoices?: string[] } }).truth?.invoices ? landedRight(e as never) : agrees(domain, d.outcome, e.expected);
     if (right) cell.right++;
     if (!ESCALATE[domain].includes(d.outcome) && (e.split === 'test' || e.split === 'live')) {
       const a = (auto[domain] ??= { n: 0, wrong: 0 });
@@ -95,8 +102,6 @@ async function main(): Promise<void> {
   }
   // Cash application judged by where the money landed, not by the outcome label.
   const landed: Record<string, Record<string, { n: number; right: number }>> = {};
-  const appliedTo = new Map<string, Set<string>>();
-  for (const a of applications) if (!a.reversed) (appliedTo.get(a.receipt_id) ?? appliedTo.set(a.receipt_id, new Set()).get(a.receipt_id)!).add(a.invoice_id);
   for (const e of key as { split: string; family: string; subject: string; truth?: { invoices?: string[] } }[]) {
     if (!e.subject.startsWith('receipt:') || !e.truth?.invoices) continue;
     const got = [...(appliedTo.get(e.subject.slice(8)) ?? new Set<string>())].sort().join(',');

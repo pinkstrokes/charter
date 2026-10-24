@@ -99,7 +99,9 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), optional: optional.length, candidates: scored.length, passing: passing.length, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
   if (!passing.length) {
     const best = scored[0];
-    return `${domain}: ${scored.length} candidates in ${secs}s, none passed (${best ? best.ev.why.join('; ') : 'model returned nothing usable'})`;
+    const summary = `${scored.length} candidates in ${secs}s, none passed: ${best ? best.ev.why.join('; ') : 'model returned nothing usable'}`;
+    if (!args.has('dry-run')) await db.call('record_evolution', domain, 'fail', summary, JSON.stringify({ lesson: lesson.map(e => e.subject).slice(0, 20), optional: optional.length, reasons: scored.slice(0, 6).map(s => ({ origin: s.origin, why: s.ev.why })) })).catch(() => undefined);
+    return `${domain}: ${summary}`;
   }
   const best = passing[0];
   const proof = {
@@ -130,6 +132,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     return `${domain}: dry run, best candidate written`;
   }
   await db.call('propose_skill', domain, JSON.stringify(best.program), active.key, provenance, JSON.stringify(proof));
+  await db.call('record_evolution', domain, 'pass', `proposed ${domain}@${active.version + 1}: fixes ${best.ev.labeled.fixed.length}, takes over ${best.ev.lesson.optionalFixed}, breaks 0`, JSON.stringify({ candidatesTried: scored.length, candidatesPassed: passing.length, seconds: Number(secs) })).catch(() => undefined);
   writeFileSync(`${COMPANY_DIR}/eval/proposal-${domain}-${active.version + 1}.json`, JSON.stringify({ program: best.program, proof }, null, 2));
   return `${domain}: proposed v${active.version + 1} in ${secs}s (${passing.length}/${scored.length} candidates passed; fixes ${best.ev.labeled.fixed.length}, breaks 0, new leads ${best.ev.newLeads.length})`;
 }

@@ -155,10 +155,11 @@ def money_for(e: dict, m: Counter, invoices: dict, receipts: dict, by_receipt: d
         if not r:
             m["receipts_missing"] += 1
             return
-        intended = set(filter(None, t.get("intended", "").split(" + ")))
+        intended = set(t.get("invoices") or [])
         applied = {a["invoice_id"]: a["amount_cents"] for a in by_receipt.get(txn, [])}
         on_target = sum(v for k, v in applied.items() if k in intended)
         m["applied_where_meant_cents"] += on_target
+        m["receipts_landed_right"] += set(applied) == intended
         m["applied_elsewhere_cents"] += sum(v for k, v in applied.items() if k not in intended)
         m["left_unapplied_cents"] += r["unapplied_cents"]
         if fam == "duplicate_payment" or t.get("paid_invoice"):

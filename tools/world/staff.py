@@ -91,10 +91,12 @@ class Staff:
             return False
         decided = handler(day, a)
         if decided is None:
+            self._slip, self._ap_fix = False, None
             return False
         who, answer, context, when = decided
         due = min(when, a["deadline"]) if when else self._default_day(a)
         if day < due:
+            self._slip, self._ap_fix = False, None
             return False
         options = json.loads(a["options"] or "[]")
         if kind != "identify_payer" and answer not in options:
@@ -199,6 +201,8 @@ class Staff:
 
     def _payment_release(self, day, a):
         """Dana releases a Friday run unless it pays a duplicate she spots (the first two) or the vendor's bank change is pending."""
+        if day < self._default_day(a):
+            return None  # decide on the day she answers, so the duplicates she catches are counted once
         ev = json.loads(a["evidence"] or "{}")
         bills = [b["id"] for b in ev.get("bills", [])]
         dups = [b for b in bills if b in self.ap.get("duplicates", {})]
@@ -211,7 +215,7 @@ class Staff:
         amount = sum(int(b.get("amount", 0)) for b in ev.get("bills", []))
         if amount > 2_500_000:
             self.s["ap_second"].append({"payment": a["subject"].split(":", 1)[1], "date": day})
-        return "Dana", "release", f"{len(bills)} approved bills, each matched to its PO and receipt; the account is the one on file", None
+        return "Dana", "release", "routine:payment_release:release", None
 
     def _allocation(self, day, a):
         txn = a["subject"].split(":", 1)[1]
@@ -222,14 +226,18 @@ class Staff:
         wrong = self.k["human_errors"].get(a["subject"])
         if wrong:
             return "Dana", wrong, "a busy close week; you took the contract-order option without opening the remittance", None
+        # Where the money belongs: the one invoice the payer named, the set their remittance listed, or (only if that is the truth) contract order.
         want = sorted(rc["intended"] or [])
-        match = next((o for o in options if o != "apply oldest first" and sorted(o.split(" + ")) == want), None)
-        if match:
-            return "Dana", match, f"the payer's remittance lists exactly {' + '.join(want)}", None
         if rc["family"] == "duplicate_payment":  # no option is right: it should stay unapplied until it is refunded
             self._skip(a, "duplicate payment: left unapplied for the refund")
             return None
-        return "Dana", "apply oldest first", "the amount matches no invoice set; it is a short payment under dispute, so apply it and settle the gap on the dispute", None
+        if len(want) == 1 and want[0] in options:
+            why = "the payment names that invoice; it is short only by the amount the owner disputes" if rc["family"] == "short_payment" else "the payment names that invoice"
+            return "Dana", want[0], why, None
+        match = next((o for o in options if o != "apply oldest first" and sorted(o.split(" + ")) == want), None)
+        if match:
+            return "Dana", match, f"the payer's remittance lists exactly {' + '.join(want)}", None
+        return "Dana", "apply oldest first", "nothing the payer said points at particular invoices, so the agreement's order applies", None
 
     def _identify(self, day, a):
         rc = self.receipts.get(a["subject"].split(":", 1)[1])
@@ -246,6 +254,8 @@ class Staff:
         return "Dana", "keep as credit", "money with nothing to pay yet; keep it on account for the next invoice", None
 
     def _refund(self, day, a):
+        if day < self._default_day(a):
+            return None
         m = re.search(r"refund of \$([\d,]+\.\d{2}) to (.+?) at the account on file", a["question"])
         amount = int(round(float(m.group(1).replace(",", "")) * 100)) if m else 0
         ent = ENTITY_BY_NAME.get(m.group(2), "") if m else ""
@@ -292,7 +302,8 @@ class Staff:
         """Two models read an email differently; the controller opens the email and says which reading is right."""
         ev = json.loads(a["evidence"] or "{}")
         rows = self.c["Dana"].sql(f"SELECT ref_key FROM observation WHERE id = {int(ev.get('observation', 0))}")
-        truth = self.k["mail"].get(rows[0]["ref_key"]) if rows else None
+        ref = rows[0]["ref_key"] if rows else ""
+        truth = self.k["mail"].get(ref) or (self.ap.get("emails", {}).get(ref) or {}).get("reading")
         if not truth:
             return "Dana", "ignore the email", "you could not match the email to anything you expected", None
         sa, sb = mismatches(ev.get("readingA") or {}, truth), mismatches(ev.get("readingB") or {}, truth)
@@ -306,6 +317,8 @@ class Staff:
 
     def _spot_check(self, day, a):
         """kind 'spot_check:<domain>': was an autonomous decision right? Options are 'correct' plus the domain's other outcomes."""
+        if day < self._default_day(a):
+            return None
         domain = a["kind"].split(":", 1)[1]
         options = json.loads(a["options"] or "[]")
         ev = json.loads(a["evidence"] or "{}")
@@ -508,12 +521,14 @@ class Staff:
                               fallback=template, check=lambda t: isinstance(t, str) and 8 < len(t) < 320 and "\n" not in t, max_tokens=80, temperature=0.7)
 
     def _routine(self, who: str, what: str, a: dict) -> str:
-        """A 'yes, that was right' spot-check answer from a small cached bank of lines per person."""
+        """A routine answer (the seat was right; a clean Friday payment run) from a small cached bank of lines per person."""
         domain, decided = what.split(":", 1)
         fallback = {"lines": [f"Checked it: '{decided}' was the right call.", f"Looked at the source data; '{decided}' holds up."]}
+        situation = ("you release this Friday's payment run to a vendor after checking that every bill in it was matched to its purchase order and receipt"
+                     if domain == "payment_release" else
+                     f"a spot check asks whether the team's software was right to decide '{decided}' on a {domain.replace('_', ' ')} case, and you checked and it was right")
         if not self.fast:
-            prompt = (f"Write 6 different one-sentence replies (at most 20 words each) you would type when a spot check asks whether the team's software "
-                      f"was right to decide '{decided}' on a {domain.replace('_', ' ')} case, and you checked and it was right. Vary the wording; mention "
+            prompt = (f"Write 6 different one-sentence replies (at most 20 words each) you would type when {situation}. Vary the wording; mention "
                       'what you looked at. Return JSON {"lines": [...]}.')
             bank = self.texts.get(f"phrases:{who}:{domain}:{decided}", REASON_SYSTEM.format(voice=STAFF[who]["voice"]).replace("ONE plain sentence (at most 30 words)", "short lines"),
                                   prompt, fallback=fallback, json_mode=True, max_tokens=300,

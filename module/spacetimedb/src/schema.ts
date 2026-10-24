@@ -197,6 +197,7 @@ export const workItem = table(
     updatedAt: t.string(),
     payload: t.string(),
     checkpoint: t.string(),
+    fromSeat: t.string(), // who handed this work over
   }
 );
 
@@ -220,6 +221,7 @@ export const ask = table(
     answeredAt: t.string(),
     deadline: t.string(),
     workItemId: t.u64(),
+    raisedBy: t.string(), // the seat or tool that asked
   }
 );
 

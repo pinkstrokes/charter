@@ -49,7 +49,7 @@ INGESTORS.vendor_invoice = (tx, obsId, p: BillPayload) => {
   const id = `${p.vendorCode}:${p.billNo}`;
   if (tx.db.bill.id.find(id)) return;
   tx.db.bill.insert({ id, vendorCode: p.vendorCode, billNo: p.billNo, poNo: p.poNo ?? '', billDate: p.date, dueAt: p.dueDate, amountCents: BigInt(p.amountCents), openCents: BigInt(p.amountCents), status: 'received', note: '', sourceObs: obsId });
-  openWork(tx, 'ap_clerk', 'match_bill', `bill:${id}`, { billId: id });
+  openWork(tx, 'ap_clerk', 'match_bill', `bill:${id}`, { billId: id }, 'erp');
 };
 
 const digits = (s: string) => s.replace(/\D/g, '').replace(/^0+/, '');
@@ -80,11 +80,11 @@ export function billFeatures(tx: Tx, billId: string): FeatureMap {
   };
 }
 
-export function approveBill(tx: Tx, who: Principal, billId: string, plan: string[]): ExecResult {
+export function approveBill(tx: Tx, who: Principal, billId: string, plan: string[], extraUsed: string[] = []): ExecResult {
   const b = tx.db.bill.id.find(billId);
   if (!b) throw new Rejection(`no bill ${billId}`);
   const amount = Number(b.amountCents);
-  return exec(tx, { principal: who, action: 'approve_bill', params: { bill: billId, amount }, used: [`bill:${billId}`, `po:${b.poNo}`], plan, amountCents: amount, facts: factsFor(tx, b.vendorCode) }, activityId => {
+  return exec(tx, { principal: who, action: 'approve_bill', params: { bill: billId, amount }, used: [`bill:${billId}`, `po:${b.poNo}`, ...extraUsed], plan, amountCents: amount, facts: factsFor(tx, b.vendorCode) }, activityId => {
     if (b.status !== 'received' && b.status !== 'held') throw new Rejection(`bill ${billId} is ${b.status}`);
     tx.db.bill.id.update({ ...b, status: 'approved' });
     post(tx, `JE-AP-${billId}`, [
@@ -105,7 +105,7 @@ function matchBill(tx: Tx, workId: bigint, billId: string): void {
   const features = billFeatures(tx, billId);
   const d = decide(tx, AP_CLERK.id, 'bill_match', `bill:${billId}`, features);
   if (d.decide === 'approve') {
-    approveBill(tx, AP_CLERK, billId, [d.key]);
+    approveBill(tx, AP_CLERK, billId, [d.key], [`decision:${d.id}`]);
   } else if (d.decide === 'reject') {
     tx.db.bill.id.update({ ...b, status: 'rejected', note: d.note });
   } else {
@@ -116,9 +116,10 @@ function matchBill(tx: Tx, workId: bigint, billId: string): void {
       toRole: 'controller',
       question: `Bill ${b.billNo} from ${tx.db.entity.code.find(b.vendorCode)?.name ?? b.vendorCode} for ${money(Number(b.amountCents))}: ${d.note || 'it does not match its order and receipts'}. Approve, reject or keep holding?`,
       options: ['approve', 'reject', 'hold'],
-      evidence: { features, skill: d.key },
+      evidence: { features, skill: d.key, decision: Number(d.id) },
       confidence: 0.4,
       workItemId: workId,
+      by: AP_CLERK.id,
     });
   }
   closeWork(tx, workId, 'done', { decision: d.decide, skill: d.key });
@@ -174,6 +175,7 @@ export function paymentsCycle(ctx: ProcCtx): string {
             options: ['release', 'cancel'],
             evidence: { payment: id, bills: due.map(b => ({ id: b.id, amount: Number(b.openCents), due: b.dueAt })), facts },
             confidence: 0.6,
+            by: PAYMENTS.id,
           });
           return `payment ${id} of ${money(amount)} prepared for ${v.name}`;
         }

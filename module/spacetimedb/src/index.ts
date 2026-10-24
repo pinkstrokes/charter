@@ -8,7 +8,7 @@ import { TRUSTED_SOURCES, type EmailPayload } from './core/contracts';
 import { sha256Hex } from './core/hash';
 import type { SkillProgram } from './core/dsl';
 import type { PolicyTemplate, Principal, Role } from './core/policy';
-import { appendActivity, checkInvariants, Rejection, simDate, type Ctx, type Tx } from './kernel';
+import { appendActivity, checkInvariants, exec, Rejection, simDate, type Ctx, type Tx } from './kernel';
 import type { ProcCtx } from './llm';
 import { answerAsk, closeAudit, correctDecision, endorseRouting, raiseConcern, releaseRefund, waiveFee } from './answers';
 import { decidePolicy, proposePolicy, proposeSkill, seedGovernance, setSkillStatus } from './governance';
@@ -229,12 +229,14 @@ export const close_audit = spacetimedb.reducer({ store: t.string(), week: t.stri
 export const hire_seat = spacetimedb.reducer({ seat: t.string() }, (ctx, { seat }) => {
   const who = requireRole(ctx, 'controller');
   if (!SEATS.includes(seat)) throw new SenderError(`no such seat ${seat}`);
-  guard(() => {
-    const res = appendActivity(ctx, { principal: who.id, role: who.role, kind: 'command', command: 'hire_seat', params: { seat, inherits: { skills: [...ctx.db.skill.iter()].filter(s => s.status === 'active').map(s => s.key), policies: [...ctx.db.policy.iter()].filter(p => p.status === 'active').map(p => p.key) } }, outcome: 'committed' });
-    const existing = ctx.db.seatState.seat.find(seat);
-    if (existing) ctx.db.seatState.seat.update({ ...existing, status: 'active' });
-    else ctx.db.seatState.insert({ seat, lastRunAt: '', status: 'active', runs: 0, lastSummary: `hired by ${who.id} (activity ${res})` });
-  });
+  guard(() =>
+    exec(ctx, { principal: who, action: 'hire_seat', params: { seat, inherits: { skills: [...ctx.db.skill.iter()].filter(s => s.status === 'active').map(s => s.key), policies: [...ctx.db.policy.iter()].filter(p => p.status === 'active').map(p => p.key) } } }, activityId => {
+      const existing = ctx.db.seatState.seat.find(seat);
+      if (existing) ctx.db.seatState.seat.update({ ...existing, status: 'active' });
+      else ctx.db.seatState.insert({ seat, lastRunAt: '', status: 'active', runs: 0, lastSummary: `hired by ${who.id} (activity ${activityId})` });
+      return `${seat} hired; it inherits every active skill and policy`;
+    })
+  );
 });
 
 // ---------- internal audit and the close ----------
@@ -269,6 +271,12 @@ export const propose_skill = spacetimedb.reducer(
     guard(() => proposeSkill(ctx, who, domain, JSON.parse(program) as SkillProgram, parent, provenance, proof));
   }
 );
+
+// Every attempt of the evolver, passed or refused, goes on the record.
+export const record_evolution = spacetimedb.reducer({ domain: t.string(), gate: t.string(), summary: t.string(), detail: t.string() }, (ctx, { domain, gate, summary, detail }) => {
+  const who = requireRole(ctx, 'evolver');
+  appendActivity(ctx, { principal: who.id, role: who.role, kind: 'evolution', command: 'attempt', params: { domain, gate, summary, detail: JSON.parse(detail || '{}') }, outcome: gate });
+});
 
 export const set_skill_status = spacetimedb.reducer({ key: t.string(), status: t.string(), fraction: t.f64() }, (ctx, { key, status, fraction }) => {
   const who = requireRole(ctx, 'controller');

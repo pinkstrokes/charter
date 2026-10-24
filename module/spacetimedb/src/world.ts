@@ -28,9 +28,9 @@ export function addFact(tx: Tx, subject: string, attr: string, value: unknown, v
   return row.id;
 }
 
-export function openWork(tx: Tx, seat: string, kind: string, subject: string, payload: unknown): bigint {
+export function openWork(tx: Tx, seat: string, kind: string, subject: string, payload: unknown, fromSeat = 'world'): bigint {
   const today = simDate(tx);
-  return tx.db.workItem.insert({ id: 0n, kind, subject, seat, state: 'open', createdAt: today, updatedAt: today, payload: JSON.stringify(payload), checkpoint: '{}' }).id;
+  return tx.db.workItem.insert({ id: 0n, kind, subject, seat, state: 'open', createdAt: today, updatedAt: today, payload: JSON.stringify(payload), checkpoint: '{}', fromSeat }).id;
 }
 
 export function ingest(tx: Tx, kind: string, source: string, validAt: string, refKey: string, subject: string, payload: string): bigint {
@@ -177,8 +177,8 @@ function ingestBankTxn(tx: Tx, obsId: bigint, p: BankTxnPayload): void {
       return `receipt ${p.txnId} recorded as unapplied cash`;
     });
     if (p.type === 'ach_debit_settled' && p.debitId) settleDebit(tx, obsId, p);
-    else if (entityCode) openWork(tx, 'cash_app', 'apply_receipt', `entity:${entityCode}`, { receiptId: p.txnId });
-    else openWork(tx, 'cash_app', 'identify_payer', `receipt:${p.txnId}`, { receiptId: p.txnId });
+    else if (entityCode) openWork(tx, 'cash_app', 'apply_receipt', `entity:${entityCode}`, { receiptId: p.txnId }, 'bank feed');
+    else openWork(tx, 'cash_app', 'identify_payer', `receipt:${p.txnId}`, { receiptId: p.txnId }, 'bank feed');
     return;
   }
   if (p.type === 'ach_debit_returned') {
@@ -230,7 +230,7 @@ function settleDebit(tx: Tx, obsId: bigint, p: BankTxnPayload): void {
     return `debit ${d.id} settled and applied to ${ids.length} invoices`;
   });
   const left = tx.db.receipt.id.find(p.txnId);
-  if (left && left.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${d.entityCode}`, { receiptId: p.txnId });
+  if (left && left.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${d.entityCode}`, { receiptId: p.txnId }, 'auto-settlement');
 }
 
 function returnDebit(tx: Tx, obsId: bigint, p: BankTxnPayload): void {
@@ -263,7 +263,7 @@ function returnDebit(tx: Tx, obsId: bigint, p: BankTxnPayload): void {
     }
     return `debit returned (${p.returnCode}); invoices reinstated`;
   });
-  openWork(tx, 'collections', 'ach_return', `entity:${entityCode}`, { returnTxn: p.txnId, code: p.returnCode, amount: p.amountCents });
+  openWork(tx, 'collections', 'ach_return', `entity:${entityCode}`, { returnTxn: p.txnId, code: p.returnCode, amount: p.amountCents }, 'seat:cash_app');
 }
 
 function ingestCallback(tx: Tx, obsId: bigint, p: CallbackPayload): void {

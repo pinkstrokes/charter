@@ -92,6 +92,7 @@ function replayHistory(tx: Tx, key: string, program: SkillProgram): number {
       options: ['request audit', 'explained — accept report'],
       evidence: { features, skill: key, replay: true },
       confidence: 0.5,
+      by: `replay of ${key}`,
     });
     opened++;
   }

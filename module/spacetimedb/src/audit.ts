@@ -22,7 +22,7 @@ export function fileFinding(tx: Tx, who: Principal, f: FindingInput): ExecResult
     const ev = JSON.parse(f.evidence || '{}') as { label?: { domain: string; subject: string; correct: string } };
     if (ev.label) recordCheck(tx, ev.label.domain, ev.label.subject, ev.label.correct, 'internal_audit', who.id);
     if (f.severity === 'major' || f.severity === 'critical') {
-      openAsk(tx, { kind: 'finding', subject: `finding:${row.id}`, toRole: 'controller', question: `Internal audit (${f.test}): ${f.detail}`, options: ['acknowledge', 'disagree'], evidence: JSON.parse(f.evidence || '{}'), confidence: 0.8 });
+      openAsk(tx, { kind: 'finding', subject: `finding:${row.id}`, toRole: 'controller', question: `Internal audit (${f.test}): ${f.detail}`, options: ['acknowledge', 'disagree'], evidence: JSON.parse(f.evidence || '{}'), confidence: 0.8, by: who.id });
     }
     return `${f.severity} finding on ${f.subject}: ${f.test}`;
   });

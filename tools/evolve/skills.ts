@@ -88,6 +88,10 @@ export function splitLessons(domain: Domain, current: SkillProgram, examples: Ex
   return { required, optional };
 }
 
+// Taking work away from people needs precedent: every rule that settles cases a
+// person used to see must rest on at least this many labeled cases, all agreeing.
+export const MIN_SUPPORT = 3;
+
 export const AUDIT_BUDGET = 0.06; // at most 6% of store-weeks may be sent for audit
 export const CHANGE_BUDGET = 0.1; // a new version may change at most 10% of past decisions
 
@@ -210,6 +214,19 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     if ((b && !a) || (!a && !escalating.includes(cand) && escalating.includes(cur))) broken.push(e.subject);
   }
   const optionalFixed = optional.filter(e => agrees(domain, decide(candidate, e.features), e.label)).length;
+  // Takeovers grouped by the candidate rule that settles them.
+  const takeovers = new Map<number, { n: number; disagree: number }>();
+  for (const e of examples) {
+    const cur = decide(current, e.features);
+    if (!escalatingOf(domain).includes(cur)) continue;
+    const r = runRule(candidate, e.features);
+    if (!r || escalatingOf(domain).includes(r.decide)) continue;
+    const t = takeovers.get(r.rule) ?? { n: 0, disagree: 0 };
+    t.n++;
+    if (!agrees(domain, r.decide, e.label)) t.disagree++;
+    takeovers.set(r.rule, t);
+  }
+  const thin = [...takeovers.entries()].filter(([, t]) => t.n < MIN_SUPPORT || t.disagree > 0);
   const lessonFixed = lesson.length ? lesson.every(e => agrees(domain, decide(candidate, e.features), e.label)) : optionalFixed > 0;
   const past = [...latestBySubject(h, domain).values()].filter(d => !hidden.has(d.subject));
   const labeledSubjects = new Set(examples.map(e => e.subject));
@@ -239,6 +256,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   if (budget && budget.rate > budget.limit) why.push(`would send ${(budget.rate * 100).toFixed(1)}% of store-weeks to audit (limit ${budget.limit * 100}%)`);
   if (changed.rate > changed.limit) why.push(`changes ${(changed.rate * 100).toFixed(1)}% of past decisions (limit ${changed.limit * 100}%)`);
   if (safety.length) why.push(`${safety.length} safety violation(s)`);
+  for (const [rule, t] of thin) why.push(`rule ${rule} would take over work people did on the strength of ${t.n} labeled case(s)${t.disagree ? `, ${t.disagree} of which disagree` : ''} (needs ${MIN_SUPPORT}, unanimous)`);
   return {
     problems,
     labeled: { n: examples.length, correctBefore: before, correctAfter: after, fixed, broken },
@@ -252,6 +270,19 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     gate: why.length === 0 ? 'pass' : 'fail',
     why,
   };
+}
+
+function escalatingOf(domain: Domain): string[] {
+  return ESCALATING[domain] ?? [];
+}
+
+function runRule(p: SkillProgram, f: FeatureMap): { rule: number; decide: string } | null {
+  try {
+    const r = run(p, f);
+    return { rule: r.trace.ruleIndex, decide: r.outcome.decide };
+  } catch {
+    return null;
+  }
 }
 
 // ---------- proposing ----------

@@ -13,6 +13,7 @@ Writes, under data/companyA/:
 from __future__ import annotations
 
 import argparse
+import re
 from collections import Counter
 
 from cast import COMPANY, CONTRACTS, ENTITIES, STAFF, company_file, entity
@@ -76,7 +77,8 @@ def payables(ap: dict | None) -> tuple[list[dict], list[dict], dict]:
         payload = {"messageId": f"<{eid}@{domain}>", "from": e["from"], "fromName": e["fromName"], "to": "ap@pearllanetea.com", "subject": e["subject"],
                    "body": e["body"], "attachments": []}
         obs.append({"date": e["date"], "kind": "email", "source": "email", "validAt": e["date"], "refKey": f"email:{eid}", "subject": f"sender:{e['from']}", "payload": payload})
-        emails[f"email:{eid}"] = {"id": e["id"], **e["truth"]}
+        last4 = re.search(r"ending (\d{4})", e["body"])
+        emails[f"email:{eid}"] = {"id": e["id"], **e["truth"], "reading": {"type": "routing_change", "new_account_last4": last4.group(1) if last4 else ""}}
     variances = ap["truth"]["price_variance"]
     knowledge = {
         "bills": {e["subject"]: {"family": e["family"], "expected": e["expected"]} for e in ap["answer_key"]},
@@ -137,7 +139,7 @@ META = {
     },
     "expected": {
         "underreport": "flag_audit when the reported sales were cut (seats.ts opens the same audit question for flag_audit and ask_consultant, so evaluators may treat them alike); otherwise accept",
-        "allocation": "apply_unique when one invoice set is right (the remittance names it, or only one fits); apply_by_terms when contract order puts the cash where the payer meant; leave_unapplied_ask when no set fits and a person must decide (short payments, duplicates)",
+        "allocation": "apply_unique when one invoice set is right (the remittance names it, or only one fits); apply_to_reference when the payment names one invoice and is short only by what the payer disputes; leave_unapplied_ask when nothing should be applied yet (a duplicate waiting for its refund). truth.invoices lists where the money should land ([] for duplicates), which is how tools/evolve/report.ts grades cash application",
         "pre_chase": "hold while a promised check is in the mail, while our own mistake caused the bounce, or inside the grace period; chase when genuinely late",
         "routing_change": "hold_and_verify when the request comes from the contact on file; reject when it comes from a look-alike address (hold_and_verify is safe but costs a callback)",
     },
