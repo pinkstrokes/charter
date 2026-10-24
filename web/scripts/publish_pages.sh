@@ -13,10 +13,12 @@ VITE_PUBLIC=1 CHARTER_BASE=/charter/ npx vite build --outDir $OUT/site --emptyOu
 STDB_URL=https://maincloud.spacetimedb.com CHARTER_RUNS=$RUNS npx tsx scripts/export_public.ts $OUT/site
 cd $REPO
 git fetch -q origin gh-pages 2>/dev/null || true
-git worktree add -f $OUT/pages 2>/dev/null --detach
+git worktree add -f --detach $OUT/pages 2>/dev/null
 cd $OUT/pages
 if git rev-parse -q --verify origin/gh-pages > /dev/null; then git checkout -q -B gh-pages origin/gh-pages; else git checkout -q --orphan gh-pages; fi
-git rm -rq --ignore-unmatch . > /dev/null
+# Start from an empty tree: an orphan branch keeps the files of the checkout it came from staged.
+git rm -rfq --ignore-unmatch . > /dev/null
+git clean -fdxq
 cp -R $OUT/site/. .
 git add -A
 git commit -q -m "Public page from $(git -C $REPO rev-parse --short HEAD), cloud runs in $RUNS" || echo "nothing changed"
