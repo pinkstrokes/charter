@@ -228,6 +228,8 @@ export function post(tx: Tx, jeId: string, lines: Line[], activityId: bigint): v
   const credits = lines.reduce((s, l) => s + (l.credit ?? 0), 0);
   if (debits !== credits) throw new Error(`journal ${jeId} unbalanced: ${debits} vs ${credits}`);
   const period = simDate(tx).slice(0, 7);
+  // A closed month is never written to; later knowledge is booked in the open month.
+  if (tx.db.periodClose.period.find(period)) throw new Error(`journal ${jeId}: period ${period} is closed`);
   for (const l of lines) {
     if (!(l.account in ACCOUNTS)) throw new Error(`unknown account ${l.account}`);
     const d = BigInt(l.debit ?? 0);

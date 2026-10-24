@@ -11,6 +11,7 @@ export const config = table(
     simDate: t.string(), // YYYY-MM-DD, the organization's business date
     autopilot: t.bool(), // seats run on the scheduler when true
     llmModel: t.string(),
+    checkerModel: t.string(), // second, independent reader for money-relevant fields
   }
 );
 
@@ -299,6 +300,8 @@ export const decision = table(
     ruleIndex: t.i32(),
     note: t.string(),
     shadow: t.bool(), // decided by a shadow version; never acted on
+    label: t.string(), // the outcome a later check established ('' until checked)
+    labelSource: t.string(),
   }
 );
 
@@ -314,6 +317,68 @@ export const refund = table(
     approvals: t.string(), // JSON array of approver ids
     createdAt: t.string(),
     sourceObs: t.u64(),
+    activityId: t.u64(),
+  }
+);
+
+// Earned autonomy: how each rule of each skill version has done when checked.
+export const ruleStat = table(
+  { name: 'rule_stat', public: true },
+  {
+    key: t.string().primaryKey(), // skillKey#ruleIndex
+    domain: t.string().index('btree'),
+    skillKey: t.string(),
+    ruleIndex: t.i32(),
+    decisions: t.u32(),
+    checked: t.u32(),
+    errors: t.u32(),
+    recent: t.string(), // JSON array of the last 20 checks, 1 = wrong
+    state: t.string(), // probation | normal | reduced | tightened | suspended
+    sampleRate: t.f64(),
+    updatedAt: t.string(),
+  }
+);
+
+// The third line: what the internal auditor found and its opinion per period.
+export const finding = table(
+  { name: 'finding', public: true },
+  {
+    id: t.u64().primaryKey().autoInc(),
+    at: t.string(),
+    period: t.string(),
+    test: t.string(),
+    subject: t.string(),
+    severity: t.string(), // info | minor | major | critical
+    detail: t.string(),
+    evidence: t.string(), // JSON
+    status: t.string(), // open | resolved
+    resolution: t.string(),
+    resolvedBy: t.string(),
+  }
+);
+
+export const auditOpinion = table(
+  { name: 'audit_opinion', public: true },
+  {
+    period: t.string().primaryKey(),
+    at: t.string(),
+    opinion: t.string(), // clean | qualified | adverse
+    projectedMisstatementCents: t.i64(),
+    upperLimitCents: t.i64(),
+    tolerableCents: t.i64(),
+    sampleSize: t.u32(),
+    report: t.string(), // JSON
+  }
+);
+
+export const periodClose = table(
+  { name: 'period_close', public: true },
+  {
+    period: t.string().primaryKey(),
+    closedAt: t.string(),
+    closedBy: t.string(),
+    certificate: t.string(), // canonical JSON
+    certificateHash: t.string(),
     activityId: t.u64(),
   }
 );
@@ -381,6 +446,10 @@ const spacetimedb = schema({
   policy,
   decision,
   refund,
+  ruleStat,
+  finding,
+  auditOpinion,
+  periodClose,
   llmCall,
   securityEvent,
   seatState,

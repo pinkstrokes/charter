@@ -53,9 +53,10 @@ export async function evolverToken(db: string): Promise<string> {
   }
   const cache = `data/.evolver-${db}.json`;
   if (existsSync(cache)) {
-    const { token } = JSON.parse(readFileSync(cache, 'utf8'));
-    const me = await new Db(db, token).sql("SELECT role FROM principal WHERE role = 'evolver'");
-    if (me.length) return token;
+    const { identity, token } = JSON.parse(readFileSync(cache, 'utf8'));
+    const hex = String(identity).replace(/^0x/, '').toLowerCase();
+    const rows = await new Db(db, token).sql("SELECT identity, role FROM principal WHERE role = 'evolver'");
+    if (rows.some(r => JSON.stringify(r.identity).toLowerCase().includes(hex))) return token;
   }
   const { identity, token } = (await (await fetch(`${BASE}/v1/identity`, { method: 'POST' })).json()) as { identity: string; token: string };
   await new Db(db, adminToken()).call('bind_role', { __identity__: identity.startsWith('0x') ? identity : `0x${identity}` }, 'evolver', 'evolver');

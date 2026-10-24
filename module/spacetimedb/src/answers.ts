@@ -9,6 +9,8 @@ import type { Principal } from './core/policy';
 import { AR_ACCOUNT_BY_KIND, bumpControl, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from './kernel';
 import { applyAllocations, CASH, closeWork, money, useCurrency, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
 import { addFact, aliasSubject, createInvoice, ingest, openWork } from './world';
+import { recordCheck } from './reliability';
+import { routeHeldEmail, type Extracted } from './seats';
 
 export function answerAsk(tx: Tx, who: Principal, askId: bigint, answer: string, reason: string): string {
   useCurrency(tx);
@@ -34,6 +36,17 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
   const today = simDate(tx);
   const evidence = JSON.parse(a.evidence || '{}');
   const plan = [`ask:${a.id}`];
+  if (a.kind.startsWith('spot_check:')) {
+    const domain = a.kind.slice('spot_check:'.length);
+    const correct = answer === 'correct' ? String(evidence.decided) : answer;
+    recordCheck(tx, domain, a.subject, correct, 'spot_check', who.id);
+    if (answer !== 'correct' && domain === 'underreport') {
+      const [, store, week] = a.subject.split(':');
+      const st = tx.db.store.code.find(store);
+      if (st) addFact(tx, `entity:${st.entityCode}`, 'audit', { store, week, status: 'open', by: who.id }, today, 0n, true);
+    }
+    return answer === 'correct' ? `spot check of ${a.subject} passed` : `spot check of ${a.subject}: should have been ${answer}`;
+  }
   switch (a.kind) {
     case 'audit': {
       const [, store, week] = a.subject.split(':');
@@ -41,6 +54,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       if (!s) return 'unknown store';
       const status = answer === 'request audit' ? 'open' : 'cleared';
       addFact(tx, `entity:${s.entityCode}`, 'audit', { store, week, status, by: who.id }, today, 0n, true);
+      recordCheck(tx, 'underreport', a.subject, status === 'open' ? 'flag_audit' : 'accept', 'answer', who.id);
       return status === 'open' ? `audit opened for ${store}, week of ${week}` : `report for ${store}, week of ${week} accepted`;
     }
     case 'callback': {
@@ -55,6 +69,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       const receiptId = a.subject.replace('receipt:', '');
       const r = tx.db.receipt.id.find(receiptId);
       if (!r) return 'unknown receipt';
+      recordCheck(tx, 'allocation', a.subject, answer !== 'apply oldest first' && evidence.features?.remittance_consistent === true ? 'apply_unique' : 'leave_unapplied_ask', 'answer', who.id);
       const items = openItemsFor(tx, r.entityCode);
       const allocations =
         answer === 'apply oldest first'
@@ -74,6 +89,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
     }
     case 'collections': {
       const entityCode = a.subject.replace('entity:', '');
+      recordCheck(tx, 'pre_chase', `${a.subject}:${a.createdAt}`, answer === 'chase' ? 'chase' : answer === 'hold 7 days' ? 'hold' : 'escalate_controller', 'answer', who.id);
       if (answer === 'chase') {
         const f = preChaseFeatures(tx, entityCode, today);
         return f && sendNotice(tx, entityCode, f, plan) ? `notice sent to ${entityCode}` : `no notice sent to ${entityCode}`;
@@ -109,6 +125,21 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
         return `refund of ${money(Number(r.unappliedCents))} handed to the refunds seat`;
       }
       return `${money(Number(r.unappliedCents))} kept as credit for ${r.entityCode}`;
+    }
+    case 'reading_conflict': {
+      const obsId = BigInt(evidence.observation);
+      if (answer === 'ignore the email') {
+        const obs = tx.db.observation.id.find(obsId);
+        if (obs) tx.db.observation.id.update({ ...obs, status: 'done' });
+        return 'email set aside';
+      }
+      routeHeldEmail(tx, obsId, (answer === 'reading A' ? evidence.readingA : evidence.readingB) as Extracted);
+      return `email handled with ${answer}`;
+    }
+    case 'finding': {
+      const f = tx.db.finding.id.find(BigInt(a.subject.split(':')[1]));
+      if (f) tx.db.finding.id.update({ ...f, status: 'resolved', resolution: answer, resolvedBy: who.id });
+      return `finding ${a.subject}: ${answer}`;
     }
     case 'royalty_decrease':
       return answer === 'issue credit' ? creditInvoice(tx, who, a.subject, Number(evidence.delta ?? 0), plan).summary : 'original royalty kept';
@@ -243,6 +274,7 @@ export function closeAudit(tx: Tx, who: Principal, store: string, week: string, 
   const owed = bpOf(auditedGrossCents, terms.royaltyBp) - billed;
   const res = exec(tx, { principal: who, action: 'answer_ask', params: { audit: `${store}:${week}`, auditedGrossCents, owed, note }, used: [`audit:${store}:${week}`] }, () => {
     addFact(tx, `entity:${s.entityCode}`, 'audit', { store, week, status: 'closed', auditedGrossCents, owedCents: Math.max(0, owed), by: who.id, note }, simDate(tx), 0n, true);
+    recordCheck(tx, 'underreport', `store:${store}:${week}`, owed > 0 ? 'flag_audit' : 'accept', 'field_audit', who.id);
     return `audit of ${store}, week of ${week} closed: ${owed > 0 ? `${money(owed)} royalty under-billed` : 'report was right'}`;
   });
   if (res.ok && owed > 0) {
@@ -268,6 +300,7 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
       options: JSON.stringify(spec.outcomes), evidence: JSON.stringify({ features: JSON.parse(d.features), decision: Number(decisionId), was: d.outcome, skill: d.skillKey }),
       confidence: 1, precedent: '', status: 'answered', answer: outcome, reason, answeredBy: who.id, answeredAt: today, deadline: today, workItemId: 0n,
     });
+    recordCheck(tx, d.domain, d.subject, outcome, 'correction', who.id);
     return `correction recorded on decision #${decisionId}: ${d.outcome} -> ${outcome}`;
   });
   return res.summary;

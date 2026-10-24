@@ -83,7 +83,7 @@ function replayHistory(tx: Tx, key: string, program: SkillProgram): number {
     if (r.outcome.decide === 'accept') continue;
     const [, store, week] = subject.split(':');
     const name = tx.db.store.code.find(store)?.name ?? store;
-    tx.db.decision.insert({ id: 0n, at: simDate(tx), seat: d.seat, domain: 'underreport', subject, features: d.features, skillKey: key, outcome: r.outcome.decide, ruleIndex: r.trace.ruleIndex, note: `replay: ${r.outcome.note ?? ''}`, shadow: false });
+    tx.db.decision.insert({ id: 0n, at: simDate(tx), seat: d.seat, domain: 'underreport', subject, features: d.features, skillKey: key, outcome: r.outcome.decide, ruleIndex: r.trace.ruleIndex, note: `replay: ${r.outcome.note ?? ''}`, shadow: false, label: '', labelSource: '' });
     openAsk(tx, {
       kind: 'audit',
       subject,

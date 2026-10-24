@@ -11,10 +11,10 @@ const ENDPOINT = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
 
 export type ProcCtx = ProcedureCtx<InferSchema<typeof spacetimedb>>;
 
-export function llmJson(ctx: ProcCtx, seat: string, purpose: string, system: string, user: string, maxTokens = 600): Record<string, unknown> | null {
+export function llmJson(ctx: ProcCtx, seat: string, purpose: string, system: string, user: string, maxTokens = 600, modelOverride = ''): Record<string, unknown> | null {
   const { key, model } = ctx.withTx(tx => ({
     key: tx.db.secret.key.find('MODELSTUDIO_API_KEY')?.value ?? '',
-    model: tx.db.config.id.find(0)?.llmModel || 'qwen3.8-flash',
+    model: modelOverride || tx.db.config.id.find(0)?.llmModel || 'qwen3.8-flash',
   }));
   const promptHash = sha256Hex(`${model}|${system}|${user}`);
   const cached = ctx.withTx(tx => {

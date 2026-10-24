@@ -107,6 +107,20 @@ export const DOMAINS = {
 
 export type DomainName = keyof typeof DOMAINS;
 
+// Outcomes that hand the case to a person instead of settling it.
+export const ESCALATING: Record<DomainName, string[]> = {
+  underreport: ['flag_audit', 'ask_consultant'],
+  pre_chase: ['ask_consultant', 'escalate_controller'],
+  allocation: ['leave_unapplied_ask'],
+  routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
+};
+
+// Two outcomes agree when they lead to the same treatment of the case.
+export function sameTreatment(domain: string, a: string, b: string): boolean {
+  if (domain === 'underreport') return ESCALATING.underreport.includes(a) === ESCALATING.underreport.includes(b);
+  return a === b;
+}
+
 export interface Trace {
   ruleIndex: number; // -1 when 'otherwise' was used
   used: Record<string, Value>; // features the deciding rule read

@@ -12,6 +12,8 @@ import { appendActivity, checkInvariants, Rejection, simDate, type Ctx, type Tx 
 import type { ProcCtx } from './llm';
 import { answerAsk, closeAudit, correctDecision, endorseRouting, raiseConcern, releaseRefund, waiveFee } from './answers';
 import { decidePolicy, proposePolicy, proposeSkill, seedGovernance, setSkillStatus } from './governance';
+import { fileFinding, recordOpinion } from './audit';
+import { closePeriod } from './close';
 import { cashAppCycle, collectionsCycle, refundsCycle, triage } from './seats';
 import { ingest } from './world';
 
@@ -25,7 +27,7 @@ export const init = spacetimedb.init(ctx => {
 });
 
 function freshCompany(tx: Tx): void {
-  tx.db.config.insert({ id: 0, companyName: '', companyKind: 'franchisor', currency: 'USD', simDate: '2026-01-05', autopilot: false, llmModel: 'qwen3.8-flash' });
+  tx.db.config.insert({ id: 0, companyName: '', companyKind: 'franchisor', currency: 'USD', simDate: '2026-01-05', autopilot: false, llmModel: 'qwen3.8-flash', checkerModel: 'kimi-k3' });
   tx.db.chainHead.insert({ id: 0, lastActivityId: 0n, hash: 'genesis', anchoredHash: '', anchoredAt: '' });
   seedGovernance(tx);
   for (const seat of ['cash_app', 'collections']) tx.db.seatState.insert({ seat, lastRunAt: '', status: 'active', runs: 0, lastSummary: '' });
@@ -36,7 +38,7 @@ function freshCompany(tx: Tx): void {
 function caller(ctx: Ctx): Principal {
   const p = ctx.db.principal.identity.find(ctx.sender);
   if (!p) throw new SenderError('this identity has no role; ask the admin to bind one');
-  const system = p.role === 'world' || p.role === 'evolver' || p.role === 'admin';
+  const system = p.role === 'world' || p.role === 'evolver' || p.role === 'admin' || p.role === 'auditor';
   return { kind: system ? 'system' : 'human', id: `${p.role}:${p.name}`, role: p.role as Role };
 }
 
@@ -61,7 +63,7 @@ function guard<T>(fn: () => T): T {
 
 export const bind_role = spacetimedb.reducer({ who: t.identity(), role: t.string(), name: t.string() }, (ctx, { who, role, name }) => {
   requireRole(ctx, 'admin');
-  if (!['controller', 'consultant', 'world', 'evolver', 'admin'].includes(role)) throw new SenderError(`seats are code, not identities; cannot bind ${role}`);
+  if (!['controller', 'consultant', 'auditor', 'world', 'evolver', 'admin'].includes(role)) throw new SenderError(`seats are code, not identities; cannot bind ${role}`);
   // A name belongs to one identity at a time; rebinding moves it.
   for (const p of [...ctx.db.principal.iter()]) if (p.name === name && p.role === role && !p.identity.equals(who)) ctx.db.principal.identity.delete(p.identity);
   const existing = ctx.db.principal.identity.find(who);
@@ -111,6 +113,10 @@ export const reset_company = spacetimedb.reducer(ctx => {
   for (const r of [...ctx.db.securityEvent.iter()]) ctx.db.securityEvent.id.delete(r.id);
   for (const r of [...ctx.db.seatState.iter()]) ctx.db.seatState.seat.delete(r.seat);
   for (const r of [...ctx.db.seatTimer.iter()]) ctx.db.seatTimer.scheduledId.delete(r.scheduledId);
+  for (const r of [...ctx.db.ruleStat.iter()]) ctx.db.ruleStat.key.delete(r.key);
+  for (const r of [...ctx.db.finding.iter()]) ctx.db.finding.id.delete(r.id);
+  for (const r of [...ctx.db.auditOpinion.iter()]) ctx.db.auditOpinion.period.delete(r.period);
+  for (const r of [...ctx.db.periodClose.iter()]) ctx.db.periodClose.period.delete(r.period);
   freshCompany(ctx);
 });
 
@@ -136,6 +142,12 @@ export const anchor_chain = spacetimedb.reducer(ctx => {
   requireRole(ctx, 'admin');
   const head = ctx.db.chainHead.id.find(0)!;
   ctx.db.chainHead.id.update({ ...head, anchoredHash: head.hash, anchoredAt: simDate(ctx) });
+});
+
+export const set_checker_model = spacetimedb.reducer({ model: t.string() }, (ctx, { model }) => {
+  requireRole(ctx, 'admin');
+  const cfg = ctx.db.config.id.find(0)!;
+  ctx.db.config.id.update({ ...cfg, checkerModel: model });
 });
 
 // ---------- the outside world ----------
@@ -215,6 +227,29 @@ export const hire_seat = spacetimedb.reducer({ seat: t.string() }, (ctx, { seat 
     if (existing) ctx.db.seatState.seat.update({ ...existing, status: 'active' });
     else ctx.db.seatState.insert({ seat, lastRunAt: '', status: 'active', runs: 0, lastSummary: `hired by ${who.id} (activity ${res})` });
   });
+});
+
+// ---------- internal audit and the close ----------
+
+export const file_finding = spacetimedb.reducer(
+  { period: t.string(), test: t.string(), subject: t.string(), severity: t.string(), detail: t.string(), evidence: t.string() },
+  (ctx, f) => {
+    const who = requireRole(ctx, 'auditor');
+    guard(() => fileFinding(ctx, who, f));
+  }
+);
+
+export const record_opinion = spacetimedb.reducer(
+  { period: t.string(), opinion: t.string(), projectedMisstatementCents: t.i64(), upperLimitCents: t.i64(), tolerableCents: t.i64(), sampleSize: t.u32(), report: t.string() },
+  (ctx, o) => {
+    const who = requireRole(ctx, 'auditor');
+    guard(() => recordOpinion(ctx, who, { ...o, projectedMisstatementCents: Number(o.projectedMisstatementCents), upperLimitCents: Number(o.upperLimitCents), tolerableCents: Number(o.tolerableCents) }));
+  }
+);
+
+export const close_period = spacetimedb.reducer({ period: t.string() }, (ctx, { period }) => {
+  const who = requireRole(ctx, 'controller');
+  guard(() => closePeriod(ctx, who, period));
 });
 
 // ---------- the team's knowledge ----------

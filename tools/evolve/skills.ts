@@ -76,6 +76,8 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
     let subject = a.subject;
     if (a.kind === `correction:${domain}`) {
       label = a.answer; // a person marked a decision wrong and said what it should have been
+    } else if (a.kind === `spot_check:${domain}`) {
+      label = a.answer === 'correct' ? String((ev as { decided?: string }).decided ?? '') : a.answer;
     } else if (a.kind === 'allocation' && domain === 'allocation') {
       // The person picked the payer's own list when it was there: the seat could have applied it.
       label = a.answer !== 'apply oldest first' && ev.features?.remittance_consistent === true ? 'apply_unique' : 'leave_unapplied_ask';
