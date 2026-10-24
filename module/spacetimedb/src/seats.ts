@@ -198,6 +198,12 @@ export function useCurrency(tx: Tx): void {
   SYMBOL = c === 'GBP' ? '£' : c === 'EUR' ? '€' : '$';
 }
 
+// Skill notes are fragments; questions people read are sentences.
+export function sentence(s: string): string {
+  const t = s.trim();
+  return t ? `${t[0].toUpperCase()}${t.slice(1).replace(/[.\s]*$/, '')}.` : '';
+}
+
 export function money(cents: number): string {
   const sign = cents < 0 ? '-' : '';
   const [whole, frac] = (Math.abs(cents) / 100).toFixed(2).split('.');
@@ -618,7 +624,7 @@ function processWeeklyReport(tx: Tx, workId: bigint, payload: { store: string; w
         kind: 'audit',
         subject,
         toRole: 'consultant',
-        question: `${store.name} reported ${money(Number(fx.reported_gross))} for the week of ${payload.week} (${money(Number(fx.reported_cash))} cash). The processor settled ${money(Number(fx.card_settled))} in card sales and supplies imply about ${money(Number(fx.supply_implied_gross))}. ${d.note || 'The sources disagree.'}  Request a sales audit?`,
+        question: `${store.name} reported ${money(Number(fx.reported_gross))} for the week of ${payload.week} (${money(Number(fx.reported_cash))} cash). The processor settled ${money(Number(fx.card_settled))} in card sales and supplies imply about ${money(Number(fx.supply_implied_gross))}. ${sentence(d.note || 'the sources disagree')} Request a sales audit?`,
         options: ['request audit', 'explained — accept report'],
         evidence: { features: fx, skill: d.key, used: d.used, report: f.reportFactId.toString(), decision: Number(d.id) },
         confidence: 0.35,
@@ -852,7 +858,7 @@ export function collectionsCycle(ctx: ProcCtx): string {
       } else if (d.decide === 'ask_consultant' || d.decide === 'escalate_controller') {
         openAsk(tx, { kind: 'collections', subject: `entity:${e.code}`, toRole: d.askRole, question: `${e.name} is ${features.days_past_due} days past due on ${money(Number(features.open_amount))}. ${d.note} How should we proceed?`, options: ['chase', 'hold 7 days', 'escalate'], evidence: { features, skill: d.key, decision: Number(d.id) }, confidence: 0.4, by: COLL.id });
       } else {
-        appendActivity(tx, { principal: COLL.id, role: COLL.role, kind: 'decision', command: 'hold_collection', params: { entity: e.code, features }, plan: [d.key], outcome: d.decide, reasons: [d.note] });
+        appendActivity(tx, { principal: COLL.id, role: COLL.role, kind: 'decision', command: 'hold_collection', params: { entity: e.code, features }, used: [`decision:${d.id}`], plan: [d.key], outcome: d.decide, reasons: [d.note] });
       }
       fees += assessLateFees(tx, e.code, today, d.decide === 'chase');
     }

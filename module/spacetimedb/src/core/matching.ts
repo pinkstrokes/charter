@@ -38,7 +38,8 @@ function subsetSums(items: OpenItem[]): { sum: number; mask: number }[] {
 
 // Subsets whose total is within [amount - tolerance, amount]: a payer may send
 // slightly less than the invoices (bank fees) but never a subset larger than the
-// money received.
+// money received. Exact subsets come first and are counted, so uniqueness is
+// judged on them; only when none exists do we look for the closest.
 export function findSubsets(amount: number, items: OpenItem[], toleranceCents: number, maxSolutions = 3): SubsetSearch {
   const pool = [...items].sort((a, b) => a.dueDate.localeCompare(b.dueDate) || a.id.localeCompare(b.id)).slice(0, MAX_ITEMS);
   const half = Math.floor(pool.length / 2);
@@ -46,32 +47,48 @@ export function findSubsets(amount: number, items: OpenItem[], toleranceCents: n
   const right = pool.slice(half);
   const leftSums = subsetSums(left);
   const rightSums = subsetSums(right).sort((a, b) => a.sum - b.sum);
-  const found: { ids: string[]; residual: number }[] = [];
-  for (const l of leftSums) {
-    const lo = amount - toleranceCents - l.sum;
-    const hi = amount - l.sum;
-    if (hi < 0) continue;
-    // binary search first right sum >= lo
+  const firstAtLeast = (x: number) => {
     let a = 0;
     let b = rightSums.length;
     while (a < b) {
       const m = (a + b) >> 1;
-      if (rightSums[m].sum < lo) a = m + 1;
+      if (rightSums[m].sum < x) a = m + 1;
       else b = m;
     }
-    for (let k = a; k < rightSums.length && rightSums[k].sum <= hi; k++) {
-      const total = l.sum + rightSums[k].sum;
-      if (total === 0) continue;
-      const ids: string[] = [];
-      left.forEach((it, i) => l.mask & (1 << i) && ids.push(it.id));
-      right.forEach((it, i) => rightSums[k].mask & (1 << i) && ids.push(it.id));
-      found.push({ ids, residual: amount - total });
-      if (found.length > 50) break;
+    return a;
+  };
+  const idsOf = (lm: number, rm: number) => {
+    const ids: string[] = [];
+    left.forEach((it, i) => lm & (1 << i) && ids.push(it.id));
+    right.forEach((it, i) => rm & (1 << i) && ids.push(it.id));
+    return ids;
+  };
+
+  const exact: string[][] = [];
+  for (const l of leftSums) {
+    const need = amount - l.sum;
+    if (need < 0) continue;
+    for (let k = firstAtLeast(need); k < rightSums.length && rightSums[k].sum === need && exact.length <= maxSolutions; k++) {
+      if (l.sum + rightSums[k].sum > 0) exact.push(idsOf(l.mask, rightSums[k].mask));
     }
-    if (found.length > 50) break;
+    if (exact.length > maxSolutions) break;
   }
-  found.sort((x, y) => x.residual - y.residual || x.ids.length - y.ids.length);
-  const top = found.slice(0, maxSolutions);
+  if (exact.length) {
+    const top = exact.sort((x, y) => x.length - y.length).slice(0, maxSolutions);
+    return { solutions: top, residuals: top.map(() => 0), searched: pool.length };
+  }
+
+  // No exact subset: each left subset with its closest right partner.
+  const near: { ids: string[]; residual: number }[] = [];
+  for (const l of leftSums) {
+    const k = firstAtLeast(amount - l.sum + 1) - 1;
+    if (k < 0) continue;
+    const total = l.sum + rightSums[k].sum;
+    if (total === 0 || amount - total > toleranceCents) continue;
+    near.push({ ids: idsOf(l.mask, rightSums[k].mask), residual: amount - total });
+  }
+  near.sort((x, y) => x.residual - y.residual || x.ids.length - y.ids.length);
+  const top = near.slice(0, maxSolutions);
   return { solutions: top.map(f => f.ids), residuals: top.map(f => f.residual), searched: pool.length };
 }
 

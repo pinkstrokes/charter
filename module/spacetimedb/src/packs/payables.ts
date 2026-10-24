@@ -249,11 +249,11 @@ export function rejectBill(tx: Tx, who: Principal, billId: string, reason: strin
 }
 
 // What people's answers on this desk mean.
-export function answerPayables(tx: Tx, who: Principal, kind: string, subject: string, answer: string, plan: string[]): string | null {
+export function answerPayables(tx: Tx, who: Principal, kind: string, subject: string, answer: string, plan: string[], fromDecision: string[] = []): string | null {
   if (kind === 'bill_exception') {
     const billId = subject.replace('bill:', '');
     recordCheck(tx, 'bill_match', subject, answer === 'approve' ? 'approve' : answer === 'reject' ? 'reject' : 'hold_exception', 'answer', who.id);
-    if (answer === 'approve') return approveBill(tx, who, billId, plan).summary;
+    if (answer === 'approve') return approveBill(tx, who, billId, plan, fromDecision).summary;
     if (answer === 'reject') return rejectBill(tx, who, billId, `rejected by ${who.id}`).summary;
     return `bill ${billId}: still held`;
   }

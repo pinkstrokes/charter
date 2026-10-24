@@ -40,7 +40,9 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
   const today = simDate(tx);
   const evidence = JSON.parse(a.evidence || '{}');
   const plan = [`ask:${a.id}`];
-  const payables = answerPayables(tx, who, a.kind, a.subject, answer, plan);
+  // The action a person's answer causes is linked to the decision that raised the question.
+  const fromDecision = evidence.decision ? [`decision:${evidence.decision}`] : [];
+  const payables = answerPayables(tx, who, a.kind, a.subject, answer, plan, fromDecision);
   if (payables !== null) return payables;
   if (a.kind.startsWith('spot_check:')) {
     const domain = a.kind.slice('spot_check:'.length);
@@ -84,7 +86,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
           : picked.length === 1
             ? [{ id: picked[0], cents: Math.min(Number(r.unappliedCents), items.find(i => i.id === picked[0])!.openCents) }]
             : allocationsForSubset(picked, items);
-      return applyAllocations(tx, CASH, receiptId, allocations, plan) ? `applied ${receiptId} as told` : `could not apply ${receiptId}`;
+      return applyAllocations(tx, CASH, receiptId, allocations, plan, {}, fromDecision) ? `applied ${receiptId} as told` : `could not apply ${receiptId}`;
     }
     case 'identify_payer': {
       const receiptId = a.subject.replace('receipt:', '');
@@ -101,7 +103,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       recordCheck(tx, 'pre_chase', `${a.subject}:${a.createdAt}`, answer === 'chase' ? 'chase' : answer === 'hold 7 days' ? 'hold' : 'escalate_controller', 'answer', who.id);
       if (answer === 'chase') {
         const f = preChaseFeatures(tx, entityCode, today);
-        return f && sendNotice(tx, entityCode, f, plan) ? `notice sent to ${entityCode}` : `no notice sent to ${entityCode}`;
+        return f && sendNotice(tx, entityCode, f, plan, fromDecision) ? `notice sent to ${entityCode}` : `no notice sent to ${entityCode}`;
       }
       const until = addDays(today, answer === 'escalate' ? 30 : 7);
       addFact(tx, `entity:${entityCode}`, 'collections_hold', { until, by: who.id, answer }, today, 0n, true);
