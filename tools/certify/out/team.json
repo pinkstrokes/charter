@@ -1,0 +1,539 @@
+{
+ "invariant": "No notice and no late fee while the counterparty's unapplied cash covers what is past due.",
+ "axiomsCheckedOn": 946,
+ "results": [
+  {
+   "variant": "as it is",
+   "versions": {
+    "pre_chase@1": {
+     "notice": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": false,
+       "routing_changed_unverified": false,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": false,
+       "audit_open": true
+      }
+     },
+     "fee": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": true,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": true,
+       "audit_open": true
+      }
+     }
+    },
+    "pre_chase@2": {
+     "notice": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": true,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": false,
+       "audit_open": true
+      }
+     },
+     "fee": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": false,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": false,
+       "audit_open": false
+      }
+     }
+    }
+   },
+   "world": {
+    "today": "2026-07-06",
+    "party": "Patel Brews Inc (F02, FA-2025: 5 days of grace, $100.00 late fee per invoice)",
+    "payment": "$9,611.20 arrives, reference \"JUNE SUPPLIES\": exactly the 3 invoices due 2026-06-29 (SUP-24496, SUP-24497, SUP-24498); 3 more invoices are open, not yet due",
+    "cash": {
+     "skill": "allocation@2",
+     "features": {
+      "solution_count": 1,
+      "exact_match": true,
+      "residual_cents": 0,
+      "remittance_present": false,
+      "remittance_consistent": false,
+      "receipt_amount": 961120,
+      "reference_paid": false,
+      "reference_matches_open": false,
+      "reference_names_open": false,
+      "reference_gap_cents": 0,
+      "open_items": 6
+     },
+     "decides": "leave_unapplied_ask"
+    },
+    "collections": {
+     "skill": "pre_chase@2",
+     "features": {
+      "days_past_due": 7,
+      "grace_days": 5,
+      "open_amount": 961120,
+      "unapplied_amount": 961120,
+      "announced_payment": 0,
+      "open_credit_notes": 0,
+      "open_dispute": false,
+      "recent_return": false,
+      "bank_change_recent": false,
+      "notices_last_30d": 0
+     },
+     "decides": "chase"
+    },
+    "notice": {
+     "allowed": true,
+     "by": [
+      "R-coll"
+     ],
+     "refused": []
+    },
+    "fees": {
+     "allowed": true,
+     "count": 3,
+     "total": 30000,
+     "refused": []
+    }
+   }
+  },
+  {
+   "variant": "P-4: no notice while cash is unapplied",
+   "versions": {
+    "pre_chase@1": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": true,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": true,
+       "audit_open": true
+      }
+     }
+    },
+    "pre_chase@2": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": true,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": true,
+       "audit_open": true
+      }
+     }
+    }
+   },
+   "world": {
+    "today": "2026-07-06",
+    "party": "Patel Brews Inc (F02, FA-2025: 5 days of grace, $100.00 late fee per invoice)",
+    "payment": "$9,611.20 arrives, reference \"JUNE SUPPLIES\": exactly the 3 invoices due 2026-06-29 (SUP-24496, SUP-24497, SUP-24498); 3 more invoices are open, not yet due",
+    "cash": {
+     "skill": "allocation@2",
+     "features": {
+      "solution_count": 1,
+      "exact_match": true,
+      "residual_cents": 0,
+      "remittance_present": false,
+      "remittance_consistent": false,
+      "receipt_amount": 961120,
+      "reference_paid": false,
+      "reference_matches_open": false,
+      "reference_names_open": false,
+      "reference_gap_cents": 0,
+      "open_items": 6
+     },
+     "decides": "leave_unapplied_ask"
+    },
+    "collections": {
+     "skill": "pre_chase@2",
+     "features": {
+      "days_past_due": 7,
+      "grace_days": 5,
+      "open_amount": 961120,
+      "unapplied_amount": 961120,
+      "announced_payment": 0,
+      "open_credit_notes": 0,
+      "open_dispute": false,
+      "recent_return": false,
+      "bank_change_recent": false,
+      "notices_last_30d": 0
+     },
+     "decides": "chase"
+    },
+    "notice": {
+     "allowed": false,
+     "by": [
+      "R-coll"
+     ],
+     "refused": [
+      "P-4: forbidden while payment_in_transit"
+     ]
+    },
+    "fees": {
+     "allowed": true,
+     "count": 3,
+     "total": 30000,
+     "refused": []
+    }
+   }
+  },
+  {
+   "variant": "P-4 and P-5: no notice, no fee while cash is unapplied",
+   "versions": {
+    "pre_chase@1": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": true,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": true,
+       "audit_open": true
+      }
+     }
+    },
+    "pre_chase@2": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": false,
+      "counterexample": {
+       "days_past_due": 1,
+       "grace_days": 0,
+       "open_amount": 1,
+       "unapplied_amount": 1,
+       "announced_payment": 0,
+       "open_credit_notes": 0,
+       "open_dispute": false,
+       "recent_return": true,
+       "bank_change_recent": false,
+       "notices_last_30d": 0
+      },
+      "facts": {
+       "routing_verified": true,
+       "routing_changed_unverified": true,
+       "payment_in_transit": true,
+       "open_dispute": false,
+       "recent_return": true,
+       "within_grace": false,
+       "bankruptcy_flag": true,
+       "audit_open": true
+      }
+     }
+    }
+   },
+   "world": {
+    "today": "2026-07-06",
+    "party": "Patel Brews Inc (F02, FA-2025: 5 days of grace, $100.00 late fee per invoice)",
+    "payment": "$9,611.20 arrives, reference \"JUNE SUPPLIES\": exactly the 3 invoices due 2026-06-29 (SUP-24496, SUP-24497, SUP-24498); 3 more invoices are open, not yet due",
+    "cash": {
+     "skill": "allocation@2",
+     "features": {
+      "solution_count": 1,
+      "exact_match": true,
+      "residual_cents": 0,
+      "remittance_present": false,
+      "remittance_consistent": false,
+      "receipt_amount": 961120,
+      "reference_paid": false,
+      "reference_matches_open": false,
+      "reference_names_open": false,
+      "reference_gap_cents": 0,
+      "open_items": 6
+     },
+     "decides": "leave_unapplied_ask"
+    },
+    "collections": {
+     "skill": "pre_chase@2",
+     "features": {
+      "days_past_due": 7,
+      "grace_days": 5,
+      "open_amount": 961120,
+      "unapplied_amount": 961120,
+      "announced_payment": 0,
+      "open_credit_notes": 0,
+      "open_dispute": false,
+      "recent_return": false,
+      "bank_change_recent": false,
+      "notices_last_30d": 0
+     },
+     "decides": "chase"
+    },
+    "notice": {
+     "allowed": false,
+     "by": [
+      "R-coll"
+     ],
+     "refused": [
+      "P-4: forbidden while payment_in_transit"
+     ]
+    },
+    "fees": {
+     "allowed": true,
+     "count": 3,
+     "total": 30000,
+     "refused": []
+    }
+   }
+  },
+  {
+   "variant": "P-4 and P-5, and a late-fee request carries the kernel's facts",
+   "versions": {
+    "pre_chase@1": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": true
+     }
+    },
+    "pre_chase@2": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": true
+     }
+    }
+   },
+   "world": {
+    "today": "2026-07-06",
+    "party": "Patel Brews Inc (F02, FA-2025: 5 days of grace, $100.00 late fee per invoice)",
+    "payment": "$9,611.20 arrives, reference \"JUNE SUPPLIES\": exactly the 3 invoices due 2026-06-29 (SUP-24496, SUP-24497, SUP-24498); 3 more invoices are open, not yet due",
+    "cash": {
+     "skill": "allocation@2",
+     "features": {
+      "solution_count": 1,
+      "exact_match": true,
+      "residual_cents": 0,
+      "remittance_present": false,
+      "remittance_consistent": false,
+      "receipt_amount": 961120,
+      "reference_paid": false,
+      "reference_matches_open": false,
+      "reference_names_open": false,
+      "reference_gap_cents": 0,
+      "open_items": 6
+     },
+     "decides": "leave_unapplied_ask"
+    },
+    "collections": {
+     "skill": "pre_chase@2",
+     "features": {
+      "days_past_due": 7,
+      "grace_days": 5,
+      "open_amount": 961120,
+      "unapplied_amount": 961120,
+      "announced_payment": 0,
+      "open_credit_notes": 0,
+      "open_dispute": false,
+      "recent_return": false,
+      "bank_change_recent": false,
+      "notices_last_30d": 0
+     },
+     "decides": "chase"
+    },
+    "notice": {
+     "allowed": false,
+     "by": [
+      "R-coll"
+     ],
+     "refused": [
+      "P-4: forbidden while payment_in_transit"
+     ]
+    },
+    "fees": {
+     "allowed": false,
+     "count": 3,
+     "total": 30000,
+     "refused": [
+      "P-5: forbidden while payment_in_transit"
+     ]
+    }
+   }
+  },
+  {
+   "variant": "collections learns: hold while unapplied cash covers the balance",
+   "versions": {
+    "pre_chase@1": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": true
+     }
+    },
+    "pre_chase@2": {
+     "notice": {
+      "holds": true
+     },
+     "fee": {
+      "holds": true
+     }
+    }
+   },
+   "world": {
+    "today": "2026-07-06",
+    "party": "Patel Brews Inc (F02, FA-2025: 5 days of grace, $100.00 late fee per invoice)",
+    "payment": "$9,611.20 arrives, reference \"JUNE SUPPLIES\": exactly the 3 invoices due 2026-06-29 (SUP-24496, SUP-24497, SUP-24498); 3 more invoices are open, not yet due",
+    "cash": {
+     "skill": "allocation@2",
+     "features": {
+      "solution_count": 1,
+      "exact_match": true,
+      "residual_cents": 0,
+      "remittance_present": false,
+      "remittance_consistent": false,
+      "receipt_amount": 961120,
+      "reference_paid": false,
+      "reference_matches_open": false,
+      "reference_names_open": false,
+      "reference_gap_cents": 0,
+      "open_items": 6
+     },
+     "decides": "leave_unapplied_ask"
+    },
+    "collections": {
+     "skill": "pre_chase@2",
+     "features": {
+      "days_past_due": 7,
+      "grace_days": 5,
+      "open_amount": 961120,
+      "unapplied_amount": 961120,
+      "announced_payment": 0,
+      "open_credit_notes": 0,
+      "open_dispute": false,
+      "recent_return": false,
+      "bank_change_recent": false,
+      "notices_last_30d": 0
+     },
+     "decides": "hold"
+    },
+    "notice": null,
+    "fees": null
+   }
+  }
+ ]
+}

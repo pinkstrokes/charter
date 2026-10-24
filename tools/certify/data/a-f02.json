@@ -1,0 +1,117 @@
+{
+ "party": "F02",
+ "name": "Patel Brews Inc",
+ "contract": "FA-2025",
+ "terms": {
+  "version": "FA-2025",
+  "royaltyBp": 650,
+  "graceDays": 5,
+  "lateFeeCents": 10000,
+  "interestBpPerMonth": 150,
+  "nsfFeeCents": 3500,
+  "auditThresholdBp": 200,
+  "paymentTermsDays": 2,
+  "applicationOrder": [
+   "interest",
+   "fee",
+   "royalty",
+   "audit",
+   "supply",
+   "trade"
+  ]
+ },
+ "open": [
+  {
+   "id": "SUP-24496",
+   "entity_code": "F02",
+   "kind": "supply",
+   "amount_cents": 344120,
+   "open_cents": 344120,
+   "due_at": "2026-06-29",
+   "issued_at": "2026-06-19",
+   "status": "open"
+  },
+  {
+   "id": "SUP-24497",
+   "entity_code": "F02",
+   "kind": "supply",
+   "amount_cents": 304140,
+   "open_cents": 304140,
+   "due_at": "2026-06-29",
+   "issued_at": "2026-06-19",
+   "status": "open"
+  },
+  {
+   "id": "SUP-24498",
+   "entity_code": "F02",
+   "kind": "supply",
+   "amount_cents": 312860,
+   "open_cents": 312860,
+   "due_at": "2026-06-29",
+   "issued_at": "2026-06-19",
+   "status": "open"
+  },
+  {
+   "id": "SUP-24516",
+   "entity_code": "F02",
+   "kind": "supply",
+   "amount_cents": 305640,
+   "open_cents": 305640,
+   "due_at": "2026-07-06",
+   "issued_at": "2026-06-26",
+   "status": "open"
+  },
+  {
+   "id": "SUP-24517",
+   "entity_code": "F02",
+   "kind": "supply",
+   "amount_cents": 333440,
+   "open_cents": 333440,
+   "due_at": "2026-07-06",
+   "issued_at": "2026-06-26",
+   "status": "open"
+  },
+  {
+   "id": "SUP-24518",
+   "entity_code": "F02",
+   "kind": "supply",
+   "amount_cents": 300820,
+   "open_cents": 300820,
+   "due_at": "2026-07-06",
+   "issued_at": "2026-06-26",
+   "status": "open"
+  }
+ ],
+ "policies": [
+  {
+   "id": "P-3",
+   "template": {
+    "t": "forbid_when",
+    "action": "release_payment",
+    "fact": "routing_changed_unverified"
+   },
+   "text": "No vendor payment is released while a bank-account change is pending and has not been confirmed out of band.",
+   "status": "active"
+  },
+  {
+   "id": "P-1",
+   "template": {
+    "t": "forbid_when",
+    "action": "initiate_debit",
+    "fact": "routing_changed_unverified"
+   },
+   "text": "No debit is initiated while a bank-account change is pending and has not been confirmed out of band.",
+   "status": "active"
+  },
+  {
+   "id": "P-2",
+   "template": {
+    "t": "forbid_when",
+    "action": "issue_refund",
+    "fact": "routing_changed_unverified"
+   },
+   "text": "No refund is released while a bank-account change is pending and has not been confirmed out of band.",
+   "status": "active"
+  }
+ ]
+}
