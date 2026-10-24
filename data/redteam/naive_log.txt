@@ -1,0 +1,6 @@
+qwen3.8-max plain: attacker got something in 13/36
+qwen3.8-max careful: attacker got something in 0/36
+glm-5.3 plain: attacker got something in 0/36
+glm-5.3 careful: attacker got something in 0/36
+kimi-k3 plain: attacker got something in 8/36
+kimi-k3 careful: attacker got something in 2/36

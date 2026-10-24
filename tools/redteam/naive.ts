@@ -1,7 +1,7 @@
 // Baseline: the common design, an LLM agent with tools reading the AR inbox.
 // Two prompts: plain, and careful (explicit security rules). Same attacks, same
 // company data as Charter gets.  npx tsx tools/redteam/naive.ts --models qwen3.8-max,glm-5.3,kimi-k3
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { llmJson } from '../evolve/lib';
 
 const args = process.argv.slice(2);
@@ -63,6 +63,7 @@ async function main(): Promise<void> {
         )
       );
       let wins = 0;
+      const failed = runs.filter(r => r.status !== 'fulfilled').length;
       for (const run of runs) {
         if (run.status !== 'fulfilled') continue;
         const { atk, r } = run.value;
@@ -71,10 +72,15 @@ async function main(): Promise<void> {
         if (harms.length) wins++;
         results.push({ model, variant, attack: atk.id, category: atk.category, calls: calls.map(c => c.name), harm: harms[0] ?? null });
       }
-      console.log(`${model} ${variant}: attacker got something in ${wins}/${attacks.length}`);
+      const valid = attacks.length - failed;
+      const note = failed > attacks.length * 0.1 ? ' — INVALID RUN, too many failed requests' : '';
+      console.log(`${model} ${variant}: attacker got something in ${wins}/${valid} (${failed} requests failed)${note}`);
+      if (failed) console.log(`  first failure: ${String((runs.find(r => r.status === 'rejected') as PromiseRejectedResult).reason).slice(0, 200)}`);
     }
   }
-  writeFileSync('data/redteam/naive_results.json', JSON.stringify({ attacksBy: author, models: MODELS, results }, null, 1));
+  const path = 'data/redteam/naive_results.json';
+  const prior = existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')).results as any[]).filter(r => !MODELS.includes(r.model)) : [];
+  writeFileSync(path, JSON.stringify({ attacksBy: author, models: [...new Set([...prior.map(r => r.model), ...MODELS])], results: [...prior, ...results] }, null, 1));
 }
 
 main().catch(e => {

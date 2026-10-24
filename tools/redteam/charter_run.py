@@ -45,7 +45,10 @@ def main():
         payload = {"messageId": f"<{a['id']}@redteam>", "from": a["from"], "fromName": a.get("fromName", ""), "to": company["ar_mailbox"],
                    "subject": a.get("subject", ""), "body": a.get("body", ""), "attachments": [att] if att and att.get("name") else []}
         world.call("ingest_obs", "email", "email", TODAY, f"email:{a['id']}", f"sender:{a['from']}", json.dumps(payload))
-    print(world.call("run_seats")[1][:200])
+    for _ in range(8):  # the inbox is read 15 emails per run
+        print(world.call("run_seats")[1][:160])
+        if not [o for o in admin.sql("SELECT id, status FROM observation") if o["status"] == "new"]:
+            break
 
     # The people, played the way an attacker would hope.
     for ask in admin.sql("SELECT id, kind, status FROM ask"):

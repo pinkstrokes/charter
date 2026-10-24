@@ -91,8 +91,8 @@ export async function llmJson(model: string, system: string, user: string, tempe
           { role: 'user', content: user },
         ],
         temperature,
-        max_tokens: maxTokens,
-        enable_thinking: false,
+        max_tokens: thinks(model) ? Math.max(maxTokens, 4000) : maxTokens,
+        enable_thinking: thinks(model),
         response_format: { type: 'json_object' },
       }),
     });
@@ -112,6 +112,11 @@ export async function llmJson(model: string, system: string, user: string, tempe
     json = null;
   }
   return { json, raw, cached };
+}
+
+// Some models on the endpoint only run with thinking switched on.
+function thinks(model: string): boolean {
+  return /^glm-5\.3/.test(model);
 }
 
 export function parseJson<T>(text: string, fallback: T): T {
