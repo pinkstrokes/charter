@@ -4,7 +4,7 @@
 import { complexity, DOMAINS, ESCALATING, run, validate, type Expr, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { createHash } from 'node:crypto';
 import { llmJson, parseJson, type Db, type Row } from './lib';
-import { allocationLabel } from '../../module/spacetimedb/src/core/labels';
+import { allocationLabel, labelBreach } from '../../module/spacetimedb/src/core/labels';
 
 export type Domain = keyof typeof DOMAINS;
 
@@ -52,7 +52,7 @@ export function agrees(domain: Domain, a: string, b: string): boolean {
 // Domain safety rules a candidate may never break on any past case.
 const SAFETY: Record<Domain, (f: FeatureMap, outcome: string) => string | null> = {
   underreport: () => null,
-  pre_chase: (f, o) => (o === 'chase' && Number(f.days_past_due) <= Number(f.grace_days) ? 'chases inside the contractual grace period' : null),
+  pre_chase: (f, o) => labelBreach('pre_chase', f, o),
   allocation: (f, o) =>
     o === 'apply_unique' && Number(f.solution_count) > 1 && f.remittance_consistent !== true && f.reference_matches_open !== true
       ? 'applies cash when several invoice sets fit and the payer did not say which'
@@ -126,7 +126,8 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
     }
     if (!label) continue;
     const features = ev.features ?? parseJson<FeatureMap>(latest.get(subject)?.features ?? '{}', {});
-    if (!Object.keys(features).length) continue;
+    // A verdict that breaks the agreement was pushed back on, not learned from.
+    if (!Object.keys(features).length || labelBreach(domain, features, label)) continue;
     bySubject.set(subject, { subject, features, label, source: `ask #${a.id} answered by ${a.answered_by}`, reason: a.reason, at: a.answered_at });
   }
   if (domain === 'underreport') {

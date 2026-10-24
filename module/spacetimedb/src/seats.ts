@@ -3,6 +3,7 @@
 import type { ContractTerms, EmailPayload, InvoiceKind } from './core/contracts';
 import { DOMAINS, ESCALATING, run, type FeatureMap, type SkillProgram } from './core/dsl';
 import { sha256Hex } from './core/hash';
+import { labelBreach } from './core/labels';
 import { allocationsForSubset, applyByTerms, findSubsets, type OpenItem } from './core/matching';
 import { nameTokens } from './core/names';
 import { addDays, bpOf, daysBetween } from './core/money';
@@ -938,6 +939,8 @@ export function sendNotice(tx: Tx, entityCode: string, features: FeatureMap, pla
   if (!e) return false;
   const today = simDate(tx);
   const res = exec(tx, { principal: COLL, action: 'send_notice', params: { entity: e.code, open: features.open_amount, daysPastDue: features.days_past_due }, used: [`entity:${e.code}`, ...extraUsed], plan, facts: factsFor(tx, e.code) }, activityId => {
+    const breach = labelBreach('pre_chase', features, 'chase');
+    if (breach) throw new Rejection(breach);
     addFact(tx, `entity:${e.code}`, 'notice_sent', { open: features.open_amount, daysPastDue: features.days_past_due, plan }, today, 0n, true, activityId);
     return `past-due notice to ${e.name} for ${money(Number(features.open_amount))}`;
   });

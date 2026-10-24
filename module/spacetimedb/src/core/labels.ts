@@ -9,3 +9,12 @@ export function allocationLabel(evidence: { features?: Record<string, unknown>; 
   if (evidence.referenced && answer === evidence.referenced) return f.reference_matches_open === true ? 'apply_unique' : 'apply_to_reference';
   return 'leave_unapplied_ask';
 }
+
+// An outcome nobody may choose, a seat or a person: it would break the agreement
+// with the counterparty. A label that says otherwise is a mistake to push back
+// on, not a lesson, and a seat that declined it was right.
+export function labelBreach(domain: string, features: Record<string, unknown>, outcome: string): string | null {
+  if (domain === 'pre_chase' && outcome === 'chase' && Number(features.days_past_due) <= Number(features.grace_days))
+    return `a notice on day ${features.days_past_due} past due breaks the ${features.grace_days}-day grace period in the agreement`;
+  return null;
+}

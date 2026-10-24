@@ -3,7 +3,7 @@
 // Every path goes through the kernel, so a person is bound by the same policies.
 import type { CallbackPayload } from './core/contracts';
 import { DOMAINS } from './core/dsl';
-import { allocationLabel } from './core/labels';
+import { allocationLabel, labelBreach } from './core/labels';
 import { applyByTerms, allocationsForSubset } from './core/matching';
 import { addDays, bpOf } from './core/money';
 import type { Principal } from './core/policy';
@@ -47,7 +47,8 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
   if (a.kind.startsWith('spot_check:')) {
     const domain = a.kind.slice('spot_check:'.length);
     const correct = answer === 'correct' ? String(evidence.decided) : answer;
-    recordCheck(tx, domain, a.subject, correct, 'spot_check', who.id);
+    const declined = recordCheck(tx, domain, a.subject, correct, 'spot_check', who.id);
+    if (declined) return `spot check of ${a.subject}: "${evidence.decided}" stands — ${declined}`;
     if (answer !== 'correct' && domain === 'underreport') {
       const [, store, week] = a.subject.split(':');
       const st = tx.db.store.code.find(store);
@@ -338,6 +339,8 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
   if (!spec || !(spec.outcomes as readonly string[]).includes(outcome)) throw new Rejection(`${d.domain} decisions are one of: ${spec ? spec.outcomes.join(', ') : 'unknown domain'}`);
   if (!reason.trim()) throw new Rejection('say in one line why');
   const res = exec(tx, { principal: who, action: 'answer_ask', params: { correction: Number(decisionId), domain: d.domain, subject: d.subject, was: d.outcome, should: outcome, reason }, used: [`decision:${decisionId}`] }, () => {
+    const breach = labelBreach(d.domain, JSON.parse(d.features), outcome);
+    if (breach) throw new Rejection(`"${d.outcome}" stands: ${breach}`);
     const today = simDate(tx);
     tx.db.ask.insert({
       raisedBy: who.id,
