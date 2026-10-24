@@ -1,7 +1,8 @@
 """Build the demo video from screenshots and a script: each scene is one image,
 narrated with macOS text-to-speech and captioned, then all scenes are joined.
   python3 tools/video/make_video.py tools/video/scenes.json docs/video/charter.mp4
-scenes.json: [{"image": "path.png", "say": "narration", "hold": 0.6}]"""
+scenes.json: [{"image": "path.png", "say": "narration", "caption": "optional", "hold": 0.6}]
+or a text card: {"title": {"heading": "...", "lines": ["..."]}, "say": "..."}"""
 import json
 import os
 import subprocess
@@ -18,14 +19,25 @@ def run(cmd):
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-def compose(image, caption, out):
+def compose(image, caption, out, title=None):
     from PIL import Image, ImageDraw, ImageFont
 
     canvas = Image.new("RGB", (W, H), (11, 13, 16))
-    shot = Image.open(image).convert("RGB")
-    shot.thumbnail((W, H - 150), Image.LANCZOS)
-    canvas.paste(shot, ((W - shot.width) // 2, max(0, (H - 150 - shot.height) // 2)))
     draw = ImageDraw.Draw(canvas, "RGBA")
+    if title:
+        # A text card: a heading and up to four lines under it.
+        big, small = ImageFont.truetype(FONT, 88), ImageFont.truetype(FONT, 40)
+        lines = [l for part in title.get("lines", []) for l in textwrap.wrap(part, 70)]
+        y = (H - 150 - 120 - len(lines) * 58) // 2
+        draw.text(((W - draw.textlength(title["heading"], font=big)) / 2, y), title["heading"], font=big, fill=(240, 240, 240))
+        y += 140
+        for line in lines:
+            draw.text(((W - draw.textlength(line, font=small)) / 2, y), line, font=small, fill=(190, 190, 200))
+            y += 58
+    else:
+        shot = Image.open(image).convert("RGB")
+        shot.thumbnail((W, H - 150), Image.LANCZOS)
+        canvas.paste(shot, ((W - shot.width) // 2, max(0, (H - 150 - shot.height) // 2)))
     draw.rectangle([0, H - 150, W, H], fill=(0, 0, 0, 200))
     font = ImageFont.truetype(FONT, 34)
     lines = textwrap.wrap(caption, 92)[:3]
@@ -48,12 +60,12 @@ def main(scenes_path, out_path):
     work = tempfile.mkdtemp(prefix="charter-video-")
     parts = []
     for i, sc in enumerate(scenes):
-        img = sc["image"] if os.path.isabs(sc["image"]) else os.path.join(base, sc["image"])
+        img = None if "title" in sc else sc["image"] if os.path.isabs(sc["image"]) else os.path.join(base, sc["image"])
         audio = os.path.join(work, f"s{i}.aiff")
         run(["say", "-v", VOICE, "-r", str(sc.get("rate", 178)), "-o", audio, sc["say"]])
         secs = duration(audio) + float(sc.get("hold", 0.6))
         frame = os.path.join(work, f"s{i}.png")
-        compose(img, sc.get("caption", sc["say"]), frame)
+        compose(img, sc.get("caption", sc["say"]), frame, sc.get("title"))
         seg = os.path.join(work, f"s{i}.mp4")
         run(["ffmpeg", "-y", "-loop", "1", "-i", frame, "-i", audio, "-c:v", "libx264", "-tune", "stillimage", "-pix_fmt", "yuv420p",
              "-r", "30", "-c:a", "aac", "-b:a", "160k", "-t", f"{secs:.2f}", "-af", "apad", seg])
