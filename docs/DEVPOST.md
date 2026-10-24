@@ -4,6 +4,10 @@
 
 An AI finance team that lives in one database: it catches and undoes its own mistakes when later evidence contradicts them, pushes back when a person's verdict would break an agreement, learns binding policies from its losses, and cannot move a cent outside a kernel the AI cannot change.
 
+## Try it
+
+Live, read-only for anyone: https://pinkstrokes.github.io/charter/ (the three companies replayed on SpacetimeDB maincloud). Code, data and the replay caches: https://github.com/pinkstrokes/charter
+
 ## Seats it fills
 
 Cash-application accountant, collections specialist and refunds specialist (receivables); payables clerk and payments (payables); mailroom clerk; internal auditor. People: two controllers and field consultants.

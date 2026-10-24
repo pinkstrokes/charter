@@ -4,6 +4,8 @@
 
 Charter fills the receivables and payables seats of a finance team — mailroom clerk, cash-application accountant, collections specialist, refunds specialist, payables clerk, payments — beside a controller, checked by a read-only internal auditor. Built at Cal Hacks 13.0 for the Hyphenate track.
 
+**Watch it live:** [pinkstrokes.github.io/charter](https://pinkstrokes.github.io/charter/) — the three companies replayed on SpacetimeDB's maincloud, open to anyone as an outsider: every decision's Why panel, every skill version's replay proof, the hash chain verified in your browser.
+
 ## The moment
 
 A UK wholesaler's real invoices. On 28 December 2010 a customer's parent company pays £2,149.30 and names invoice 536784, which is £21.60 short of what it owes. In its first week the team's cash-application skill matches the money to three *other* invoices whose total comes close (£2,127.16). Five days later the same payer sends £30.00 naming invoice 536792 — which the books say is already paid.
