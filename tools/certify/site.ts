@@ -19,8 +19,9 @@ const site = {
   },
   timeline: Object.fromEntries([['B', tb], ['C', tc]].map(([k, t]: any) => [k, { decisions: t.decisions, from: t.from, to: t.to, asRun: t.asRun, byDay: [1, 2, 3].map(m => t[`noHindsight_${m}`]), mistakesAlone: t.mistakesAlone, inUnlabeled: t.mistakesInUnlabeledSituations, flags: t.flags }])),
   team: {
-    invariant: team.invariant, axiomsCheckedOn: team.axiomsCheckedOn,
-    variants: team.results.map((r: any) => ({ name: r.variant, proved: Object.fromEntries(Object.entries(r.versions).map(([k, x]: any) => [k, { notice: x.notice.holds, fee: x.fee.holds }])), world: r.world })),
+    invariant: team.invariant, axiomsCheckedOn: team.axiomsCheckedOn, properties: team.properties, realBooks: team.realBooks,
+    variants: team.results.map((r: any) => ({ name: r.variant, adopted: r.adopted, proved: Object.fromEntries(Object.entries(r.versions).map(([k, x]: any) => [k, Object.fromEntries(Object.entries(x).map(([p, y]: any) => [p, y.holds]))])), world: r.world, legit: r.legit })),
+    legitCase: team.results[0].legit,
     ledger: { party: A.party, name: A.name, contract: A.contract, terms: A.terms, open: A.open.map((i: any) => ({ id: i.id, kind: i.kind, amountCents: i.amount_cents, openCents: i.open_cents, dueDate: i.due_at })) },
     rules: [...CONSTITUTION, ...ROLE_MATRIX].filter(r => r.tpl.t === 'role_can' ? (r.tpl as any).actions.some((a: string) => a === 'send_notice' || a === 'assess_fee') : ['send_notice', 'assess_fee'].includes((r.tpl as any).action)),
     learned: A.policies.map((p: any) => ({ id: p.id, version: 1, constitutional: false, tpl: p.template, text: p.text })),
