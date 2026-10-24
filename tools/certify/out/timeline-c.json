@@ -1,0 +1,236 @@
+{
+ "company": "C",
+ "decisions": 1201,
+ "from": "2009-12-27",
+ "to": "2010-06-30",
+ "situations": 40,
+ "asRun": {
+  "wrongAlone": 18,
+  "asks": 77,
+  "checks": 170,
+  "rightAlone": 1106,
+  "firstAsks": 0
+ },
+ "situations_1": {
+  "wrongAlone": 11,
+  "asks": 100,
+  "checks": 164,
+  "rightAlone": 1090,
+  "firstAsks": 19
+ },
+ "situations_2": {
+  "wrongAlone": 11,
+  "asks": 112,
+  "checks": 161,
+  "rightAlone": 1078,
+  "firstAsks": 19
+ },
+ "situations_3": {
+  "wrongAlone": 8,
+  "asks": 129,
+  "checks": 157,
+  "rightAlone": 1064,
+  "firstAsks": 19
+ },
+ "mistakesAlone": 18,
+ "mistakesInUnlabeledSituations": 5,
+ "mistakes": [
+  {
+   "at": "2010-01-31",
+   "subject": "receipt:BACS-493695-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@2",
+   "outcome": "apply_unique",
+   "labeledBefore": false
+  },
+  {
+   "at": "2010-03-04",
+   "subject": "receipt:BACS-496315-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@2",
+   "outcome": "apply_unique",
+   "labeledBefore": false
+  },
+  {
+   "at": "2010-03-06",
+   "subject": "receipt:STMT-C-13081-2010-02",
+   "family": "statement_with_remittance",
+   "situation": "S7",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
+   "labeledBefore": false
+  },
+  {
+   "at": "2010-03-10",
+   "subject": "receipt:BACS-497384",
+   "family": "two_invoices_bank_charge",
+   "situation": "S4",
+   "skill": "allocation@2",
+   "outcome": "apply_to_reference",
+   "labeledBefore": false
+  },
+  {
+   "at": "2010-03-16",
+   "subject": "receipt:BACS-497369-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@2",
+   "outcome": "apply_unique",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-03-23",
+   "subject": "receipt:BACS-498935",
+   "family": "two_invoices_bank_charge",
+   "situation": "S37",
+   "skill": "allocation@2",
+   "outcome": "apply_unique",
+   "labeledBefore": false
+  },
+  {
+   "at": "2010-04-02",
+   "subject": "receipt:BACS-499505-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-04-02",
+   "subject": "receipt:BACS-499795-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@2",
+   "outcome": "apply_unique",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-04-08",
+   "subject": "receipt:BACS-500867-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-04-18",
+   "subject": "receipt:BACS-502219-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@2",
+   "outcome": "apply_unique",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-04-30",
+   "subject": "receipt:BACS-502875-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-05-06",
+   "subject": "receipt:STMT-C-13081-2010-04",
+   "family": "statement_with_remittance",
+   "situation": "S7",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-05-13",
+   "subject": "receipt:BACS-504730-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@3",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-05-18",
+   "subject": "receipt:BACS-504635-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@3",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-05-18",
+   "subject": "receipt:BACS-505447-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@3",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-06-01",
+   "subject": "receipt:BACS-505994-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@3",
+   "outcome": "apply_unique",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-06-04",
+   "subject": "receipt:BACS-507374-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@3",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-06-09",
+   "subject": "receipt:BACS-508045-A",
+   "family": "on_account",
+   "situation": "S19",
+   "skill": "allocation@3",
+   "outcome": "apply_unique",
+   "labeledBefore": true
+  }
+ ],
+ "flags": [
+  {
+   "version": "allocation@2",
+   "live": "2009-12-27",
+   "decisions": 854,
+   "flagged": 32,
+   "decisionsInFlagged": 804,
+   "mistakesInFlagged": 12,
+   "flaggedWithMistakes": [
+    "S19",
+    "S7",
+    "S4",
+    "S37",
+    "S6"
+   ]
+  },
+  {
+   "version": "allocation@3",
+   "live": "2010-05-10",
+   "decisions": 265,
+   "flagged": 21,
+   "decisionsInFlagged": 2,
+   "mistakesInFlagged": 0,
+   "flaggedWithMistakes": []
+  },
+  {
+   "version": "allocation@4",
+   "live": "2010-06-14",
+   "decisions": 82,
+   "flagged": 17,
+   "decisionsInFlagged": 0,
+   "mistakesInFlagged": 0,
+   "flaggedWithMistakes": []
+  }
+ ]
+}
