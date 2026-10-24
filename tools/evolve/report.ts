@@ -6,6 +6,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { chainHash } from '../../module/spacetimedb/src/core/hash';
+import { upper95 } from '../../module/spacetimedb/src/core/stats';
 import { Db, evolverToken, parseJson, type Row } from './lib';
 import { agrees, type Domain } from './skills';
 
@@ -29,28 +30,6 @@ function domainOf(subject: string): Domain | null {
   if (subject.startsWith('routing:')) return 'routing_change';
   if (subject.startsWith('bill:')) return 'bill_match';
   return null;
-}
-
-// Exact one-sided 95% upper bound on an error rate (Clopper-Pearson), by bisection.
-function upper95(errors: number, n: number): number {
-  if (n === 0) return 1;
-  const tail = (p: number) => {
-    let s = 0;
-    let term = Math.pow(1 - p, n);
-    for (let k = 0; k <= errors; k++) {
-      s += term;
-      term *= ((n - k) / (k + 1)) * (p / (1 - p));
-    }
-    return s;
-  };
-  let lo = errors / n;
-  let hi = 1;
-  for (let i = 0; i < 60; i++) {
-    const mid = (lo + hi) / 2;
-    if (tail(mid) > 0.05) lo = mid;
-    else hi = mid;
-  }
-  return hi;
 }
 
 async function main(): Promise<void> {

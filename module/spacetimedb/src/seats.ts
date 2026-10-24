@@ -458,6 +458,10 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
         openAsk(tx, { kind: 'unknown_report', subject: `obs:${obsId}`, toRole: 'controller', question: `A sales report came from ${p.from} for unknown store "${x.store_code ?? ''}". Which store is it?`, options: ['ignore'], evidence: { observation: Number(obsId) }, confidence: 0.2 });
         return;
       }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(x.week_start ?? '') || Number.isNaN(Date.parse(x.week_start!))) {
+        openAsk(tx, { kind: 'unknown_report', subject: `obs:${obsId}`, toRole: 'controller', question: `A sales report for ${store} came from ${p.from}, but neither reader could tell which week it covers ("${x.week_start ?? ''}"). Which week is it?`, options: ['ignore'], evidence: { observation: Number(obsId), store }, confidence: 0.2 });
+        return;
+      }
       addFact(tx, `store:${store}`, 'sales_report', { week: x.week_start, card: centsFrom(x.card_sales), cash: centsFrom(x.cash_sales), gross: centsFrom(x.gross_sales), revised: !!x.revised, senderMatches }, x.week_start ?? today, obsId, false);
       openWork(tx, 'cash_app', 'weekly_report', `store:${store}`, { store, week: x.week_start, obs: Number(obsId) }, 'seat:mailroom');
       return;
@@ -478,7 +482,7 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
           const inv = tx.db.invoice.id.find(ref);
           if (inv && inv.entityCode === entityCode && inv.openCents > 0n) tx.db.invoice.id.update({ ...inv, status: 'disputed' });
         }
-        openWork(tx, 'collections', 'dispute', `entity:${entityCode}`, { refs: x.invoice_refs ?? [], reason: x.reason ?? '', obs: Number(obsId) }, 'seat:mailroom');
+        openWork(tx, 'collections', 'dispute', `entity:${entityCode}`, { refs: x.invoice_refs ?? [], amount: centsFrom(x.amount), reason: x.reason ?? '', obs: Number(obsId) }, 'seat:mailroom');
       }
       return;
     case 'promise_to_pay':
@@ -534,23 +538,37 @@ function requestRoutingChange(tx: Tx, who: Principal, entityCode: string, x: Ext
 // ---------- cash application ----------
 
 export function cashAppCycle(ctx: ProcCtx): string {
-  return ctx.withTx(tx => {
-    useCurrency(tx);
-    let reports = 0;
-    let receipts = 0;
-    for (const w of [...tx.db.workItem.seat.filter('cash_app')]) {
-      if (w.state !== 'open') continue;
-      if (w.kind === 'weekly_report') {
-        processWeeklyReport(tx, w.id, JSON.parse(w.payload));
-        reports++;
-      } else if (w.kind === 'apply_receipt' || w.kind === 'identify_payer') {
-        processReceipt(tx, w.id, JSON.parse(w.payload));
-        receipts++;
-      }
+  const done = { weekly_report: 0, apply_receipt: 0, identify_payer: 0 } as Record<string, number>;
+  let setAside = 0;
+  const open = ctx.withTx(tx => [...tx.db.workItem.seat.filter('cash_app')].filter(w => w.state === 'open' && w.kind in done).map(w => w.id));
+  for (const id of open) {
+    // Each item in its own transaction: one that cannot be handled is set aside
+    // on the record for a person, and the rest of the desk keeps working.
+    try {
+      const kind = ctx.withTx(tx => {
+        useCurrency(tx);
+        const w = tx.db.workItem.id.find(id);
+        if (!w || w.state !== 'open') return '';
+        if (w.kind === 'weekly_report') processWeeklyReport(tx, w.id, JSON.parse(w.payload));
+        else processReceipt(tx, w.id, JSON.parse(w.payload));
+        return w.kind;
+      });
+      if (kind) done[kind]++;
+    } catch (e) {
+      setAside++;
+      ctx.withTx(tx => setAsideWork(tx, id, (e as Error).message));
     }
-    const debits = scheduleDebits(tx);
-    return `reports ${reports}, receipts ${receipts}, debits ${debits}`;
-  });
+  }
+  const debits = ctx.withTx(tx => (useCurrency(tx), scheduleDebits(tx)));
+  return `reports ${done.weekly_report}, receipts ${done.apply_receipt + done.identify_payer}, debits ${debits}${setAside ? `, set aside ${setAside}` : ''}`;
+}
+
+function setAsideWork(tx: Tx, id: bigint, error: string): void {
+  const w = tx.db.workItem.id.find(id);
+  if (!w) return;
+  closeWork(tx, id, 'failed', { error });
+  appendActivity(tx, { principal: CASH.id, role: CASH.role, kind: 'work', command: 'set_aside', params: { work: Number(id), kind: w.kind, subject: w.subject }, used: [`work:${id}`], outcome: 'set_aside', reasons: [error] });
+  openAsk(tx, { kind: 'set_aside', subject: w.subject, toRole: 'controller', question: `The ${w.kind.replace(/_/g, ' ')} for ${w.subject} could not be handled (${error}). It is set aside for a person.`, options: ['noted'], evidence: { work: Number(id) }, confidence: 0 });
 }
 
 function weekFacts(tx: Tx, store: string, week: string) {
@@ -863,7 +881,8 @@ function scheduleDebits(tx: Tx): number {
 
 export function preChaseFeatures(tx: Tx, entityCode: string, today: string): FeatureMap | null {
   const terms = termsForEntity(tx, entityCode);
-  const open = [...tx.db.invoice.entityCode.filter(entityCode)].filter(i => i.openCents > 0n && i.dueAt < today);
+  const inDebit = new Set([...tx.db.debitInstruction.entityCode.filter(entityCode)].filter(d => d.status === 'scheduled').flatMap(d => JSON.parse(d.invoiceIds) as string[]));
+  const open = [...tx.db.invoice.entityCode.filter(entityCode)].filter(i => i.openCents > 0n && i.dueAt < today && !inDebit.has(i.id));
   if (open.length === 0) return null;
   const oldest = open.map(i => i.dueAt).sort()[0];
   const facts = factsFor(tx, entityCode);
@@ -879,6 +898,7 @@ export function preChaseFeatures(tx: Tx, entityCode: string, today: string): Fea
     open_credit_notes: credits,
     open_dispute: facts.open_dispute,
     recent_return: facts.recent_return,
+    bank_change_recent: [...tx.db.routingRequest.entityCode.filter(entityCode)].some(r => daysBetween(r.createdAt, today) <= 30),
     notices_last_30d: notices,
   };
 }
@@ -905,7 +925,7 @@ export function collectionsCycle(ctx: ProcCtx): string {
       const entityCode = w.subject.replace('entity:', '');
       if (w.kind === 'ach_return' && entityCode) {
         const terms = termsForEntity(tx, entityCode);
-        if (terms && terms.nsfFeeCents > 0) {
+        if (terms && terms.nsfFeeCents > 0 && ['R01', 'R09'].includes(payload.code)) {
           const r = createInvoice(tx, COLL, { id: `NSF-${payload.returnTxn}`, kind: 'fee', entityCode, storeCode: '', period: today.slice(0, 7), issuedAt: today, dueAt: addDays(today, 7), amountCents: terms.nsfFeeCents, source: `return ${payload.code}` }, [`bank:${payload.returnTxn}`], ['contract:nsf_fee'], '4200', 'assess_fee');
           if (r.ok) fees++;
         }

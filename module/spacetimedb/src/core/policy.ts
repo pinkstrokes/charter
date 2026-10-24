@@ -155,6 +155,7 @@ export const CONSTITUTION: PolicyRule[] = [
   { id: 'C12', version: 1, constitutional: true, tpl: { t: 'trusted_field', action: 'release_payment', field: 'bank_account' }, text: 'Vendors are paid only to bank accounts that came from a trusted source.' },
   { id: 'C13', version: 1, constitutional: true, tpl: { t: 'sod', action: 'release_payment' }, text: 'Whoever prepares a payment cannot release it.' },
   { id: 'C14', version: 1, constitutional: true, tpl: { t: 'two_person_above', action: 'release_payment', amountCents: 2_500_000 }, text: 'Vendor payments over $25,000 need two approvals.' },
+  { id: 'C15', version: 1, constitutional: true, tpl: { t: 'forbid_when', action: 'initiate_debit', fact: 'bankruptcy_flag' }, text: 'No debit is taken from a counterparty in bankruptcy (the automatic stay).' },
 ];
 
 export const ROLE_MATRIX: PolicyRule[] = [

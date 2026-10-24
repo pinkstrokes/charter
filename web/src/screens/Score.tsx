@@ -35,7 +35,7 @@ function askSeat(kind: string): string {
   const [base, domain] = kind.split(':');
   if (base === 'reading_conflict') return 'mail';
   if (base === 'spot_check' || base === 'correction') return `seat:${DOMAIN_SEAT[domain] ?? 'cash_app'}`;
-  const map: Record<string, string> = { audit: 'cash_app', callback: 'cash_app', allocation: 'cash_app', identify_payer: 'cash_app', unapplied_cash: 'cash_app', misapplied: 'cash_app', royalty_decrease: 'cash_app', unknown_report: 'cash_app', collections: 'collections', dispute: 'collections', refund_release: 'refunds', bill_exception: 'ap_clerk', payment_release: 'payments', finding: 'auditor' };
+  const map: Record<string, string> = { audit: 'cash_app', callback: 'cash_app', allocation: 'cash_app', identify_payer: 'cash_app', unapplied_cash: 'cash_app', misapplied: 'cash_app', set_aside: 'cash_app', royalty_decrease: 'cash_app', unknown_report: 'cash_app', collections: 'collections', dispute: 'collections', refund_release: 'refunds', bill_exception: 'ap_clerk', payment_release: 'payments', finding: 'auditor' };
   const seat = map[base];
   return seat === 'auditor' ? 'auditor' : `seat:${seat ?? 'cash_app'}`;
 }

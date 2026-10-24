@@ -126,8 +126,28 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
         for (const inv of invoices) if (inv.status === 'disputed') tx.db.invoice.id.update({ ...inv, status: 'open' });
         return `dispute by ${entityCode} rejected; invoices back to open`;
       }
-      const targets = answer === 'waive fees' ? invoices.filter(i => i.kind === 'fee' && i.openCents > 0n) : invoices.filter(i => refs.includes(i.id) && i.openCents > 0n);
-      const done = targets.map(inv => (answer === 'waive fees' ? waiveFee(tx, who, inv.id, plan) : creditInvoice(tx, who, inv.id, Number(inv.openCents), plan)));
+      // Only what was disputed: the fees it names (or, naming none, its open fees up to
+      // the amount disputed), or credit on the invoices it names up to that amount.
+      const disputed = Number(evidence.amount ?? 0);
+      const open = invoices.filter(i => i.openCents > 0n).sort((x, y) => x.issuedAt.localeCompare(y.issuedAt));
+      const fees = open.filter(i => i.kind === 'fee' || i.kind === 'interest');
+      let left = disputed > 0 ? disputed : Infinity;
+      const done: ExecResult[] = [];
+      if (answer === 'waive fees') {
+        const named = fees.filter(i => refs.includes(i.id));
+        for (const inv of named.length ? named : fees) {
+          if (!named.length && Number(inv.openCents) > left) continue;
+          done.push(waiveFee(tx, who, inv.id, plan));
+          left -= Number(inv.openCents);
+        }
+      } else {
+        for (const inv of open.filter(i => refs.includes(i.id))) {
+          const cents = Math.min(Number(inv.openCents), left);
+          if (cents <= 0) break;
+          done.push(creditInvoice(tx, who, inv.id, cents, plan));
+          left -= cents;
+        }
+      }
       return done.map(r => r.summary).join('; ') || 'nothing to adjust';
     }
     case 'refund_release': {

@@ -73,6 +73,7 @@ export const DOMAINS = {
       open_credit_notes: { type: 'number', doc: 'credit notes issued to this counterparty and not yet netted (cents)' },
       open_dispute: { type: 'bool', doc: 'there is an open dispute on this balance' },
       recent_return: { type: 'bool', doc: 'a debit was returned in the last 14 days' },
+      bank_change_recent: { type: 'bool', doc: 'the counterparty asked to change its bank account in the last 30 days (a return may be our debit hitting the old account)' },
       notices_last_30d: { type: 'number', doc: 'collection notices already sent in the last 30 days' },
     },
   },

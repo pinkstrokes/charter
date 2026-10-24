@@ -30,6 +30,7 @@ const ASK_SEAT: Record<string, string> = {
   identify_payer: 'cash_app',
   unapplied_cash: 'cash_app',
   misapplied: 'cash_app',
+  set_aside: 'cash_app',
   royalty_decrease: 'cash_app',
   unknown_report: 'cash_app',
   collections: 'collections',
