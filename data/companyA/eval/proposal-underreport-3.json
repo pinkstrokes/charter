@@ -337,7 +337,7 @@
     "rationale": "The revised-report rule was split so that minor revisions (like bulk-buy noise) auto-accept while those paired with a >5% supply gap still escalate to a consultant, matching all human overrides. All other existing audit rules were preserved because they correctly require two independent signals before flagging.",
     "candidatesTried": 3,
     "candidatesPassed": 2,
-    "seconds": 0.4,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -402,6 +402,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T19:01:15.926Z"
+    "evaluatedAt": "2026-10-24T21:38:27.457Z"
   }
 }

@@ -49,31 +49,31 @@ Two other moments the judges can trigger themselves:
 | Six rules written by hand (three suspended) | 83.9% | 31 | 99.89% | yes |
 | Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 114 | 99.45% | no |
 
-By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher, and that ranking is exactly what Charter will not play to. On the locked eval split the 918 lines the learned desk hands to people instead were wrong 36 times when day 0 matched them alone, one in 25: day 0 clears the floor only by averaging that pattern into clean matches. Every rule earns its autonomy on its own record, so a pattern wrong 4% of the time never acts alone, whatever the average around it.
+By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher, and that ranking is exactly what Charter will not play to. On the locked eval split the 918 lines the learned desk hands to people instead were wrong 36 times when day 0 matched them alone, one in 25: day 0 clears the floor only by averaging that pattern into clean matches. Every rule earns its autonomy on its own record, so a pattern wrong 4% of the time never acts alone, whatever the average around it. Month by month (`tools/benchrec/monthly.ts`), the learned desk clears the floor in each of the eval split's three full months (its worst, April, 99.90%); day 0 misses it in April and May (99.75%, 99.77%) and clears it overall only because March and a late August batch were clean. Resampling whole days, day 0 falls under the floor in 28% of resamples and the learned desk in 0.1%. The price is 2.9 points of match rate: by the benchmark's own pick, day 0 still wins most resamples.
 
 ![BenchRec on the locked eval split: the learned desk, its day-0 rule, rules written by hand and the matcher shipped with the dataset; and how it learned, month by month](docs/img/p1_benchrec.png)
 
-**Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **312 of 317** payments, and the team was wrong on **4 of the 300** it settled without a person (95% upper bound 3.0%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
+**Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate, sometimes paying two invoices in one transfer; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **310 of 314** payments, and the team was wrong on **3 of the 304** it settled without a person (95% upper bound 2.5%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
 
 | Version | What it learned | Live from | Settled alone | Wrong when alone | Right |
 |---|---|---|---|---|---|
-| Day one | — | 1 Dec 2010 | 300 | 18 | 282 of 313 |
-| v2 | several sets fit and the reference names one for exactly its amount → that one | 2 Jan | 305 | 17 | 288 |
-| v3 | no set fits, but the reference names one open invoice → that invoice, even short | 16 Jan | 305 | 8 | 297 |
-| v4 | no set fits and the reference names an invoice already paid → a duplicate: ask | 3 Apr | 301 | 4 | 301 |
-| v5 | several sets fit and the remittance agrees with one → that one | 8 May | 306 | 4 | 306 |
+| Day one | — | 1 Dec 2010 | 301 | 18 | 283 of 313 |
+| v2 | the invoices a reference names come first, even when the amount is short or several sets fit; when several fit, the one the payer confirms | 2 Jan | 313 | 17 | 296 |
+| v3 | no set fits, but the reference names open invoices → those, even short; an exact match only when its reference is not already paid | 16 Jan | 313 | 7 | 306 |
+| v4 | a reference to an invoice already paid, or several sets that fit with nothing to choose between them → ask: it may be a duplicate | 3 Apr | 306 | 2 | 309 |
+| v5 | several sets fit exactly and the reference names open invoices → those | 17 Apr | 306 | 2 | 309 |
 
 | Month | Settled without a person | Questions to people | Right when settled alone |
 |---|---|---|---|
 | Dec 2010 | 72% | 5 | 92% (12/13) |
-| Jan 2011 | 94% | 31 | 95.7% (178/186) |
-| Feb 2011 | 99% | 5 | 99.4% (156/157) |
-| Mar 2011 | 99% | 4 | 98.9% (187/189) |
-| Apr 2011 | 98% | 10 | 98.5% (203/206) |
-| May 2011 | 97% | 10 | 99.5% (200/201) |
-| Jun 2011 | 99% | 4 | 99.6% (244/245) |
+| Jan 2011 | 92% | 21 | 96.8% (181/187) |
+| Feb 2011 | 100% | 4 | 98.7% (156/158) |
+| Mar 2011 | 100% | 2 | 98.9% (188/190) |
+| Apr 2011 | 98% | 7 | 99.0% (202/204) |
+| May 2011 | 98% | 7 | 100% (202/202) |
+| Jun 2011 | 99% | 4 | 99.6% (238/239) |
 
-Eleven times, nine of them in January, a later payment exposed an earlier application as a guess and the team undid it. The pennies bank charges leave are not chased: every Monday the cash seat lists them and the controller writes them off (112 invoices, £1,188.21 over seven months).
+Twice — on 2 January and again in June — a later payment exposed an earlier application as a guess and the team undid it; after the first, the team learned that the invoices a payer names come first, and stopped guessing over them. The pennies bank charges leave are not chased: every Monday the cash seat lists them and the controller writes them off (99 invoices, £1,052.42 over seven months).
 
 ![Company B month by month: settled alone 72% to 99%, questions to people while it learned in January, then four to ten a month](docs/img/b6_proof.png)
 
@@ -88,7 +88,7 @@ Eleven times, nine of them in January, a later payment exposed an earlier applic
 | Payables | duplicate bills rejected by the clerk's own skill | 0/2 → 2/2 | the controller's answer on a third duplicate in April, after the internal auditor had caught the first two |
 | All desks | no money moves while a bank change is unverified | P-1, P-2, P-3 | one debit returned in April |
 
-Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicate bills was stopped and none paid. The internal auditor qualified February and March (two duplicate liabilities of $34,800 and $10,750, and a royalty billed $59.03 too high) and gave clean opinions for January, April and May; all five months are closed into certificates anchored in git. Seven times a person's spot-check verdict contradicted a rule with a clean record; asked to look again, people called four of them slips and stood by three, and a later run of slips no longer teaches a desk to ask more. Settled without a person on the test and live splits: under-reporting 6 wrong of 111 (95% upper bound 10%), collections 3 of 30, payables 2 of 23, cash 1 of 9. What it still misses: store 31's milder under-reporting in June (0 of 3 live weeks: its cash share ran 11–13 points under its own history, while every week people taught it ran 20 or more under), and short payments, which A's franchisees pay without an invoice number in the reference (none of 3 applied where meant).
+Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicate bills was stopped and none paid. The internal auditor qualified February and March (two duplicate liabilities of $34,800 and $10,750, and a royalty billed $59.03 too high) and gave clean opinions for January, April and May; all five months are closed into certificates anchored in git. Seven times a person's spot-check verdict contradicted a rule with a clean record; asked to look again, people called four of them slips and stood by three, and a later run of slips no longer teaches a desk to ask more. Settled without a person on the test and live splits: under-reporting 6 wrong of 111 (95% upper bound 10%), collections 3 of 30, payables 2 of 23, cash 1 of 9. What it still misses: store 31's milder under-reporting in June (0 of 3 live weeks: its cash share ran 11–13 points under its own history, while every week people taught it ran 20 or more under), and short payments that name their invoice (1 of 3 applied where meant): A's cash desk ran its day-one skill, which does not read references, until June, and its people labeled only one of the other two, then contradicted that label in a spot check.
 
 **Skills travel; the target decides.** A skill crosses between companies as a program and a few numbers from its proof; no record crosses, and the receiving company decides.
 
@@ -96,15 +96,16 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 
 | Company C | Started from B's skill | Started from scratch |
 |---|---|---|
-| First three months: wrong when it settled alone | **3** of 357 | 22 of 342 |
-| First three months: questions to people | **12** | 33 |
+| First three months: wrong when it settled alone | **1** of 337 | 21 of 334 |
+| Seven months: wrong when it settled alone | **18** of 1,124 | 31 of 1,058 |
+| Seven months: questions to people | **95** | 167 |
 | New versions it needed | 2 | 6 |
-| Locked test split: cash landed where the payer meant | **325** of 329 | 318 of 329 |
-| Test and live splits: wrong when it settled alone | **4** of 324 (95% upper bound 2.8%) | 11 of 313 (5.8%) |
+| Locked test split: cash landed where the payer meant | **315** of 324 | 311 of 324 |
+| Test and live splits: wrong when it settled alone | **5** of 305 (95% upper bound 3.4%) | 8 of 290 (4.9%) |
 
 ![Company C's cash skill: version 2 learned at company B and ratified by C's controller, versions 3 and 4 learned from C's own answers](docs/img/c1_sister.png)
 
-*A skill that does not fit is refused.* Company B's cash skill was also offered to company A, whose history is six months long: A's gate replayed it, whole and rule by rule at every place in A's own program, over A's own history, and refused every variant before a person saw it. The whole program would get 4 of A's labeled cases wrong, and none of its rules handles a case A's people taught: A's franchisees do not write invoice numbers in their payment references, so B's best lesson, "a payment naming one open invoice goes there even when short", never fires at A.
+*A skill that does not fit is refused.* Company B's cash skill was also offered to company A, whose history is six months long: A's gate replayed it, whole and rule by rule at every place in A's own program, over A's own history, and refused every variant before a person saw it. The whole program would get 3 of A's labeled cases wrong, and none of its rules handles the case A's people had just taught. B's best lesson, a payment naming one open invoice goes there even when short, is what A's two misapplied short payments needed; but A had no clean evidence for it (one of the two was never checked, the other's correction was contradicted by a later spot check), and a rule takes over work only on agreeing cases of the receiving company's own.
 
 **Attacks.** 36 attack emails: Charter gave the attacker nothing (0/36), with the people played as an attacker would hope — a careless controller tries to release every refund and endorse every bank change. Tool-using agents on the same emails: qwen3.8-max 13/36, kimi-k3 8/36, glm-5.3 4/36 with plain prompts; 0, 2 and 1 with careful prompts.
 

@@ -213,7 +213,7 @@
     "rationale": "Added a rule to reject bills with a very high duplicate score (>=0.9) and raised the over-billing rejection threshold above 5% to correctly reject short shipments while still approving authorized price increases like Golden Tapioca's 8% variance. The hold exception at >2% remains to catch smaller discrepancies that need review.",
     "candidatesTried": 8,
     "candidatesPassed": 6,
-    "seconds": 0.3,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -273,6 +273,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T19:02:31.097Z"
+    "evaluatedAt": "2026-10-24T21:39:06.663Z"
   }
 }

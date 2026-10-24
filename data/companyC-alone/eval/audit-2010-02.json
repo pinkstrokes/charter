@@ -27,7 +27,7 @@
   {
    "id": "HUMAN_ONLY",
    "name": "only people endorsed bank changes, activated knowledge or closed books",
-   "population": 36,
+   "population": 34,
    "exceptions": 0,
    "examples": []
   },
@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 3733,
+   "population": 3718,
    "exceptions": 0,
    "examples": []
   },

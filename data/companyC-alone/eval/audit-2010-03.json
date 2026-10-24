@@ -27,7 +27,7 @@
   {
    "id": "HUMAN_ONLY",
    "name": "only people endorsed bank changes, activated knowledge or closed books",
-   "population": 91,
+   "population": 74,
    "exceptions": 0,
    "examples": []
   },
@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 5426,
+   "population": 5386,
    "exceptions": 0,
    "examples": []
   },
@@ -81,33 +81,33 @@
    "bookCents": 29224062,
    "tolerableCents": 1461203,
    "intervalCents": 487068,
-   "sampleSize": 57,
+   "sampleSize": 58,
    "items": [
     {
-     "id": "499520",
+     "id": "499519",
      "kind": "invoice:trade",
-     "book": 79640,
-     "audited": 79640,
+     "book": 6120,
+     "audited": 6120,
      "notes": [
-      "traced to trade_invoice:499520, hash verified"
+      "traced to trade_invoice:499519, hash verified"
      ]
     },
     {
-     "id": "499524",
+     "id": "499523",
      "kind": "invoice:trade",
-     "book": 194352,
-     "audited": 194352,
+     "book": 194580,
+     "audited": 194580,
      "notes": [
-      "traced to trade_invoice:499524, hash verified"
+      "traced to trade_invoice:499523, hash verified"
      ]
     },
     {
-     "id": "499660",
+     "id": "499640",
      "kind": "invoice:trade",
-     "book": 30504,
-     "audited": 30504,
+     "book": 33568,
+     "audited": 33568,
      "notes": [
-      "traced to trade_invoice:499660, hash verified"
+      "traced to trade_invoice:499640, hash verified"
      ]
     },
     {
@@ -117,6 +117,15 @@
      "audited": 151880,
      "notes": [
       "traced to trade_invoice:499769, hash verified"
+     ]
+    },
+    {
+     "id": "499876",
+     "kind": "invoice:trade",
+     "book": 54190,
+     "audited": 54190,
+     "notes": [
+      "traced to trade_invoice:499876, hash verified"
      ]
     },
     {
@@ -138,12 +147,12 @@
      ]
     },
     {
-     "id": "499982",
+     "id": "499972",
      "kind": "invoice:trade",
-     "book": 29928,
-     "audited": 29928,
+     "book": 77379,
+     "audited": 77379,
      "notes": [
-      "traced to trade_invoice:499982, hash verified"
+      "traced to trade_invoice:499972, hash verified"
      ]
     },
     {

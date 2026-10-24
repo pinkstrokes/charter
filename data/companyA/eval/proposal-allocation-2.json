@@ -58,7 +58,7 @@
         },
         "then": {
           "decide": "apply_unique",
-          "note": "Unique exact subset confirmed by a second independent signal (reference, remittance, or simple peer history)"
+          "note": "unique exact match with confirmation or few open items"
         }
       },
       {
@@ -76,12 +76,13 @@
         },
         "then": {
           "decide": "apply_by_terms",
-          "note": "No subset matches the amount; apply by contract order"
+          "note": "no subset matches; apply by contract order"
         }
       }
     ],
     "otherwise": {
-      "decide": "leave_unapplied_ask"
+      "decide": "leave_unapplied_ask",
+      "note": "ambiguous allocation requires manual review"
     }
   },
   "proof": {
@@ -169,29 +170,29 @@
     "robustness": 0.85,
     "alternatives": [
       {
-        "origin": "qwen3.8-max style 1, unsupported rules removed by replay, thresholds centred by replay",
+        "origin": "qwen3.8-max style 2, unsupported rules removed by replay, thresholds centred by replay",
         "robustness": 0.85,
         "newLeads": 0,
         "complexity": 19
       },
       {
-        "origin": "qwen3.8-max style 0",
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
         "robustness": 0.85,
         "newLeads": 0,
-        "complexity": 21
+        "complexity": 27
       },
       {
-        "origin": "qwen3.8-max style 0, thresholds centred by replay",
+        "origin": "qwen3.8-max style 2, constants tuned by replay",
         "robustness": 0.85,
         "newLeads": 0,
-        "complexity": 21
+        "complexity": 27
       }
     ],
-    "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
-    "rationale": "The updated skill requires two independent signals before auto-applying: an exact unique subset plus confirmation from a matching reference, consistent remittance, or a simple account history (open_items <= 2), which correctly holds ambiguous cases like WIRE-260105-4137 and WIRE-260512-5321 for review. It also explicitly blocks application when the payment reference points to an already-paid invoice and safely routes multi-solution cases with consistent remittance to apply_by_terms.",
-    "candidatesTried": 9,
-    "candidatesPassed": 7,
-    "seconds": 11,
+    "origin": "qwen3.8-max style 2, unsupported rules removed by replay",
+    "rationale": "Added guards against auto-applying when the payment reference is already paid, when there is no exact match, or when multiple invoices are open without any confirming signal like remittance or a matching reference. Safe takeovers only occur when remittance_consistent or reference_matches_open confirms intent for ambiguous cases, otherwise we ask.",
+    "candidatesTried": 12,
+    "candidatesPassed": 9,
+    "seconds": 11.2,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -276,6 +277,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T19:08:10.431Z"
+    "evaluatedAt": "2026-10-24T21:41:04.562Z"
   }
 }

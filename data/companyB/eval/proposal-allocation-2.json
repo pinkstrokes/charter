@@ -48,19 +48,48 @@
             {
               "op": "feat",
               "name": "reference_names_open"
-            },
-            {
-              "op": "not",
-              "a": {
-                "op": "feat",
-                "name": "reference_paid"
-              }
             }
           ]
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "single inexact match but reference names one open invoice"
+          "note": "single inexact match but reference names an open invoice"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "or",
+              "args": [
+                {
+                  "op": "feat",
+                  "name": "remittance_consistent"
+                },
+                {
+                  "op": "feat",
+                  "name": "reference_matches_open"
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "payer confirmed which invoices among several matching subsets"
         }
       },
       {
@@ -87,25 +116,25 @@
           "args": [
             {
               "op": "cmp",
-              "c": "ge",
+              "c": "gt",
               "a": {
                 "op": "feat",
                 "name": "solution_count"
               },
               "b": {
                 "op": "num",
-                "v": 2
+                "v": 1
               }
             },
             {
               "op": "feat",
-              "name": "reference_matches_open"
+              "name": "reference_names_open"
             }
           ]
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "multiple subsets fit but payment reference matches one open invoice exactly"
+          "note": "several subsets fit but reference names open invoices"
         }
       },
       {
@@ -129,8 +158,7 @@
     ],
     "otherwise": {
       "decide": "leave_unapplied_ask",
-      "askRole": "controller",
-      "note": "several invoice sets explain this amount without payer confirmation"
+      "note": "several invoice sets explain this amount with no payer guidance"
     }
   },
   "proof": {
@@ -145,8 +173,8 @@
       "handled": [
         "receipt:BACS-536784"
       ],
-      "optionalFixed": 3,
-      "optionalTotal": 6,
+      "optionalFixed": 7,
+      "optionalTotal": 7,
       "cases": [
         {
           "subject": "receipt:BACS-536784",
@@ -157,9 +185,9 @@
         },
         {
           "subject": "receipt:BACS-536688",
-          "label": "apply_by_terms",
+          "label": "apply_to_reference",
           "source": "ask #2 answered by controller:Dana",
-          "reason": "apply to the oldest",
+          "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
@@ -185,65 +213,76 @@
         },
         {
           "subject": "receipt:BACS-536610",
-          "label": "apply_by_terms",
+          "label": "apply_unique",
           "source": "ask #14 answered by controller:Dana",
-          "reason": "apply to the oldest",
+          "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-536750",
-          "label": "apply_by_terms",
+          "label": "apply_to_reference",
           "source": "ask #15 answered by controller:Dana",
-          "reason": "apply to the oldest",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536366",
+          "label": "apply_unique",
+          "source": "ask #21 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 15,
+      "n": 16,
       "correctBefore": 8,
-      "correctAfter": 12,
+      "correctAfter": 16,
       "fixed": [
+        "receipt:BACS-536688",
         "receipt:BACS-536753",
         "receipt:BACS-536791",
         "receipt:BACS-536601",
+        "receipt:BACS-536610",
+        "receipt:BACS-536750",
+        "receipt:BACS-536366",
         "receipt:BACS-536784"
       ],
       "broken": [],
       "asksAgain": [],
-      "newAlone": 3
+      "newAlone": 7
     },
     "budget": null,
     "changed": {
       "n": 0,
-      "total": 27,
+      "total": 28,
       "rate": 0,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 29,
-    "robustness": 0.8,
+    "complexity": 35,
+    "robustness": 1,
     "alternatives": [
       {
         "origin": "qwen3.8-max style 0",
-        "robustness": 0.6,
+        "robustness": 0.8125,
         "newLeads": 0,
-        "complexity": 21
+        "complexity": 29
       }
     ],
-    "origin": "qwen3.8-max style 1",
-    "rationale": "Added a rule so that when only one subset fits inexactly but the payment reference names an open invoice, we apply to that reference instead of blindly using the approximate subset. For multiple matching subsets, we now require explicit payer confirmation (reference_matches_open or remittance_consistent) before applying, and otherwise escalate to the controller.",
-    "candidatesTried": 3,
+    "origin": "qwen3.8-max style 2",
+    "rationale": "Added rules so that when solution_count=1 is inexact but reference_names_open, we apply_to_reference (fixing BACS-536784), and when multiple solutions exist we only apply if the payer indicated which via remittance_consistent, reference_matches_open, or reference_names_open (satisfying the safety rule and the controller's past decisions).",
+    "candidatesTried": 2,
     "candidatesPassed": 2,
-    "seconds": 0.2,
+    "seconds": 38.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
         "payment_prompt": {
-          "n": 13,
+          "n": 14,
           "current": 11,
-          "candidate": 12
+          "candidate": 13
         },
         "payment_parent": {
           "n": 3,
@@ -252,7 +291,7 @@
         },
         "payment_two_invoices": {
           "n": 2,
-          "current": 2,
+          "current": 0,
           "candidate": 2
         }
       },
@@ -260,7 +299,7 @@
         "payment_prompt": {
           "n": 4,
           "current": 2,
-          "candidate": 3
+          "candidate": 4
         }
       },
       "val": {
@@ -276,11 +315,11 @@
         },
         "payment_two_invoices": {
           "n": 1,
-          "current": 1,
+          "current": 0,
           "candidate": 1
         }
       }
     },
-    "evaluatedAt": "2026-10-24T18:29:16.427Z"
+    "evaluatedAt": "2026-10-24T21:04:55.948Z"
   }
 }

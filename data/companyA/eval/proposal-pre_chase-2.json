@@ -117,7 +117,7 @@
     "rationale": "Added a rule to hold collection when an announced payment is greater than zero, reflecting the controller's guidance that trusted in-transit payments warrant a hold. This single addition fixes the F08 mistake while preserving the safety rule and all previously labeled cases.",
     "candidatesTried": 3,
     "candidatesPassed": 3,
-    "seconds": 0.3,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -157,6 +157,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T18:57:23.140Z"
+    "evaluatedAt": "2026-10-24T21:37:10.764Z"
   }
 }

@@ -27,7 +27,7 @@
   {
    "id": "HUMAN_ONLY",
    "name": "only people endorsed bank changes, activated knowledge or closed books",
-   "population": 99,
+   "population": 80,
    "exceptions": 0,
    "examples": []
   },
@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 5279,
+   "population": 5202,
    "exceptions": 0,
    "examples": []
   },
@@ -63,8 +63,13 @@
    "id": "CHANGE",
    "name": "every new skill version and promoted policy passed its gate before going live",
    "population": 1,
-   "exceptions": 0,
-   "examples": []
+   "exceptions": 1,
+   "examples": [
+    {
+     "subject": "allocation@2",
+     "detail": "allocation@2 went live without a passing proof"
+    }
+   ]
   },
   {
    "id": "DECISIONS",
@@ -81,15 +86,15 @@
    "bookCents": 29224062,
    "tolerableCents": 1461203,
    "intervalCents": 487068,
-   "sampleSize": 57,
+   "sampleSize": 58,
    "items": [
     {
-     "id": "499520",
+     "id": "499922",
      "kind": "invoice:trade",
-     "book": 79640,
-     "audited": 79640,
+     "book": 12911,
+     "audited": 12911,
      "notes": [
-      "traced to trade_invoice:499520, hash verified"
+      "traced to trade_invoice:499922, hash verified"
      ]
     },
     {
@@ -102,12 +107,12 @@
      ]
     },
     {
-     "id": "499660",
+     "id": "499640",
      "kind": "invoice:trade",
-     "book": 30504,
-     "audited": 30504,
+     "book": 33568,
+     "audited": 33568,
      "notes": [
-      "traced to trade_invoice:499660, hash verified"
+      "traced to trade_invoice:499640, hash verified"
      ]
     },
     {
@@ -117,6 +122,15 @@
      "audited": 151880,
      "notes": [
       "traced to trade_invoice:499769, hash verified"
+     ]
+    },
+    {
+     "id": "499876",
+     "kind": "invoice:trade",
+     "book": 54190,
+     "audited": 54190,
+     "notes": [
+      "traced to trade_invoice:499876, hash verified"
      ]
     },
     {
@@ -138,12 +152,12 @@
      ]
     },
     {
-     "id": "499982",
+     "id": "499972",
      "kind": "invoice:trade",
-     "book": 29928,
-     "audited": 29928,
+     "book": 77379,
+     "audited": 77379,
      "notes": [
-      "traced to trade_invoice:499982, hash verified"
+      "traced to trade_invoice:499972, hash verified"
      ]
     },
     {
@@ -300,21 +314,21 @@
      ]
     },
     {
-     "id": "501442",
+     "id": "501464",
      "kind": "invoice:trade",
-     "book": 51795,
-     "audited": 51795,
+     "book": 20556,
+     "audited": 20556,
      "notes": [
-      "traced to trade_invoice:501442, hash verified"
+      "traced to trade_invoice:501464, hash verified"
      ]
     },
     {
-     "id": "501473",
+     "id": "501480",
      "kind": "invoice:trade",
-     "book": 460730,
-     "audited": 460730,
+     "book": 86400,
+     "audited": 86400,
      "notes": [
-      "traced to trade_invoice:501473, hash verified"
+      "traced to trade_invoice:501480, hash verified"
      ]
     },
     {
@@ -612,6 +626,6 @@
    "upperLimitCents": 0
   }
  ],
- "opinion": "clean",
+ "opinion": "qualified",
  "method": "monetary-unit sampling at 95% confidence, tolerable misstatement 5% of each population, Poisson factors; controls tested over 100% of the population"
 }

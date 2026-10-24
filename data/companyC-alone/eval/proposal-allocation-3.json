@@ -52,7 +52,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "one subset within tolerance and reference names an open invoice"
+          "note": "one subset within tolerance but reference names an open invoice; trust the payer's reference"
         }
       },
       {
@@ -95,7 +95,7 @@
             },
             {
               "op": "cmp",
-              "c": "lt",
+              "c": "le",
               "a": {
                 "op": "feat",
                 "name": "reference_gap_cents"
@@ -109,7 +109,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice that was overpaid"
+          "note": "no subset matches but reference names an open invoice and payment covers it"
         }
       },
       {
@@ -143,10 +143,9 @@
     "parent": "allocation@2",
     "lesson": {
       "subjects": [
-        "receipt:BACS-492092",
         "receipt:BACS-492737"
       ],
-      "required": 2,
+      "required": 1,
       "handled": [
         "receipt:BACS-492737"
       ],
@@ -154,23 +153,16 @@
       "optionalTotal": 0,
       "cases": [
         {
-          "subject": "receipt:BACS-492092",
-          "label": "leave_unapplied_ask",
-          "source": "ask #120 answered by controller:Dana",
-          "reason": "landed on 492251, the customer paid 492092",
-          "handled": false
-        },
-        {
           "subject": "receipt:BACS-492737",
           "label": "apply_to_reference",
-          "source": "ask #127 answered by controller:Dana",
+          "source": "ask #124 answered by controller:Dana",
           "reason": "landed on 492792, the customer paid 492737",
           "handled": true
         }
       ]
     },
     "labeled": {
-      "n": 34,
+      "n": 33,
       "correctBefore": 32,
       "correctAfter": 33,
       "fixed": [
@@ -183,20 +175,27 @@
     "budget": null,
     "changed": {
       "n": 2,
-      "total": 95,
-      "rate": 0.021052631578947368,
+      "total": 94,
+      "rate": 0.02127659574468085,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
     "complexity": 30,
-    "robustness": 0.9705882352941176,
-    "alternatives": [],
+    "robustness": 1,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 44
+      }
+    ],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Inserted a rule before the generic solution_count=1 fallback so that when one approximate subset exists and the payment reference names an open invoice, we apply to that reference instead of blindly applying the ambiguous subset. The existing solution_count=0 rules already route BACS-492092 (reference_names_open=false) to leave_unapplied_ask correctly.",
+    "rationale": "Added a rule before the generic solution_count=1 fallback: when there is one inexact subset but the reference names an open invoice, trust the payer's reference and apply_to_reference. This fixes BACS-492737 where the controller confirmed the customer intended to pay the referenced invoice despite the near-match subset.",
     "candidatesTried": 3,
-    "candidatesPassed": 1,
-    "seconds": 14.4,
+    "candidatesPassed": 2,
+    "seconds": 13.9,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -248,7 +247,7 @@
           "candidate": 27
         },
         "payment_bank_charge": {
-          "n": 6,
+          "n": 5,
           "current": 2,
           "candidate": 3
         },
@@ -256,6 +255,11 @@
           "n": 7,
           "current": 7,
           "candidate": 7
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 1,
+          "current": 0,
+          "candidate": 0
         },
         "payment_on_account_balance": {
           "n": 2,
@@ -295,7 +299,7 @@
           "candidate": 2
         },
         "payment_bank_charge": {
-          "n": 4,
+          "n": 3,
           "current": 2,
           "candidate": 2
         },
@@ -311,6 +315,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T19:57:01.742Z"
+    "evaluatedAt": "2026-10-24T21:04:54.654Z"
   }
 }

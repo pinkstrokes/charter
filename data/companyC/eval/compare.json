@@ -12,95 +12,95 @@
     },
     {
      "month": "2010-01",
-     "decisions": 168,
+     "decisions": 166,
      "aloneShare": 0.988,
      "questions": 4,
      "wrongAlone": 1,
-     "gradedAlone": 166
+     "gradedAlone": 164
     },
     {
      "month": "2010-02",
-     "decisions": 184,
-     "aloneShare": 0.973,
-     "questions": 8,
-     "wrongAlone": 2,
-     "gradedAlone": 179
+     "decisions": 180,
+     "aloneShare": 0.894,
+     "questions": 23,
+     "wrongAlone": 0,
+     "gradedAlone": 161
     },
     {
      "month": "2010-03",
-     "decisions": 204,
-     "aloneShare": 0.985,
-     "questions": 8,
-     "wrongAlone": 3,
-     "gradedAlone": 201
+     "decisions": 197,
+     "aloneShare": 0.934,
+     "questions": 17,
+     "wrongAlone": 5,
+     "gradedAlone": 184
     },
     {
      "month": "2010-04",
-     "decisions": 227,
-     "aloneShare": 0.987,
-     "questions": 5,
-     "wrongAlone": 6,
-     "gradedAlone": 224
+     "decisions": 220,
+     "aloneShare": 0.923,
+     "questions": 21,
+     "wrongAlone": 5,
+     "gradedAlone": 203
     },
     {
      "month": "2010-05",
-     "decisions": 209,
-     "aloneShare": 0.99,
-     "questions": 2,
+     "decisions": 201,
+     "aloneShare": 0.93,
+     "questions": 15,
      "wrongAlone": 4,
-     "gradedAlone": 207
+     "gradedAlone": 187
     },
     {
      "month": "2010-06",
-     "decisions": 231,
-     "aloneShare": 0.978,
-     "questions": 6,
-     "wrongAlone": 1,
-     "gradedAlone": 226
+     "decisions": 225,
+     "aloneShare": 0.947,
+     "questions": 15,
+     "wrongAlone": 3,
+     "gradedAlone": 213
     }
    ],
    "versions": [
     {
      "key": "allocation@1",
      "liveFrom": null,
-     "alone": 309,
-     "wrong": 25,
-     "right": 284,
-     "n": 328
+     "alone": 301,
+     "wrong": 21,
+     "right": 280,
+     "n": 323
     },
     {
      "key": "allocation@2",
      "liveFrom": "2009-12-01",
-     "alone": 314,
-     "wrong": 6,
-     "right": 309,
-     "n": 328
+     "alone": 305,
+     "wrong": 5,
+     "right": 302,
+     "n": 323
     },
     {
      "key": "allocation@3",
-     "liveFrom": "2010-02-07",
-     "alone": 327,
-     "wrong": 6,
-     "right": 322,
-     "n": 328
+     "liveFrom": "2010-05-09",
+     "alone": 305,
+     "wrong": 5,
+     "right": 302,
+     "n": 323
     },
     {
      "key": "allocation@4",
-     "liveFrom": "2010-03-07",
-     "alone": 327,
-     "wrong": 5,
-     "right": 323,
-     "n": 328
+     "liveFrom": "2010-06-13",
+     "alone": 303,
+     "wrong": 3,
+     "right": 303,
+     "n": 323
     }
    ],
    "landed": {
-    "right": 325,
-    "n": 329
+    "right": 315,
+    "n": 324
    },
    "knowingWhenToAsk": {
-    "handledAlone": 324,
-    "wrong": 4,
-    "upper95": 0.028027502999653762
+    "handledAlone": 305,
+    "wrong": 5,
+    "upper95": 0.0341581941162913
    }
   },
   "data/companyC-alone": {
@@ -115,119 +115,119 @@
     },
     {
      "month": "2010-01",
-     "decisions": 168,
+     "decisions": 166,
      "aloneShare": 0.988,
      "questions": 6,
-     "wrongAlone": 13,
-     "gradedAlone": 166
-    },
-    {
-     "month": "2010-02",
-     "decisions": 184,
-     "aloneShare": 0.891,
-     "questions": 27,
-     "wrongAlone": 8,
+     "wrongAlone": 12,
      "gradedAlone": 164
     },
     {
+     "month": "2010-02",
+     "decisions": 180,
+     "aloneShare": 0.878,
+     "questions": 28,
+     "wrongAlone": 8,
+     "gradedAlone": 158
+    },
+    {
      "month": "2010-03",
-     "decisions": 204,
-     "aloneShare": 0.931,
-     "questions": 19,
-     "wrongAlone": 3,
-     "gradedAlone": 190
+     "decisions": 197,
+     "aloneShare": 0.883,
+     "questions": 28,
+     "wrongAlone": 5,
+     "gradedAlone": 174
     },
     {
      "month": "2010-04",
-     "decisions": 226,
-     "aloneShare": 0.942,
-     "questions": 18,
-     "wrongAlone": 7,
-     "gradedAlone": 213
+     "decisions": 219,
+     "aloneShare": 0.826,
+     "questions": 44,
+     "wrongAlone": 3,
+     "gradedAlone": 181
     },
     {
      "month": "2010-05",
-     "decisions": 209,
-     "aloneShare": 0.957,
-     "questions": 10,
-     "wrongAlone": 4,
-     "gradedAlone": 200
+     "decisions": 201,
+     "aloneShare": 0.841,
+     "questions": 32,
+     "wrongAlone": 0,
+     "gradedAlone": 169
     },
     {
      "month": "2010-06",
-     "decisions": 230,
-     "aloneShare": 0.965,
-     "questions": 11,
-     "wrongAlone": 4,
-     "gradedAlone": 222
+     "decisions": 224,
+     "aloneShare": 0.893,
+     "questions": 29,
+     "wrongAlone": 2,
+     "gradedAlone": 200
     }
    ],
    "versions": [
     {
      "key": "allocation@1",
      "liveFrom": null,
-     "alone": 308,
-     "wrong": 31,
-     "right": 277,
-     "n": 326
+     "alone": 296,
+     "wrong": 23,
+     "right": 273,
+     "n": 321
     },
     {
      "key": "allocation@2",
      "liveFrom": "2010-01-10",
-     "alone": 308,
-     "wrong": 27,
-     "right": 281,
-     "n": 326
+     "alone": 296,
+     "wrong": 20,
+     "right": 276,
+     "n": 321
     },
     {
      "key": "allocation@3",
      "liveFrom": "2010-01-17",
-     "alone": 308,
-     "wrong": 21,
-     "right": 287,
-     "n": 326
+     "alone": 296,
+     "wrong": 18,
+     "right": 278,
+     "n": 321
     },
     {
      "key": "allocation@4",
      "liveFrom": "2010-02-07",
-     "alone": 314,
+     "alone": 296,
      "wrong": 10,
-     "right": 304,
-     "n": 326
+     "right": 286,
+     "n": 321
     },
     {
      "key": "allocation@5",
-     "liveFrom": "2010-02-21",
-     "alone": 310,
-     "wrong": 6,
-     "right": 308,
-     "n": 326
+     "liveFrom": "2010-02-14",
+     "alone": 296,
+     "wrong": 10,
+     "right": 286,
+     "n": 321
     },
     {
      "key": "allocation@6",
      "liveFrom": "2010-02-28",
-     "alone": 310,
-     "wrong": 6,
-     "right": 308,
-     "n": 326
+     "alone": 291,
+     "wrong": 5,
+     "right": 291,
+     "n": 321
     },
     {
      "key": "allocation@7",
-     "liveFrom": "2010-03-07",
-     "alone": 310,
-     "wrong": 6,
-     "right": 308,
-     "n": 326
+     "liveFrom": "2010-04-25",
+     "alone": 272,
+     "wrong": 3,
+     "right": 276,
+     "n": 321
     }
    ],
    "landed": {
-    "right": 318,
-    "n": 329
+    "right": 311,
+    "n": 324
    },
    "knowingWhenToAsk": {
-    "handledAlone": 313,
-    "wrong": 11,
-    "upper95": 0.05750096881743923
+    "handledAlone": 290,
+    "wrong": 8,
+    "upper95": 0.04922309102215695
    }
   }
  }

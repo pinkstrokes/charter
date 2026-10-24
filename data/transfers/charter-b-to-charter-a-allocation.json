@@ -9,10 +9,26 @@
             "args": [
               {
                 "op": "cmp",
-                "c": "eq",
+                "c": "gt",
                 "a": {
                   "op": "feat",
                   "name": "solution_count"
+                },
+                "b": {
+                  "op": "num",
+                  "v": 1
+                }
+              },
+              {
+                "op": "feat",
+                "name": "exact_match"
+              },
+              {
+                "op": "cmp",
+                "c": "eq",
+                "a": {
+                  "op": "feat",
+                  "name": "residual_cents"
                 },
                 "b": {
                   "op": "num",
@@ -21,13 +37,68 @@
               },
               {
                 "op": "feat",
-                "name": "reference_paid"
+                "name": "reference_names_open"
+              }
+            ]
+          },
+          "then": {
+            "decide": "apply_to_reference",
+            "note": "exact match among several subsets with zero residual and reference names open invoices; safe to apply by reference"
+          }
+        },
+        {
+          "when": {
+            "op": "and",
+            "args": [
+              {
+                "op": "not",
+                "a": {
+                  "op": "feat",
+                  "name": "reference_matches_open"
+                }
+              },
+              {
+                "op": "or",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "reference_paid"
+                  },
+                  {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "cmp",
+                        "c": "gt",
+                        "a": {
+                          "op": "feat",
+                          "name": "solution_count"
+                        },
+                        "b": {
+                          "op": "num",
+                          "v": 1
+                        }
+                      },
+                      {
+                        "op": "feat",
+                        "name": "reference_names_open"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "not",
+                "a": {
+                  "op": "feat",
+                  "name": "remittance_consistent"
+                }
               }
             ]
           },
           "then": {
             "decide": "leave_unapplied_ask",
-            "note": "no subset matches and the referenced invoice is already paid; likely a duplicate payment"
+            "note": "possible duplicate payment or ambiguous reference without payer confirmation"
           }
         },
         {
@@ -49,12 +120,19 @@
               {
                 "op": "feat",
                 "name": "exact_match"
+              },
+              {
+                "op": "not",
+                "a": {
+                  "op": "feat",
+                  "name": "reference_paid"
+                }
               }
             ]
           },
           "then": {
             "decide": "apply_unique",
-            "note": "one subset sums exactly to the receipt"
+            "note": "one subset sums exactly to the receipt and reference is not already paid"
           }
         },
         {
@@ -76,19 +154,48 @@
               {
                 "op": "feat",
                 "name": "reference_names_open"
-              },
-              {
-                "op": "not",
-                "a": {
-                  "op": "feat",
-                  "name": "reference_paid"
-                }
               }
             ]
           },
           "then": {
             "decide": "apply_to_reference",
-            "note": "single inexact match but reference names one open invoice"
+            "note": "single inexact match but reference names an open invoice"
+          }
+        },
+        {
+          "when": {
+            "op": "and",
+            "args": [
+              {
+                "op": "cmp",
+                "c": "gt",
+                "a": {
+                  "op": "feat",
+                  "name": "solution_count"
+                },
+                "b": {
+                  "op": "num",
+                  "v": 1
+                }
+              },
+              {
+                "op": "or",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "remittance_consistent"
+                  },
+                  {
+                    "op": "feat",
+                    "name": "reference_matches_open"
+                  }
+                ]
+              }
+            ]
+          },
+          "then": {
+            "decide": "apply_unique",
+            "note": "payer confirmed which invoices among several matching subsets"
           }
         },
         {
@@ -128,19 +235,12 @@
               {
                 "op": "feat",
                 "name": "reference_names_open"
-              },
-              {
-                "op": "not",
-                "a": {
-                  "op": "feat",
-                  "name": "reference_paid"
-                }
               }
             ]
           },
           "then": {
             "decide": "apply_to_reference",
-            "note": "no subset matches but payer named one open invoice; difference is likely bank charges"
+            "note": "no subset matches but reference names an open invoice"
           }
         },
         {
@@ -149,52 +249,25 @@
             "args": [
               {
                 "op": "cmp",
-                "c": "ge",
+                "c": "gt",
                 "a": {
                   "op": "feat",
                   "name": "solution_count"
                 },
                 "b": {
                   "op": "num",
-                  "v": 2
+                  "v": 1
                 }
               },
               {
                 "op": "feat",
-                "name": "reference_matches_open"
+                "name": "reference_names_open"
               }
             ]
           },
           "then": {
             "decide": "apply_to_reference",
-            "note": "multiple subsets fit but payment reference matches one open invoice exactly"
-          }
-        },
-        {
-          "when": {
-            "op": "and",
-            "args": [
-              {
-                "op": "cmp",
-                "c": "ge",
-                "a": {
-                  "op": "feat",
-                  "name": "solution_count"
-                },
-                "b": {
-                  "op": "num",
-                  "v": 2
-                }
-              },
-              {
-                "op": "feat",
-                "name": "remittance_consistent"
-              }
-            ]
-          },
-          "then": {
-            "decide": "apply_unique",
-            "note": "multiple subsets fit but the customer's remittance lists these invoices"
+            "note": "several subsets fit but reference names open invoices"
           }
         },
         {
@@ -218,28 +291,27 @@
       ],
       "otherwise": {
         "decide": "leave_unapplied_ask",
-        "askRole": "controller",
-        "note": "several invoice sets explain this amount without payer confirmation"
+        "note": "several invoice sets explain this amount with no payer guidance"
       }
     },
-    "programHash": "be381efd18e300f32796283fe6f9a49fc95f9f1f1f79d148bbb0f3376f097edb",
+    "programHash": "df3856c33906a83ce4e01b80cb96d45ab33849bc8611f4e6ab8fb4ec7ffdfadf",
     "source": {
       "company": "UK giftware wholesaler (UCI Online Retail II)",
       "skill": "allocation@5",
-      "labeledCases": 136,
-      "rightAfter": 134
+      "labeledCases": 123,
+      "rightAfter": 123
     }
   },
   "proof": {
     "gate": "fail",
     "transfer": true,
     "crossed": {
-      "programHash": "be381efd18e300f32796283fe6f9a49fc95f9f1f1f79d148bbb0f3376f097edb",
+      "programHash": "df3856c33906a83ce4e01b80cb96d45ab33849bc8611f4e6ab8fb4ec7ffdfadf",
       "source": {
         "company": "UK giftware wholesaler (UCI Online Retail II)",
         "skill": "allocation@5",
-        "labeledCases": 136,
-        "rightAfter": 134
+        "labeledCases": 123,
+        "rightAfter": 123
       },
       "records": 0,
       "adopted": "the whole program"
@@ -251,33 +323,49 @@
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught",
-          "gets 4 case(s) wrong that the current version gets right",
-          "rule 1 would take over work people did on the strength of 4 labeled case(s), 2 of which disagree (needs 3, and disagreements provably under 2%)",
-          "rule 6 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-          "rule 3 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
+          "gets 3 case(s) wrong that the current version gets right",
+          "rule 4 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+          "rule 5 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+          "rule 2 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
         ]
       },
       {
-        "what": "rule \"no subset matches and the referenced invoice is already paid; likely a duplicate payment\" as rule 1",
+        "what": "rule \"exact match among several subsets with zero residual and reference names open invoices; safe to apply by reference\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
         ]
       },
       {
-        "what": "rule \"one subset sums exactly to the receipt\" as rule 1",
+        "what": "rule \"possible duplicate payment or ambiguous reference without payer confirmation\" as rule 1",
+        "gate": "fail",
+        "why": [
+          "handles none of the cases people just taught"
+        ]
+      },
+      {
+        "what": "rule \"one subset sums exactly to the receipt and reference is not already paid\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught",
-          "gets 2 case(s) wrong that the current version gets right",
-          "rule 0 would take over work people did on the strength of 4 labeled case(s), 2 of which disagree (needs 3, and disagreements provably under 2%)"
+          "gets 1 case(s) wrong that the current version gets right",
+          "rule 0 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
         ]
       },
       {
-        "what": "rule \"single inexact match but reference names one open invoice\" as rule 1",
+        "what": "rule \"single inexact match but reference names an open invoice\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
+        ]
+      },
+      {
+        "what": "rule \"payer confirmed which invoices among several matching subsets\" as rule 1",
+        "gate": "fail",
+        "why": [
+          "handles none of the cases people just taught",
+          "gets 1 case(s) wrong that the current version gets right",
+          "rule 0 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
         ]
       },
       {
@@ -290,45 +378,35 @@
         ]
       },
       {
-        "what": "rule \"no subset matches but payer named one open invoice; difference is likely bank charges\" as rule 1",
+        "what": "rule \"no subset matches but reference names an open invoice\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
         ]
       },
       {
-        "what": "rule \"multiple subsets fit but payment reference matches one open invoice exactly\" as rule 1",
+        "what": "rule \"several subsets fit but reference names open invoices\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
-        ]
-      },
-      {
-        "what": "rule \"multiple subsets fit but the customer's remittance lists these invoices\" as rule 1",
-        "gate": "fail",
-        "why": [
-          "handles none of the cases people just taught",
-          "gets 1 case(s) wrong that the current version gets right",
-          "rule 0 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
         ]
       }
     ],
     "labeled": {
       "n": 21,
       "correctBefore": 17,
-      "correctAfter": 16,
+      "correctAfter": 17,
       "fixed": [
         "receipt:WIRE-260526-5469",
         "receipt:CHK-260609-1185"
       ],
       "broken": [
-        "receipt:WIRE-260424-5099",
         "receipt:WIRE-260505-5247",
         "receipt:WIRE-260512-5321",
         "receipt:WIRE-260602-5543"
       ],
       "asksAgain": [],
-      "newAlone": 6
+      "newAlone": 5
     },
     "lesson": {
       "subjects": [
@@ -349,15 +427,15 @@
       "limit": 0.1
     },
     "safetyViolations": 0,
-    "robustness": 0.7619047619047619,
+    "robustness": 0.8095238095238095,
     "why": [
       "handles none of the cases people just taught",
-      "gets 4 case(s) wrong that the current version gets right",
-      "rule 1 would take over work people did on the strength of 4 labeled case(s), 2 of which disagree (needs 3, and disagreements provably under 2%)",
-      "rule 6 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-      "rule 3 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
+      "gets 3 case(s) wrong that the current version gets right",
+      "rule 4 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+      "rule 5 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+      "rule 2 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
     ],
     "selection": "replayed over charter-a's own history and answers; nothing from charter-b but the program and the numbers above",
-    "evaluatedAt": "2026-10-24T19:13:54.335Z"
+    "evaluatedAt": "2026-10-24T21:42:28.314Z"
   }
 }

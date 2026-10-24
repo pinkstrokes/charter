@@ -4,25 +4,8 @@
     "rules": [
       {
         "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "eq",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
-                "v": 0
-              }
-            },
-            {
-              "op": "feat",
-              "name": "reference_paid"
-            }
-          ]
+          "op": "feat",
+          "name": "reference_paid"
         },
         "then": {
           "decide": "leave_unapplied_ask",
@@ -52,15 +35,31 @@
             {
               "op": "not",
               "a": {
-                "op": "feat",
-                "name": "reference_names_open"
+                "op": "and",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "reference_names_open"
+                  },
+                  {
+                    "op": "cmp",
+                    "c": "gt",
+                    "a": {
+                      "op": "feat",
+                      "name": "open_items"
+                    },
+                    "b": {
+                      "op": "num",
+                      "v": 2
+                    }
+                  }
+                ]
               }
             }
           ]
         },
         "then": {
-          "decide": "apply_unique",
-          "note": "one exact subset and no reference to override"
+          "decide": "apply_unique"
         }
       },
       {
@@ -87,34 +86,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "one subset within tolerance and reference names an open invoice"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "eq",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
-                "v": 1
-              }
-            },
-            {
-              "op": "feat",
-              "name": "exact_match"
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_to_reference",
-          "note": "one exact subset but payer named a specific open invoice"
+          "note": "one subset within tolerance but reference names an open invoice; trust the payer's reference"
         }
       },
       {
@@ -157,21 +129,21 @@
             },
             {
               "op": "cmp",
-              "c": "le",
+              "c": "gt",
               "a": {
                 "op": "feat",
-                "name": "reference_gap_cents"
+                "name": "open_items"
               },
               "b": {
                 "op": "num",
-                "v": 2000
+                "v": 2
               }
             }
           ]
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice with a small gap likely due to bank charges"
+          "note": "no subset matches but reference names an open invoice among many; trust the payer's reference over blind terms order"
         }
       },
       {
@@ -196,7 +168,7 @@
             },
             {
               "op": "cmp",
-              "c": "lt",
+              "c": "le",
               "a": {
                 "op": "feat",
                 "name": "reference_gap_cents"
@@ -210,7 +182,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice that was overpaid"
+          "note": "no subset matches but reference names an open invoice and payment covers it"
         }
       },
       {
@@ -230,42 +202,6 @@
           "decide": "apply_by_terms",
           "note": "no subset matches; apply by contract order"
         }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "ge",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
-                "v": 2
-              }
-            },
-            {
-              "op": "or",
-              "args": [
-                {
-                  "op": "feat",
-                  "name": "remittance_consistent"
-                },
-                {
-                  "op": "feat",
-                  "name": "reference_matches_open"
-                }
-              ]
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_unique",
-          "note": "several subsets fit but payer confirmed which invoices via remittance or exact reference match"
-        }
       }
     ],
     "otherwise": {
@@ -280,136 +216,170 @@
     "parent": "allocation@5",
     "lesson": {
       "subjects": [
-        "receipt:BACS-490941",
-        "receipt:BACS-491979"
+        "receipt:BACS-493978-DUP",
+        "receipt:BACS-493991-DUP",
+        "receipt:BACS-495766",
+        "receipt:BACS-495317-DUP"
       ],
-      "required": 2,
+      "required": 4,
       "handled": [
-        "receipt:BACS-490941"
+        "receipt:BACS-493978-DUP",
+        "receipt:BACS-493991-DUP",
+        "receipt:BACS-495317-DUP"
       ],
       "optionalFixed": 0,
-      "optionalTotal": 14,
+      "optionalTotal": 21,
       "cases": [
         {
-          "subject": "receipt:BACS-490941",
-          "label": "apply_to_reference",
-          "source": "ask #234 answered by controller:Dana",
-          "reason": "landed on 490941, 491750, the customer paid 490941",
+          "subject": "receipt:BACS-493978-DUP",
+          "label": "leave_unapplied_ask",
+          "source": "ask #256 answered by controller:Dana",
+          "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
           "handled": true
         },
         {
-          "subject": "receipt:BACS-491979",
+          "subject": "receipt:BACS-493991-DUP",
+          "label": "leave_unapplied_ask",
+          "source": "ask #270 answered by controller:Dana",
+          "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
+          "handled": true
+        },
+        {
+          "subject": "receipt:BACS-495766",
           "label": "apply_to_reference",
-          "source": "ask #277 answered by controller:Dana",
-          "reason": "BACS-490297 names 490297 for its amount",
+          "source": "ask #301 answered by controller:Dana",
+          "reason": "landed on 495699, 495766, the customer paid 495766",
           "handled": false
+        },
+        {
+          "subject": "receipt:BACS-495317-DUP",
+          "label": "leave_unapplied_ask",
+          "source": "ask #304 answered by controller:Dana",
+          "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
+          "handled": true
         },
         {
           "subject": "receipt:BACS-489792",
           "label": "apply_to_reference",
-          "source": "ask #180 answered by controller:Dana",
+          "source": "ask #177 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-490563",
           "label": "apply_to_reference",
-          "source": "ask #190 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the banks' charges",
+          "source": "ask #187 answered by controller:Dana",
+          "reason": "the customer named both invoices; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-493877",
           "label": "apply_to_reference",
-          "source": "ask #203 answered by controller:Dana",
+          "source": "ask #199 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the banks' charges",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-C-13694-2010-01",
+          "label": "apply_unique",
+          "source": "ask #205 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-492711",
+          "label": "apply_unique",
+          "source": "ask #209 answered by controller:Dana",
+          "reason": "the customer named the invoice; the difference is the exchange rate",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-C-17850-2010-01",
+          "label": "apply_unique",
+          "source": "ask #211 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-C-17841-2010-01",
+          "label": "apply_unique",
+          "source": "ask #214 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-C-17949-2010-01",
+          "label": "apply_unique",
+          "source": "ask #222 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-C-15311-2010-01",
+          "label": "apply_unique",
+          "source": "ask #223 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-C-16029-2010-01",
+          "label": "apply_unique",
+          "source": "ask #225 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-494120",
           "label": "apply_to_reference",
-          "source": "ask #229 answered by controller:Dana",
+          "source": "ask #227 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-494971",
           "label": "apply_to_reference",
-          "source": "ask #258 answered by controller:Dana",
+          "source": "ask #254 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the exchange rate",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495304",
           "label": "apply_to_reference",
-          "source": "ask #263 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the banks' charges",
+          "source": "ask #259 answered by controller:Dana",
+          "reason": "the customer named both invoices; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495277",
           "label": "apply_to_reference",
-          "source": "ask #269 answered by controller:Dana",
+          "source": "ask #264 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the exchange rate",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495488",
           "label": "apply_to_reference",
-          "source": "ask #278 answered by controller:Dana",
+          "source": "ask #273 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the exchange rate",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495193",
           "label": "apply_by_terms",
-          "source": "ask #280 answered by controller:Dana",
+          "source": "ask #276 answered by controller:Dana",
           "reason": "apply to the oldest",
-          "handled": false
-        },
-        {
-          "subject": "receipt:BACS-495055",
-          "label": "apply_to_reference",
-          "source": "ask #285 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the exchange rate",
-          "handled": false
-        },
-        {
-          "subject": "receipt:BACS-496008",
-          "label": "apply_to_reference",
-          "source": "ask #288 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the banks' charges",
-          "handled": false
-        },
-        {
-          "subject": "receipt:BACS-495734",
-          "label": "apply_to_reference",
-          "source": "ask #293 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the exchange rate",
-          "handled": false
-        },
-        {
-          "subject": "receipt:BACS-495235",
-          "label": "apply_to_reference",
-          "source": "ask #301 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the exchange rate",
-          "handled": false
-        },
-        {
-          "subject": "receipt:BACS-496334",
-          "label": "apply_to_reference",
-          "source": "ask #307 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the exchange rate",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 92,
-      "correctBefore": 76,
-      "correctAfter": 77,
+      "n": 94,
+      "correctBefore": 69,
+      "correctAfter": 72,
       "fixed": [
-        "receipt:BACS-490941"
+        "receipt:BACS-493978-DUP",
+        "receipt:BACS-493991-DUP",
+        "receipt:BACS-495317-DUP"
       ],
       "broken": [],
       "asksAgain": [],
@@ -417,21 +387,21 @@
     },
     "budget": null,
     "changed": {
-      "n": 0,
-      "total": 262,
-      "rate": 0,
+      "n": 1,
+      "total": 259,
+      "rate": 0.003861003861003861,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 61,
-    "robustness": 0.8369565217391305,
+    "complexity": 47,
+    "robustness": 0.7659574468085106,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Split the solution_count=1 exact_match rule so that when the payer explicitly names an open invoice we honor it with apply_to_reference, fixing both mistake cases. The safety rule is preserved because apply_to_reference is only chosen when reference_names_open is true, and ambiguous multi-subset cases still require remittance_consistent or reference_matches_open.",
+    "rationale": "Added a top-priority rule to leave unapplied and ask when the payment reference points to an already-paid invoice, catching duplicate payments like BACS-493978-DUP. This also corrects BACS-495766 by preventing the earlier solution_count=0 rules from misfiring before the reference check applies.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 21.9,
+    "seconds": 14.8,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -441,9 +411,9 @@
           "candidate": 9
         },
         "payment_late": {
-          "n": 4,
-          "current": 4,
-          "candidate": 4
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "payment_prompt": {
           "n": 39,
@@ -451,9 +421,9 @@
           "candidate": 39
         },
         "payment_bank_charge": {
-          "n": 6,
-          "current": 4,
-          "candidate": 4
+          "n": 4,
+          "current": 3,
+          "candidate": 3
         },
         "payment_two_invoices": {
           "n": 3,
@@ -472,20 +442,25 @@
         },
         "payment_fx_difference": {
           "n": 9,
-          "current": 5,
-          "candidate": 5
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 2,
+          "current": 1,
+          "candidate": 1
         },
         "payment_statement_with_remittance": {
           "n": 8,
-          "current": 8,
-          "candidate": 8
+          "current": 6,
+          "candidate": 6
         }
       },
       "train": {
-        "payment_bank_charge": {
-          "n": 16,
-          "current": 13,
-          "candidate": 13
+        "payment_two_invoices_bank_charge": {
+          "n": 4,
+          "current": 1,
+          "candidate": 1
         },
         "payment_prompt": {
           "n": 82,
@@ -498,19 +473,24 @@
           "candidate": 11
         },
         "payment_fx_difference": {
-          "n": 10,
-          "current": 7,
+          "n": 8,
+          "current": 6,
           "candidate": 7
         },
         "payment_late": {
           "n": 25,
-          "current": 23,
+          "current": 24,
           "candidate": 24
         },
         "payment_on_account": {
           "n": 3,
           "current": 3,
           "candidate": 3
+        },
+        "payment_bank_charge": {
+          "n": 10,
+          "current": 8,
+          "candidate": 8
         },
         "payment_on_account_balance": {
           "n": 5,
@@ -519,7 +499,7 @@
         },
         "payment_duplicate": {
           "n": 3,
-          "current": 3,
+          "current": 0,
           "candidate": 3
         },
         "payment_two_invoices": {
@@ -529,8 +509,8 @@
         },
         "payment_statement_with_remittance": {
           "n": 21,
-          "current": 21,
-          "candidate": 21
+          "current": 17,
+          "candidate": 17
         }
       },
       "test": {
@@ -540,9 +520,9 @@
           "candidate": 40
         },
         "payment_bank_charge": {
-          "n": 12,
-          "current": 9,
-          "candidate": 9
+          "n": 10,
+          "current": 6,
+          "candidate": 8
         },
         "payment_parent": {
           "n": 11,
@@ -554,15 +534,20 @@
           "current": 7,
           "candidate": 7
         },
+        "payment_two_invoices_bank_charge": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
         "payment_on_account_balance": {
           "n": 3,
           "current": 3,
           "candidate": 3
         },
         "payment_fx_difference": {
-          "n": 8,
-          "current": 7,
-          "candidate": 7
+          "n": 7,
+          "current": 5,
+          "candidate": 6
         },
         "payment_on_account": {
           "n": 5,
@@ -577,7 +562,7 @@
         "payment_duplicate": {
           "n": 1,
           "current": 0,
-          "candidate": 0
+          "candidate": 1
         },
         "payment_statement_with_remittance": {
           "n": 7,
@@ -586,6 +571,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T19:59:07.524Z"
+    "evaluatedAt": "2026-10-24T21:06:44.557Z"
   }
 }

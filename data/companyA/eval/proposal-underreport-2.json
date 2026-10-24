@@ -352,7 +352,7 @@
     "rationale": "The updated skill requires two independent signals before flagging: a supply-implied gross discrepancy combined with either a cash-share anomaly versus the store's own history or versus peers, while preserving the original card-settlement check. Stores with insufficient history default to accept to avoid false alarms on new franchisees whose baselines are not yet established.",
     "candidatesTried": 7,
     "candidatesPassed": 4,
-    "seconds": 2.3,
+    "seconds": 0.2,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -417,6 +417,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T18:58:26.080Z"
+    "evaluatedAt": "2026-10-24T21:37:28.862Z"
   }
 }

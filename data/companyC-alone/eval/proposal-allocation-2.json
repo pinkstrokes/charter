@@ -68,7 +68,7 @@
             },
             {
               "op": "cmp",
-              "c": "lt",
+              "c": "le",
               "a": {
                 "op": "feat",
                 "name": "reference_gap_cents"
@@ -82,7 +82,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice that was overpaid"
+          "note": "no subset matches but reference names an open invoice and payment covers it"
         }
       },
       {
@@ -156,12 +156,19 @@
     "safetyViolations": 0,
     "complexity": 24,
     "robustness": 1,
-    "alternatives": [],
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 26
+      }
+    ],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule before the generic solution_count=0 fallback to apply_to_reference when no subset matches, the payment reference names exactly one open invoice, and the receipt overpays it (negative gap), fixing BACS-490687. This respects the safety rule because apply_to_reference is only chosen when reference_names_open is true.",
-    "candidatesTried": 2,
-    "candidatesPassed": 1,
-    "seconds": 35.3,
+    "rationale": "Added a rule before the generic solution_count=0 fallback: when no subset matches, the reference names an open invoice, and the payment fully covers it (reference_gap_cents <= 0), we apply to that reference. This correctly handles BACS-490687 where the customer overpaid a single referenced invoice, while preserving apply_by_terms for cases like BACS-490925 and BACS-490733 where the reference falls short of the named invoices' balances.",
+    "candidatesTried": 3,
+    "candidatesPassed": 2,
+    "seconds": 15.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -208,7 +215,7 @@
           "candidate": 15
         },
         "payment_bank_charge": {
-          "n": 5,
+          "n": 4,
           "current": 2,
           "candidate": 2
         },
@@ -216,6 +223,11 @@
           "n": 5,
           "current": 5,
           "candidate": 5
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 1,
+          "current": 0,
+          "candidate": 0
         },
         "payment_fx_difference": {
           "n": 2,
@@ -251,6 +263,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T19:56:42.810Z"
+    "evaluatedAt": "2026-10-24T21:04:36.645Z"
   }
 }
