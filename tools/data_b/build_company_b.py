@@ -736,6 +736,7 @@ class Params:
     end: date = DEFAULT_END
     top: int = DEFAULT_TOP
     min_invoices: int = DEFAULT_MIN_INVOICES
+    prefix: str = "B-"  # customer codes: a second ledger built from the same source takes its own
 
     @property
     def t0(self) -> datetime:
@@ -776,7 +777,7 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
     window_rows = [r for r in rows if p.t0 <= r.ts < p.t1]
     selected_ids, selection_info = select_customers(window_rows, p)
     selected = set(selected_ids)
-    code_of = {c: f"B-{c}" for c in selected_ids}
+    code_of = {c: f"{p.prefix}{c}" for c in selected_ids}
 
     # Documents of the selected customers over the whole source (history is needed for linking).
     docs = build_docs(r for r in rows if r.customer_id in selected)
@@ -1214,7 +1215,7 @@ def build_stats(rows, window_rows, overlap, selection_info, p, sha, docs, invoic
     mc = sorted(c for c, v in cc.items() if len(v) > 1)
     ph.append(phenomenon("customer_with_several_countries", "source",
                          "customer ids that appear with more than one country", len(mc), mc,
-                         in_selection=sum(1 for c in mc if f"B-{c}" in cust_country)))
+                         in_selection=sum(1 for c in mc if f"{p.prefix}{c}" in cust_country)))
 
     inv_sizes = [r["net_pence"] for r in invoice_records]
     line_counts = [r["line_count"] for r in invoice_records]
@@ -1303,6 +1304,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--end", type=date.fromisoformat, default=DEFAULT_END, help="window end (inclusive)")
     ap.add_argument("--top", type=int, default=DEFAULT_TOP, help="number of customers to keep")
     ap.add_argument("--min-invoices", type=int, default=DEFAULT_MIN_INVOICES, help="minimum invoices in the window")
+    ap.add_argument("--prefix", default="B-", help="customer-code prefix (another ledger built from the same source takes its own)")
     ap.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE_DIR, help="where to keep the parsed-rows cache")
     ap.add_argument("--no-cache", action="store_true", help="always parse the xlsx (slow, ~40 s)")
     ap.add_argument("--allow-hash-mismatch", action="store_true", help="build even if the xlsx differs from the recorded SHA-256")
@@ -1319,7 +1321,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"xlsx SHA-256 {sha} differs from the recorded {EXPECTED_XLSX_SHA256} (see PROVENANCE.md); "
               "pass --allow-hash-mismatch to build anyway", file=sys.stderr)
         return 3
-    params = Params(args.start, args.end, args.top, args.min_invoices)
+    params = Params(args.start, args.end, args.top, args.min_invoices, args.prefix)
     result = build(rows, sha, params)
     for path in write_outputs(result, args.out):
         print(f"wrote {path}")

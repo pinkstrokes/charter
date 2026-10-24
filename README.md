@@ -48,7 +48,7 @@ Two other moments the judges can trigger themselves:
 | Six rules written by hand (three suspended) | 83.9% | 31 | 99.89% | yes |
 | Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 114 | 99.45% | no |
 
-By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher: on average it is precise enough, while letting through a pattern that is wrong one time in 25. Charter's standard is stricter by design: every rule earns its autonomy on its own record.
+By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher, and that ranking is exactly what Charter will not play to. On the locked eval split the 918 lines the learned desk hands to people instead were wrong 36 times when day 0 matched them alone, one in 25: day 0 clears the floor only by averaging that pattern into clean matches. Every rule earns its autonomy on its own record, so a pattern wrong 4% of the time never acts alone, whatever the average around it.
 
 **Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **312 of 317** payments, and the team was wrong on **4 of the 300** it settled without a person (95% upper bound 3.0%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
 

@@ -3,7 +3,11 @@ Invoices and credit notes are real and booked on their real dates; the cash
 side is simulated, and labelled as such: customers pay by profile (prompt,
 monthly statement with remittance advice, late, through a parent company) and
 the controller answers the seats' questions the way the simulated truth says.
-  STDB_DB=charter-b python3 tools/world_b/run_b.py [--until 2011-06-30] [--no-evolve]"""
+  STDB_DB=charter-b python3 tools/world_b/run_b.py [--until 2011-06-30] [--no-evolve]
+The same simulation runs a second ledger built from the source's previous year
+(data/companyC), started from the cash skill company B learned or from scratch:
+  STDB_DB=charter-c python3 tools/world_b/run_b.py --data data/companyC --start 2009-12-01 --until 2010-06-30 \
+      --name "..." --seed 7 --start-from charter-b"""
 import argparse
 import hashlib
 import json
@@ -14,6 +18,7 @@ import sys
 from datetime import date, datetime, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import stdb  # noqa: E402
 from stdb import DB, Client, admin_token, identity_arg, load_key, new_identity  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -26,17 +31,17 @@ def acct(code, salt=""):
     return "****" + str(int(hashlib.sha256((code + salt).encode()).hexdigest(), 16) % 10_000).zfill(4)
 
 
-def build(seed):
+def build(seed, data=B, out=B):
     rng = random.Random(seed)
     # The long tail of cash application, from its own random stream so every
     # payment drawn from the first stays as it was: bank charges and currency
     # differences on payments from abroad, money sent "on account" without a
     # reference, and one payment covering two invoices.
     mess = random.Random(seed * 7919 + 1)
-    customers = json.load(open(f"{B}/customers.json"))
+    customers = json.load(open(f"{data}/customers.json"))
     customer = {c["customer_code"]: c for c in customers}
-    invoices = json.load(open(f"{B}/invoices.json"))
-    credits = json.load(open(f"{B}/credit_notes.json"))
+    invoices = json.load(open(f"{data}/invoices.json"))
+    credits = json.load(open(f"{data}/credit_notes.json"))
     profile = {}
     for c in customers:
         r = rng.random()
@@ -133,7 +138,7 @@ def build(seed):
         truth[txn] = {"customer": cust, "invoices": [n for n, _ in items], "profile": "statement"}
         key.append({"caseId": f"b-{txn}", "family": "payment_statement_with_remittance", "split": split_of(f"receipt:{txn}"), "subject": f"receipt:{txn}", "truth": truth[txn], "expected": "apply_unique"})
     events.sort(key=lambda e: (e[0], e[1]))
-    json.dump({"note": "real invoices and credit notes; simulated payments and remittances", "entries": key}, open(f"{B}/answer_key.json", "w"))
+    json.dump({"note": "real invoices and credit notes; simulated payments and remittances", "entries": key}, open(f"{out}/answer_key.json", "w"))
     return entities, events, truth
 
 
@@ -147,8 +152,15 @@ def main():
     ap.add_argument("--until", default="2011-06-30")
     ap.add_argument("--seed", type=int, default=5)
     ap.add_argument("--no-evolve", action="store_true")
+    ap.add_argument("--data", default="data/companyB", help="the ledger's invoices, credit notes and customers")
+    ap.add_argument("--out", default="", help="where this run's answer key, identities and evaluations go (default: --data)")
+    ap.add_argument("--start", default="2010-12-01")
+    ap.add_argument("--name", default="UK giftware wholesaler (UCI Online Retail II)")
+    ap.add_argument("--start-from", default="", help="a sister company's database: start cash application from the skill it learned")
     a = ap.parse_args()
-    entities, events, truth = build(a.seed)
+    a.out = a.out or a.data
+    os.makedirs(os.path.join(ROOT, a.out), exist_ok=True)
+    entities, events, truth = build(a.seed, os.path.join(ROOT, a.data), os.path.join(ROOT, a.out))
     admin = Client(admin_token(), "admin")
     admin.call("reset_company")
     who, ids = {}, {}
@@ -157,22 +169,24 @@ def main():
         admin.call("bind_role", identity_arg(ident), role, name)
         who[name] = Client(tok, name)
         ids[name] = {"identity": ident, "token": tok, "role": role}
-    json.dump(ids, open(f"{B}/identities.json", "w"), indent=1)
+    json.dump(ids, open(os.path.join(ROOT, a.out, "identities.json"), "w"), indent=1)
     admin.call("set_secret", "MODELSTUDIO_API_KEY", load_key())
     dana, world = who["Dana"], who["feeder"]
-    world.call("load_company", json.dumps({"company": {"name": "UK giftware wholesaler (UCI Online Retail II)", "kind": "wholesaler", "currency": "GBP", "startDate": "2010-12-01"},
+    world.call("load_company", json.dumps({"company": {"name": a.name, "kind": "wholesaler", "currency": "GBP", "startDate": a.start},
                                            "contracts": [{"version": "TRADE-30", "terms": TERMS}], "entities": entities, "stores": []}))
+    if a.start_from:
+        onboard(a.start_from, who["evolver"], dana)
     by_day = {}
     for e in events:
         by_day.setdefault(e[0], []).append(e)
-    d, end, prev = date(2010, 12, 1), date.fromisoformat(a.until), date(2010, 12, 1)
+    d, end, prev = date.fromisoformat(a.start), date.fromisoformat(a.until), date.fromisoformat(a.start)
     n_ing = 0
     while d <= end:
         iso = d.isoformat()
         world.call("set_sim_date", iso)
         if d.month != prev.month:
             period = prev.strftime("%Y-%m")
-            subprocess.run(["npx", "tsx", "tools/audit/auditor.ts", "--db", DB, "--period", period, "--data", "data/companyB"], cwd=ROOT, capture_output=True, text=True)
+            subprocess.run(["npx", "tsx", "tools/audit/auditor.ts", "--db", DB, "--period", period, "--data", a.out], cwd=ROOT, capture_output=True, text=True)
             dana.call("close_period", period, check=False)
         prev = d
         for _, _, kind, p in by_day.get(iso, []):
@@ -187,7 +201,7 @@ def main():
         answer(admin, dana, truth)
         customers_notice_duplicates(admin, dana, truth, d)
         if d.weekday() == 6 and not a.no_evolve:
-            r = subprocess.run(["npx", "tsx", "tools/evolve/evolve.ts", "--db", DB, "--once", "--data", "data/companyB", "--no-policies"], cwd=ROOT, capture_output=True, text=True)
+            r = subprocess.run(["npx", "tsx", "tools/evolve/evolve.ts", "--db", DB, "--once", "--data", a.out, "--no-policies"], cwd=ROOT, capture_output=True, text=True)
             for line in (r.stdout or "").splitlines():
                 if "proposed" in line:
                     print(f"{iso} evolver: {line}", flush=True)
@@ -198,6 +212,25 @@ def main():
         if d.day == 1:
             print(f"{iso}: {n_ing} observations so far", flush=True)
         d += timedelta(days=1)
+
+
+# Start cash application from the skill a sister company learned. Only the program
+# and the numbers of its proof cross; this company's controller ratifies it, and
+# here every rule of it starts on probation, as any new version does.
+def onboard(source_db, evolver, dana):
+    here = stdb.DB
+    stdb.DB = source_db
+    try:
+        src = Client(admin_token(), "admin")
+        company = src.sql("SELECT company_name FROM config")[0]["company_name"]
+        skill = max((s for s in src.sql("SELECT key, domain, version, status, program, proof FROM skill") if s["domain"] == "allocation" and s["status"] == "active"), key=lambda s: s["version"])
+    finally:
+        stdb.DB = here
+    labeled = json.loads(skill["proof"] or "{}").get("labeled", {})
+    evolver.call("propose_skill", "allocation", skill["program"], "allocation@1", f"learned at {company} ({skill['key']}); only the program crossed",
+                 json.dumps({"gate": "imported", "source": {"company": company, "skill": skill["key"], "labeledCases": labeled.get("n"), "rightAfter": labeled.get("correctAfter")}}))
+    dana.call("set_skill_status", "allocation@2", "active", 0.0)
+    print(f"started from {company}'s {skill['key']}", flush=True)
 
 
 def answer(admin, dana, truth):
