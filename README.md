@@ -41,7 +41,19 @@ Two other moments the judges can trigger themselves:
 | Charter | 83.9% (26,899 of 32,048) | 99.90% (28 wrong) | yes |
 | Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 99.45% | no |
 
-**Real invoices (company B, locked test split).** [B_TABLE]
+**Real invoices (company B).** On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **310 of 310** payments — 199 prompt, 32 through a parent company, 34 late, 40 monthly statements paid against remittance advice, and 5 duplicates held instead of spread over other invoices (19 payments the simulation schedules after 30 June, when the run ends, are not judged) — and the team was wrong on **0 of the 299** it settled without a person (95% upper bound 1.0%). Month by month:
+
+| Month | Settled without a person | Questions to people | Right when settled alone |
+|---|---|---|---|
+| Dec 2010 | 68% | 6 | 92% (12/13) |
+| Jan 2011 | 97% | 13 | 98.5% (199/202) |
+| Feb 2011 | 100% | 4 | 98.8% (159/161) |
+| Mar 2011 | 99% | 4 | 99.5% (182/183) |
+| Apr 2011 | 97% | 10 | 100% (201/201) |
+| May 2011 | 97% | 9 | 100% (200/200) |
+| Jun 2011 | 100% | 0 | 100% (244/244) |
+
+Four new versions of the cash-application skill went live, each after a replay over every past decision; between the first and the last, the skill's own decisions on the test split went from 0 to 5 of 5 duplicates held and from 33 to 40 of 40 statements applied line by line. Twice in January a later payment showed an earlier application was a guess, and the team undid it.
 
 **A franchisor's six months (company A).** [A_TABLE]
 
