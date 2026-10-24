@@ -10,7 +10,8 @@
     "typecheck": "tsc -b --pretty",
     "generate": "cd .. && spacetime generate --lang typescript --out-dir web/src/module_bindings --module-path module/spacetimedb --no-config -y",
     "personas": "tsx scripts/personas.ts",
-    "seed:story": "python3 scripts/seed_story.py --db charter-ui"
+    "seed:story": "python3 scripts/seed_story.py --db charter-ui",
+    "report:ui": "python3 scripts/seed_story.py --db charter-ui --only report"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "5.3.0",

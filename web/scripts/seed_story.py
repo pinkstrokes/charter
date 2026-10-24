@@ -8,8 +8,8 @@ Dana moves it through shadow and canary to active and hires the refunds seat,
 two more weeks in which the new version catches store 31, the payables desk
 (tools/smoke_ap.py --keep), an overpayment refunded above the two-person
 limit, a payment whose bank reference and remittance advice disagree, and an
-internal auditor's opinions on January to March. Afterwards the
-UI personas are bound again. Takes a minute or two and a few model calls.
+internal auditor's opinions on January to March; then the Proof page's report
+(web/.data/<db>/). Afterwards the UI personas are bound again. Takes a minute or two and a few model calls.
 
 Only for development databases: it resets the company. It refuses charter-a,
 charter-b and charter-iqwfr.
@@ -19,6 +19,7 @@ import datetime
 import json
 import os
 import random
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -81,6 +82,17 @@ def week(world, monday, under, cash_factor=(0.3, 0.45), seed=99):
     return world.call("run_seats")[1]
 
 
+def write_report(db):
+    """The Proof page's numbers for this database (tools/evolve/report.ts), kept in
+    web/.data/<db>/ next to its answer key; the dev middleware serves them from there."""
+    here = os.path.join(WEB, ".data", db)
+    if not os.path.exists(os.path.join(here, "answer_key.json")):
+        sys.exit(f"no answer key in {here}; run the full story first")
+    tsx = os.path.join(WEB, "node_modules", ".bin", "tsx")
+    subprocess.run([tsx, os.path.join(TOOLS, "evolve", "report.ts"), "--db", db, "--data", "."], cwd=here, check=True, stdout=subprocess.DEVNULL)
+    print(f"   report: {os.path.relpath(os.path.join(here, 'eval', 'report.json'), REPO)}", flush=True)
+
+
 def ambiguous_payment(world, outsider):
     """Owner F01 pays its first January week plus the two late fees on it in one
     ACH. The bank reference names only the royalty invoice; the remittance advice
@@ -108,7 +120,7 @@ def ambiguous_payment(world, outsider):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", required=True)
-    ap.add_argument("--only", choices=["ambiguous-payment"], help="run one step against the database as it is, without resetting it")
+    ap.add_argument("--only", choices=["ambiguous-payment", "report"], help="run one step against the database as it is, without resetting it")
     args = ap.parse_args()
     db = args.db
     if db in PROTECTED:
@@ -117,6 +129,10 @@ def main():
     import stdb
     stdb.DB = db
 
+    if args.only == "report":
+        step("report for the Proof page")
+        write_report(db)
+        return
     if args.only == "ambiguous-payment":
         step("F01 pays one January week; the bank reference and the remittance advice disagree")
         ambiguous_payment(bind(db, "world", "story-feeder"), Client(new_identity()[1], "outsider"))
@@ -132,6 +148,9 @@ def main():
         import dev_history
         dev_history.main(10)
         os.chdir(cwd)
+        here = os.path.join(WEB, ".data", db)
+        os.makedirs(here, exist_ok=True)
+        shutil.copy(os.path.join(tmp, "data", "dev", "answer_key.json"), os.path.join(here, "answer_key.json"))
 
         step("UI personas")
         ui = personas(db)
@@ -182,6 +201,8 @@ def main():
                  json.dumps({"reportedCents": 680000, "impliedCents": 900000, "label": {"domain": "underreport", "subject": "store:S03:2026-01-12", "correct": "flag_audit"}}))
     for period, opinion, projected, upper in [("2026-01", "qualified", 52800, 131000), ("2026-02", "clean", 0, 88000), ("2026-03", "clean", 0, 91000)]:
         auditor.call("record_opinion", period, opinion, projected, upper, 250000, 24, json.dumps({"population": f"{period} royalty, supply and fee invoices", "sampled": 24, "method": "monetary-unit sampling at 95% confidence"}))
+    step("report for the Proof page")
+    write_report(db)
     personas(db, rebind=False)
     print(f"done: open http://127.0.0.1:5190/?db={db}")
 

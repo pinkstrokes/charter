@@ -60,10 +60,10 @@ A policy learned on one desk binds the others through the shared fact vocabulary
 | Month | Settled without a person | Questions to people | Right when settled alone |
 |---|---|---|---|
 | Dec 2010 | 68% | 8 | 92% (12/13) |
-| Jan 2011 | 94% | 20 | 93% (184/197) |
+| Jan 2011 | 94% | 20 | 92% (184/199) |
 | Feb 2011 | 90% | 19 | 100% (145/145) |
 | Mar 2011 | 91% | 19 | 99% (167/168) |
-| Apr 2011 | 92% | 19 | 99% (190/192) |
+| Apr 2011 | 92% | 19 | 98% (190/193) |
 | May 2011 | 93% | 17 | 100% (192/192) |
 | Jun 2011 | 99% | 5 | 100% (239/239) |
 

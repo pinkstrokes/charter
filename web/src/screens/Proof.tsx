@@ -1,5 +1,8 @@
 import { Check, FileJson, RefreshCw, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { TrendSection, type TrendMonth, type VersionMark } from '../components/Trend';
+import { parseObj } from '../lib/json';
+import { useRows } from '../stdb/store';
 import { Empty, KV } from '../components/ui';
 import { valueText } from '../lib/values';
 import { SkillProof } from '../components/Proofs';
@@ -20,7 +23,7 @@ const isScalar = (v: unknown) => v === null || ['string', 'number', 'boolean'].i
 export function Proof() {
   const info = useCharter();
   const [dir, setDir] = useState('');
-  const [data, setData] = useState<{ dir: string; available: string[]; files: ProofFile[] } | null>(null);
+  const [data, setData] = useState<{ dir: string; current: string; available: { id: string; label: string }[]; files: ProofFile[] } | null>(null);
   const [err, setErr] = useState('');
   const load = useCallback(async () => {
     try {
@@ -46,10 +49,10 @@ export function Proof() {
         <p className="page-sub">What is real, what is simulated, and how we know: numbers written by the run and the evolution engine, shown as they are.</p>
         <div className="row" style={{ marginLeft: 'auto' }}>
           {data && data.available.length > 1 && (
-            <select className="select" style={{ width: 'auto', minHeight: 30 }} value={dir || data.dir.split('/').pop()} onChange={e => setDir(e.target.value)} aria-label="Data folder">
+            <select className="select" style={{ width: 'auto', minHeight: 30 }} value={dir || data.current} onChange={e => setDir(e.target.value)} aria-label="Data folder">
               {data.available.map(d => (
-                <option key={d} value={d}>
-                  data/{d}
+                <option key={d.id} value={d.id}>
+                  {d.label}
                 </option>
               ))}
             </select>
@@ -85,6 +88,32 @@ export function Proof() {
   );
 }
 
+// Money the run kept or moved, as plain figures; a figure that is zero because the
+// run had nothing of that kind is left out rather than shown as a reassuring $0.
+function MoneyKept({ m }: { m: Record<string, number> }) {
+  const tiles: { label: string; value: string; sub?: string }[] = [];
+  const stopped = m.duplicateBillsStoppedCents ?? 0;
+  const paid = m.duplicateBillsPaidCents ?? 0;
+  if (stopped || paid) {
+    tiles.push({ label: 'Duplicate bills stopped', value: money(stopped) });
+    tiles.push({ label: 'Duplicate bills paid anyway', value: money(paid) });
+  }
+  if (m.auditInvoices) tiles.push({ label: 'Royalty billed after audits', value: money(m.auditInvoicesCents ?? 0), sub: `${num(m.auditInvoices)} audit invoice${m.auditInvoices === 1 ? '' : 's'}` });
+  if (m.refundsReleased) tiles.push({ label: 'Refunds released', value: num(m.refundsReleased) });
+  if (!tiles.length) return null;
+  return (
+    <div className="stat-row">
+      {tiles.map(t => (
+        <div key={t.label} className="sheet stat">
+          <div className="stat-label">{t.label}</div>
+          <div className="stat-value">{t.value}</div>
+          {t.sub && <div className="stat-sub">{t.sub}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function FileBody({ json }: { json: unknown }) {
   if (isObj(json) && isObj(json.proof) && isObj(json.program)) return <SkillProof text={JSON.stringify(json.proof)} />;
   if (isObj(json) && isObj(json.families) && Object.values(json.families).some(f => isObj(f) && 'planted' in f)) return <RunReport r={json} />;
@@ -92,21 +121,58 @@ function FileBody({ json }: { json: unknown }) {
   return <Auto v={json} />;
 }
 
+// When a version went live: from the activity log if this report describes the
+// database the page is connected to, else from the report (activatedAt if it has
+// it, otherwise the day the version was created).
+function useVersionMarks(r: Obj, db: string): { marks: VersionMark[]; from: 'activity' | 'report' | 'created' } {
+  const activity = useRows('activity');
+  return useMemo(() => {
+    const gens = Array.isArray(r.generations) ? (r.generations as { key: string; status: string; createdAt?: string; activatedAt?: string }[]) : [];
+    const later = (key: string) => Number(key.split('@')[1] ?? 1) > 1;
+    if (r.db === db) {
+      const marks: VersionMark[] = [];
+      for (const a of activity) {
+        if (a.command !== 'activate_skill' || a.outcome !== 'committed') continue;
+        const p = parseObj(a.params);
+        const key = String(p.key ?? '');
+        if (p.to === 'active' && later(key)) marks.push({ key, domain: key.split('@')[0], date: a.at, how: 'went live' });
+      }
+      return { marks, from: 'activity' };
+    }
+    const dated = gens.filter(g => later(g.key) && (g.activatedAt || ((g.status === 'active' || g.status === 'retired') && g.createdAt)));
+    const fromReport = dated.some(g => g.activatedAt);
+    return {
+      marks: dated.map(g => ({ key: g.key, domain: g.key.split('@')[0], date: String(g.activatedAt ?? g.createdAt).slice(0, 10), how: g.activatedAt ? 'went live' : 'created' })),
+      from: fromReport ? 'report' : 'created',
+    };
+  }, [r, db, activity]);
+}
+
 function Report({ f, db }: { f: ProofFile; db: string }) {
   const r = f.json as Obj;
+  const trend = Array.isArray(r.trend) && r.trend.length ? (r.trend as TrendMonth[]) : null;
+  const versions = useVersionMarks(r, db);
+  const moneyKept = isObj(r.money) ? (r.money as Record<string, number>) : null;
   const outcomes = isObj(r.outcomes) ? (r.outcomes as Record<string, Record<string, { n: number; right: number; missing?: number }>>) : null;
   const landed = isObj(r.cashLanded) ? (r.cashLanded as Record<string, Record<string, { n: number; right: number }>>) : null;
   const asking = isObj(r.knowingWhenToAsk) ? (r.knowingWhenToAsk as Record<string, { handledAlone: number; wrong: number; upper95: number }>) : null;
   const gens = Array.isArray(r.generations) ? (r.generations as { key: string; status: string; createdAt?: string; test?: Record<string, { n: number; right: number }> }[]) : [];
   const invariants = isObj(r.invariants) ? (r.invariants as Record<string, boolean>) : null;
   const chain = isObj(r.chain) ? (r.chain as { rows: number; verified: number; firstBreak: unknown; head: string }) : null;
-  const known = new Set(['db', 'generatedAt', 'answerKeyEntries', 'outcomes', 'cashLanded', 'knowingWhenToAsk', 'generations', 'invariants', 'chain']);
+  const known = new Set(['db', 'generatedAt', 'answerKeyEntries', 'outcomes', 'cashLanded', 'knowingWhenToAsk', 'generations', 'invariants', 'chain', 'trend', 'money']);
   const rest: Obj = {};
   for (const [k, v] of Object.entries(r)) if (!known.has(k)) rest[k] = v;
   const hasLanded = !!landed && Object.values(landed).some(x => isObj(x) && Object.keys(x).length > 0);
   const splits = outcomes ? Object.keys(outcomes).sort((a, b) => ['train', 'val', 'test', 'live'].indexOf(a) - ['train', 'val', 'test', 'live'].indexOf(b)) : [];
   return (
     <section className="stack">
+      {typeof r.db === 'string' && r.db !== db && (
+        <div className="banner">
+          This report was generated from database {r.db}; you are connected to {db}. Its numbers describe {r.db}.
+        </div>
+      )}
+      {trend && <TrendSection trend={trend} marks={versions.marks} marksFrom={versions.from} />}
+      {moneyKept && <MoneyKept m={moneyKept} />}
       <div className="sheet sheet-pad">
         <div className="section-head">
           <h2 className="section-title">Run report</h2>
@@ -115,11 +181,6 @@ function Report({ f, db }: { f: ProofFile; db: string }) {
             {r.generatedAt ? `, generated ${new Date(String(r.generatedAt)).toLocaleString()}` : ''}
           </span>
         </div>
-        {typeof r.db === 'string' && r.db !== db && (
-          <div className="banner" style={{ marginBottom: 10 }}>
-            This report was generated from database {r.db}; you are connected to {db}. Its numbers describe {r.db}.
-          </div>
-        )}
         <div className="row" style={{ gap: 22, fontSize: 14 }}>
           {typeof r.answerKeyEntries === 'number' && (
             <span>

@@ -67,7 +67,7 @@ async function main(): Promise<void> {
     db.sql('SELECT id, kind, amount_cents, open_cents, status FROM invoice'),
     db.sql('SELECT kind, subject FROM security_event'),
     db.sql('SELECT entity_code, amount_cents, bank_account, status FROM refund'),
-    db.sql('SELECT receipt_id, invoice_id, reversed FROM application'),
+    db.sql('SELECT receipt_id, invoice_id, activity_id, reversed FROM application'),
     db.sql('SELECT key, policy_id, status, text, template, source_skill, approved_by, approved_at, proof FROM policy'),
     db.sql('SELECT id, created_at, kind, status FROM ask'),
     db.sql('SELECT id, amount_cents, status FROM bill'),
@@ -128,7 +128,8 @@ async function main(): Promise<void> {
         c.n++;
         if (agrees(s.domain as Domain, run(program, parseJson<FeatureMap>(d.features, {})).outcome.decide, e.expected)) c.right++;
       }
-      return { key: s.key, status: s.status, createdAt: s.created_at, test: byFamily };
+      const live = activity.find(a => a.command === 'activate_skill' && a.outcome === 'committed' && parseJson<{ key?: string; to?: string }>(a.params, {}).key === s.key && parseJson<{ to?: string }>(a.params, {}).to === 'active');
+      return { key: s.key, status: s.status, createdAt: s.created_at, activatedAt: live?.at ?? null, test: byFamily };
     });
 
   // 3. Ledger invariants against independently maintained totals.
@@ -176,7 +177,21 @@ async function main(): Promise<void> {
     });
   // How the team changes month by month: what it settles alone, how often it needs a person,
   // and how often its own decisions were right where the answer key knows.
+  // Each decision is graded in the month it was made, by what it did itself: for
+  // cash application, the invoices its own apply_receipt commands put money on,
+  // even if a person later reversed them.
   const keyBySubject = new Map(key.map(e => [e.subject, e]));
+  const decisionOf = new Map<number, number>();
+  for (const a of acts) {
+    if (a.command !== 'apply_receipt' || a.outcome !== 'committed') continue;
+    const ref = (JSON.parse(a.used) as string[]).find(u => u.startsWith('decision:'));
+    if (ref) decisionOf.set(Number(a.id), Number(ref.slice(9)));
+  }
+  const placedBy = new Map<number, Set<string>>();
+  for (const a of applications) {
+    const dec = decisionOf.get(Number(a.activity_id));
+    if (dec !== undefined) (placedBy.get(dec) ?? placedBy.set(dec, new Set()).get(dec)!).add(a.invoice_id);
+  }
   type Cell = { decisions: number; alone: number; aloneGraded: number; aloneRight: number; questions: number };
   const blank = (): Cell => ({ decisions: 0, alone: 0, aloneGraded: 0, aloneRight: 0, questions: 0 });
   const trend: Record<string, Record<string, Cell>> = {};
@@ -190,11 +205,11 @@ async function main(): Promise<void> {
     if ((ESCALATE[domain] ?? []).includes(d.outcome)) continue;
     t.alone++;
     const e = keyBySubject.get(d.subject);
-    if (e && latest.get(d.subject)?.id === d.id) {
-      t.aloneGraded++;
-      const right = domain === 'allocation' && (e as { truth?: { invoices?: string[] } }).truth?.invoices ? landedRight(e as never) : agrees(domain, d.outcome, e.expected);
-      if (right) t.aloneRight++;
-    }
+    if (!e) continue;
+    t.aloneGraded++;
+    const truth = (e as { truth?: { invoices?: string[] } }).truth?.invoices;
+    const right = domain === 'allocation' && truth ? [...(placedBy.get(Number(d.id)) ?? [])].sort().join(',') === [...truth].sort().join(',') : agrees(domain, d.outcome, e.expected);
+    if (right) t.aloneRight++;
   }
   for (const a of asks) {
     const dom = ASK_DOMAIN[a.kind];

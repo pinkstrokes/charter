@@ -28,7 +28,7 @@ export function charterDev(opts: CoreOptions): Plugin {
         if (externalFile(db)) return send(409, { error: `${db} uses identities written by the world builder; not rebinding them` });
         return send(200, await personas(db, true));
       }
-      if (url.pathname === '/__charter/proof') return send(200, proofFiles(companyDir(db, url.searchParams.get('dir'))));
+      if (url.pathname === '/__charter/proof') return send(200, proofFiles(companyDir(db, url.searchParams.get('dir')), db));
       return send(404, { error: 'unknown endpoint' });
     } catch (e) {
       return send(500, { error: e instanceof Error ? e.message : String(e) });

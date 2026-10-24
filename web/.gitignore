@@ -2,3 +2,5 @@ node_modules/
 dist/
 # persona tokens minted by the dev middleware; never commit
 .personas/
+# reports and answer keys for development databases (scripts/seed_story.py)
+.data/

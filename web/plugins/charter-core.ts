@@ -6,7 +6,9 @@
 //   GET  /__charter/personas?db=NAME    tokens for Dana, Sam, Lee, Priya and an unbound Outsider
 //   POST /__charter/personas/rebind?db=NAME   rebind self-managed personas (after a reseed)
 //   GET  /__charter/proof?db=NAME       run_report.json and eval/*.json from data/companyA (charter-a),
-//                                       data/companyB (charter-b) or data/dev (anything else); ?dir= overrides
+//                                       data/companyB (charter-b), web/.data/NAME (a development database
+//                                       whose report scripts/seed_story.py wrote there) or data/dev;
+//                                       ?dir=companyB (any folder under data/) or ?dir=local overrides
 //
 // Persona tokens come from an identities file written by the world builder
 // (data/companyA/identities.json for charter-a, or $CHARTER_IDENTITIES), or, for
@@ -188,25 +190,35 @@ export function createCharterCore(opts: CoreOptions) {
   }
 
   // Where the world builder and evolution engine write for this database (same rule as tools/evolve).
+  // A development database's own report (web/.data/<db>, gitignored), written by scripts/seed_story.py.
+  const localDir = (db: string) => path.join(opts.webRoot, '.data', db);
+  const hasProof = (dir: string) => fs.existsSync(path.join(dir, 'eval')) || fs.existsSync(path.join(dir, 'run_report.json'));
+
   function companyDir(db: string, override?: string | null): string {
+    if (override === 'local' && /^[A-Za-z0-9_-]+$/.test(db)) return localDir(db);
     if (override && /^[A-Za-z0-9_-]+$/.test(override)) return path.join(opts.repoRoot, 'data', override);
     if (process.env.CHARTER_DATA_DIR) return dataDir;
     const m = /^charter-([a-z])$/.exec(db);
     if (m) return path.join(opts.repoRoot, 'data', `company${m[1].toUpperCase()}`);
+    if (/^[A-Za-z0-9_-]+$/.test(db) && hasProof(localDir(db))) return localDir(db);
     return path.join(opts.repoRoot, 'data', 'dev');
   }
 
-  function availableDirs(): string[] {
+  // Choices for the folder picker: every folder under data/ with proof files, and this database's own.
+  function availableDirs(db: string): { id: string; label: string }[] {
     const root = path.join(opts.repoRoot, 'data');
-    if (!fs.existsSync(root)) return [];
-    return fs
-      .readdirSync(root, { withFileTypes: true })
-      .filter(d => d.isDirectory() && (fs.existsSync(path.join(root, d.name, 'eval')) || fs.existsSync(path.join(root, d.name, 'run_report.json'))))
-      .map(d => d.name)
-      .sort();
+    const out = fs.existsSync(root)
+      ? fs
+          .readdirSync(root, { withFileTypes: true })
+          .filter(d => d.isDirectory() && hasProof(path.join(root, d.name)))
+          .map(d => ({ id: d.name, label: `data/${d.name}` }))
+          .sort((a, b) => a.id.localeCompare(b.id))
+      : [];
+    if (/^[A-Za-z0-9_-]+$/.test(db) && hasProof(localDir(db))) out.push({ id: 'local', label: `web/.data/${db}` });
+    return out;
   }
 
-  function proofFiles(dir: string): { dir: string; available: string[]; files: { name: string; json?: unknown; error?: string; modified?: string }[] } {
+  function proofFiles(dir: string, db = ''): { dir: string; current: string; available: { id: string; label: string }[]; files: { name: string; json?: unknown; error?: string; modified?: string }[] } {
     const files: { name: string; json?: unknown; error?: string; modified?: string }[] = [];
     const candidates: string[] = [];
     const report = path.join(dir, 'run_report.json');
@@ -226,7 +238,8 @@ export function createCharterCore(opts: CoreOptions) {
         files.push({ name, error: e instanceof Error ? e.message : String(e) });
       }
     }
-    return { dir: path.relative(opts.repoRoot, dir), available: availableDirs(), files };
+    const current = path.resolve(dir) === path.resolve(localDir(db)) ? 'local' : path.basename(dir);
+    return { dir: path.relative(opts.repoRoot, dir), current, available: availableDirs(db), files };
   }
 
   return { httpBase, defaultDb, personas, externalFile, companyDir, proofFiles };
