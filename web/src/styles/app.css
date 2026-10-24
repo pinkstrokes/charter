@@ -2942,9 +2942,14 @@ th.n {
 /* The public page: a visitor switches between the companies, one database each. */
 .companies {
   display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-left: 12px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.companies .btn {
+  min-width: 28px;
+  padding: 0 8px;
+  justify-content: center;
 }
 
 /* World: the invoices a made-up payment is for, the bills a vendor sent before. */

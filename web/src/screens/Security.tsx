@@ -27,10 +27,13 @@ function lookalike(email: string): string {
   return `${local}.${domain.split('.')[0]}@gmail.com`;
 }
 
+// A role mailbox (ar@, accounts@, ...) is a team, not a first name.
+const ROLE_MAILBOXES = new Set(['ar', 'ap', 'accounts', 'billing', 'finance', 'info', 'admin', 'office', 'sales', 'owner', 'payments']);
+
 function personName(email: string, entity: Entity): string {
   const local = email.split('@')[0];
   const surname = entity.name.split(/\s+/)[0];
-  return /^[a-z]{2,10}$/i.test(local) && local.toLowerCase() !== 'owner' ? `${local.charAt(0).toUpperCase()}${local.slice(1)} ${surname}` : `${entity.name} accounts`;
+  return /^[a-z]{2,10}$/i.test(local) && !ROLE_MAILBOXES.has(local.toLowerCase()) ? `${local.charAt(0).toUpperCase()}${local.slice(1)} ${surname}` : `${entity.name} accounts`;
 }
 
 function presets(entities: Entity[], stores: Store[], payments: Payment[]): { label: string; hint: string; draft: Draft }[] {
@@ -50,7 +53,7 @@ function presets(entities: Entity[], stores: Store[], payments: Payment[]): { la
             from: v.contactEmail,
             fromName: personName(v.contactEmail, v),
             subject: 'Updated remittance details',
-            body: `Hello,\n\nOur bank account is closing this week. Please send today's payment of ${money(due.amountCents)} to our new account ending 7713, routing 026009593. The old account will reject transfers from Monday.\n\nThanks for updating this before the run,\n${personName(v.contactEmail, v).split(' ')[0]}`,
+            body: `Hello,\n\nOur bank account is closing this week. Please send today's payment of ${money(due.amountCents)} to our new account ending 7713, routing 026009593. The old account will reject transfers from Monday.\n\nThanks for updating this before the run,\nAccounts receivable, ${v.name}`,
             attachmentName: '',
             attachmentText: '',
           },

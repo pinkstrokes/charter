@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DbConnection } from '../module_bindings';
 import type { Activity } from '../module_bindings/types';
 import { parseArr } from '../lib/json';
+import { policyById } from '../lib/policies';
 import { charter, message } from './client';
 import { store } from './store';
 
@@ -81,7 +82,12 @@ export async function act(opts: ActOptions): Promise<ActionResult> {
   const rows = await waitForRows(before, match, opts.wait ?? 2500);
   const stopped = rows.filter(r => r.outcome === 'denied' || r.outcome === 'rejected');
   if (stopped.length) {
-    const reasons = stopped.flatMap(r => parseArr<string>(r.reasons));
+    // The kernel's reasons name a policy and its check ("P-3: forbidden while ..."); say them in the policy's own words.
+    const reasons = stopped.flatMap(r => parseArr<string>(r.reasons)).map(r => {
+      const id = /^([A-Z]+-?\d+):/.exec(r)?.[1];
+      const p = id ? policyById(store.rows.policy, id) : undefined;
+      return p?.text ? `${id}: ${p.text.replace(/\.$/, '')}` : r;
+    });
     return { status: 'denied', message: reasons.join('; ') || 'denied by the kernel', rows, value, as };
   }
   return { status: 'ok', message: typeof value === 'string' ? value : '', rows, value, as };

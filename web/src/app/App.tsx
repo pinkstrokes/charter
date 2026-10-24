@@ -118,8 +118,8 @@ function CompanySwitcher() {
   return (
     <div className="companies" role="group" aria-label="Company">
       {info.companies.map(c => (
-        <button key={c.db} type="button" className="btn small option" aria-pressed={c.db === info.db} onClick={() => open(c.db)}>
-          {c.label}
+        <button key={c.db} type="button" className="btn small option" aria-pressed={c.db === info.db} onClick={() => open(c.db)} title={c.label} aria-label={c.label}>
+          {c.label.split(' · ')[0]}
         </button>
       ))}
     </div>

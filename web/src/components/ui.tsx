@@ -8,7 +8,6 @@ import { policyKind } from '../lib/policies';
 import { featureKind, featureLabel, featureSpec, featureValue } from '../lib/rules';
 import type { ActionResult } from '../stdb/actions';
 import { openWhy } from '../app/nav';
-import { usePolicyLookup } from '../app/data';
 
 export function Money({ cents, className = '', whole }: { cents: bigint | number | string; className?: string; whole?: boolean }) {
   return <span className={`money ${className}`}>{money(cents, { whole })}</span>;
@@ -67,7 +66,6 @@ export function PolicyChip({ p, hit, withText }: { p: Policy; hit?: boolean; wit
 }
 
 export function Result({ r, pending, idle }: { r: ActionResult | null; pending?: boolean; idle?: ReactNode }) {
-  const policyOf = usePolicyLookup();
   if (pending)
     return (
       <div className="result" role="status">
@@ -92,11 +90,6 @@ export function Result({ r, pending, idle }: { r: ActionResult | null; pending?:
         <AlertTriangle size={14} aria-hidden />
         <span>
           {stopped?.outcome === 'rejected' ? 'Rejected' : 'Denied'} by the kernel: {r.message}
-          {(() => {
-            const id = /^([A-Z][A-Za-z]*-?[A-Za-z0-9]*):/.exec(r.message)?.[1];
-            const text = id ? policyOf(id)?.text : undefined;
-            return text ? <span style={{ color: 'var(--ink)' }}> ({text})</span> : null;
-          })()}
           {stopped && (
             <>
               {' '}
