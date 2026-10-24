@@ -1,6 +1,7 @@
 // Full-resolution screenshots of the running UI for the video and the Devpost
 // gallery: each shot is a URL (deep links like ?db=charter-a#/knowledge?why=12),
-// optional text to wait for, and optional clicks by visible text.
+// optional text to wait for, optional clicks by visible text, and an optional
+// section heading to scroll to.
 //   node tools/video/capture.mjs tools/video/shots.json tools/video/shots/
 import { mkdirSync, readFileSync } from 'node:fs';
 import puppeteer from 'puppeteer-core';
@@ -28,6 +29,13 @@ for (const s of shots) {
     await sleep(800);
   }
   if (s.scroll) await page.evaluate(y => window.scrollTo(0, y), s.scroll);
+  // Bring a section into view by its heading (the app scrolls inside its main element).
+  if (s.scrollTo)
+    await page.evaluate(t => {
+      const el = [...document.querySelectorAll('h1, h2, h3, h4, td, [class*="title"]')].find(e => e.textContent?.trim().startsWith(t));
+      el?.scrollIntoView({ block: 'start' });
+      document.getElementById('main')?.scrollBy(0, -110); // clear the sticky headers
+    }, s.scrollTo);
   await sleep(s.settle ?? 1500);
   await page.screenshot({ path: `${outDir}/${s.name}.png` });
   console.log(`${s.name}.png`);

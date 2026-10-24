@@ -58,7 +58,6 @@ export function InternalAudit() {
                 <th className="n">Sample</th>
                 <th className="n">Projected misstatement</th>
                 <th>Upper limit against tolerable</th>
-                <th>Report</th>
               </tr>
             </thead>
             <tbody>
@@ -104,6 +103,7 @@ function OpinionRow({ o }: { o: AuditOpinion }) {
   const report = parseObj(o.report);
   const x = (v: number) => `${tol > 0 ? Math.min(100, (v / tol) * 50) : 0}%`;
   return (
+    <>
     <tr>
       <td style={{ fontWeight: 600 }}>{monthName(o.period)}</td>
       <td>
@@ -124,10 +124,57 @@ function OpinionRow({ o }: { o: AuditOpinion }) {
           <span style={{ position: 'absolute', left: '50%', top: -3, bottom: -3, width: 1.5, background: 'var(--ink-2)' }} title="tolerable" />
         </div>
       </td>
-      <td style={{ fontSize: 12, maxWidth: 320 }}>
-        <KV data={report} />
+    </tr>
+    <tr>
+      <td colSpan={5} style={{ paddingTop: 0 }}>
+        <ReportDetail report={report} />
       </td>
     </tr>
+    </>
+  );
+}
+
+// The report under its month: every control tested over the whole population,
+// then each monetary-unit sample, in the auditor's own numbers.
+function ReportDetail({ report }: { report: Record<string, unknown> }) {
+  const controls = (report.controls as { id: string; name: string; population: number; exceptions: number }[] | undefined) ?? [];
+  const samples = (report.samples as { name: string; population: number; sampleSize: number; projectedCents: number; upperLimitCents: number; tolerableCents: number }[] | undefined) ?? [];
+  return (
+    <div className="audit-detail">
+      {controls.length > 0 && (
+        <div>
+          <div className="label">Controls, tested over every case</div>
+          <div className="audit-controls">
+            {controls.map(c => (
+              <div key={c.id} className="audit-control">
+                {c.exceptions ? <X size={13} style={{ color: 'var(--red)' }} /> : <Check size={13} className="tick" />}
+                <span>{c.name}</span>
+                <span className="num faint">{c.exceptions ? `${c.exceptions} of ${c.population}` : c.population}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {samples.length > 0 && (
+        <div>
+          <div className="label">Monetary-unit samples</div>
+          {samples.map(m => (
+            <div key={m.name} className="audit-control">
+              {m.upperLimitCents <= m.tolerableCents ? <Check size={13} className="tick" /> : <X size={13} style={{ color: 'var(--red)' }} />}
+              <span>
+                {m.name}: {m.sampleSize} of {m.population} re-performed; projected {money(m.projectedCents)}, upper limit {money(m.upperLimitCents)} against {money(m.tolerableCents)} tolerable
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      {typeof report.method === 'string' && (
+        <div className="faint" style={{ fontSize: 12 }}>
+          {report.method}
+          {typeof report.reader === 'string' ? `; documents re-read by ${report.reader}` : ''}
+        </div>
+      )}
+    </div>
   );
 }
 
