@@ -13,7 +13,7 @@ Charter does not file the £30 as a duplicate. It works out that 536792 was paid
 Two other moments the judges can trigger themselves:
 
 - **It pushes back.** Tell it, on a spot check, that it should have chased a franchisee on day 5 of a 10-day grace period. It keeps its decision, says the agreement forbids that, does not count your verdict against the rule, and does not learn from it.
-- **It cannot be talked into moving money.** Email new bank details for Formosa Leaf the day before a $48,000 payment run. Two models read it, the change is held, the controller is asked to call the number already on file, and on Friday the release is refused — for the controller too — by a policy nobody wrote: the team learned it in April from a debit that bounced during an unverified bank change, and extended it from debits to refunds and vendor payments.
+- **It cannot be talked into moving money.** Email new bank details for Formosa Leaf the day before its $92,400 payment run. Two models read it, the change is held, the controller is asked to call the number already on file, and on Friday the release is refused — for the controller too — by a policy nobody wrote: the team learned it in April from a debit that bounced during an unverified bank change, and extended it from debits to refunds and vendor payments.
 
 ## Would you hire it?
 
@@ -55,7 +55,18 @@ Two other moments the judges can trigger themselves:
 
 Four new versions of the cash-application skill went live, each after a replay over every past decision; between the first and the last, the skill's own decisions on the test split went from 0 to 5 of 5 duplicates held and from 33 to 40 of 40 statements applied line by line. Twice in January a later payment showed an earlier application was a guess, and the team undid it.
 
-**A franchisor's six months (company A).** [A_TABLE]
+**A franchisor's six months (company A).** Twenty stores, six vendors, and people who make mistakes on purpose (34 of 507 answers were wrong). On the locked test split, from the day-0 skills to the versions people approved:
+
+| Desk | What changed | Day 0 → now | Learned from |
+|---|---|---|---|
+| Under-reported sales | weeks flagged for audit | 0/4 → 3/4, with 88/88 clean, 14/14 legitimately low-cash and 5/5 bulk-buying weeks still accepted | one consultant's spot-check answer in February; the new version then caught store 14 twice in March and store 31 in June, weeks the old one would have accepted |
+| Collections | payments announced as a check in the mail, not chased | 0/3 → 3/3 | the controller's answer on one franchisee's check in March |
+| Payables | duplicate bills rejected by the clerk's own skill | 0/2 → 2/2 | the controller's answer on a third duplicate in April, after the internal auditor had caught the first two |
+| All desks | no money moves while a bank change is unverified | P-1, P-2, P-3 | one debit returned in April |
+
+Audits recovered $1,449.57 of $1,864.04 in hidden royalties; $89,242 of duplicate bills was stopped and none paid. The internal auditor qualified February and March (two duplicate liabilities of $34,800 and $10,750, and a royalty billed $59.03 too high) and gave clean opinions for January, April and May; all five months are closed into certificates anchored in git. Seven times a person's spot-check verdict contradicted a rule with a clean record; asked to look again, people called four of them slips and stood by three. Settled without a person on the test and live splits: under-reporting 4 wrong of 112 (95% upper bound 8%), collections 3 of 30, payables 2 of 23, cash 1 of 9.
+
+**Skills travel; the target decides.** Company B's cash-application skill — 310/310 on its own books — was offered to company A as a program. Replayed over A's history it would have got 3 of A's labeled cases wrong and dropped rules A's people never faulted (A's franchise agreement applies unnamed money in contract order), so A's gate refused it before a person saw it.
 
 **Attacks.** 36 attack emails: Charter gave the attacker nothing (0/36), with the people played as an attacker would hope — a careless controller tries to release every refund and endorse every bank change. Tool-using agents on the same emails: qwen3.8-max 13/36, kimi-k3 8/36, glm-5.3 4/36 with plain prompts; 0, 2 and 1 with careful prompts.
 
@@ -68,7 +79,7 @@ Four new versions of the cash-application skill went live, each after a replay o
 3. **Policies are learned from losses and bind every desk.** An exhaustive search replays every past money movement with the facts the kernel saw at the time; a rule is offered only if it stops a loss no rule in force stops and holds back little that was legitimate, and it extends to every other way money leaves.
 4. **A lesson is a pull request with a replay proof.** A person's one-line correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision: it must fix the lesson, break nothing people labeled, take over work only on three agreeing precedents, stay inside a change budget and never break a safety rule. New rules no known case supports are dropped, failing candidates are repaired by removing the rules behind the failure, and new thresholds are centred between the nearest known cases so they generalise.
 5. **Sources disagree; the team weighs them.** Who paid is voted by the account on file, the invoice the payer named and the payer's name; masked account numbers collide, so one source loses to two and a tie goes to a person with every reading. Two model families read every email that could move money; a disagreement waits for a person.
-6. **Skills travel, data does not.** A skill learned at one company is offered to another as a program; the target replays it over its own history and its own people decide.
+6. **Skills travel, data does not — and the target decides.** A skill learned at one company is offered to another as a program; the target replays it over its own history, and a skill that would break the target's labeled cases or drop rules its people never faulted is refused there.
 
 ## How it works
 
