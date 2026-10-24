@@ -28,6 +28,14 @@ const all: Case[] = decisions.map(d => ({ id: String(d.id), f: d.f }));
 const map = await competenceMap(Z3, 'allocation', versions, allocationAxioms(Z3, 2500), all);
 const cellOf = new Map<string, string>();
 for (const cell of map.cells) for (const id of cell.cases) cellOf.set(id, cell.id);
+// Without hindsight: a situation as it could be told apart on the day, from the conditions of the
+// versions live by then (a version's atoms are known from the day it goes live).
+import { vocabulary } from './encode';
+const liveOrder = [...new Set([...decisions].sort((x, y) => x.at.localeCompare(y.at) || x.id - y.id).map(d => d.skill.split('+')[0]))];
+const vocabAt = new Map<string, any[]>();
+liveOrder.forEach((k, i) => vocabAt.set(k, vocabulary(liveOrder.slice(0, i + 1).map(kk => (co === 'B' ? D.b : D.c).versions.find((v: any) => v.key === kk).program))));
+const holdsAtom = (atom: any, f: any) => run({ domain: 'allocation', rules: [{ when: atom, then: { decide: 'y' } }], otherwise: { decide: 'n' } } as any, f).outcome.decide === 'y';
+const keyAt = (d: any, version: string) => vocabAt.get(version)!.map(a => (holdsAtom(a, d.f) ? '1' : '0')).join('') + '@' + vocabAt.get(version)!.length;
 
 const landing = (truth: string[]) => (truth.length ? [...truth].sort().join(' + ') : 'ask');
 // The outcome a person would choose: the one that lands where the payer meant, or asking when none does.
@@ -40,14 +48,14 @@ const ordered = [...decisions].sort((x, y) => x.at.localeCompare(y.at) || x.id -
 const progOf = (key: string) => (co === 'B' ? D.b : D.c).versions.find((v: any) => v.key === key.split('+')[0]).program;
 
 interface Tally { wrongAlone: number; asks: number; checks: number; rightAlone: number; firstAsks: number }
-function simulate(mode: 'run' | 'situations', minAgree: number) {
+function simulate(mode: 'run' | 'situations', minAgree: number, hindsight = true) {
   const tally: Tally = { wrongAlone: 0, asks: 0, checks: 0, rightAlone: 0, firstAsks: 0 };
   const askedIn = new Set<string>();
   // Evidence per situation: what people said was right on cases there, kept with the case.
   const evidence = new Map<string, any[]>();
   const add = (cell: string, d: any, said: string) => { const e = evidence.get(cell) ?? []; e.push({ d, said }); evidence.set(cell, e); };
   for (const d of ordered) {
-    const cell = cellOf.get(String(d.id))!;
+    const cell = hindsight ? cellOf.get(String(d.id))! : keyAt(d, d.skill.split('+')[0]);
     const outcome = d.outcome;
     if (mode === 'run') {
       if (alone(d, outcome)) { if (rightOf(d, outcome)) tally.rightAlone++; else tally.wrongAlone++; } else tally.asks++;
@@ -55,7 +63,7 @@ function simulate(mode: 'run' | 'situations', minAgree: number) {
       continue;
     }
     // The seat acts alone only where people have confirmed what it would do and nobody has said otherwise.
-    const ev = evidence.get(cell) ?? [];
+    const ev = hindsight ? evidence.get(cell) ?? [] : [...evidence.values()].flat().filter(e => keyAt(e.d, d.skill.split('+')[0]) === cell);
     const agreeing = ev.filter(e => agrees(e.d, e.said, run(progOf(d.skill), e.d.f).outcome.decide)).length;
     const earned = agreeing >= minAgree && agreeing === ev.length;
     if (alone(d, outcome) && earned) {
@@ -73,6 +81,7 @@ function simulate(mode: 'run' | 'situations', minAgree: number) {
 const out: any = { company: co, decisions: ordered.length, from: ordered[0].at, to: ordered.at(-1).at, situations: map.cells.length };
 out.asRun = simulate('run', 1);
 for (const m of [1, 2, 3]) out[`situations_${m}`] = simulate('situations', m);
+for (const m of [1, 2, 3]) out[`noHindsight_${m}`] = simulate('situations', m, false);
 // Exposure: the mistakes made alone, and whether a person had ever labeled their situation when they were made.
 const labeledBefore = (cell: string, at: string) => ordered.some(x => x.label && x.at < at && cellOf.get(String(x.id)) === cell);
 const mistakes = ordered.filter(d => alone(d, d.outcome) && !rightOf(d, d.outcome));
@@ -92,7 +101,8 @@ out.flags = vs.map(key => {
 writeFileSync(new URL(`./out/timeline-${co.toLowerCase()}.json`, import.meta.url), JSON.stringify(out, null, 1));
 const md: string[] = [`# ${co}: earning autonomy situation by situation`, '', `${out.decisions} cash decisions, ${out.from} to ${out.to}, replayed in order with the run's own skill versions and dates. People answer from the answer key, as in the run; a label counts from the day of the decision it labels.`, '', '| rule for acting alone | wrong with nobody asked | questions | of which first in their situation |', '|---|---|---|---|'];
 md.push(`| as run (by rule) | ${out.asRun.wrongAlone} | ${out.asRun.asks} | — |`);
-for (const m of [1, 2, 3]) md.push(`| by situation, ${m} confirmation${m > 1 ? 's' : ''} and none against | ${out[`situations_${m}`].wrongAlone} | ${out[`situations_${m}`].asks} | ${out[`situations_${m}`].firstAsks} |`);
+for (const m of [1, 2, 3]) md.push(`| by situation as known on the day, ${m} confirmation${m > 1 ? 's' : ''} and none against | ${out[`noHindsight_${m}`].wrongAlone} | ${out[`noHindsight_${m}`].asks} | ${out[`noHindsight_${m}`].firstAsks} |`);
+for (const m of [1, 2, 3]) md.push(`| by situation on the final map (hindsight), ${m} confirmation${m > 1 ? 's' : ''} | ${out[`situations_${m}`].wrongAlone} | ${out[`situations_${m}`].asks} | ${out[`situations_${m}`].firstAsks} |`);
 md.push('', `Of the ${out.mistakesAlone} mistakes made alone as run, ${out.mistakesInUnlabeledSituations} came in situations no person had ever labeled when they were made. The first question in a situation can be asked before any payment waits for it: the map lists the situation in advance.`, '', '| version | live from | decisions | situations flagged at go-live | decisions there | mistakes there |', '|---|---|---|---|---|---|');
 for (const f of out.flags) md.push(`| ${f.version} | ${f.live} | ${f.decisions} | ${f.flagged} | ${f.decisionsInFlagged} | ${f.mistakesInFlagged}${f.flaggedWithMistakes.length ? ' (' + f.flaggedWithMistakes.join(', ') + ')' : ''} |`);
 writeFileSync(new URL(`./out/timeline-${co.toLowerCase()}.md`, import.meta.url), md.join('\n') + '\n');
@@ -100,5 +110,6 @@ const row = (k: string, t: Tally) => console.log(k.padEnd(14), 'wrong alone', St
 console.log(`${co}: ${out.decisions} decisions ${out.from} → ${out.to}, ${out.situations} situations`);
 row('as run', out.asRun);
 for (const m of [1, 2, 3]) row(`situations ${m}`, out[`situations_${m}`]);
+for (const m of [1, 2, 3]) row(`on the day ${m}`, out[`noHindsight_${m}`]);
 console.log(`mistakes made alone as run: ${out.mistakesAlone}; in situations no person had labeled when made: ${out.mistakesInUnlabeledSituations}`);
 process.exit(0);

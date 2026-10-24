@@ -32,6 +32,27 @@
   "rightAlone": 1064,
   "firstAsks": 19
  },
+ "noHindsight_1": {
+  "wrongAlone": 11,
+  "asks": 100,
+  "checks": 164,
+  "rightAlone": 1090,
+  "firstAsks": 19
+ },
+ "noHindsight_2": {
+  "wrongAlone": 11,
+  "asks": 112,
+  "checks": 161,
+  "rightAlone": 1078,
+  "firstAsks": 19
+ },
+ "noHindsight_3": {
+  "wrongAlone": 8,
+  "asks": 129,
+  "checks": 157,
+  "rightAlone": 1064,
+  "firstAsks": 19
+ },
  "mistakesAlone": 18,
  "mistakesInUnlabeledSituations": 5,
  "mistakes": [

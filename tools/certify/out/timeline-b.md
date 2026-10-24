@@ -5,9 +5,12 @@
 | rule for acting alone | wrong with nobody asked | questions | of which first in their situation |
 |---|---|---|---|
 | as run (by rule) | 14 | 32 | — |
-| by situation, 1 confirmation and none against | 7 | 53 | 21 |
-| by situation, 2 confirmations and none against | 4 | 69 | 21 |
-| by situation, 3 confirmations and none against | 3 | 75 | 21 |
+| by situation as known on the day, 1 confirmation and none against | 7 | 53 | 25 |
+| by situation as known on the day, 2 confirmations and none against | 4 | 69 | 29 |
+| by situation as known on the day, 3 confirmations and none against | 3 | 75 | 29 |
+| by situation on the final map (hindsight), 1 confirmation | 7 | 53 | 21 |
+| by situation on the final map (hindsight), 2 confirmations | 4 | 69 | 21 |
+| by situation on the final map (hindsight), 3 confirmations | 3 | 75 | 21 |
 
 Of the 14 mistakes made alone as run, 6 came in situations no person had ever labeled when they were made. The first question in a situation can be asked before any payment waits for it: the map lists the situation in advance.
 
