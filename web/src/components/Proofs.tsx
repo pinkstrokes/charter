@@ -6,6 +6,7 @@ import { openWhy } from '../app/nav';
 import { day, money, pct } from '../lib/format';
 import { parseLoose } from '../lib/json';
 import { subjectLabel } from '../lib/lineage';
+import { templateText, type PolicyTemplate } from '../lib/policies';
 import { KV } from './ui';
 
 type Obj = Record<string, unknown>;
@@ -241,18 +242,21 @@ export function PolicyProof({ text }: { text: string }) {
         {typeof p.searched === 'number' && <span className="muted num">{p.searched} rules searched</span>}
         {p.tightensOnly === true && <span className="muted">only tightens</span>}
       </div>
-      {(typeof p.benefitCents === 'number' || typeof p.costCents === 'number') && (
+      {stopped.length > 0 && typeof p.benefitCents === 'number' && (
         <div className="row num" style={{ gap: 18, fontSize: 13 }}>
-          {typeof p.benefitCents === 'number' && (
-            <span>
-              would have protected <b>{money(p.benefitCents)}</b>
-            </span>
-          )}
-          {typeof p.costCents === 'number' && (
-            <span>
-              would have delayed <b>{money(p.costCents)}</b> of legitimate money
-            </span>
-          )}
+          <span>
+            would have saved <b>{money(p.benefitCents)}</b> in return fees and handling
+          </span>
+          <span>
+            {delayed.length ? (
+              <>
+                would have held back <b>{delayed.length}</b> legitimate {delayed.length === 1 ? 'request' : 'requests'} worth {money(delayed.reduce((s, d) => s + d.amountCents, 0))} for a week
+                {typeof p.costCents === 'number' && <> (cost {money(p.costCents)})</>}
+              </>
+            ) : (
+              'would have held back nothing legitimate'
+            )}
+          </span>
         </div>
       )}
       {stopped.length > 0 && (
@@ -283,7 +287,11 @@ export function PolicyProof({ text }: { text: string }) {
           ))}
         </div>
       )}
-      {typeof p.extendsFrom === 'string' && p.extendsFrom && <div className="muted" style={{ fontSize: 13 }}>extends {p.extendsFrom}</div>}
+      {typeof p.extendsFrom === 'string' && p.extendsFrom && (
+        <div className="muted" style={{ fontSize: 13 }}>
+          the same risk on another way money leaves: extends “{templateText(parseLoose<PolicyTemplate | null>(p.extendsFrom, null))}”, and would never have held back a past request of this kind
+        </div>
+      )}
       {Object.keys(rest).length > 0 && <KV data={rest} />}
     </div>
   );
