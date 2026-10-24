@@ -5,5 +5,13 @@
   "description": "Competence maps and certificates for Charter's skills: every situation a skill can tell apart, realized as a concrete world and graded",
   "dependencies": {
     "z3-solver": "^4.13.0"
+  },
+  "scripts": {
+    "check": "tsx check_encoding.ts",
+    "map": "tsx certify.ts",
+    "timeline": "tsx timeline.ts B && tsx timeline.ts C",
+    "team": "tsx team.ts",
+    "site": "tsx site.ts",
+    "all": "tsx check_encoding.ts && tsx certify.ts && tsx timeline.ts B && tsx timeline.ts C && tsx team.ts && tsx site.ts"
   }
 }

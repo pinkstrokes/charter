@@ -98,7 +98,7 @@ Changes 4 situations. On the locked test payments: 1 newly right, 0 newly wrong 
 ## Situations
 
 **S1** — one set adds up within £25, not exactly; the reference names an open invoice, one of them for the amount (±£1); a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4076.98, 536783 and 50p more; names 536783; sends a remittance listing 536783 → £4,076.98 naming 536783.
+  World: pays £4,076.98, 536783 and 50p more; names 536783; sends a remittance listing 536783 → £4,076.98 naming 536783.
   Decides: applies the set (B v1, C v1); applies to the invoices it names (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S2** — one set adds up within £25, not exactly; the reference names an open invoice. B decided 21 (6 labeled), C 31 (6 labeled); test payments: 12 (prompt, fx_difference, bank_charge, two_invoices_bank_charge).
@@ -106,63 +106,63 @@ Changes 4 situations. On the locked test payments: 1 newly right, 0 newly wrong 
   Decides: applies the set (B v1, C v1); applies to the invoices it names (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S3** — no set of open invoices adds up within £25; the reference names an open invoice. B decided 110 (36 labeled), C 132 (27 labeled); test payments: 64 (bank_charge, parent, fx_difference, two_invoices_bank_charge, prompt, on_account_balance).
-  World: pays £4064.48, 536783 less £12 of bank charges → £4,064.48 naming 536784.
+  World: pays £4,064.48, 536783 less £12 of bank charges → £4,064.48 naming 536784.
   Decides: applies oldest first (B v1, B v2, C v1); applies to the invoices it names (B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S4** — no set of open invoices adds up within £25; the reference names an open invoice, one of them for the amount (±£1). B decided 1 (0 labeled), C 3 (1 labeled); test payments: 1 (fx_difference).
-  World: pays £4075.98, 536783 less 50p; names 536783 → £4,075.98 naming 536783.
+  World: pays £4,075.98, 536783 less 50p; names 536783 → £4,075.98 naming 536783.
   Decides: applies oldest first (B v1, B v2, C v1); applies to the invoices it names (B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S5** — no set of open invoices adds up within £25; the reference names an open invoice; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4075.98, 536783 less 50p; sends a remittance listing 536783 → £4,075.98 naming 536784.
+  World: pays £4,075.98, 536783 less 50p; sends a remittance listing 536783 → £4,075.98 naming 536784.
   Decides: applies oldest first (B v1, B v2, C v1); applies to the invoices it names (B v3, B v4, B v5, C v2); applies the set (C v3, C v4).
 
 **S6** — no set of open invoices adds up within £25; the reference names no open invoice. B decided 31 (9 labeled), C 30 (6 labeled); test payments: 20 (on_account).
-  World: pays £4064.48, 536783 less £12 of bank charges; gives no reference → £4,064.48.
+  World: pays £4,064.48, 536783 less £12 of bank charges; gives no reference → £4,064.48.
   Decides: applies oldest first (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S7** — no set of open invoices adds up within £25; the reference names no open invoice; a remittance lists invoices that add up. B decided 2 (1 labeled), C 9 (2 labeled); test payments: 4 (statement_with_remittance).
-  World: pays £4075.98, 536783 less 50p; gives no reference; sends a remittance listing 536783 → £4,075.98.
+  World: pays £4,075.98, 536783 less 50p; gives no reference; sends a remittance listing 536783 → £4,075.98.
   Decides: applies oldest first (B v1, B v2, B v3, B v4, B v5, C v1, C v2); applies the set (C v3, C v4).
 
 **S8** — no set of open invoices adds up within £25; what the reference names is already paid; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: 536783 is already paid; pays £4222.56, 536784 + 536792 + 537618 less 50p; names 536783; sends a remittance listing 536784, 536792, 537618 → £4,222.56 naming 536783.
+  World: 536783 is already paid; pays £4,222.56, 536784 + 536792 + 537618 less 50p; names 536783; sends a remittance listing 536784, 536792, 537618 → £4,222.56 naming 536783.
   Decides: applies oldest first (B v1, B v2, B v3, B v4, B v5, C v1, C v2); applies the set (C v3, C v4).
 
 **S9** — no set of open invoices adds up within £25; the reference names an open invoice, one of them for the amount (±£1); a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4075.98, 536783 less 50p; names 536783; sends a remittance listing 536783 → £4,075.98 naming 536783.
+  World: pays £4,075.98, 536783 less 50p; names 536783; sends a remittance listing 536783 → £4,075.98 naming 536783.
   Decides: applies oldest first (B v1, B v2, C v1); applies to the invoices it names (B v3, B v4, B v5, C v2); applies the set (C v3, C v4).
 
 **S10** — several sets add up within £25; the reference names an open invoice, one of them for the amount (±£1). B decided 1 (1 labeled), C 1 (0 labeled).
-  World: pays £2171.40, 536784 and 50p more → £2,171.40 naming 536784.
+  World: pays £2,171.40, 536784 and 50p more → £2,171.40 naming 536784.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S11** — several sets add up within £25; the reference names an open invoice; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £6247.88, 536783 + 536784 and 50p more; sends a remittance listing 536783, 536784 → £6,247.88 naming 536784.
+  World: pays £6,247.88, 536783 + 536784 and 50p more; sends a remittance listing 536783, 536784 → £6,247.88 naming 536784.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S12** — several sets add up within £25; the reference names an open invoice, one of them for the amount (±£1); a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: 536783 is already paid; pays £2171.40, 536784 and 50p more; sends a remittance listing 536784 → £2,171.40 naming 536784.
+  World: 536783 is already paid; pays £2,171.40, 536784 and 50p more; sends a remittance listing 536784 → £2,171.40 naming 536784.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S13** — several sets add up within £25; the reference names no open invoice. B decided 2 (2 labeled), C 2 (2 labeled).
-  World: pays £6259.38, 536783 + 536784 and £12 more; gives no reference → £6,259.38.
+  World: pays £6,259.38, 536783 + 536784 and £12 more; gives no reference → £6,259.38.
   Decides: asks a person (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S14** — several sets add up within £25; the reference names no open invoice; a remittance lists invoices that add up. B decided 1 (0 labeled), C 3 (0 labeled); test payments: 2 (statement_with_remittance).
-  World: pays £6247.88, 536783 + 536784 and 50p more; gives no reference; sends a remittance listing 536783, 536784 → £6,247.88.
+  World: pays £6,247.88, 536783 + 536784 and 50p more; gives no reference; sends a remittance listing 536783, 536784 → £6,247.88.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S15** — several sets add up within £25; what the reference names is already paid. B decided 1 (1 labeled), C 2 (2 labeled).
-  World: 536783 is already paid; pays £2182.90, 536784 and £12 more; names 536783 → £2,182.90 naming 536783.
+  World: 536783 is already paid; pays £2,182.90, 536784 and £12 more; names 536783 → £2,182.90 naming 536783.
   Decides: asks a person (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S16** — several sets add up within £25; what the reference names is already paid; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: 536783 is already paid; pays £2171.40, 536784 and 50p more; names 536783; sends a remittance listing 536784 → £2,171.40 naming 536783.
+  World: 536783 is already paid; pays £2,171.40, 536784 and 50p more; names 536783; sends a remittance listing 536784 → £2,171.40 naming 536783.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S17** — several sets add up within £25; the reference names an open invoice. B decided 5 (5 labeled), C 61 (61 labeled); test payments: 18 (prompt, fx_difference, bank_charge, two_invoices_bank_charge).
-  World: pays £6259.38, 536783 + 536784 and £12 more → £6,259.38 naming 536784.
+  World: pays £6,259.38, 536783 + 536784 and £12 more → £6,259.38 naming 536784.
   Decides: asks a person (B v1, B v4, B v5, C v1, C v2, C v3, C v4); applies to the invoices it names (B v2, B v3).
 
 **S18** — no set of open invoices adds up within £25; what the reference names is already paid. B decided 10 (9 labeled), C 8 (8 labeled); test payments: 5 (duplicate, on_account_balance).
@@ -178,81 +178,81 @@ Changes 4 situations. On the locked test payments: 1 newly right, 0 newly wrong 
   Decides: applies the set (B v1, B v2, B v3, C v1); asks a person (B v4, B v5, C v2, C v3, C v4).
 
 **S21** — one set adds up within £25, not exactly; the reference names no open invoice; a remittance lists invoices that add up. B decided 1 (0 labeled), C 0 (0 labeled).
-  World: pays £4076.98, 536783 and 50p more; gives no reference; sends a remittance listing 536783 → £4,076.98.
+  World: pays £4,076.98, 536783 and 50p more; gives no reference; sends a remittance listing 536783 → £4,076.98.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3); asks a person (C v4).
 
 **S22** — one set adds up within £25, not exactly; what the reference names is already paid; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: 536783 is already paid; pays £6923.52, 536784 + 536785 + 537618 less 50p; names 536783; sends a remittance listing 536784, 536785, 537618 → £6,923.52 naming 536783.
+  World: 536783 is already paid; pays £6,923.52, 536784 + 536785 + 537618 less 50p; names 536783; sends a remittance listing 536784, 536785, 537618 → £6,923.52 naming 536783.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3); asks a person (C v4).
 
 **S23** — one set adds up within £25, not exactly; the reference names an open invoice; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4076.98, 536783 and 50p more; sends a remittance listing 536783 → £4,076.98 naming 536784.
+  World: pays £4,076.98, 536783 and 50p more; sends a remittance listing 536783 → £4,076.98 naming 536784.
   Decides: applies the set (B v1, C v1); applies to the invoices it names (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S24** — one set adds up within £25, not exactly; the reference names an open invoice, one of them for the amount (±£1). B decided 2 (0 labeled), C 4 (2 labeled); test payments: 3 (fx_difference, prompt).
-  World: pays £4076.98, 536783 and 50p more; names 536783 → £4,076.98 naming 536783.
+  World: pays £4,076.98, 536783 and 50p more; names 536783 → £4,076.98 naming 536783.
   Decides: applies the set (B v1, C v1); applies to the invoices it names (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S25** — one set of open invoices adds up exactly; the reference names no open invoice. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4076.48, exactly 536783; gives no reference → £4,076.48.
+  World: pays £4,076.48, exactly 536783; gives no reference → £4,076.48.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S26** — several sets add up exactly; the reference names no open invoice. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783; gives no reference → £4,076.48.
+  World: a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783; gives no reference → £4,076.48.
   Decides: asks a person (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S27** — several sets add up exactly; what the reference names is already paid. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: the 6 invoices under £400 are already paid; a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783; names 536786 → £4,076.48 naming 536786.
+  World: the 6 invoices under £400 are already paid; a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783; names 536786 → £4,076.48 naming 536786.
   Decides: asks a person (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S28** — several sets add up exactly; the reference names no open invoice; a remittance lists invoices that add up. B decided 10 (2 labeled), C 23 (4 labeled); test payments: 8 (statement_with_remittance).
-  World: a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783; gives no reference; sends a remittance listing 536783 → £4,076.48.
+  World: a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783; gives no reference; sends a remittance listing 536783 → £4,076.48.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S29** — several sets add up exactly; what the reference names is already paid; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: the 6 invoices under £400 are already paid; a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783; names 536786; sends a remittance listing 536783 → £4,076.48 naming 536786.
+  World: the 6 invoices under £400 are already paid; a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783; names 536786; sends a remittance listing 536783 → £4,076.48 naming 536786.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4, B v5, C v2, C v3, C v4).
 
 **S30** — several sets add up exactly; the reference names an open invoice. B decided 4 (3 labeled), C 0 (0 labeled).
-  World: a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783 → £4,076.48 naming 536784.
+  World: a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783 → £4,076.48 naming 536784.
   Decides: asks a person (B v1, B v4, C v1); applies to the invoices it names (B v2, B v3, B v5, C v2, C v3, C v4).
 
 **S31** — several sets add up exactly; the reference names an open invoice; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783; sends a remittance listing 536783 → £4,076.48 naming 536784.
+  World: a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783; sends a remittance listing 536783 → £4,076.48 naming 536784.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4); applies to the invoices it names (B v5, C v2, C v3, C v4).
 
 **S32** — several sets add up exactly; the reference names an open invoice, one of them for the amount (±£1). B decided 22 (9 labeled), C 5 (1 labeled); test payments: 6 (prompt, parent).
-  World: a second invoice 436784 for £2170.90; pays £2170.90, exactly 536784 → £2,170.90 naming 536784.
+  World: a second invoice 436784 for £2,170.90; pays £2,170.90, exactly 536784 → £2,170.90 naming 536784.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4); applies to the invoices it names (B v5, C v2, C v3, C v4).
 
 **S33** — several sets add up exactly; the reference names an open invoice, one of them for the amount (±£1); a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: a second invoice 436783 for £4076.48; pays £4076.48, exactly 536783; names 536783; sends a remittance listing 536783 → £4,076.48 naming 536783.
+  World: a second invoice 436783 for £4,076.48; pays £4,076.48, exactly 536783; names 536783; sends a remittance listing 536783 → £4,076.48 naming 536783.
   Decides: asks a person (B v1, C v1); applies the set (B v2, B v3, B v4); applies to the invoices it names (B v5, C v2, C v3, C v4).
 
 **S34** — one set of open invoices adds up exactly; what the reference names is already paid. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: 536783 is already paid; pays £2170.90, exactly 536784; names 536783 → £2,170.90 naming 536783.
+  World: 536783 is already paid; pays £2,170.90, exactly 536784; names 536783 → £2,170.90 naming 536783.
   Decides: applies the set (B v1, B v2, B v3, C v1); asks a person (B v4, B v5, C v2, C v3, C v4).
 
 **S35** — one set of open invoices adds up exactly; the reference names no open invoice; a remittance lists invoices that add up. B decided 136 (26 labeled), C 118 (13 labeled); test payments: 69 (statement_with_remittance).
-  World: pays £4076.48, exactly 536783; gives no reference; sends a remittance listing 536783 → £4,076.48.
+  World: pays £4,076.48, exactly 536783; gives no reference; sends a remittance listing 536783 → £4,076.48.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S36** — one set of open invoices adds up exactly; what the reference names is already paid; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: 536783 is already paid; pays £2170.90, exactly 536784; names 536783; sends a remittance listing 536784 → £2,170.90 naming 536783.
+  World: 536783 is already paid; pays £2,170.90, exactly 536784; names 536783; sends a remittance listing 536784 → £2,170.90 naming 536783.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3); asks a person (C v4).
 
 **S37** — one set of open invoices adds up exactly; the reference names an open invoice. B decided 19 (3 labeled), C 17 (1 labeled); test payments: 13 (two_invoices).
-  World: pays £4076.48, exactly 536783 → £4,076.48 naming 536784.
+  World: pays £4,076.48, exactly 536783 → £4,076.48 naming 536784.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S38** — one set of open invoices adds up exactly; the reference names an open invoice; a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4076.48, exactly 536783; sends a remittance listing 536783 → £4,076.48 naming 536784.
+  World: pays £4,076.48, exactly 536783; sends a remittance listing 536783 → £4,076.48 naming 536784.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S39** — one set of open invoices adds up exactly; the reference names an open invoice, one of them for the amount (±£1). B decided 843 (126 labeled), C 741 (104 labeled); test payments: 406 (prompt, parent, late, on_account_balance).
-  World: pays £2170.90, exactly 536784 → £2,170.90 naming 536784.
+  World: pays £2,170.90, exactly 536784 → £2,170.90 naming 536784.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).
 
 **S40** — one set of open invoices adds up exactly; the reference names an open invoice, one of them for the amount (±£1); a remittance lists invoices that add up. B decided 0 (0 labeled), C 0 (0 labeled).
-  World: pays £4076.48, exactly 536783; names 536783; sends a remittance listing 536783 → £4,076.48 naming 536783.
+  World: pays £4,076.48, exactly 536783; names 536783; sends a remittance listing 536783 → £4,076.48 naming 536783.
   Decides: applies the set (B v1, B v2, B v3, B v4, B v5, C v1, C v2, C v3, C v4).

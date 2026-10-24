@@ -80,7 +80,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.98, 536783 and 50p more",
+     "pays £4,076.98, 536783 and 50p more",
      "names 536783",
      "sends a remittance listing 536783"
     ],
@@ -610,7 +610,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4064.48, 536783 less £12 of bank charges"
+     "pays £4,064.48, 536783 less £12 of bank charges"
     ],
     "payment": {
      "amount": 406448,
@@ -947,7 +947,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4075.98, 536783 less 50p",
+     "pays £4,075.98, 536783 less 50p",
      "names 536783"
     ],
     "payment": {
@@ -1205,7 +1205,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4075.98, 536783 less 50p",
+     "pays £4,075.98, 536783 less 50p",
      "sends a remittance listing 536783"
     ],
     "payment": {
@@ -1459,7 +1459,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4064.48, 536783 less £12 of bank charges",
+     "pays £4,064.48, 536783 less £12 of bank charges",
      "gives no reference"
     ],
     "payment": {
@@ -1738,7 +1738,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4075.98, 536783 less 50p",
+     "pays £4,075.98, 536783 less 50p",
      "gives no reference",
      "sends a remittance listing 536783"
     ],
@@ -2005,7 +2005,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £4222.56, 536784 + 536792 + 537618 less 50p",
+     "pays £4,222.56, 536784 + 536792 + 537618 less 50p",
      "names 536783",
      "sends a remittance listing 536784, 536792, 537618"
     ],
@@ -2262,7 +2262,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4075.98, 536783 less 50p",
+     "pays £4,075.98, 536783 less 50p",
      "names 536783",
      "sends a remittance listing 536783"
     ],
@@ -2517,7 +2517,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £2171.40, 536784 and 50p more"
+     "pays £2,171.40, 536784 and 50p more"
     ],
     "payment": {
      "amount": 217140,
@@ -2768,7 +2768,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £6247.88, 536783 + 536784 and 50p more",
+     "pays £6,247.88, 536783 + 536784 and 50p more",
      "sends a remittance listing 536783, 536784"
     ],
     "payment": {
@@ -3024,7 +3024,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £2171.40, 536784 and 50p more",
+     "pays £2,171.40, 536784 and 50p more",
      "sends a remittance listing 536784"
     ],
     "payment": {
@@ -3278,7 +3278,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £6259.38, 536783 + 536784 and £12 more",
+     "pays £6,259.38, 536783 + 536784 and £12 more",
      "gives no reference"
     ],
     "payment": {
@@ -3530,7 +3530,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £6247.88, 536783 + 536784 and 50p more",
+     "pays £6,247.88, 536783 + 536784 and 50p more",
      "gives no reference",
      "sends a remittance listing 536783, 536784"
     ],
@@ -3796,7 +3796,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £2182.90, 536784 and £12 more",
+     "pays £2,182.90, 536784 and £12 more",
      "names 536783"
     ],
     "payment": {
@@ -4049,7 +4049,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £2171.40, 536784 and 50p more",
+     "pays £2,171.40, 536784 and 50p more",
      "names 536783",
      "sends a remittance listing 536784"
     ],
@@ -4304,7 +4304,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £6259.38, 536783 + 536784 and £12 more"
+     "pays £6,259.38, 536783 + 536784 and £12 more"
     ],
     "payment": {
      "amount": 625938,
@@ -5373,7 +5373,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.98, 536783 and 50p more",
+     "pays £4,076.98, 536783 and 50p more",
      "gives no reference",
      "sends a remittance listing 536783"
     ],
@@ -5629,7 +5629,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £6923.52, 536784 + 536785 + 537618 less 50p",
+     "pays £6,923.52, 536784 + 536785 + 537618 less 50p",
      "names 536783",
      "sends a remittance listing 536784, 536785, 537618"
     ],
@@ -5886,7 +5886,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.98, 536783 and 50p more",
+     "pays £4,076.98, 536783 and 50p more",
      "sends a remittance listing 536783"
     ],
     "payment": {
@@ -6140,7 +6140,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.98, 536783 and 50p more",
+     "pays £4,076.98, 536783 and 50p more",
      "names 536783"
     ],
     "payment": {
@@ -6404,7 +6404,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.48, exactly 536783",
+     "pays £4,076.48, exactly 536783",
      "gives no reference"
     ],
     "payment": {
@@ -6656,8 +6656,8 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783",
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783",
      "gives no reference"
     ],
     "payment": {
@@ -6910,8 +6910,8 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "the 6 invoices under £400 are already paid",
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783",
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783",
      "names 536786"
     ],
     "payment": {
@@ -7163,8 +7163,8 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783",
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783",
      "gives no reference",
      "sends a remittance listing 536783"
     ],
@@ -7435,8 +7435,8 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "the 6 invoices under £400 are already paid",
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783",
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783",
      "names 536786",
      "sends a remittance listing 536783"
     ],
@@ -7691,8 +7691,8 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783"
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783"
     ],
     "payment": {
      "amount": 407648,
@@ -7943,8 +7943,8 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783",
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783",
      "sends a remittance listing 536783"
     ],
     "payment": {
@@ -8198,8 +8198,8 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "a second invoice 436784 for £2170.90",
-     "pays £2170.90, exactly 536784"
+     "a second invoice 436784 for £2,170.90",
+     "pays £2,170.90, exactly 536784"
     ],
     "payment": {
      "amount": 217090,
@@ -8464,8 +8464,8 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "a second invoice 436783 for £4076.48",
-     "pays £4076.48, exactly 536783",
+     "a second invoice 436783 for £4,076.48",
+     "pays £4,076.48, exactly 536783",
      "names 536783",
      "sends a remittance listing 536783"
     ],
@@ -8721,7 +8721,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £2170.90, exactly 536784",
+     "pays £2,170.90, exactly 536784",
      "names 536783"
     ],
     "payment": {
@@ -8973,7 +8973,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.48, exactly 536783",
+     "pays £4,076.48, exactly 536783",
      "gives no reference",
      "sends a remittance listing 536783"
     ],
@@ -9305,7 +9305,7 @@
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
      "536783 is already paid",
-     "pays £2170.90, exactly 536784",
+     "pays £2,170.90, exactly 536784",
      "names 536783",
      "sends a remittance listing 536784"
     ],
@@ -9560,7 +9560,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.48, exactly 536783"
+     "pays £4,076.48, exactly 536783"
     ],
     "payment": {
      "amount": 407648,
@@ -9831,7 +9831,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.48, exactly 536783",
+     "pays £4,076.48, exactly 536783",
      "sends a remittance listing 536783"
     ],
     "payment": {
@@ -10085,7 +10085,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £2170.90, exactly 536784"
+     "pays £2,170.90, exactly 536784"
     ],
     "payment": {
      "amount": 217090,
@@ -10758,7 +10758,7 @@
    "world": {
     "starts": "B-15061 HOLDINGS LTD's real ledger on 2010-12-28 and the payment of £2,149.30 naming 536784",
     "edits": [
-     "pays £4076.48, exactly 536783",
+     "pays £4,076.48, exactly 536783",
      "names 536783",
      "sends a remittance listing 536783"
     ],

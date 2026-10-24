@@ -15,7 +15,7 @@ export interface World { ledger: Ledger; payment: Payment; edits: Edit[]; featur
 const holds = (atom: Expr, f: Record<string, any>) =>
   run({ domain: 'allocation', rules: [{ when: atom, then: { decide: 'y' } }], otherwise: { decide: 'n' } } as any, f).outcome.decide === 'y';
 export const cellKey = (vocab: Expr[], f: Record<string, any>) => vocab.map(a => (holds(a, f) ? '1' : '0')).join('');
-const money = (c: number) => '£' + (c / 100).toFixed(2);
+const money = (c: number) => '£' + (c / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function subsets(items: Invoice[], max = 3): Invoice[][] {
   const out: Invoice[][] = [];
