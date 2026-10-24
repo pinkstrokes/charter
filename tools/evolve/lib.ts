@@ -2,7 +2,7 @@
 // identity, and a cached LLM client. Nothing here decides anything.
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname } from 'node:path';
 
@@ -107,7 +107,10 @@ export async function llmJson(model: string, system: string, user: string, tempe
     raw = String(JSON.parse(text).choices?.[0]?.message?.content ?? '');
     cache![key] = raw;
     mkdirSync('data', { recursive: true });
-    writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 1));
+    // Runs share the cache: merge with what is on disk, and replace the file in one step.
+    cache = { ...(existsSync(CACHE_FILE) ? JSON.parse(readFileSync(CACHE_FILE, 'utf8')) : {}), ...cache };
+    writeFileSync(`${CACHE_FILE}.${process.pid}`, JSON.stringify(cache, null, 1));
+    renameSync(`${CACHE_FILE}.${process.pid}`, CACHE_FILE);
   }
   const start = raw.indexOf('{');
   const end = raw.lastIndexOf('}');

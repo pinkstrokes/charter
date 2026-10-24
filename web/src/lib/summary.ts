@@ -46,6 +46,7 @@ export function summarize(a: Activity): string {
     case 'assess_fee':
       return `${str(p.id)} ${cents(p.amountCents)}`;
     case 'waive_fee':
+    case 'write_off':
       return `${str(p.invoice)} ${cents(p.cents)}`;
     case 'record_adjustment':
       return p.invoice ? `${str(p.invoice)} ${cents(p.cents)}` : `${str(p.id ?? p.txnId)} ${cents(p.amountCents)}`;

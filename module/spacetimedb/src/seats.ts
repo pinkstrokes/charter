@@ -562,7 +562,37 @@ export function cashAppCycle(ctx: ProcCtx): string {
     }
   }
   const debits = ctx.withTx(tx => (useCurrency(tx), scheduleDebits(tx)));
-  return `reports ${done.weekly_report}, receipts ${done.apply_receipt + done.identify_payer}, debits ${debits}${setAside ? `, set aside ${setAside}` : ''}`;
+  const differences = ctx.withTx(tx => (useCurrency(tx), listDifferences(tx)));
+  return `reports ${done.weekly_report}, receipts ${done.apply_receipt + done.identify_payer}, debits ${debits}${differences ? `, small differences ${differences}` : ''}${setAside ? `, set aside ${setAside}` : ''}`;
+}
+
+// What a payment left open on an invoice it paid, when that is no more than the
+// agreement tolerates: bank charges and exchange differences. Not chased; a
+// person writes it off (C7).
+function isDifference(tx: Tx, inv: { id: string; entityCode: string; openCents: bigint }): boolean {
+  if (inv.openCents <= 0n || Number(inv.openCents) > (termsForEntity(tx, inv.entityCode)?.smallBalanceCents ?? 0)) return false;
+  for (const app of tx.db.application.invoiceId.filter(inv.id)) if (!app.reversed) return true;
+  return false;
+}
+
+// On Mondays the cash seat puts the week's small differences to the controller in one list.
+function listDifferences(tx: Tx): number {
+  const today = simDate(tx);
+  if (new Date(`${today}T00:00:00Z`).getUTCDay() !== 1 || [...tx.db.ask.status.filter('open')].some(a => a.kind === 'write_off')) return 0;
+  const items = [...tx.db.invoice.iter()].filter(i => isDifference(tx, i)).map(i => ({ invoice: i.id, entity: i.entityCode, cents: Number(i.openCents) }));
+  if (!items.length) return 0;
+  const total = items.reduce((s, i) => s + i.cents, 0);
+  openAsk(tx, {
+    kind: 'write_off',
+    subject: `differences:${today}`,
+    toRole: 'controller',
+    question: `${items.length} invoice${items.length === 1 ? ' was' : 's were'} paid short by ${money(total)} in all, each by no more than the agreement treats as bank charges or exchange differences. Write the differences off to bank charges?`,
+    options: ['write off', 'keep open'],
+    evidence: { invoices: items, total },
+    confidence: 0.9,
+    by: CASH.id,
+  });
+  return items.length;
 }
 
 function setAsideWork(tx: Tx, id: bigint, error: string): void {
@@ -889,7 +919,7 @@ function scheduleDebits(tx: Tx): number {
 export function preChaseFeatures(tx: Tx, entityCode: string, today: string): FeatureMap | null {
   const terms = termsForEntity(tx, entityCode);
   const inDebit = new Set([...tx.db.debitInstruction.entityCode.filter(entityCode)].filter(d => d.status === 'scheduled').flatMap(d => JSON.parse(d.invoiceIds) as string[]));
-  const open = [...tx.db.invoice.entityCode.filter(entityCode)].filter(i => i.openCents > 0n && i.dueAt < today && !inDebit.has(i.id));
+  const open = [...tx.db.invoice.entityCode.filter(entityCode)].filter(i => i.openCents > 0n && i.dueAt < today && !inDebit.has(i.id) && !isDifference(tx, i));
   if (open.length === 0) return null;
   const oldest = open.map(i => i.dueAt).sort()[0];
   const facts = factsFor(tx, entityCode);

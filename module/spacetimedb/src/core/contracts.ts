@@ -16,6 +16,7 @@ export interface ContractTerms {
   auditThresholdBp: number; // underreporting above this shifts audit cost to the franchisee
   paymentTermsDays: number; // royalty due this many days after the sales week closes
   applicationOrder: InvoiceKind[]; // how a payment is applied when it does not match exactly
+  smallBalanceCents?: Cents; // a payment may leave this much open (bank charges, exchange rates); a person writes it off rather than chasing it
 }
 
 export type InvoiceKind = 'interest' | 'fee' | 'royalty' | 'supply' | 'trade' | 'audit';

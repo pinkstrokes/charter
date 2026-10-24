@@ -107,6 +107,12 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
               : allocationsForSubset(picked, items);
       return applyAllocations(tx, CASH, receiptId, allocations, plan, {}, fromDecision) ? `applied ${receiptId} as told` : `could not apply ${receiptId}`;
     }
+    case 'write_off': {
+      if (answer !== 'write off') return 'the differences stay open';
+      const items = (evidence.invoices ?? []) as { invoice: string; cents: number }[];
+      const done = items.filter(i => writeOff(tx, who, i.invoice, i.cents, plan).ok).length;
+      return `wrote off ${done} of ${items.length} difference${items.length === 1 ? '' : 's'}`;
+    }
     case 'identify_payer': {
       const receiptId = a.subject.replace('receipt:', '');
       const r = tx.db.receipt.id.find(receiptId);
@@ -310,6 +316,22 @@ export function waiveFee(tx: Tx, who: Principal, invoiceId: string, plan: string
     ], activityId);
     bumpControl(tx, `ar_${inv.kind}`, -cents);
     return `waived ${money(cents)} on ${invoiceId}`;
+  });
+}
+
+// A difference a payment left open, written off by a person (C7) to bank charges and payment differences.
+export function writeOff(tx: Tx, who: Principal, invoiceId: string, cents: number, plan: string[]): ExecResult {
+  const inv = tx.db.invoice.id.find(invoiceId);
+  if (!inv) throw new Rejection(`no invoice ${invoiceId}`);
+  return exec(tx, { principal: who, action: 'write_off', params: { invoice: invoiceId, cents }, used: [`invoice:${invoiceId}`], plan, amountCents: cents, facts: factsFor(tx, inv.entityCode) }, activityId => {
+    if (inv.openCents !== BigInt(cents)) throw new Rejection(`${invoiceId} has ${money(Number(inv.openCents))} open now, not ${money(cents)}`);
+    tx.db.invoice.id.update({ ...inv, openCents: 0n, status: 'written_off' });
+    post(tx, `JE-WO-${invoiceId}`, [
+      { account: '6100', debit: cents, entity: inv.entityCode, memo: `difference on ${invoiceId} written off` },
+      { account: AR_ACCOUNT_BY_KIND[inv.kind], credit: cents, entity: inv.entityCode, memo: `difference on ${invoiceId} written off` },
+    ], activityId);
+    bumpControl(tx, `ar_${inv.kind}`, -cents);
+    return `wrote off ${money(cents)} on ${invoiceId}`;
   });
 }
 

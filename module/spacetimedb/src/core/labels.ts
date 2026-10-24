@@ -1,7 +1,7 @@
 // How people's answers become labels. Pure, so the evolution tools use the
 // same reading of an answer as the kernel does.
 
-import { ASKS, type Treatments } from './dsl';
+import { ASKS, outcomeFor, type Treatments } from './dsl';
 
 // The invoices a set of applications pays, in one canonical spelling.
 export function landing(allocations: { id: string }[]): string {
@@ -16,8 +16,7 @@ export function allocationLabel(evidence: { features?: Record<string, unknown>; 
   const t = evidence.treatments;
   if (t && Object.keys(t).length) {
     if (answer === 'leave unapplied') return 'leave_unapplied_ask';
-    const picked = landing(answer.split(' + ').map(id => ({ id })));
-    return Object.keys(t).find(o => t[o] === picked) ?? 'leave_unapplied_ask';
+    return outcomeFor(t, landing(answer.split(' + ').map(id => ({ id }))), 'leave_unapplied_ask');
   }
   if (f.remittance_consistent === true && (evidence.remittance ?? []).slice().sort().join(' + ') === answer.split(' + ').sort().join(' + ')) return 'apply_unique';
   if (evidence.referenced && answer === evidence.referenced) return f.reference_matches_open === true ? 'apply_unique' : 'apply_to_reference';

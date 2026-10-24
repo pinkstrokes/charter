@@ -2903,6 +2903,12 @@ th.n {
   color: var(--ink-2);
 }
 
+.benchrec .sub-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .benchrec-rules th.group {
   text-align: center;
   border-bottom: 1px solid var(--rule);

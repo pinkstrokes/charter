@@ -28,6 +28,7 @@ export const ACCOUNTS: Record<string, string> = {
   '4100': 'Supply sales',
   '4200': 'Late fee and interest income',
   '6000': 'Bad debt expense',
+  '6100': 'Bank charges and payment differences',
 };
 
 export const AR_ACCOUNT_BY_KIND: Record<string, string> = {

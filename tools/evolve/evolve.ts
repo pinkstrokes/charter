@@ -9,7 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
-import { center, evaluate, examplesFor, graded, latestBySubject, loadHistory, propose, prune, repair, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
+import { examplesFor, graded, improve, latestBySubject, loadHistory, splitLessons, type Domain, type Example, type History } from './skills';
 import { searchPolicies } from './policies';
 
 const args = new Map<string, string>();
@@ -85,42 +85,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   }
 
   const t0 = Date.now();
-  const proposals = await propose(MODEL, domain, current, lesson, examples, h, optional);
-  type Scored = { program: SkillProgram; ev: Evaluation; origin: string; rationale: string };
-  const scored: Scored[] = [];
-  for (const proposal of proposals) {
-    let ev: Evaluation;
-    let p: typeof proposal;
-    try {
-      p = { ...proposal, program: prune(domain, current, proposal.program, examples, h, hidden) };
-      ev = evaluate(domain, current, p.program, examples, lesson, h, hidden, optional);
-    } catch (e) {
-      continue; // a candidate the evaluator cannot even read is simply not a candidate
-    }
-    scored.push({ program: p.program, ev, origin: `${MODEL} style ${p.style}`, rationale: p.rationale });
-    // Constants are tuned only to rescue a candidate that fails, never to shave flags:
-    // a threshold fitted tightly around one case is exactly how a skill overfits.
-    if (ev.gate === 'fail') {
-      for (const v of tune(domain, current, p.program, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, constants tuned by replay`, rationale: p.rationale });
-      for (const v of repair(domain, current, p.program, ev, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, unsupported rules removed by replay`, rationale: p.rationale });
-    }
-  }
-  // Most taught cases handled, most labeled cases right, most robust, then the
-  // smallest change to past decisions nobody labeled, then the simplest.
-  const rank = (a: Scored, b: Scored) =>
-    b.ev.lesson.handled.length - a.ev.lesson.handled.length || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.changed.n - b.ev.changed.n || a.ev.complexity - b.ev.complexity;
-  const passing = scored.filter(s => s.ev.gate === 'pass').sort(rank);
-  // The leading candidates get their new thresholds centred between the known cases.
-  for (const c of passing.slice(0, 3)) {
-    const program = center(domain, current, c.program, examples, lesson, h, hidden, optional);
-    if (JSON.stringify(program) === JSON.stringify(c.program)) continue;
-    const ev = evaluate(domain, current, program, examples, lesson, h, hidden, optional);
-    if (ev.gate !== 'pass') continue;
-    const centred = { program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale };
-    scored.push(centred);
-    passing.push(centred);
-  }
-  passing.sort(rank);
+  const { scored, passing } = await improve(MODEL, domain, current, examples, lesson, optional, h, hidden);
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
   log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), optional: optional.length, candidates: scored.length, passing: passing.length, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
   if (!passing.length) {
@@ -158,9 +123,9 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     return `${domain}: dry run, best candidate written`;
   }
   await db.call('propose_skill', domain, JSON.stringify(best.program), active.key, provenance, JSON.stringify(proof));
-  await db.call('record_evolution', domain, 'pass', `proposed ${domain}@${active.version + 1}: fixes ${best.ev.labeled.fixed.length}, takes over ${best.ev.lesson.optionalFixed}, breaks 0`, JSON.stringify({ candidatesTried: scored.length, candidatesPassed: passing.length, seconds: Number(secs) })).catch(() => undefined);
+  await db.call('record_evolution', domain, 'pass', `proposed ${domain}@${active.version + 1}: fixes ${best.ev.labeled.fixed.length}, takes over ${best.ev.lesson.optionalFixed}, breaks ${best.ev.labeled.broken.length}`, JSON.stringify({ candidatesTried: scored.length, candidatesPassed: passing.length, seconds: Number(secs) })).catch(() => undefined);
   writeFileSync(`${COMPANY_DIR}/eval/proposal-${domain}-${active.version + 1}.json`, JSON.stringify({ program: best.program, proof }, null, 2));
-  return `${domain}: proposed v${active.version + 1} in ${secs}s (${passing.length}/${scored.length} candidates passed; handles ${best.ev.lesson.handled.length}/${lesson.length} lessons, fixes ${best.ev.labeled.fixed.length}, breaks 0, new leads ${best.ev.newLeads.length})`;
+  return `${domain}: proposed v${active.version + 1} in ${secs}s (${passing.length}/${scored.length} candidates passed; handles ${best.ev.lesson.handled.length}/${lesson.length} lessons, fixes ${best.ev.labeled.fixed.length}, breaks ${best.ev.labeled.broken.length}, new leads ${best.ev.newLeads.length})`;
 }
 
 async function once(db: Db): Promise<void> {

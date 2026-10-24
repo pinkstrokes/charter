@@ -35,17 +35,16 @@ export function ruleText(program: SkillProgram | null, index: number): string {
 }
 export type { Expr, FeatureMap, SkillProgram, Value };
 
-export const DOMAIN_NAMES = Object.keys(DOMAINS) as (keyof typeof DOMAINS)[];
-
 export const DOMAIN_LABEL: Record<string, string> = {
   underreport: 'Under-reported sales',
   pre_chase: 'Before chasing a balance',
   routing_change: 'Bank-detail changes',
   allocation: 'Applying receipts',
   bill_match: 'Matching vendor bills',
+  bank_match: 'Bank reconciliation',
 };
 
-// Which seat uses each domain.
+// Which seat uses each domain. The bank-reconciliation desk is measured offline, on BenchRec.
 export const DOMAIN_SEAT: Record<string, string> = {
   underreport: 'cash_app',
   allocation: 'cash_app',
@@ -53,6 +52,9 @@ export const DOMAIN_SEAT: Record<string, string> = {
   pre_chase: 'collections',
   bill_match: 'ap_clerk',
 };
+
+// The domains a seat in this database decides.
+export const DOMAIN_NAMES = (Object.keys(DOMAINS) as (keyof typeof DOMAINS)[]).filter(d => d in DOMAIN_SEAT);
 
 // Ask kinds whose evidence carries a domain's features.
 export const ASK_DOMAIN: Record<string, string> = {
@@ -108,6 +110,12 @@ const FEATURE_LABEL: Record<string, string> = {
   reference_gap_cents: 'named invoice minus payment',
   report_revised: 'revised report',
   weeks_of_history: 'weeks on file',
+  exact_allocations: 'allocations with exactly this amount that day',
+  exact_lines: 'ledger lines with exactly this amount that day',
+  contested: 'contested ledger line',
+  import_gap_days: 'days between bank line and ledger line',
+  group_allocations: 'allocations whose lines that day add up to it',
+  near_allocations: 'allocations with exactly this amount within 3 days',
 };
 
 export function featureLabel(name: string): string {

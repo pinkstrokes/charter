@@ -4,7 +4,7 @@
 // invariants, and an independent re-verification of the activity hash chain.
 //   npx tsx tools/evolve/report.ts --db charter-a
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
+import { ESCALATING as ESCALATE, parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { chainHash } from '../../module/spacetimedb/src/core/hash';
 import { upper95 } from '../../module/spacetimedb/src/core/stats';
 import { Db, evolverToken, parseJson, type Row } from './lib';
@@ -15,13 +15,6 @@ for (let i = 2; i < process.argv.length; i++) if (process.argv[i].startsWith('--
 const DB = args.get('db') ?? 'charter-iqwfr';
 const DIR = args.get('data') ?? (DB === 'charter-a' ? 'data/companyA' : DB === 'charter-b' ? 'data/companyB' : 'data/dev');
 
-const ESCALATE: Record<Domain, string[]> = {
-  underreport: ['flag_audit', 'ask_consultant'],
-  pre_chase: ['ask_consultant', 'escalate_controller'],
-  allocation: ['leave_unapplied_ask'],
-  routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
-  bill_match: ['hold_exception'],
-};
 
 function domainOf(subject: string): Domain | null {
   if (subject.startsWith('store:')) return 'underreport';

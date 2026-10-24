@@ -4,14 +4,14 @@
 // rule starts on probation, a proven one gets reduced inspection, a recent error
 // tightens it, and a rule we are 95% sure is worse than the tolerable error rate
 // is suspended, so its cases go to a person until a new version replaces it.
-import { ESCALATING, parseTreatments, sameTreatment } from './core/dsl';
+import { ESCALATING, parseTreatments, sameTreatment, TOLERABLE } from './core/dsl';
 import { labelBreach } from './core/labels';
 import { lower95, upper95 } from './core/stats';
 
 export { lower95, upper95 };
 import { appendActivity, simDate, type Tx } from './kernel';
 
-export const TOLERABLE: Record<string, number> = { underreport: 0.05, pre_chase: 0.1, allocation: 0.02, routing_change: 0.02, bill_match: 0.02 };
+export { TOLERABLE };
 export const SAMPLE_RATE: Record<string, number> = { probation: 0.25, normal: 0.1, reduced: 0.03, tightened: 0.4, suspended: 0 };
 
 // Stronger evidence overrides weaker evidence about the same decision.
@@ -28,7 +28,7 @@ export function statFor(tx: Tx, domain: string, skillKey: string, ruleIndex: num
 
 export function nextState(s: { domain: string; checked: number; errors: number; recent: string; state: string }): string {
   const recent = JSON.parse(s.recent) as number[];
-  const tolerable = TOLERABLE[s.domain] ?? 0.05;
+  const tolerable = (TOLERABLE as Record<string, number>)[s.domain] ?? 0.05;
   if (s.checked >= 5 && lower95(s.errors, s.checked) > tolerable) return 'suspended';
   if (recent.slice(-5).includes(1)) return 'tightened';
   // Tightened inspection ends after ten correct checks in a row.
@@ -97,7 +97,7 @@ export function recordCheck(tx: Tx, domain: string, subject: string, correct: st
       role: 'system',
       kind: 'reliability',
       command: 'inspection_level',
-      params: { rule: stat.key, from: stat.state, to: state, checked, errors, upper95: Number(upper95(errors, checked).toFixed(4)), lower95: Number(lower95(errors, checked).toFixed(4)), tolerable: TOLERABLE[domain] ?? 0.05 },
+      params: { rule: stat.key, from: stat.state, to: state, checked, errors, upper95: Number(upper95(errors, checked).toFixed(4)), lower95: Number(lower95(errors, checked).toFixed(4)), tolerable: (TOLERABLE as Record<string, number>)[domain] ?? 0.05 },
       used: [`decision:${d.id}`],
       outcome: state,
     });

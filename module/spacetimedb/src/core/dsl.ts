@@ -122,6 +122,18 @@ export const DOMAINS = {
       amount: { type: 'number', doc: 'bill amount (cents)' },
     },
   },
+  bank_match: {
+    doc: 'Decide which ledger allocation a bank statement line belongs to, or hand it to a person.',
+    outcomes: ['match_exact', 'match_group', 'match_near', 'ask'],
+    features: {
+      exact_allocations: { type: 'number', doc: 'ledger allocations with a line of exactly this amount on the same value date (match_exact takes the first)' },
+      exact_lines: { type: 'number', doc: 'ledger lines of exactly this amount on the same value date' },
+      contested: { type: 'bool', doc: 'another bank line has the same amount and value date as one of those ledger lines' },
+      import_gap_days: { type: 'number', doc: 'days between this bank line and the closest such ledger line arriving in the books (999 when there is none)' },
+      group_allocations: { type: 'number', doc: 'other allocations whose ledger lines on the value date add up to this amount (match_group takes the first)' },
+      near_allocations: { type: 'number', doc: 'allocations with a line of exactly this amount within 3 days of the value date, not on it (match_near takes the first)' },
+    },
+  },
 } satisfies Record<string, DomainSpec>;
 
 export type DomainName = keyof typeof DOMAINS;
@@ -133,7 +145,13 @@ export const ESCALATING: Record<DomainName, string[]> = {
   allocation: ['leave_unapplied_ask'],
   routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
   bill_match: ['hold_exception'],
+  bank_match: ['ask'],
 };
+
+// How often a rule may be wrong and still act alone. At exactly this rate acting
+// alone and asking a person cost the same, so one mistake is worth 1/TOLERABLE
+// questions. The bank desk's is BenchRec's floor: 99.8% precision.
+export const TOLERABLE: Record<DomainName, number> = { underreport: 0.05, pre_chase: 0.1, allocation: 0.02, routing_change: 0.02, bill_match: 0.02, bank_match: 0.002 };
 
 // What each outcome would do with one case, recorded with the decision when the
 // seat can work it out: for cash, the invoices each outcome would pay ('ask' when
@@ -147,6 +165,11 @@ export function sameTreatment(domain: string, a: string, b: string, treatments?:
   if (domain === 'underreport') return ESCALATING.underreport.includes(a) === ESCALATING.underreport.includes(b);
   if (treatments && a in treatments && b in treatments) return treatments[a] === treatments[b];
   return a === b;
+}
+
+// The outcome that would have done what a person did, or the domain's way of asking when none would.
+export function outcomeFor(treatments: Treatments, done: string, asks: string): string {
+  return Object.keys(treatments).find(o => treatments[o] === done) ?? asks;
 }
 
 export function parseTreatments(json: string | undefined): Treatments | undefined {

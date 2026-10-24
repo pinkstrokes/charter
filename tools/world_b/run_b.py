@@ -19,7 +19,7 @@ from stdb import DB, Client, admin_token, identity_arg, load_key, new_identity  
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 B = os.path.join(ROOT, "data/companyB")
 TERMS = {"version": "TRADE-30", "royaltyBp": 0, "graceDays": 7, "lateFeeCents": 0, "interestBpPerMonth": 0, "nsfFeeCents": 0, "auditThresholdBp": 0,
-         "paymentTermsDays": 30, "applicationOrder": ["trade", "fee", "interest", "royalty", "supply", "audit"]}
+         "paymentTermsDays": 30, "applicationOrder": ["trade", "fee", "interest", "royalty", "supply", "audit"], "smallBalanceCents": 2500}
 
 
 def acct(code, salt=""):
@@ -243,6 +243,8 @@ def answer(admin, dana, truth):
             dana.call("answer_ask", a["id"], "chase", "overdue")
         elif k == "reading_conflict":
             dana.call("answer_ask", a["id"], "reading A", "matches the email")
+        elif k == "write_off":
+            dana.call("answer_ask", a["id"], "write off", "bank charges and exchange differences on payments from abroad; not worth a letter")
         elif k == "finding":
             dana.call("answer_ask", a["id"], "acknowledge", "noted")
 
