@@ -141,6 +141,16 @@ def main():
     gl = {g["account"]: g["debit_cents"] - g["credit_cents"] for g in admin.sql("SELECT account, debit_cents, credit_cents FROM gl_balance")}
     check("unapplied cash back to zero after refund", gl.get("2100", 0) == 0, str(gl))
 
+    # Chapter 11: a person records the filing; the constitution stops collections at once.
+    world.call("ingest_obs", "supply_invoice", "erp", "2026-03-13", "sup:SUP-1003", "store:S14",
+               json.dumps({"invoiceNo": "SUP-1003", "storeCode": "S14", "entityCode": "F01", "date": "2026-03-13", "dueDate": "2026-03-16",
+                           "lines": [{"sku": "TEA-BASE", "qty": 10, "unitCents": 9000}], "totalCents": 90_000, "impliedDrinks": 900}))
+    dana.call("set_entity_status", "F01", "bankrupt", "Chen Tea LLC filed Chapter 11 this morning")
+    world.call("set_sim_date", "2026-04-15")
+    world.call("run_seats")
+    notices = [x for x in admin.sql("SELECT command, outcome, reasons, params FROM activity WHERE command = 'send_notice'") if '"F01"' in x["params"]]
+    check("no collection notice reaches a bankrupt franchisee (C9)", notices and all(x["outcome"] == "denied" for x in notices) and any("C9" in x["reasons"] for x in notices), str([(x["outcome"], x["reasons"][:60]) for x in notices][:2]))
+
     # The chain links up row by row.
     acts = admin.sql("SELECT id, prev_hash, hash, kind, command, outcome FROM activity")
     acts.sort(key=lambda a: a["id"])

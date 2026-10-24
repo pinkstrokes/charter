@@ -359,3 +359,17 @@ export function reverseApplications(tx: Tx, who: Principal, receiptId: string, r
     return `${money(total)} of ${receiptId} returned to unapplied cash`;
   });
 }
+
+// A person records what happened to a counterparty (a bankruptcy filing, a
+// closure). The constitution then binds every seat: no collection notices while
+// a counterparty is in bankruptcy.
+export function setEntityStatus(tx: Tx, who: Principal, code: string, status: string, reason: string): ExecResult {
+  const e = tx.db.entity.code.find(code);
+  if (!e) throw new Rejection(`no counterparty ${code}`);
+  if (!['active', 'bankrupt', 'closed'].includes(status)) throw new Rejection('status is active, bankrupt or closed');
+  return exec(tx, { principal: who, action: 'set_entity_status', params: { entity: code, from: e.status, to: status, reason }, used: [`entity:${code}`] }, () => {
+    tx.db.entity.code.update({ ...e, status });
+    addFact(tx, `entity:${code}`, 'status', { status, reason, by: who.id }, simDate(tx), 0n, true);
+    return `${e.name}: ${e.status} -> ${status}`;
+  });
+}

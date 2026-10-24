@@ -10,7 +10,7 @@ import type { SkillProgram } from './core/dsl';
 import type { PolicyTemplate, Principal, Role } from './core/policy';
 import { appendActivity, checkInvariants, exec, Rejection, simDate, type Ctx, type Tx } from './kernel';
 import type { ProcCtx } from './llm';
-import { answerAsk, closeAudit, correctDecision, endorseRouting, raiseConcern, releaseRefund, waiveFee } from './answers';
+import { answerAsk, closeAudit, correctDecision, endorseRouting, raiseConcern, releaseRefund, setEntityStatus, waiveFee } from './answers';
 import { decidePolicy, proposePolicy, proposeSkill, seedGovernance, setSkillStatus } from './governance';
 import { fileFinding, recordOpinion } from './audit';
 import { closePeriod } from './close';
@@ -193,6 +193,11 @@ export const answer_ask = spacetimedb.reducer({ askId: t.u64(), answer: t.string
 export const release_refund = spacetimedb.reducer({ refundId: t.u64() }, (ctx, { refundId }) => {
   const who = requireRole(ctx, 'controller');
   guard(() => releaseRefund(ctx, who, refundId));
+});
+
+export const set_entity_status = spacetimedb.reducer({ code: t.string(), status: t.string(), reason: t.string() }, (ctx, { code, status, reason }) => {
+  const who = requireRole(ctx, 'controller');
+  guard(() => setEntityStatus(ctx, who, code, status, reason));
 });
 
 export const release_payment = spacetimedb.reducer({ paymentId: t.string() }, (ctx, { paymentId }) => {
