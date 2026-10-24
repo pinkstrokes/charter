@@ -11,13 +11,40 @@ import sys
 import tempfile
 import textwrap
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from make_video import FONT, VOICE, H, W, compose, duration, run  # noqa: E402
-
+VOICE = os.environ.get("VOICE", "Samantha")
+FONT = "/System/Library/Fonts/Supplemental/Arial.ttf"
+W, H = 1920, 1080
 PAGE_H = 930  # the browser viewport; the caption bar fills the rest of the frame
 
 
-def caption_png(text, path):
+def run(cmd):
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def duration(path):
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path], capture_output=True, text=True).stdout
+    return float(out.strip() or 0)
+
+
+def title_card(title, caption, out):
+    """A heading and up to four lines under it, with the caption bar."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    canvas = Image.new("RGB", (W, H), (11, 13, 16))
+    draw = ImageDraw.Draw(canvas)
+    big, small = ImageFont.truetype(FONT, 88), ImageFont.truetype(FONT, 40)
+    lines = [line for part in title.get("lines", []) for line in textwrap.wrap(part, 70)]
+    y = (PAGE_H - 120 - len(lines) * 58) // 2
+    draw.text(((W - draw.textlength(title["heading"], font=big)) / 2, y), title["heading"], font=big, fill=(240, 240, 240))
+    y += 140
+    for line in lines:
+        draw.text(((W - draw.textlength(line, font=small)) / 2, y), line, font=small, fill=(190, 190, 200))
+        y += 58
+    canvas.paste(caption_bar(caption), (0, PAGE_H))
+    canvas.save(out)
+
+
+def caption_bar(text):
     from PIL import Image, ImageDraw, ImageFont
 
     bar = Image.new("RGB", (W, H - PAGE_H), (0, 0, 0))
@@ -28,7 +55,7 @@ def caption_png(text, path):
     for line in lines:
         draw.text(((W - draw.textlength(line, font=font)) / 2, y), line, font=font, fill=(240, 240, 240))
         y += 44
-    bar.save(path)
+    return bar
 
 
 def main(spec_path, out_path):
@@ -51,12 +78,12 @@ def main(spec_path, out_path):
         caption = sc.get("caption", sc["say"])
         if "title" in sc:
             frame = os.path.join(work, f"s{i}.png")
-            compose(None, caption, frame, sc["title"])
+            title_card(sc["title"], caption, frame)
             run(["ffmpeg", "-y", "-loop", "1", "-i", frame, "-i", sc["audio"], "-c:v", "libx264", "-tune", "stillimage", "-pix_fmt", "yuv420p", "-r", "30",
                  "-c:a", "aac", "-b:a", "160k", "-t", f"{sc['seconds']:.2f}", "-af", "apad", seg])
         else:
             bar = os.path.join(work, f"s{i}-caption.png")
-            caption_png(caption, bar)
+            caption_bar(caption).save(bar)
             video = os.path.join(work, f"scene-{i}.webm")
             run(["ffmpeg", "-y", "-i", video, "-i", bar, "-i", sc["audio"],
                  "-filter_complex", f"[0:v]scale={W}:{PAGE_H},pad={W}:{H}:0:0:black,fps=30[v];[v][1:v]overlay=0:{PAGE_H}[out]",
