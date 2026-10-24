@@ -1,0 +1,9 @@
+{
+  "name": "charter-certify",
+  "private": true,
+  "type": "module",
+  "description": "Competence maps and certificates for Charter's skills: every situation a skill can tell apart, realized as a concrete world and graded",
+  "dependencies": {
+    "z3-solver": "^4.13.0"
+  }
+}
