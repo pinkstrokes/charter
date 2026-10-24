@@ -115,9 +115,11 @@ const le = (a: object, b: object) => ({ op: 'cmp' as const, c: 'le' as const, a,
 const and = (...args: object[]) => ({ op: 'and' as const, args }) as never;
 const not = (a: object) => ({ op: 'not' as const, a }) as never;
 
-// Day-0 skill: the obvious matches a bank-reconciliation clerk makes first.
-export const SKILL: SkillProgram = {
-  domain: 'bank_match',
+// Day-0 skill: the obvious matches a bank-reconciliation clerk makes first. The
+// interpreter is the seats' own; the domain lives here, not in the database's
+// DOMAINS, because this desk is measured offline.
+export const SKILL = {
+  domain: 'bank_match' as SkillProgram['domain'],
   rules: [
     { when: and(eq(feat('exact_allocations'), num(1)), not(feat('contested')), le(feat('import_gap_days'), num(14))), then: { decide: 'match_exact', note: 'one ledger allocation on the value date has exactly this amount, booked within two weeks' } },
     { when: and(eq(feat('exact_allocations'), num(1)), not(feat('contested'))), then: { decide: 'match_exact', note: 'one ledger allocation on the value date has exactly this amount' } },
@@ -127,7 +129,7 @@ export const SKILL: SkillProgram = {
     { when: and(eq(feat('exact_allocations'), num(0)), eq(feat('group_allocations'), num(0)), eq(feat('near_allocations'), num(1))), then: { decide: 'match_near', note: `one ledger allocation within ${NEAR_DAYS} days has exactly this amount` } },
   ],
   otherwise: { decide: 'ask', note: 'no single allocation explains this line' },
-};
+} satisfies SkillProgram;
 
 function main(): void {
   for (const f of ['BenchRec_cash_v1.0_train.csv', 'BenchRec_cash_v1.0_eval.csv', 'BenchRec_cash_v1.0_solution.csv'])
