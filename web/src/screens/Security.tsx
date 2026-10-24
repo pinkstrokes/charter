@@ -1,6 +1,6 @@
 import { Check, Clock, Mail, Paperclip, Play, Send, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import type { Activity, Entity, Observation, RoutingRequest, Store } from '../module_bindings/types';
+import type { Activity, Entity, Observation, Payment, RoutingRequest, Store } from '../module_bindings/types';
 import { ActorTag, Empty, Result } from '../components/ui';
 import { useMe } from '../app/data';
 import { openWhy } from '../app/nav';
@@ -33,11 +33,30 @@ function personName(email: string, entity: Entity): string {
   return /^[a-z]{2,10}$/i.test(local) && local.toLowerCase() !== 'owner' ? `${local.charAt(0).toUpperCase()}${local.slice(1)} ${surname}` : `${entity.name} accounts`;
 }
 
-function presets(entities: Entity[], stores: Store[]): { label: string; hint: string; draft: Draft }[] {
+function presets(entities: Entity[], stores: Store[], payments: Payment[]): { label: string; hint: string; draft: Draft }[] {
   const franchisees = [...entities].sort((x, y) => x.code.localeCompare(y.code)).filter(e => e.kind === 'franchisee' && stores.some(s => s.entityCode === e.code));
   const a = franchisees[0] ?? entities[0];
   const b = franchisees[1] ?? a;
   if (!a) return [];
+  // The vendor with the biggest payment waiting for release, writing from its own address.
+  const due = [...payments].filter(p => p.status === 'prepared').sort((x, y) => Number(y.amountCents - x.amountCents))[0];
+  const v = due && entities.find(e => e.code === due.vendorCode);
+  const vendor = v
+    ? [
+        {
+          label: 'Vendor’s own address, new bank',
+          hint: `${v.name}, from the address on file, hours before a ${money(due.amountCents)} payment`,
+          draft: {
+            from: v.contactEmail,
+            fromName: personName(v.contactEmail, v),
+            subject: 'Updated remittance details',
+            body: `Hello,\n\nOur bank account is closing this week. Please send today's payment of ${money(due.amountCents)} to our new account ending 7713, routing 026009593. The old account will reject transfers from Monday.\n\nThanks for updating this before the run,\n${personName(v.contactEmail, v).split(' ')[0]}`,
+            attachmentName: '',
+            attachmentText: '',
+          },
+        },
+      ]
+    : [];
   const storeA = stores.find(s => s.entityCode === a.code);
   const storeB = stores.find(s => s.entityCode === b.code);
   const numA = storeA ? storeA.code.replace(/\D/g, '').replace(/^0+/, '') : '';
@@ -47,6 +66,7 @@ function presets(entities: Entity[], stores: Store[]): { label: string; hint: st
   const firstA = nameA.split(' ')[0];
   const firstB = nameB.split(' ')[0];
   return [
+    ...vendor,
     {
       label: 'Look-alike bank change',
       hint: `${a.name}'s owner, from a free-mail address, the day before a debit`,
@@ -80,12 +100,13 @@ export function Security() {
   const obs = useRows('observation');
   const events = useRows('securityEvent');
   const routing = useRows('routingRequest');
+  const payments = useRows('payment');
   const me = useMe();
   const send = useAction();
   const [draft, setDraft] = useState<Draft>(BLANK);
   const [showAttach, setShowAttach] = useState(false);
   const [tracked, setTracked] = useState<bigint | null>(null);
-  const options = useMemo(() => presets(entities, stores), [entities, stores]);
+  const options = useMemo(() => presets(entities, stores, payments), [entities, stores, payments]);
   const emails = useMemo(() => [...obs].filter(o => o.kind === 'email').sort((a, b) => (a.id < b.id ? 1 : -1)), [obs]);
   useEffect(() => {
     if (draft === BLANK && options[0]) setDraft(options[0].draft);

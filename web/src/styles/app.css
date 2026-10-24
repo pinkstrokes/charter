@@ -2982,3 +2982,77 @@ label.pick:hover {
   margin: 0;
   accent-color: var(--taro);
 }
+
+/* The live demo's step bar (demo server only). Bottom left, clear of the Why drawer. */
+.demobar {
+  position: fixed;
+  left: 16px;
+  bottom: 14px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: calc(100vw - 32px);
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  box-shadow: var(--shadow);
+}
+
+.demostep {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 11px 0 5px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font: 500 var(--fs-meta) / 1 var(--sans);
+  cursor: pointer;
+}
+
+.demostep:hover {
+  background: var(--sheet-2);
+  color: var(--ink);
+}
+
+.demostep[aria-current='step'] {
+  background: var(--taro);
+  color: var(--sheet);
+}
+
+.demostep-n {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--sheet-2);
+  color: var(--ink-2);
+  font-size: var(--fs-micro);
+}
+
+.demostep[aria-current='step'] .demostep-n {
+  background: var(--sheet);
+  color: var(--taro);
+}
+
+.demostep.quiet {
+  padding: 0 11px;
+  color: var(--ink-3);
+}
+
+/* Under the rule that fired: where it came from. */
+.rule-origin {
+  margin-top: 6px;
+  font-size: var(--fs-meta);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.rule-origin .chip {
+  vertical-align: 1px;
+}

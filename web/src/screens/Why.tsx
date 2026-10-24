@@ -8,7 +8,7 @@ import { useActivityById, useActivityDesc, useMe, usePolicyLookup } from '../app
 import { closeWhy, go, openWhy } from '../app/nav';
 import { actor, answerWords, askLabel, commandLabel, day, money, num, prettyText, ROLE_LABEL } from '../lib/format';
 import { parseArr, parseLoose, parseObj, present } from '../lib/json';
-import { actionsOf, decisionFor, planPolicies, subjectLabel } from '../lib/lineage';
+import { actionsOf, decisionFor, originsOf, planPolicies, proofSummary, ruleOrigin, skillTransitions, subjectLabel } from '../lib/lineage';
 import { factText, template } from '../lib/policies';
 import { askDomain, DOMAINS, domainOf, explainComparisons, exprText, featureLabel, outcomeText, parseProgram, parseTreatments, run, sameTreatment, type FeatureMap } from '../lib/rules';
 import { summarize } from '../lib/summary';
@@ -604,6 +604,7 @@ export function DecisionBox({ d, skills, a, title = 'Why the seat decided this' 
                       ))}
                     </ul>
                   )}
+                  {i === fired && skill && <RuleOrigin rule={r} skill={skill} skills={skills} />}
                 </div>
               </li>
             ))}
@@ -646,6 +647,53 @@ export function DecisionBox({ d, skills, a, title = 'Why the seat decided this' 
       </details>
       <CorrectDecision d={d} a={a} />
     </section>
+  );
+}
+
+// Where the rule that fired came from: the version that introduced it, when it went
+// live, whose answers taught it, and what replaying it over the past showed first.
+function RuleOrigin({ rule, skill, skills }: { rule: NonNullable<ReturnType<typeof parseProgram>>['rules'][number]; skill: Skill; skills: Skill[] }) {
+  const asks = useRows('ask');
+  const activity = useRows('activity');
+  const origin = ruleOrigin(rule, skill, skills);
+  const live = skillTransitions(origin.key, activity).find(t => t.to === 'active');
+  const proof = proofSummary(origin.proof);
+  const source = proof.gate === 'imported' ? (proof.raw?.source as { company?: string; skill?: string } | undefined) : undefined;
+  const people = originsOf(origin, asks);
+  const who = (by: string) => by.split(':')[1] ?? by;
+  // Of the lessons this version handles, the reason people gave most often for this rule's outcome.
+  const lessons = ((proof.raw?.lesson as { cases?: { label: string; reason: string; source: string; handled?: boolean }[] } | undefined)?.cases ?? []).filter(c => c.label === rule.then.decide && c.handled !== false && c.reason);
+  const reasons = new Map<string, { n: number; by: string }>();
+  for (const c of lessons) reasons.set(c.reason, { n: (reasons.get(c.reason)?.n ?? 0) + 1, by: /(?:answered|audit) by (\S+)/.exec(c.source)?.[1] ?? c.source });
+  const top = [...reasons].sort((x, y) => y[1].n - x[1].n)[0];
+  return (
+    <div className="rule-origin">
+      {origin.version === 1 && !source ? (
+        <>Written on day one, before anyone answered anything.</>
+      ) : (
+        <>
+          Learned in{' '}
+          <button type="button" className="chip active" style={{ cursor: 'pointer' }} onClick={() => go('knowledge', origin.domain)}>
+            {origin.key}
+          </button>
+          {live ? `, live ${day(live.at)}` : ''}
+          {source ? (
+            `, at ${source.company ?? 'a sister company'} (${source.skill ?? 'its skill'}), ratified here`
+          ) : top ? (
+            <>
+              , from {who(top[1].by)}’s answers: <span className="serif">“{top[0]}”</span>
+              {lessons.length > 1 ? ` (${lessons.length} cases)` : ''}
+            </>
+          ) : people.length ? (
+            <>
+              , from {who(people[0].by)}: <span className="serif">“{people[0].text}”</span>
+              {people.length > 1 ? ` and ${people.length - 1} more` : ''}
+            </>
+          ) : null}
+          {proof.fixed !== undefined ? `; replayed over the past first: fixed ${proof.fixed}, broke ${proof.broken ?? 0}` : ''}.
+        </>
+      )}
+    </div>
   );
 }
 

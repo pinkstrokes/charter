@@ -5,7 +5,7 @@
 import type { Activity, Ask, Decision, Policy, Skill } from '../module_bindings/types';
 import { day } from './format';
 import { parseArr, parseLoose, parseObj } from './json';
-import { parseProgram, run, skillVersion, type FeatureMap } from './rules';
+import { parseProgram, run, skillVersion, type FeatureMap, type SkillProgram } from './rules';
 
 export function askRefs(text: string): bigint[] {
   const out: bigint[] = [];
@@ -193,6 +193,15 @@ export function proofSummary(proofText: string): ProofSummary {
     violations: Array.isArray(vio) ? vio.length : typeof vio === 'number' ? vio : undefined,
     raw,
   };
+}
+
+// The version that introduced a rule: walk back through the parents while it is still there.
+export function ruleOrigin(rule: SkillProgram['rules'][number], skill: Skill, skills: Skill[]): Skill {
+  const same = (r: SkillProgram['rules'][number]) => r.then.decide === rule.then.decide && JSON.stringify(r.when) === JSON.stringify(rule.when);
+  const has = (s: Skill) => (parseProgram(s.program)?.rules ?? []).some(same);
+  let origin = skill;
+  for (let p = skills.find(s => s.key === skill.parent); p && has(p); p = skills.find(s => s.key === p!.parent)) origin = p;
+  return origin;
 }
 
 // The people a version learned from: asks it cites, or the lesson in its proof.

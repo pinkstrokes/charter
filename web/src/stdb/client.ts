@@ -38,7 +38,8 @@ export interface ClientInfo {
   warning: string; // e.g. watching read-only because no identities file exists yet
   personas: PersonaConn[];
   active: string;
-  companies: Company[]; // what a public page lets a visitor switch between
+  companies: Company[]; // what a public page (or the live demo's server) lets a visitor switch between
+  demo: boolean; // the live demo's server: show the step bar
 }
 
 const FACT_ATTRS = [
@@ -91,7 +92,7 @@ const QUERIES = [
 type Listener = () => void;
 
 class Charter {
-  info: ClientInfo = { db: '', wsBase: '', httpBase: '', source: '', managed: false, error: '', warning: '', personas: [], active: '', companies: [] };
+  info: ClientInfo = { db: '', wsBase: '', httpBase: '', source: '', managed: false, error: '', warning: '', personas: [], active: '', companies: [], demo: false };
   private listeners = new Set<Listener>();
   private observer: DbConnection | null = null;
   private extra = new Set<string>();
@@ -116,10 +117,10 @@ class Charter {
     this.started = true;
     const params = new URLSearchParams(window.location.search);
     try {
-      const env = (await (await fetch(charterApi('env'))).json()) as { defaultDb: string; wsBase: string; httpBase: string; companies?: Company[] };
+      const env = (await (await fetch(charterApi('env'))).json()) as { defaultDb: string; wsBase: string; httpBase: string; companies?: Company[]; demo?: boolean };
       const db = params.get('db') || (import.meta.env.VITE_CHARTER_DB as string | undefined) || env.defaultDb;
       const wsBase = params.get('ws') || (import.meta.env.VITE_STDB_WS as string | undefined) || env.wsBase;
-      this.set({ db, wsBase, httpBase: env.httpBase, companies: env.companies ?? [] });
+      this.set({ db, wsBase, httpBase: env.httpBase, companies: env.companies ?? [], demo: !isPublic && !!env.demo });
       document.title = `Charter · ${db}`;
       await this.loadPersonas(db, false);
     } catch (e) {

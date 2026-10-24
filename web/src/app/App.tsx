@@ -17,6 +17,7 @@ import { World } from '../screens/World';
 import { isPublic } from '../stdb/api';
 import { Why } from '../screens/Why';
 import { Toasts } from '../components/Toast';
+import { DemoBar } from '../components/DemoBar';
 
 const TITLES: Record<Screen, string> = {
   floor: 'Floor',
@@ -55,6 +56,7 @@ export function App() {
         {nav.screen === 'proof' && <Proof />}
       </main>
       {ready && nav.why !== null && <Why id={nav.why} />}
+      <DemoBar />
       <Toasts />
     </div>
   );

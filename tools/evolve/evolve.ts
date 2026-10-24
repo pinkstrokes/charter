@@ -153,12 +153,17 @@ async function once(db: Db): Promise<void> {
 async function main(): Promise<void> {
   const db = new Db(DB, await evolverToken(DB));
   if (!args.has('watch')) return once(db);
-  // Live: wake when a person answers something or an audit closes.
-  let seen = '';
-  for (;;) {
+  // Live: wake when a person answers something or an audit closes after the watch began
+  // (what came before was evolved on when it happened), so every demo starts the same.
+  const markNow = async () => {
     const marks = await db.sql("SELECT id, status, answered_at FROM ask WHERE status = 'answered'");
     const audits = (await db.sql('SELECT id, attr FROM fact')).filter(f => f.attr === 'audit').length;
-    const mark = `${marks.length}:${audits}`;
+    return `${marks.length}:${audits}`;
+  };
+  let seen = await markNow();
+  console.log(`[${new Date().toLocaleTimeString()}] watching ${DB}`);
+  for (;;) {
+    const mark = await markNow();
     if (mark !== seen) {
       seen = mark;
       console.log(`[${new Date().toLocaleTimeString()}] new answers; evolving`);

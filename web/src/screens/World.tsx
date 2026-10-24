@@ -153,7 +153,24 @@ function PaymentForm({ onSent }: { onSent: (id: string) => void }) {
     if (!payer && payers[0]) choose(payers[0].e.code);
   }, [payers]); // eslint-disable-line react-hooks/exhaustive-deps
   const entity: Entity | undefined = entities.find(e => e.code === payer);
+  // The classic messy case in one click: a customer abroad pays two invoices in one
+  // transfer, and the banks in between take their charges.
+  const abroad = payers
+    .filter(p => p.open >= 2 && p.e.country && !/^(United Kingdom|USA|United States)$/i.test(p.e.country))
+    .sort((a, b) => a.open - b.open)[0];
+  const twoFromAbroad = () => {
+    if (!abroad) return;
+    const list = openOf(abroad.e.code).slice(0, 2);
+    setPayer(abroad.e.code);
+    setPicked(list.map(i => i.id));
+    setAmount(fromCents(list.reduce((s, i) => s + Number(i.openCents), 0) - 1200));
+    setReference(list.map(i => i.id).join(' '));
+    setAccount(abroad.e.bankAccount || newAccount());
+    setName(abroad.e.name.toUpperCase());
+    setState({ pending: false, error: '', note: '' });
+  };
   const chips = [
+    ...(abroad ? [{ label: 'Two invoices from abroad, less charges', hint: `${abroad.e.name} pays two invoices in one transfer, ${sym}12 short`, apply: twoFromAbroad }] : []),
     { label: `Less a ${sym}12 bank charge`, hint: 'a payment from abroad arrives short by the bank’s fee', apply: () => setAmount(a => fromCents(Math.max(1, toCents(a) - 1200))) },
     { label: 'No reference', hint: 'the payer wrote nothing on it', apply: () => setReference('') },
     { label: 'Half, on account', hint: 'half now, the rest later, no invoice named', apply: () => (setAmount(a => fromCents(Math.round(toCents(a) / 2))), setReference('ON ACCOUNT')) },
