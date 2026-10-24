@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -136,7 +137,7 @@ class Runner:
             if first_business_day_of_month(day):
                 extra += self.close_month(day)
             kinds = Counter(o["kind"] for o in arrivals)
-            line = (f"{day} {day_name(day)} | in {len(arrivals):3d} (mail {kinds['email']:2d}, bank {kinds['bank_txn'] + bank['settled'] + bank['returned']:2d}) | "
+            line = (f"{day} {day_name(day)} | in {len(arrivals):3d} (bank {kinds['bank_txn'] + bank['settled'] + bank['returned']:2d}) | "
                     f"{seats} | answered {people['answered']:2d}" + (f" | audits closed {people['audits']}" if people["audits"] else "")
                     + "".join(f" | {e}" for e in people["events"] + extra) + f" | {time.time() - t0:.1f}s")
             print(line, flush=True)
@@ -226,21 +227,16 @@ class Runner:
 
 
 def compact(parts: list[str]) -> str:
-    """'triage 3 | cash_app reports 2, receipts 1, debits 0 | collections notices 0, fees 0 | refunds ...' -> short form."""
+    """The seats' summary ('triage 3 | cash_app reports 2, receipts 1, debits 0 | ... | payments payments prepared 1') in one short row."""
     totals: Counter = Counter()
-    refunds = ""
     for summary in parts:
         for chunk in summary.split(" | "):
-            words = chunk.replace(",", "").split()
-            if words and words[0] == "refunds":
-                refunds = " ".join(words[1:])
-                continue
-            pairs = words[1:] if words and words[0] in ("cash_app", "collections") else words
-            for k, v in zip(pairs[0::2], pairs[1::2]):
-                if v.lstrip("-").isdigit():
-                    totals[k] += int(v)
-    keys = ["triage", "reports", "receipts", "debits", "notices", "fees"]
-    return " ".join(f"{k[:5]} {totals[k]:2d}" for k in keys) + (f" refunds {refunds}" if refunds and refunds != "not hired" else "")
+            seat, _, rest = chunk.partition(" ")
+            for m in re.finditer(r"([a-z]+) (-?\d+)", rest if seat != "triage" else chunk):
+                totals[f"{seat}.{m.group(1)}"] += int(m.group(2))
+    cols = [("mail", "triage.triage"), ("rep", "cash_app.reports"), ("rcpt", "cash_app.receipts"), ("debit", "cash_app.debits"), ("notice", "collections.notices"),
+            ("fee", "collections.fees"), ("refund", "refunds.prepared"), ("bill", "ap_clerk.bills"), ("pay", "payments.prepared")]
+    return " ".join(f"{label} {totals[k]:2d}" for label, k in cols)
 
 
 def main() -> None:

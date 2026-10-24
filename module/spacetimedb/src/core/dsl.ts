@@ -101,6 +101,7 @@ export const DOMAINS = {
       remittance_consistent: { type: 'bool', doc: 'the payer’s list agrees with a valid subset' },
       receipt_amount: { type: 'number', doc: 'amount received (cents)' },
       reference_paid: { type: 'bool', doc: 'the payment reference names an invoice that is already paid' },
+      reference_matches_open: { type: 'bool', doc: 'the payment reference names one open invoice whose balance is exactly the payment' },
       open_items: { type: 'number', doc: 'open invoices this payer has' },
     },
   },

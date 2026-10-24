@@ -9,7 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
-import { agrees, evaluate, examplesFor, latestBySubject, loadHistory, propose, tune, type Domain, type Evaluation, type Example, type History } from './skills';
+import { agrees, evaluate, examplesFor, latestBySubject, loadHistory, propose, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
 import { searchPolicies } from './policies';
 
 const args = new Map<string, string>();
@@ -75,28 +75,28 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   if (versions.some(s => s.status === 'proposed')) return `${domain}: a proposal is waiting for a person`;
   const current = JSON.parse(active.program) as SkillProgram;
   const examples = examplesFor(h, domain, hidden);
-  const lesson = examples.filter(e => !agrees(domain, run(current, e.features).outcome.decide, e.label));
-  if (!lesson.length) return `${domain}: nothing new to learn (${examples.length} labeled cases, all handled)`;
-  const lessonKey = lesson.map(e => e.subject).sort().join('|');
+  const { required: lesson, optional } = splitLessons(domain, current, examples);
+  if (!lesson.length && !optional.length) return `${domain}: nothing new to learn (${examples.length} labeled cases, all handled)`;
+  const lessonKey = (lesson.length ? lesson : optional).map(e => e.subject).sort().join('|');
   for (const s of versions.filter(v => v.status === 'rejected')) {
     if ((parseJson<{ lesson?: { subjects?: string[] } }>(s.proof, {}).lesson?.subjects ?? []).sort().join('|') === lessonKey) return `${domain}: a person already rejected a proposal for this lesson`;
   }
 
   const t0 = Date.now();
-  const proposals = await propose(MODEL, domain, current, lesson, examples, h);
+  const proposals = await propose(MODEL, domain, current, lesson, examples, h, optional);
   type Scored = { program: SkillProgram; ev: Evaluation; origin: string; rationale: string };
   const scored: Scored[] = [];
   for (const p of proposals) {
-    const ev = evaluate(domain, current, p.program, examples, lesson, h, hidden);
+    const ev = evaluate(domain, current, p.program, examples, lesson, h, hidden, optional);
     scored.push({ program: p.program, ev, origin: `${MODEL} style ${p.style}`, rationale: p.rationale });
     // Constants are tuned only to rescue a candidate that fails, never to shave flags:
     // a threshold fitted tightly around one case is exactly how a skill overfits.
-    if (ev.gate === 'fail') for (const v of tune(domain, current, p.program, examples, lesson, h, hidden)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden), origin: `${MODEL} style ${p.style}, constants tuned by replay`, rationale: p.rationale });
+    if (ev.gate === 'fail') for (const v of tune(domain, current, p.program, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, constants tuned by replay`, rationale: p.rationale });
   }
   const passing = scored.filter(s => s.ev.gate === 'pass');
   passing.sort((a, b) => b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity);
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
-  log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), candidates: scored.length, passing: passing.length, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
+  log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), optional: optional.length, candidates: scored.length, passing: passing.length, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
   if (!passing.length) {
     const best = scored[0];
     return `${domain}: ${scored.length} candidates in ${secs}s, none passed (${best ? best.ev.why.join('; ') : 'model returned nothing usable'})`;
@@ -106,7 +106,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     gate: 'pass',
     domain,
     parent: active.key,
-    lesson: { subjects: lesson.map(e => e.subject), cases: lesson.map(e => ({ subject: e.subject, label: e.label, source: e.source, reason: e.reason })) },
+    lesson: { subjects: (lesson.length ? lesson : optional).map(e => e.subject), required: lesson.length, optionalFixed: best.ev.lesson.optionalFixed, optionalTotal: optional.length, cases: [...lesson, ...optional].slice(0, 20).map(e => ({ subject: e.subject, label: e.label, source: e.source, reason: e.reason })) },
     labeled: best.ev.labeled,
     budget: best.ev.budget,
     changed: best.ev.changed,
@@ -124,7 +124,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     grading: key.length ? grade(domain, current, best.program, key, h) : null,
     evaluatedAt: new Date().toISOString(),
   };
-  const provenance = lesson.map(e => `${e.source}: "${e.reason}"`).join(' | ');
+  const provenance = (lesson.length ? lesson : optional).slice(0, 6).map(e => `${e.source}: "${e.reason}"`).join(' | ');
   if (args.has('dry-run')) {
     writeFileSync(`${COMPANY_DIR}/eval/dry-run-${domain}.json`, JSON.stringify({ program: best.program, proof }, null, 2));
     return `${domain}: dry run, best candidate written`;

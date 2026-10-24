@@ -72,7 +72,7 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       const receiptId = a.subject.replace('receipt:', '');
       const r = tx.db.receipt.id.find(receiptId);
       if (!r) return 'unknown receipt';
-      recordCheck(tx, 'allocation', a.subject, answer !== 'apply oldest first' && evidence.features?.remittance_consistent === true ? 'apply_unique' : 'leave_unapplied_ask', 'answer', who.id);
+      recordCheck(tx, 'allocation', a.subject, answer !== 'apply oldest first' && (evidence.features?.remittance_consistent === true || evidence.features?.reference_matches_open === true) ? 'apply_unique' : 'leave_unapplied_ask', 'answer', who.id);
       const items = openItemsFor(tx, r.entityCode);
       const allocations =
         answer === 'apply oldest first'

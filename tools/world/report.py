@@ -26,7 +26,7 @@ ESCALATE = {"flag_audit", "ask_consultant"}
 
 
 def domain_of(subject: str) -> str | None:
-    return {"store": "underreport", "receipt": "allocation", "entity": "pre_chase", "routing": "routing_change"}.get(subject.split(":", 1)[0])
+    return {"store": "underreport", "receipt": "allocation", "entity": "pre_chase", "routing": "routing_change", "bill": "bill_match"}.get(subject.split(":", 1)[0])
 
 
 def agrees(domain: str, a: str, b: str) -> bool:
@@ -47,7 +47,10 @@ def build(db: Client, world: dict, state: dict, texts=None) -> dict:
     security = q("SELECT at, kind, subject, detail FROM security_event")
     llm = q("SELECT purpose, status, cached FROM llm_call")
     facts = q("SELECT subject, attr, value, valid_from FROM fact")
-    entities = {e["code"]: e for e in q("SELECT code, name, bank_account, bank_account_trusted FROM entity")}
+    entities = {e["code"]: e for e in q("SELECT code, name, kind, bank_account, bank_account_trusted FROM entity")}
+    bills = {b["id"]: b for b in q("SELECT id, vendor_code, amount_cents, status FROM bill")}
+    payments = q("SELECT id, vendor_code, amount_cents, bank_account, status FROM payment")
+    rules = q("SELECT key, domain, decisions, checked, errors, state FROM rule_stat")
 
     first, latest = {}, {}
     for d in decisions:
@@ -83,6 +86,13 @@ def build(db: Client, world: dict, state: dict, texts=None) -> dict:
                     fam["cases"].append({"case": e["caseId"], "split": e["split"], "expected": e["expected"], "first": f"{d0['outcome']} ({d0['skill_key']}, {d0['at']})",
                                          "latest": f"{d1['outcome']} ({d1['skill_key']}, {d1['at']})"})
         money_for(e, fam["money"], invoices, receipts, by_receipt, refunds, notices)
+        if e["subject"].startswith("bill:"):
+            b = bills.get(e["subject"].split(":", 1)[1])
+            fam["money"]["bill_cents"] += b["amount_cents"] if b else 0
+            if b and b["status"] == "paid" and e["expected"] == "reject":
+                fam["money"]["paid_that_should_not_be_cents"] += b["amount_cents"]
+            if b and b["status"] in ("rejected",) and e["expected"] == "reject":
+                fam["money"]["stopped_cents"] += b["amount_cents"]
 
     for d in debits:
         if d["status"] == "returned":
@@ -110,11 +120,15 @@ def build(db: Client, world: dict, state: dict, texts=None) -> dict:
             "human_errors_realized": [a for a in answers if a.get("human_error")],
             "human_error_rate": round(sum(1 for a in answers if a.get("human_error")) / max(1, len(answers)), 3),
         },
+        "payables": {"bills": dict(Counter(b["status"] for b in bills.values())), "payments": dict(Counter(p["status"] for p in payments)),
+                     "released_cents": sum(p["amount_cents"] for p in payments if p["status"] == "released"),
+                     "vendor_accounts": {c: e["bank_account"] for c, e in entities.items() if e.get("kind") == "vendor"}},
+        "rule_stats": sorted(rules, key=lambda r: r["key"]),
         "routing_requests": routing,
         "refunds": refunds,
         "security_events": dict(Counter(s["kind"] for s in security)),
         "bank": {"debits": len(debits), "by_status": dict(Counter(d["status"] for d in debits)), "returned": [d for d in debits if d["status"] == "returned"]},
-        "entities_bank_accounts": {c: e["bank_account"] for c, e in entities.items()},
+        "franchisee_bank_accounts": {c: e["bank_account"] for c, e in entities.items() if e.get("kind") == "franchisee"},
         "ratified": state.get("ratified", []),
         "evolve_hooks": state.get("hooks", []),
         "month_end_closes": state.get("closes", []),

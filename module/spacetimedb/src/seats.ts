@@ -505,7 +505,7 @@ function requestRoutingChange(tx: Tx, who: Principal, entityCode: string, x: Ext
       openAsk(tx, {
         kind: 'callback',
         subject: `routing:${rr.id}`,
-        toRole: 'consultant',
+        toRole: e.kind === 'vendor' ? 'controller' : 'consultant',
         question: `${e.name} asked by email to move money to account ${rr.requestedAccount}. Please call the number on file before the request (${e.phoneOnFile}) — not any number in the email — and record whether the owner confirms.`,
         options: ['confirmed', 'denied', 'no_answer'],
         evidence: { observation: Number(obsId), features, skill: d.key, note: d.note },
@@ -648,8 +648,12 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
   const search = findSubsets(amount, items, 2_500);
   const remits = factsOf(tx, `entity:${r.entityCode}`, 'remittance').filter(f => Math.abs(f.value.amount - amount) <= 100);
   const remitRefs: string[] = remits.length ? remits[remits.length - 1].value.refs : [];
-  const remitConsistent = remitRefs.length > 0 && search.solutions.some(sol => sol.length === remitRefs.length && sol.every(id => remitRefs.includes(id)));
+  // The payer's own list counts when every invoice on it is open here and together they make up the payment.
+  const listed = remitRefs.map(id => items.find(i => i.id === id)).filter((i): i is OpenItem => !!i);
+  const remitConsistent = remitRefs.length > 0 && listed.length === remitRefs.length && Math.abs(listed.reduce((s2, i) => s2 + i.openCents, 0) - amount) <= 100;
   const referenced = [...tx.db.invoice.entityCode.filter(r.entityCode)].filter(i => r.reference.includes(i.id));
+  // The payment reference names one open invoice whose balance is exactly the payment.
+  const named = items.filter(i => r.reference.includes(i.id) && Math.abs(i.openCents - amount) <= 100);
   const features: FeatureMap = {
     solution_count: Math.min(search.solutions.length, 3),
     exact_match: search.residuals[0] === 0,
@@ -658,6 +662,7 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
     remittance_consistent: remitConsistent,
     receipt_amount: amount,
     reference_paid: referenced.length > 0 && referenced.every(i => i.openCents === 0n),
+    reference_matches_open: named.length === 1,
     open_items: items.length,
   };
   if (items.length === 0) {
@@ -677,8 +682,9 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
   }
   const d = decide(tx, CASH.id, 'allocation', `receipt:${r.id}`, features);
   let allocations: { id: string; cents: number }[] = [];
-  if (d.decide === 'apply_unique' && search.solutions.length >= 1) {
-    const chosen = remitConsistent ? search.solutions.find(sol => sol.every(id => remitRefs.includes(id)))! : search.solutions[0];
+  if (d.decide === 'apply_unique' && (remitConsistent || named.length === 1 || search.solutions.length >= 1)) {
+    // The payer's word, when it is consistent, decides which invoices are paid.
+    const chosen = remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0];
     allocations = allocationsForSubset(chosen, items);
   } else if (d.decide === 'apply_by_terms') {
     allocations = applyByTerms(amount, items, terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations;
@@ -688,7 +694,7 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
       subject: `receipt:${r.id}`,
       toRole: d.askRole,
       question: `${money(amount)} from ${r.payerName} can be explained by ${search.solutions.length} different sets of invoices. Which should it pay?`,
-      options: search.solutions.map(s => s.join(' + ')).concat(['apply oldest first']),
+      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(named.length === 1 ? [named[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first']),
       evidence: { features, solutions: search.solutions, skill: d.key },
       confidence: 0.3,
       workItemId: workId,

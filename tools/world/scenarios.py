@@ -16,7 +16,7 @@ from collections import defaultdict
 
 from cast import CONTRACTS, ENTITIES, LOW_CASH_STORES, STORES, entity, report_sender, stores_of, store, terms_for_entity, terms_for_store
 from common import (WEEKS, add_days, all_days, bp_of, business_day_on_or_after, days_between, dollars, is_business_day, money,
-                    next_business_day, rng_for, split_for, stable_int, weekday)
+                    next_business_day, rng_for, split_for, spot_check_slip, stable_int, weekday)
 from economy import BULK_BUYS, cash_cut_for_share, implied_gross
 from ledger import Ledger, apply_by_terms, find_subsets
 
@@ -609,14 +609,10 @@ class Plan:
                                                                                   "nsf_fee": f"NSF-ACHR-{debit}"}, "re-present debit and bill NSF fee")
 
         def lfd1(d):  # F08: the late fees the day-0 chase assessed on the day the debit bounced
-            fees = [f for f in self.fees_on_chase["F08"]]
-            e = entity("F08")
+            fees = list(self.fees_on_chase["F08"])
             self._dispute("LFD1", d, "F08", fees, "uphold", "2026-02-19",
                           f"They were charged late fees {' and '.join(fees)} the same day the Feb 11 debit bounced. They argue the debit went out on time and the bank "
                           "returned it, so late fees on top of the NSF fee are unfair, and ask for the late fees to be removed.", family="late_fee_dispute", valid=False)
-            self.windows.append({"entity": "F08", "from": d, "to": "2026-02-18", "expected": "hold", "family": "late_fee_dispute", "case": "LFD1",
-                                 "answer": "hold 7 days"})
-            del e
         self.hooks["2026-02-18"].append(lfd1)
 
         def promise(cid: str, ent: str, day: str, arrives: str, check_no: str, why: str):
@@ -661,7 +657,7 @@ class Plan:
              "URGENT: new bank details for the #14 Mission store. They say they moved banks and need the ACH debit switched to the new account ending 9921 "
              "before this week's debit. Ask to keep it between us and do it today because she is travelling and cannot take calls."),
             ("FR2", "2026-04-23", "F02", "raj@patelbrew.com", "Raj Patel", "0457", False, [("2026-04-24", "Lee", "denied")],
-             "Please update the ACH account for all three stores (#29 Cupertino, #31 Santana Row, #34 Mountain View) to the new Chase account ending 0457 "
+             "Please update the ACH account for store #31 Santana Row (and our other two stores) to the new Chase account ending 0457 "
              "before the next debit. If there are any questions call me directly at (408) 555-0199, I am on my cell today."),
             ("FR3", "2026-05-14", "F07", "tommy@valleypearlholdings.co", "Tommy Nguyen", "6084", False, [("2026-05-15", "Priya", "no_answer"), ("2026-05-18", "call_desk", "denied")],
              "Our auditors require that franchise fees for #16 Midtown, #18 Elk Grove and #20 Davis come from our new holding account ending 6084. Please make the "
@@ -792,6 +788,12 @@ class Plan:
             he = self.human_errors.get(f"collections:{p['entity']}:{p['date']}")
             self.entry(f"PC-{p['entity']}-{p['date']}", fam, subject, {**p["features"], "window": p["window"], "day0_predicted": p["day0"],
                                                                          "human_error": bool(he)}, p["expected"])
+
+    def mark_slips(self) -> None:
+        """Record in the key where the pre-registered spot-check slip rule (common.spot_check_slip) applies."""
+        for e in self.key:
+            if e["subject"].split(":", 1)[0] in ("store", "receipt", "entity") and spot_check_slip(e["subject"]):
+                e["truth"]["spot_check_slip"] = True
 
     def _after_return(self, ent: str, day: str) -> bool:
         return any(d[2:5] == ent and d[6:] <= day for d in self.bank_rules["returns"])

@@ -45,21 +45,26 @@ function adminToken(): string {
 
 // The evolver is an ordinary principal with one right: to propose.
 export async function evolverToken(db: string): Promise<string> {
+  return roleToken(db, 'evolver', 'evolver');
+}
+
+// A tool acting as a named principal: use the world's identity file, else bind one locally.
+export async function roleToken(db: string, role: string, name: string): Promise<string> {
   const ids = process.env.IDENTITIES ?? 'data/companyA/identities.json';
   if (db === 'charter-a' && existsSync(ids)) {
     const all = JSON.parse(readFileSync(ids, 'utf8')) as Record<string, { token: string; role: string }>;
-    const e = all.evolver ?? Object.values(all).find(x => x.role === 'evolver');
+    const e = all[name] ?? Object.values(all).find(x => x.role === role);
     if (e) return e.token;
   }
-  const cache = `data/.evolver-${db}.json`;
+  const cache = `data/.${role}-${db}.json`;
   if (existsSync(cache)) {
     const { identity, token } = JSON.parse(readFileSync(cache, 'utf8'));
     const hex = String(identity).replace(/^0x/, '').toLowerCase();
-    const rows = await new Db(db, token).sql("SELECT identity, role FROM principal WHERE role = 'evolver'");
+    const rows = await new Db(db, token).sql(`SELECT identity, role FROM principal WHERE role = '${role}'`);
     if (rows.some(r => JSON.stringify(r.identity).toLowerCase().includes(hex))) return token;
   }
   const { identity, token } = (await (await fetch(`${BASE}/v1/identity`, { method: 'POST' })).json()) as { identity: string; token: string };
-  await new Db(db, adminToken()).call('bind_role', { __identity__: identity.startsWith('0x') ? identity : `0x${identity}` }, 'evolver', 'evolver');
+  await new Db(db, adminToken()).call('bind_role', { __identity__: identity.startsWith('0x') ? identity : `0x${identity}` }, role, name);
   mkdirSync(dirname(cache), { recursive: true });
   writeFileSync(cache, JSON.stringify({ identity, token }));
   return token;

@@ -1,7 +1,7 @@
 // Skill evolution for one domain. People's answers are the only teacher; every
 // candidate is replayed over the features the seats actually saw, and must pass
 // the gate before a person is even asked to look at it.
-import { complexity, DOMAINS, run, validate, type Expr, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
+import { complexity, DOMAINS, ESCALATING, run, validate, type Expr, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { createHash } from 'node:crypto';
 import { llmJson, parseJson, type Db, type Row } from './lib';
 
@@ -57,6 +57,31 @@ const SAFETY: Record<Domain, (f: FeatureMap, outcome: string) => string | null> 
   bill_match: (f, o) => (o === 'approve' && f.po_found !== true ? 'approves a bill with no purchase order' : null),
 };
 
+// The same rules in words, for the proposer.
+export const SAFETY_TEXT: Record<Domain, string> = {
+  underreport: 'none beyond the audit budget',
+  pre_chase: 'never chase inside the contractual grace period',
+  allocation: 'never apply cash when several invoice sets fit unless the payer said which (remittance_consistent)',
+  routing_change: 'never send an unverified bank change to approval',
+  bill_match: 'never approve a bill that has no purchase order',
+};
+
+// What a lesson asks of a candidate: cases it must now get right (the current
+// version settled them alone and was wrong) and cases it may take over (the
+// current version asked a person who then said it could have been settled).
+export function splitLessons(domain: Domain, current: SkillProgram, examples: Example[]): { required: Example[]; optional: Example[] } {
+  const escalating = ESCALATING[domain] ?? [];
+  const required: Example[] = [];
+  const optional: Example[] = [];
+  for (const e of examples) {
+    const out = run(current, e.features).outcome.decide;
+    if (agrees(domain, out, e.label)) continue;
+    if (escalating.includes(out) && !escalating.includes(e.label)) optional.push(e);
+    else required.push(e);
+  }
+  return { required, optional };
+}
+
 export const AUDIT_BUDGET = 0.06; // at most 6% of store-weeks may be sent for audit
 export const CHANGE_BUDGET = 0.1; // a new version may change at most 10% of past decisions
 
@@ -82,7 +107,7 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
       label = a.answer === 'correct' ? String((ev as { decided?: string }).decided ?? '') : a.answer;
     } else if (a.kind === 'allocation' && domain === 'allocation') {
       // The person picked the payer's own list when it was there: the seat could have applied it.
-      label = a.answer !== 'apply oldest first' && ev.features?.remittance_consistent === true ? 'apply_unique' : 'leave_unapplied_ask';
+      label = a.answer !== 'apply oldest first' && (ev.features?.remittance_consistent === true || ev.features?.reference_matches_open === true) ? 'apply_unique' : 'leave_unapplied_ask';
     } else {
       const spec = ASK_LABELS[a.kind];
       if (!spec || spec.domain !== domain) continue;
@@ -112,7 +137,7 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
 export interface Evaluation {
   problems: string[];
   labeled: { n: number; correctBefore: number; correctAfter: number; fixed: string[]; broken: string[] };
-  lesson: { subjects: string[]; fixed: boolean };
+  lesson: { subjects: string[]; fixed: boolean; optionalFixed: number; optionalTotal: number };
   budget: { flagged: number; total: number; rate: number; limit: number } | null;
   changed: { n: number; total: number; rate: number; limit: number };
   newLeads: string[];
@@ -152,7 +177,7 @@ function robustness(domain: Domain, p: SkillProgram, examples: Example[]): numbe
   return ok / n;
 }
 
-export function evaluate(domain: Domain, current: SkillProgram, candidate: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>): Evaluation {
+export function evaluate(domain: Domain, current: SkillProgram, candidate: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[] = []): Evaluation {
   const problems = validate(candidate);
   const decide = (p: SkillProgram, f: FeatureMap) => {
     try {
@@ -165,15 +190,21 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   const broken: string[] = [];
   let before = 0;
   let after = 0;
+  const escalating = ESCALATING[domain] ?? [];
   for (const e of examples) {
-    const b = agrees(domain, decide(current, e.features), e.label);
-    const a = agrees(domain, decide(candidate, e.features), e.label);
+    const cur = decide(current, e.features);
+    const cand = decide(candidate, e.features);
+    const b = agrees(domain, cur, e.label);
+    const a = agrees(domain, cand, e.label);
     before += b ? 1 : 0;
     after += a ? 1 : 0;
     if (!b && a) fixed.push(e.subject);
-    if (b && !a) broken.push(e.subject);
+    // Broken: right before and wrong now, or a new autonomous mistake where the
+    // current version had asked a person. Mixed human answers mean: keep asking.
+    if ((b && !a) || (!a && !escalating.includes(cand) && escalating.includes(cur))) broken.push(e.subject);
   }
-  const lessonFixed = lesson.every(e => agrees(domain, decide(candidate, e.features), e.label));
+  const optionalFixed = optional.filter(e => agrees(domain, decide(candidate, e.features), e.label)).length;
+  const lessonFixed = lesson.length ? lesson.every(e => agrees(domain, decide(candidate, e.features), e.label)) : optionalFixed > 0;
   const past = [...latestBySubject(h, domain).values()].filter(d => !hidden.has(d.subject));
   const labeledSubjects = new Set(examples.map(e => e.subject));
   let changedN = 0;
@@ -196,7 +227,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   const changed = { n: changedN, total: past.length, rate: changedN / total, limit: CHANGE_BUDGET };
   const why: string[] = [];
   if (problems.length) why.push(`invalid: ${problems.join('; ')}`);
-  if (!lessonFixed) why.push('does not handle the case people just taught');
+  if (!lessonFixed) why.push(lesson.length ? 'does not handle the case people just taught' : 'takes over none of the cases people said could be settled');
   if (broken.length) why.push(`gets ${broken.length} case(s) wrong that the current version gets right`);
   if (budget && budget.rate > budget.limit) why.push(`would send ${(budget.rate * 100).toFixed(1)}% of store-weeks to audit (limit ${budget.limit * 100}%)`);
   if (changed.rate > changed.limit) why.push(`changes ${(changed.rate * 100).toFixed(1)}% of past decisions (limit ${changed.limit * 100}%)`);
@@ -204,7 +235,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   return {
     problems,
     labeled: { n: examples.length, correctBefore: before, correctAfter: after, fixed, broken },
-    lesson: { subjects: lesson.map(e => e.subject), fixed: lessonFixed },
+    lesson: { subjects: lesson.map(e => e.subject), fixed: lessonFixed, optionalFixed, optionalTotal: optional.length },
     budget,
     changed,
     newLeads,
@@ -257,12 +288,14 @@ const STYLES = [
   { temperature: 0.9, hint: 'Think about what pattern the person described in general terms, and encode that pattern as simply as possible.' },
 ];
 
-export async function propose(model: string, domain: Domain, current: SkillProgram, lesson: Example[], examples: Example[], h: History): Promise<{ program: SkillProgram; rationale: string; style: number; cached: boolean }[]> {
-  const keep = examples.filter(e => !lesson.some(l => l.subject === e.subject)).slice(-12);
+export async function propose(model: string, domain: Domain, current: SkillProgram, lesson: Example[], examples: Example[], h: History, optional: Example[] = []): Promise<{ program: SkillProgram; rationale: string; style: number; cached: boolean }[]> {
+  const keep = examples.filter(e => !lesson.some(l => l.subject === e.subject) && !optional.some(o => o.subject === e.subject)).slice(-12);
   const user = [
     describeDomain(domain),
     `\nCurrent team skill:\n${JSON.stringify(current)}`,
-    `\nWhat people just taught the team (the current skill decides these wrongly):\n${lesson.map(e => `- ${e.subject}: correct outcome "${e.label}". ${e.source}: "${e.reason}"\n  features: ${show(e.features)}`).join('\n')}`,
+    lesson.length ? `\nMistakes people found (the current skill settled these alone and was wrong; the new version must get them right):\n${lesson.map(e => `- ${e.subject}: correct outcome "${e.label}". ${e.source}: "${e.reason}"\n  features: ${show(e.features)}`).join('\n')}` : '',
+    optional.length ? `\nCases the current skill asked a person about, who settled them (take these over only if it is safe; otherwise keep asking):\n${optional.slice(-12).map(e => `- ${e.subject}: person decided "${e.label}". "${e.reason}"\n  features: ${show(e.features)}`).join('\n')}` : '',
+    `\nSafety rule that must never be broken: ${SAFETY_TEXT[domain]}.`,
     keep.length ? `\nOther cases people have labeled (keep these right):\n${keep.map(e => `- ${e.subject}: "${e.label}"; ${show(e.features)}`).join('\n')}` : '',
     `\nHow the features are distributed over all past cases:\n${percentiles(h, domain)}`,
     `\nReturn JSON: {"program": <skill>, "rationale": "<two sentences>"}`,
@@ -282,7 +315,7 @@ export async function propose(model: string, domain: Domain, current: SkillProgr
 }
 
 // The model proposes structure; the evaluator tunes its constants by replay.
-export function tune(domain: Domain, current: SkillProgram, cand: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>): SkillProgram[] {
+export function tune(domain: Domain, current: SkillProgram, cand: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[] = []): SkillProgram[] {
   const nums: { set: (v: number) => void; v: number }[] = [];
   const clone = JSON.parse(JSON.stringify(cand)) as SkillProgram;
   const walk = (e: Expr) => {
@@ -303,5 +336,5 @@ export function tune(domain: Domain, current: SkillProgram, cand: SkillProgram, 
       n.set(original);
     }
   }
-  return variants.filter(v => evaluate(domain, current, v, examples, lesson, h, hidden).gate === 'pass');
+  return variants.filter(v => evaluate(domain, current, v, examples, lesson, h, hidden, optional).gate === 'pass');
 }

@@ -20,11 +20,13 @@ import json
 import re
 
 from cast import ENTITIES, STAFF, entity, store, stores_of, terms_for_store
-from common import add_days, bp_of, business_day_on_or_after, is_business_day, money, next_business_day, stable_int
+from common import add_days, bp_of, business_day_on_or_after, is_business_day, money, next_business_day, spot_check_slip, stable_int
 from scenarios import audit_payment_txn
 from texts import Texts
 
 ENTITY_BY_NAME = {e[1]: e[0] for e in ENTITIES}
+WRONG_TURN = {"accept": "flag_audit", "flag_audit": "accept", "ask_consultant": "accept", "hold": "chase", "chase": "hold",
+              "apply_unique": "leave_unapplied_ask", "apply_by_terms": "leave_unapplied_ask", "leave_unapplied_ask": "apply_unique"}
 ESCALATE = {"flag_audit", "ask_consultant"}
 REASON_SYSTEM = ("You are {voice}. Your finance team's software asked you a question and you have decided the answer. "
                  "Write ONE plain sentence (at most 30 words) giving your reason, in your own voice. No preamble, no quotes, do not restate the question.")
@@ -44,12 +46,16 @@ class Staff:
         self.c, self.texts, self.fast, self.log = clients, texts, fast, log
         self.s = state
         for key, default in [("audits", []), ("payments", []), ("routing_ids", {}), ("endorse", []), ("second_approval", []), ("done", []),
-                             ("answers", []), ("reactive_receipts", {}), ("skipped", [])]:
+                             ("answers", []), ("reactive_receipts", {}), ("skipped", []), ("ap_duplicates_caught", 0), ("ap_second", [])]:
             self.s.setdefault(key, default)
         self.receipts = {**self.k["receipts"], **self.s["reactive_receipts"]}
+        self.ap = self.k.get("payables") or {}
+        self._slip = False
+        self._ap_fix = None
         self.handlers = {"audit": self._audit, "callback": self._callback, "allocation": self._allocation, "identify_payer": self._identify,
                          "unapplied_cash": self._unapplied, "refund_release": self._refund, "collections": self._collections, "dispute": self._dispute,
                          "royalty_decrease": self._royalty_decrease, "reading_conflict": self._reading_conflict, "finding": self._finding,
+                         "bill_exception": self._bill_exception, "payment_release": self._payment_release,
                          "unknown_report": lambda d, a: ("Dana", "ignore", "no store matches; asked the sender to resend", None)}
 
     # ---------- the day ----------
@@ -67,6 +73,7 @@ class Staff:
         self._call_desk(day)
         self._endorse(day)
         self._second_approvals(day)
+        self._second_releases(day)
         self._corrections(day, counts)
         return counts
 
@@ -96,9 +103,11 @@ class Staff:
         reason = self._reason(who, a, answer, context)
         st, text = self.c[who].call("answer_ask", a["id"], answer, reason, check=False)
         self.s["answers"].append({"day": day, "ask": a["id"], "kind": kind, "subject": a["subject"], "answer": answer, "by": who, "ok": st == 200,
-                                  "human_error": self._is_error(a, answer)})
+                                  "human_error": self._is_error(a, answer) or self._slip})
+        self._slip = False
         if st != 200:
             self.log(f"  ! {who} answer_ask #{a['id']} {kind} -> {text[:160]}")
+            self._ap_fix = None
             return False
         self.log(f"  {who} answered #{a['id']} {kind} {a['subject']}: {answer} ({reason})")
         self._after_answer(day, a, answer)
@@ -145,6 +154,8 @@ class Staff:
         return "; ".join(bits)
 
     def _callback(self, day, a):
+        if a["to_role"] == "controller":
+            return self._vendor_callback(day, a)
         m = re.match(r"(.+?) asked by email to move money to account (\*{4}\S+?)\.", a["question"])
         name, account = (m.group(1), m.group(2)) if m else ("", "")
         ent = ENTITY_BY_NAME.get(name, "")
@@ -160,6 +171,47 @@ class Staff:
                    "denied": f"you called {e['owner']} at {e['phone']} (on file, not any number in the email) and they said they never sent it",
                    "no_answer": f"you called {e['phone']} (on file) and got voicemail; you will try again"}[outcome]
         return actor, outcome, context, when
+
+    def _vendor_callback(self, day, a):
+        """A vendor's bank change: the controller opens the request and its email, and calls the number on file."""
+        rid = int(a["subject"].split(":")[1])
+        rows = self.c["Dana"].sql(f"SELECT entity_code, source_obs FROM routing_request WHERE id = {rid}")
+        ref = self.c["Dana"].sql(f"SELECT ref_key FROM observation WHERE id = {rows[0]['source_obs']}")[0]["ref_key"] if rows else ""
+        truth = self.ap.get("emails", {}).get(ref)
+        self.s["routing_ids"][ref or f"routing:{rid}"] = rid
+        name = a["question"].split(" asked by email", 1)[0]
+        if truth and not truth["fraud"]:
+            return "Dana", "confirmed", f"you called {name} on the number on file and their accounts office confirmed the new account", None
+        return "Dana", "denied", f"you called {name} on the number on file (not the one in the email) and they never asked to change banks", None
+
+    def _bill_exception(self, day, a):
+        """A held vendor bill: approve the standing service bill and the one agreed price increase; reject short shipments, other variances, duplicates."""
+        known = self.ap.get("bills", {}).get(a["subject"], {})
+        bill = a["subject"].split(":", 1)[1]
+        fam = known.get("family", "")
+        if bill in self.ap.get("approve_exceptions", []) or fam in ("bill_clean", "bill_no_po_service"):
+            why = {"bill_no_po_service": "CleanPro's monthly service has no PO by design; the amount is the contract rate",
+                   "bill_price_variance": "purchasing agreed this price increase with Golden Tapioca"}.get(fam, "it matches what we ordered and received")
+            return "Dana", "approve", why, None
+        why = {"bill_short_shipment": "billed at the full PO but the receiving log shows a short shipment", "bill_duplicate": "the same invoice was already billed",
+               "bill_price_variance": "the unit price is above the PO and nobody agreed to it"}.get(fam, "it does not match what we ordered and received")
+        return "Dana", "reject", why, None
+
+    def _payment_release(self, day, a):
+        """Dana releases a Friday run unless it pays a duplicate she spots (the first two) or the vendor's bank change is pending."""
+        ev = json.loads(a["evidence"] or "{}")
+        bills = [b["id"] for b in ev.get("bills", [])]
+        dups = [b for b in bills if b in self.ap.get("duplicates", {})]
+        if dups and self.s["ap_duplicates_caught"] < 2:
+            self.s["ap_duplicates_caught"] += 1
+            self._ap_fix = (dups[0], self.ap["duplicates"][dups[0]])
+            return "Dana", "cancel", f"this run pays {dups[0]}, the same invoice as {self.ap['duplicates'][dups[0]]} typed differently", None
+        if "waiting for a callback" in a["question"]:
+            return "Dana", "cancel", "the vendor's bank change is not verified yet; pay in the next run after the callback", None
+        amount = sum(int(b.get("amount", 0)) for b in ev.get("bills", []))
+        if amount > 2_500_000:
+            self.s["ap_second"].append({"payment": a["subject"].split(":", 1)[1], "date": day})
+        return "Dana", "release", f"{len(bills)} approved bills, each matched to its PO and receipt; the account is the one on file", None
 
     def _allocation(self, day, a):
         txn = a["subject"].split(":", 1)[1]
@@ -264,7 +316,13 @@ class Staff:
             if sw.get("human_error") and decided == "accept" and "flag_audit" in options:
                 return who, "flag_audit", "the cash share looked low to you and you did not check the store's history first", None
         expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
-        if expected is None or decided is None or same_treatment(domain, decided, expected):
+        right = expected is None or decided is None or same_treatment(domain, decided, expected)
+        if domain in ("underreport", "allocation", "pre_chase") and spot_check_slip(a["subject"]):  # the pre-registered slip
+            wrong = "correct" if not right else WRONG_TURN.get(decided)
+            if wrong in options:
+                self._slip = True
+                return who, wrong, ("it looked fine at a glance" if wrong == "correct" else f"you misread the case and thought '{wrong}'"), None
+        if right:
             return who, "correct", f"routine:{domain}:{decided}", None
         if expected in options:
             return who, expected, f"the seat decided '{decided}' but it should have been '{expected}'", None
@@ -278,6 +336,8 @@ class Staff:
             return None if sw is None else "flag_audit" if sw["underreported"] else "accept"
         if domain == "allocation":
             return (self.receipts.get(subject.split(":", 1)[1]) or {}).get("expected")
+        if domain == "bill_match":
+            return (self.ap.get("bills", {}).get(subject) or {}).get("expected")
         if domain == "routing_change":
             _, ent, refkey = subject.split(":", 2)
             case = next((r for r in self.k["callbacks"] if r["entity"] == ent and r["refKey"] == refkey), None)
@@ -300,6 +360,14 @@ class Staff:
             self._open_audit(day, code, week)
         elif kind == "callback" and answer == "confirmed":
             self.s["endorse"].append({"id": int(a["subject"].split(":")[1]), "date": day})
+        elif kind == "payment_release" and getattr(self, "_ap_fix", None):
+            dup, original = self._ap_fix
+            self._ap_fix = None
+            rows = [r for r in self.c["Dana"].sql(f"SELECT id, outcome, shadow FROM decision WHERE subject = 'bill:{dup}'") if not r["shadow"]]
+            if rows:
+                last = max(rows, key=lambda r: r["id"])
+                st, text = self.c["Dana"].call("correct_decision", last["id"], "reject", f"duplicate of {original}: same amount, same invoice number typed differently", check=False)
+                self.log(f"  Dana corrected bill_match on {dup}: {last['outcome']} -> reject" + ("" if st == 200 else f" FAILED {text[:120]}"))
         elif kind == "dispute":
             d = next((d for d in self.k["disputes"] if d["entity"] == a["subject"].split(":", 1)[1] and d["case"] not in self.s["done"]), None)
             if d:
@@ -383,6 +451,13 @@ class Staff:
             st, text = self.c["Dana"].call("release_refund", item["refund"], check=False)
             self.s["second_approval"].remove(item)
             self.log(f"  Dana gave the second approval on refund #{item['refund']}: {'ok' if st == 200 else text[:120]}")
+
+    def _second_releases(self, day):
+        """Vendor payments over $25,000 need a second person: Sam releases after Dana."""
+        for item in list(self.s["ap_second"]):
+            st, text = self.c["Sam"].call("release_payment", item["payment"], check=False)
+            self.s["ap_second"].remove(item)
+            self.log(f"  Sam gave the second release on {item['payment']}: {'ok' if st == 200 else text[:120]}")
 
     def _corrections(self, day, counts):
         """A person marks a decision wrong after an owner complains: a third of the mistakes they see, not all of them."""

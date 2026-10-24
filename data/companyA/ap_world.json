@@ -1,0 +1,6619 @@
+{
+ "seed": 11,
+ "vendors": [
+  {
+   "code": "V01",
+   "name": "Formosa Leaf Imports",
+   "kind": "vendor",
+   "contactEmail": "ar@formosaleaf.com",
+   "phoneOnFile": "+1-626-555-0141",
+   "bankAccount": "****6610"
+  },
+  {
+   "code": "V02",
+   "name": "Pacific Cup & Lid Co.",
+   "kind": "vendor",
+   "contactEmail": "billing@pacificcup.com",
+   "phoneOnFile": "+1-562-555-0142",
+   "bankAccount": "****3305"
+  },
+  {
+   "code": "V03",
+   "name": "Golden Tapioca Supply",
+   "kind": "vendor",
+   "contactEmail": "orders@goldentapioca.com",
+   "phoneOnFile": "+1-408-555-0143",
+   "bankAccount": "****9184"
+  },
+  {
+   "code": "V04",
+   "name": "Bay Area Dairy Co-op",
+   "kind": "vendor",
+   "contactEmail": "accounts@bayareadairy.coop",
+   "phoneOnFile": "+1-510-555-0144",
+   "bankAccount": "****2077"
+  },
+  {
+   "code": "V05",
+   "name": "CleanPro Facilities",
+   "kind": "vendor",
+   "contactEmail": "invoices@cleanprofacilities.com",
+   "phoneOnFile": "+1-415-555-0145",
+   "bankAccount": "****5521"
+  },
+  {
+   "code": "V06",
+   "name": "Signal Marketing Group",
+   "kind": "vendor",
+   "contactEmail": "finance@signalmktg.com",
+   "phoneOnFile": "+1-213-555-0146",
+   "bankAccount": "****8840"
+  }
+ ],
+ "observations": [
+  {
+   "date": "2026-01-05",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260105-V01",
+   "subject": "po:PO-260105-V01",
+   "payload": {
+    "poNo": "PO-260105-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-05",
+    "totalCents": 4080000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 34,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-05",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260105-V02",
+   "subject": "po:PO-260105-V02",
+   "payload": {
+    "poNo": "PO-260105-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-05",
+    "totalCents": 1350000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 54,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-05",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260105-V03",
+   "subject": "po:PO-260105-V03",
+   "payload": {
+    "poNo": "PO-260105-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-05",
+    "totalCents": 925000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 50,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-05",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260105-V04",
+   "subject": "po:PO-260105-V04",
+   "payload": {
+    "poNo": "PO-260105-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-05",
+    "totalCents": 508200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 121,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-06",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V05:INV-36640",
+   "subject": "vendor:V05",
+   "payload": {
+    "billNo": "INV-36640",
+    "vendorCode": "V05",
+    "poNo": "",
+    "date": "2026-01-05",
+    "dueDate": "2026-02-04",
+    "amountCents": 685000
+   }
+  },
+  {
+   "date": "2026-01-08",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260105-V01",
+   "subject": "po:PO-260105-V01",
+   "payload": {
+    "receiptNo": "GR-260105-V01",
+    "poNo": "PO-260105-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-08",
+    "receivedCents": 4080000
+   }
+  },
+  {
+   "date": "2026-01-08",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260105-V02",
+   "subject": "po:PO-260105-V02",
+   "payload": {
+    "receiptNo": "GR-260105-V02",
+    "poNo": "PO-260105-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-08",
+    "receivedCents": 1350000
+   }
+  },
+  {
+   "date": "2026-01-08",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260105-V03",
+   "subject": "po:PO-260105-V03",
+   "payload": {
+    "receiptNo": "GR-260105-V03",
+    "poNo": "PO-260105-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-08",
+    "receivedCents": 925000
+   }
+  },
+  {
+   "date": "2026-01-08",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260105-V04",
+   "subject": "po:PO-260105-V04",
+   "payload": {
+    "receiptNo": "GR-260105-V04",
+    "poNo": "PO-260105-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-08",
+    "receivedCents": 508200
+   }
+  },
+  {
+   "date": "2026-01-09",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34805",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34805",
+    "vendorCode": "V04",
+    "poNo": "PO-260105-V04",
+    "date": "2026-01-09",
+    "dueDate": "2026-02-08",
+    "amountCents": 508200
+   }
+  },
+  {
+   "date": "2026-01-10",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34823",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34823",
+    "vendorCode": "V01",
+    "poNo": "PO-260105-V01",
+    "date": "2026-01-10",
+    "dueDate": "2026-02-09",
+    "amountCents": 4080000
+   }
+  },
+  {
+   "date": "2026-01-10",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38342",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38342",
+    "vendorCode": "V02",
+    "poNo": "PO-260105-V02",
+    "date": "2026-01-10",
+    "dueDate": "2026-02-09",
+    "amountCents": 1350000
+   }
+  },
+  {
+   "date": "2026-01-11",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35258",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35258",
+    "vendorCode": "V03",
+    "poNo": "PO-260105-V03",
+    "date": "2026-01-11",
+    "dueDate": "2026-02-10",
+    "amountCents": 925000
+   }
+  },
+  {
+   "date": "2026-01-12",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260112-V01",
+   "subject": "po:PO-260112-V01",
+   "payload": {
+    "poNo": "PO-260112-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-12",
+    "totalCents": 3960000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 33,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-12",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260112-V02",
+   "subject": "po:PO-260112-V02",
+   "payload": {
+    "poNo": "PO-260112-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-12",
+    "totalCents": 875000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 35,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-12",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260112-V03",
+   "subject": "po:PO-260112-V03",
+   "payload": {
+    "poNo": "PO-260112-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-12",
+    "totalCents": 795500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 43,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-12",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260112-V04",
+   "subject": "po:PO-260112-V04",
+   "payload": {
+    "poNo": "PO-260112-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-12",
+    "totalCents": 634200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 151,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-15",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260112-V01",
+   "subject": "po:PO-260112-V01",
+   "payload": {
+    "receiptNo": "GR-260112-V01",
+    "poNo": "PO-260112-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-15",
+    "receivedCents": 3960000
+   }
+  },
+  {
+   "date": "2026-01-15",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260112-V02",
+   "subject": "po:PO-260112-V02",
+   "payload": {
+    "receiptNo": "GR-260112-V02",
+    "poNo": "PO-260112-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-15",
+    "receivedCents": 875000
+   }
+  },
+  {
+   "date": "2026-01-15",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260112-V03",
+   "subject": "po:PO-260112-V03",
+   "payload": {
+    "receiptNo": "GR-260112-V03",
+    "poNo": "PO-260112-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-15",
+    "receivedCents": 795500
+   }
+  },
+  {
+   "date": "2026-01-15",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260112-V04",
+   "subject": "po:PO-260112-V04",
+   "payload": {
+    "receiptNo": "GR-260112-V04",
+    "poNo": "PO-260112-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-15",
+    "receivedCents": 634200
+   }
+  },
+  {
+   "date": "2026-01-16",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34827",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34827",
+    "vendorCode": "V01",
+    "poNo": "PO-260112-V01",
+    "date": "2026-01-16",
+    "dueDate": "2026-02-15",
+    "amountCents": 3960000
+   }
+  },
+  {
+   "date": "2026-01-16",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38343",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38343",
+    "vendorCode": "V02",
+    "poNo": "PO-260112-V02",
+    "date": "2026-01-16",
+    "dueDate": "2026-02-15",
+    "amountCents": 875000
+   }
+  },
+  {
+   "date": "2026-01-16",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35260",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35260",
+    "vendorCode": "V03",
+    "poNo": "PO-260112-V03",
+    "date": "2026-01-16",
+    "dueDate": "2026-02-15",
+    "amountCents": 795500
+   }
+  },
+  {
+   "date": "2026-01-19",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260119-V01",
+   "subject": "po:PO-260119-V01",
+   "payload": {
+    "poNo": "PO-260119-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-19",
+    "totalCents": 5280000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 44,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-19",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260119-V02",
+   "subject": "po:PO-260119-V02",
+   "payload": {
+    "poNo": "PO-260119-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-19",
+    "totalCents": 1225000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 49,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-19",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260119-V03",
+   "subject": "po:PO-260119-V03",
+   "payload": {
+    "poNo": "PO-260119-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-19",
+    "totalCents": 925000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 50,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-19",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260119-V04",
+   "subject": "po:PO-260119-V04",
+   "payload": {
+    "poNo": "PO-260119-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-19",
+    "totalCents": 756000,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 180,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-19",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260119-V06",
+   "subject": "po:PO-260119-V06",
+   "payload": {
+    "poNo": "PO-260119-V06",
+    "vendorCode": "V06",
+    "date": "2026-01-19",
+    "totalCents": 1450000,
+    "lines": [
+     {
+      "sku": "CAMPAIGN",
+      "qty": 1,
+      "unitCents": 1450000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-19",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34809",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34809",
+    "vendorCode": "V04",
+    "poNo": "PO-260112-V04",
+    "date": "2026-01-19",
+    "dueDate": "2026-02-18",
+    "amountCents": 634200
+   }
+  },
+  {
+   "date": "2026-01-22",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260119-V01",
+   "subject": "po:PO-260119-V01",
+   "payload": {
+    "receiptNo": "GR-260119-V01",
+    "poNo": "PO-260119-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-22",
+    "receivedCents": 5280000
+   }
+  },
+  {
+   "date": "2026-01-22",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260119-V02",
+   "subject": "po:PO-260119-V02",
+   "payload": {
+    "receiptNo": "GR-260119-V02",
+    "poNo": "PO-260119-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-22",
+    "receivedCents": 1225000
+   }
+  },
+  {
+   "date": "2026-01-22",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260119-V03",
+   "subject": "po:PO-260119-V03",
+   "payload": {
+    "receiptNo": "GR-260119-V03",
+    "poNo": "PO-260119-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-22",
+    "receivedCents": 925000
+   }
+  },
+  {
+   "date": "2026-01-22",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260119-V04",
+   "subject": "po:PO-260119-V04",
+   "payload": {
+    "receiptNo": "GR-260119-V04",
+    "poNo": "PO-260119-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-22",
+    "receivedCents": 756000
+   }
+  },
+  {
+   "date": "2026-01-22",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260119-V06",
+   "subject": "po:PO-260119-V06",
+   "payload": {
+    "receiptNo": "GR-260119-V06",
+    "poNo": "PO-260119-V06",
+    "vendorCode": "V06",
+    "date": "2026-01-22",
+    "receivedCents": 1450000
+   }
+  },
+  {
+   "date": "2026-01-23",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38345",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38345",
+    "vendorCode": "V02",
+    "poNo": "PO-260119-V02",
+    "date": "2026-01-23",
+    "dueDate": "2026-02-22",
+    "amountCents": 1225000
+   }
+  },
+  {
+   "date": "2026-01-23",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34811",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34811",
+    "vendorCode": "V04",
+    "poNo": "PO-260119-V04",
+    "date": "2026-01-23",
+    "dueDate": "2026-02-22",
+    "amountCents": 756000
+   }
+  },
+  {
+   "date": "2026-01-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34828",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34828",
+    "vendorCode": "V01",
+    "poNo": "PO-260119-V01",
+    "date": "2026-01-24",
+    "dueDate": "2026-02-23",
+    "amountCents": 5280000
+   }
+  },
+  {
+   "date": "2026-01-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V06:SMG-2026-39247",
+   "subject": "vendor:V06",
+   "payload": {
+    "billNo": "SMG-2026-39247",
+    "vendorCode": "V06",
+    "poNo": "PO-260119-V06",
+    "date": "2026-01-24",
+    "dueDate": "2026-02-23",
+    "amountCents": 1450000
+   }
+  },
+  {
+   "date": "2026-01-25",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35264",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35264",
+    "vendorCode": "V03",
+    "poNo": "PO-260119-V03",
+    "date": "2026-01-25",
+    "dueDate": "2026-02-24",
+    "amountCents": 925000
+   }
+  },
+  {
+   "date": "2026-01-26",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260126-V01",
+   "subject": "po:PO-260126-V01",
+   "payload": {
+    "poNo": "PO-260126-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-26",
+    "totalCents": 3360000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 28,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-26",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260126-V02",
+   "subject": "po:PO-260126-V02",
+   "payload": {
+    "poNo": "PO-260126-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-26",
+    "totalCents": 1150000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 46,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-26",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260126-V03",
+   "subject": "po:PO-260126-V03",
+   "payload": {
+    "poNo": "PO-260126-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-26",
+    "totalCents": 888000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 48,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-26",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260126-V04",
+   "subject": "po:PO-260126-V04",
+   "payload": {
+    "poNo": "PO-260126-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-26",
+    "totalCents": 462000,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 110,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-01-29",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260126-V01",
+   "subject": "po:PO-260126-V01",
+   "payload": {
+    "receiptNo": "GR-260126-V01",
+    "poNo": "PO-260126-V01",
+    "vendorCode": "V01",
+    "date": "2026-01-29",
+    "receivedCents": 3360000
+   }
+  },
+  {
+   "date": "2026-01-29",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260126-V02",
+   "subject": "po:PO-260126-V02",
+   "payload": {
+    "receiptNo": "GR-260126-V02",
+    "poNo": "PO-260126-V02",
+    "vendorCode": "V02",
+    "date": "2026-01-29",
+    "receivedCents": 1150000
+   }
+  },
+  {
+   "date": "2026-01-29",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260126-V03",
+   "subject": "po:PO-260126-V03",
+   "payload": {
+    "receiptNo": "GR-260126-V03",
+    "poNo": "PO-260126-V03",
+    "vendorCode": "V03",
+    "date": "2026-01-29",
+    "receivedCents": 888000
+   }
+  },
+  {
+   "date": "2026-01-29",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260126-V04",
+   "subject": "po:PO-260126-V04",
+   "payload": {
+    "receiptNo": "GR-260126-V04",
+    "poNo": "PO-260126-V04",
+    "vendorCode": "V04",
+    "date": "2026-01-29",
+    "receivedCents": 462000
+   }
+  },
+  {
+   "date": "2026-01-30",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34831",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34831",
+    "vendorCode": "V01",
+    "poNo": "PO-260126-V01",
+    "date": "2026-01-30",
+    "dueDate": "2026-03-01",
+    "amountCents": 3360000
+   }
+  },
+  {
+   "date": "2026-01-30",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38346",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38346",
+    "vendorCode": "V02",
+    "poNo": "PO-260126-V02",
+    "date": "2026-01-30",
+    "dueDate": "2026-03-01",
+    "amountCents": 1150000
+   }
+  },
+  {
+   "date": "2026-01-30",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35268",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35268",
+    "vendorCode": "V03",
+    "poNo": "PO-260126-V03",
+    "date": "2026-01-30",
+    "dueDate": "2026-03-01",
+    "amountCents": 888000
+   }
+  },
+  {
+   "date": "2026-01-31",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34814",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34814",
+    "vendorCode": "V04",
+    "poNo": "PO-260126-V04",
+    "date": "2026-01-31",
+    "dueDate": "2026-03-02",
+    "amountCents": 462000
+   }
+  },
+  {
+   "date": "2026-02-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260202-V01",
+   "subject": "po:PO-260202-V01",
+   "payload": {
+    "poNo": "PO-260202-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-02",
+    "totalCents": 3480000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 29,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260202-V02",
+   "subject": "po:PO-260202-V02",
+   "payload": {
+    "poNo": "PO-260202-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-02",
+    "totalCents": 1175000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 47,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260202-V03",
+   "subject": "po:PO-260202-V03",
+   "payload": {
+    "poNo": "PO-260202-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-02",
+    "totalCents": 1110000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 60,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260202-V04",
+   "subject": "po:PO-260202-V04",
+   "payload": {
+    "poNo": "PO-260202-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-02",
+    "totalCents": 508200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 121,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-03",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V05:INV-36644",
+   "subject": "vendor:V05",
+   "payload": {
+    "billNo": "INV-36644",
+    "vendorCode": "V05",
+    "poNo": "",
+    "date": "2026-02-02",
+    "dueDate": "2026-03-04",
+    "amountCents": 685000
+   }
+  },
+  {
+   "date": "2026-02-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260202-V01",
+   "subject": "po:PO-260202-V01",
+   "payload": {
+    "receiptNo": "GR-260202-V01",
+    "poNo": "PO-260202-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-05",
+    "receivedCents": 3480000
+   }
+  },
+  {
+   "date": "2026-02-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260202-V02",
+   "subject": "po:PO-260202-V02",
+   "payload": {
+    "receiptNo": "GR-260202-V02",
+    "poNo": "PO-260202-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-05",
+    "receivedCents": 1175000
+   }
+  },
+  {
+   "date": "2026-02-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260202-V03",
+   "subject": "po:PO-260202-V03",
+   "payload": {
+    "receiptNo": "GR-260202-V03",
+    "poNo": "PO-260202-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-05",
+    "receivedCents": 1110000
+   }
+  },
+  {
+   "date": "2026-02-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260202-V04",
+   "subject": "po:PO-260202-V04",
+   "payload": {
+    "receiptNo": "GR-260202-V04",
+    "poNo": "PO-260202-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-05",
+    "receivedCents": 508200
+   }
+  },
+  {
+   "date": "2026-02-06",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38349",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38349",
+    "vendorCode": "V02",
+    "poNo": "PO-260202-V02",
+    "date": "2026-02-06",
+    "dueDate": "2026-03-08",
+    "amountCents": 1175000
+   }
+  },
+  {
+   "date": "2026-02-08",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35269",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35269",
+    "vendorCode": "V03",
+    "poNo": "PO-260202-V03",
+    "date": "2026-02-08",
+    "dueDate": "2026-03-10",
+    "amountCents": 1110000
+   }
+  },
+  {
+   "date": "2026-02-08",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34816",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34816",
+    "vendorCode": "V04",
+    "poNo": "PO-260202-V04",
+    "date": "2026-02-08",
+    "dueDate": "2026-03-10",
+    "amountCents": 508200
+   }
+  },
+  {
+   "date": "2026-02-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260209-V01",
+   "subject": "po:PO-260209-V01",
+   "payload": {
+    "poNo": "PO-260209-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-09",
+    "totalCents": 4920000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 41,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260209-V02",
+   "subject": "po:PO-260209-V02",
+   "payload": {
+    "poNo": "PO-260209-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-09",
+    "totalCents": 1025000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 41,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260209-V03",
+   "subject": "po:PO-260209-V03",
+   "payload": {
+    "poNo": "PO-260209-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-09",
+    "totalCents": 684500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 37,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260209-V04",
+   "subject": "po:PO-260209-V04",
+   "payload": {
+    "poNo": "PO-260209-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-09",
+    "totalCents": 554400,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 132,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-09",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34832",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34832",
+    "vendorCode": "V01",
+    "poNo": "PO-260202-V01",
+    "date": "2026-02-09",
+    "dueDate": "2026-03-11",
+    "amountCents": 3480000
+   }
+  },
+  {
+   "date": "2026-02-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260209-V01",
+   "subject": "po:PO-260209-V01",
+   "payload": {
+    "receiptNo": "GR-260209-V01",
+    "poNo": "PO-260209-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-12",
+    "receivedCents": 4920000
+   }
+  },
+  {
+   "date": "2026-02-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260209-V02",
+   "subject": "po:PO-260209-V02",
+   "payload": {
+    "receiptNo": "GR-260209-V02",
+    "poNo": "PO-260209-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-12",
+    "receivedCents": 1025000
+   }
+  },
+  {
+   "date": "2026-02-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260209-V03",
+   "subject": "po:PO-260209-V03",
+   "payload": {
+    "receiptNo": "GR-260209-V03",
+    "poNo": "PO-260209-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-12",
+    "receivedCents": 684500
+   }
+  },
+  {
+   "date": "2026-02-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260209-V04",
+   "subject": "po:PO-260209-V04",
+   "payload": {
+    "receiptNo": "GR-260209-V04",
+    "poNo": "PO-260209-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-12",
+    "receivedCents": 554400
+   }
+  },
+  {
+   "date": "2026-02-13",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34836",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34836",
+    "vendorCode": "V01",
+    "poNo": "PO-260209-V01",
+    "date": "2026-02-13",
+    "dueDate": "2026-03-15",
+    "amountCents": 4920000
+   }
+  },
+  {
+   "date": "2026-02-13",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38351",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38351",
+    "vendorCode": "V02",
+    "poNo": "PO-260209-V02",
+    "date": "2026-02-13",
+    "dueDate": "2026-03-15",
+    "amountCents": 1025000
+   }
+  },
+  {
+   "date": "2026-02-14",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:34832",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "34832",
+    "vendorCode": "V01",
+    "poNo": "PO-260202-V01",
+    "date": "2026-02-09",
+    "dueDate": "2026-03-11",
+    "amountCents": 3480000
+   }
+  },
+  {
+   "date": "2026-02-14",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34819",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34819",
+    "vendorCode": "V04",
+    "poNo": "PO-260209-V04",
+    "date": "2026-02-14",
+    "dueDate": "2026-03-16",
+    "amountCents": 554400
+   }
+  },
+  {
+   "date": "2026-02-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260216-V01",
+   "subject": "po:PO-260216-V01",
+   "payload": {
+    "poNo": "PO-260216-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-16",
+    "totalCents": 5280000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 44,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260216-V02",
+   "subject": "po:PO-260216-V02",
+   "payload": {
+    "poNo": "PO-260216-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-16",
+    "totalCents": 1175000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 47,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260216-V03",
+   "subject": "po:PO-260216-V03",
+   "payload": {
+    "poNo": "PO-260216-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-16",
+    "totalCents": 888000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 48,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260216-V04",
+   "subject": "po:PO-260216-V04",
+   "payload": {
+    "poNo": "PO-260216-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-16",
+    "totalCents": 604800,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 144,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-16",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35272",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35272",
+    "vendorCode": "V03",
+    "poNo": "PO-260209-V03",
+    "date": "2026-02-16",
+    "dueDate": "2026-03-18",
+    "amountCents": 684500
+   }
+  },
+  {
+   "date": "2026-02-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260216-V01",
+   "subject": "po:PO-260216-V01",
+   "payload": {
+    "receiptNo": "GR-260216-V01",
+    "poNo": "PO-260216-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-19",
+    "receivedCents": 5280000
+   }
+  },
+  {
+   "date": "2026-02-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260216-V02",
+   "subject": "po:PO-260216-V02",
+   "payload": {
+    "receiptNo": "GR-260216-V02",
+    "poNo": "PO-260216-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-19",
+    "receivedCents": 1175000
+   }
+  },
+  {
+   "date": "2026-02-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260216-V03",
+   "subject": "po:PO-260216-V03",
+   "payload": {
+    "receiptNo": "GR-260216-V03",
+    "poNo": "PO-260216-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-19",
+    "receivedCents": 888000
+   }
+  },
+  {
+   "date": "2026-02-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260216-V04",
+   "subject": "po:PO-260216-V04",
+   "payload": {
+    "receiptNo": "GR-260216-V04",
+    "poNo": "PO-260216-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-19",
+    "receivedCents": 604800
+   }
+  },
+  {
+   "date": "2026-02-21",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34838",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34838",
+    "vendorCode": "V01",
+    "poNo": "PO-260216-V01",
+    "date": "2026-02-21",
+    "dueDate": "2026-03-23",
+    "amountCents": 5280000
+   }
+  },
+  {
+   "date": "2026-02-22",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34823",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34823",
+    "vendorCode": "V04",
+    "poNo": "PO-260216-V04",
+    "date": "2026-02-22",
+    "dueDate": "2026-03-24",
+    "amountCents": 604800
+   }
+  },
+  {
+   "date": "2026-02-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260223-V01",
+   "subject": "po:PO-260223-V01",
+   "payload": {
+    "poNo": "PO-260223-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-23",
+    "totalCents": 4080000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 34,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260223-V02",
+   "subject": "po:PO-260223-V02",
+   "payload": {
+    "poNo": "PO-260223-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-23",
+    "totalCents": 1325000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 53,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260223-V03",
+   "subject": "po:PO-260223-V03",
+   "payload": {
+    "poNo": "PO-260223-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-23",
+    "totalCents": 740000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 40,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260223-V04",
+   "subject": "po:PO-260223-V04",
+   "payload": {
+    "poNo": "PO-260223-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-23",
+    "totalCents": 600600,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 143,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-02-23",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38352",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38352",
+    "vendorCode": "V02",
+    "poNo": "PO-260216-V02",
+    "date": "2026-02-23",
+    "dueDate": "2026-03-25",
+    "amountCents": 1175000
+   }
+  },
+  {
+   "date": "2026-02-23",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35276",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35276",
+    "vendorCode": "V03",
+    "poNo": "PO-260216-V03",
+    "date": "2026-02-23",
+    "dueDate": "2026-03-25",
+    "amountCents": 958600
+   }
+  },
+  {
+   "date": "2026-02-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260223-V01",
+   "subject": "po:PO-260223-V01",
+   "payload": {
+    "receiptNo": "GR-260223-V01",
+    "poNo": "PO-260223-V01",
+    "vendorCode": "V01",
+    "date": "2026-02-26",
+    "receivedCents": 4080000
+   }
+  },
+  {
+   "date": "2026-02-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260223-V02",
+   "subject": "po:PO-260223-V02",
+   "payload": {
+    "receiptNo": "GR-260223-V02",
+    "poNo": "PO-260223-V02",
+    "vendorCode": "V02",
+    "date": "2026-02-26",
+    "receivedCents": 1325000
+   }
+  },
+  {
+   "date": "2026-02-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260223-V03",
+   "subject": "po:PO-260223-V03",
+   "payload": {
+    "receiptNo": "GR-260223-V03",
+    "poNo": "PO-260223-V03",
+    "vendorCode": "V03",
+    "date": "2026-02-26",
+    "receivedCents": 740000
+   }
+  },
+  {
+   "date": "2026-02-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260223-V04",
+   "subject": "po:PO-260223-V04",
+   "payload": {
+    "receiptNo": "GR-260223-V04",
+    "poNo": "PO-260223-V04",
+    "vendorCode": "V04",
+    "date": "2026-02-26",
+    "receivedCents": 600600
+   }
+  },
+  {
+   "date": "2026-02-27",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38353",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38353",
+    "vendorCode": "V02",
+    "poNo": "PO-260223-V02",
+    "date": "2026-02-27",
+    "dueDate": "2026-03-29",
+    "amountCents": 1325000
+   }
+  },
+  {
+   "date": "2026-02-27",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34824",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34824",
+    "vendorCode": "V04",
+    "poNo": "PO-260223-V04",
+    "date": "2026-02-27",
+    "dueDate": "2026-03-29",
+    "amountCents": 600600
+   }
+  },
+  {
+   "date": "2026-02-28",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34840",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34840",
+    "vendorCode": "V01",
+    "poNo": "PO-260223-V01",
+    "date": "2026-02-28",
+    "dueDate": "2026-03-30",
+    "amountCents": 4080000
+   }
+  },
+  {
+   "date": "2026-02-28",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35277",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35277",
+    "vendorCode": "V03",
+    "poNo": "PO-260223-V03",
+    "date": "2026-02-28",
+    "dueDate": "2026-03-30",
+    "amountCents": 740000
+   }
+  },
+  {
+   "date": "2026-03-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260302-V01",
+   "subject": "po:PO-260302-V01",
+   "payload": {
+    "poNo": "PO-260302-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-02",
+    "totalCents": 4440000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 37,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260302-V02",
+   "subject": "po:PO-260302-V02",
+   "payload": {
+    "poNo": "PO-260302-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-02",
+    "totalCents": 900000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 36,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260302-V03",
+   "subject": "po:PO-260302-V03",
+   "payload": {
+    "poNo": "PO-260302-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-02",
+    "totalCents": 1017500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 55,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-02",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260302-V04",
+   "subject": "po:PO-260302-V04",
+   "payload": {
+    "poNo": "PO-260302-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-02",
+    "totalCents": 705600,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 168,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-03",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V05:INV-36645",
+   "subject": "vendor:V05",
+   "payload": {
+    "billNo": "INV-36645",
+    "vendorCode": "V05",
+    "poNo": "",
+    "date": "2026-03-02",
+    "dueDate": "2026-04-01",
+    "amountCents": 685000
+   }
+  },
+  {
+   "date": "2026-03-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260302-V01",
+   "subject": "po:PO-260302-V01",
+   "payload": {
+    "receiptNo": "GR-260302-V01",
+    "poNo": "PO-260302-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-05",
+    "receivedCents": 4440000
+   }
+  },
+  {
+   "date": "2026-03-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260302-V02",
+   "subject": "po:PO-260302-V02",
+   "payload": {
+    "receiptNo": "GR-260302-V02",
+    "poNo": "PO-260302-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-05",
+    "receivedCents": 750000
+   }
+  },
+  {
+   "date": "2026-03-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260302-V03",
+   "subject": "po:PO-260302-V03",
+   "payload": {
+    "receiptNo": "GR-260302-V03",
+    "poNo": "PO-260302-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-05",
+    "receivedCents": 1017500
+   }
+  },
+  {
+   "date": "2026-03-05",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260302-V04",
+   "subject": "po:PO-260302-V04",
+   "payload": {
+    "receiptNo": "GR-260302-V04",
+    "poNo": "PO-260302-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-05",
+    "receivedCents": 705600
+   }
+  },
+  {
+   "date": "2026-03-07",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38354",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38354",
+    "vendorCode": "V02",
+    "poNo": "PO-260302-V02",
+    "date": "2026-03-07",
+    "dueDate": "2026-04-06",
+    "amountCents": 900000
+   }
+  },
+  {
+   "date": "2026-03-07",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34827",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34827",
+    "vendorCode": "V04",
+    "poNo": "PO-260302-V04",
+    "date": "2026-03-07",
+    "dueDate": "2026-04-06",
+    "amountCents": 705600
+   }
+  },
+  {
+   "date": "2026-03-08",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35281",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35281",
+    "vendorCode": "V03",
+    "poNo": "PO-260302-V03",
+    "date": "2026-03-08",
+    "dueDate": "2026-04-07",
+    "amountCents": 1017500
+   }
+  },
+  {
+   "date": "2026-03-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260309-V01",
+   "subject": "po:PO-260309-V01",
+   "payload": {
+    "poNo": "PO-260309-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-09",
+    "totalCents": 4800000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 40,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260309-V02",
+   "subject": "po:PO-260309-V02",
+   "payload": {
+    "poNo": "PO-260309-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-09",
+    "totalCents": 1075000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 43,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260309-V03",
+   "subject": "po:PO-260309-V03",
+   "payload": {
+    "poNo": "PO-260309-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-09",
+    "totalCents": 758500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 41,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-09",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260309-V04",
+   "subject": "po:PO-260309-V04",
+   "payload": {
+    "poNo": "PO-260309-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-09",
+    "totalCents": 718200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 171,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-09",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34844",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34844",
+    "vendorCode": "V01",
+    "poNo": "PO-260302-V01",
+    "date": "2026-03-09",
+    "dueDate": "2026-04-08",
+    "amountCents": 4440000
+   }
+  },
+  {
+   "date": "2026-03-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260309-V01",
+   "subject": "po:PO-260309-V01",
+   "payload": {
+    "receiptNo": "GR-260309-V01",
+    "poNo": "PO-260309-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-12",
+    "receivedCents": 4800000
+   }
+  },
+  {
+   "date": "2026-03-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260309-V02",
+   "subject": "po:PO-260309-V02",
+   "payload": {
+    "receiptNo": "GR-260309-V02",
+    "poNo": "PO-260309-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-12",
+    "receivedCents": 1075000
+   }
+  },
+  {
+   "date": "2026-03-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260309-V03",
+   "subject": "po:PO-260309-V03",
+   "payload": {
+    "receiptNo": "GR-260309-V03",
+    "poNo": "PO-260309-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-12",
+    "receivedCents": 758500
+   }
+  },
+  {
+   "date": "2026-03-12",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260309-V04",
+   "subject": "po:PO-260309-V04",
+   "payload": {
+    "receiptNo": "GR-260309-V04",
+    "poNo": "PO-260309-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-12",
+    "receivedCents": 718200
+   }
+  },
+  {
+   "date": "2026-03-13",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34831",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34831",
+    "vendorCode": "V04",
+    "poNo": "PO-260309-V04",
+    "date": "2026-03-13",
+    "dueDate": "2026-04-12",
+    "amountCents": 718200
+   }
+  },
+  {
+   "date": "2026-03-14",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34845",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34845",
+    "vendorCode": "V01",
+    "poNo": "PO-260309-V01",
+    "date": "2026-03-14",
+    "dueDate": "2026-04-13",
+    "amountCents": 4800000
+   }
+  },
+  {
+   "date": "2026-03-14",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38355",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38355",
+    "vendorCode": "V02",
+    "poNo": "PO-260309-V02",
+    "date": "2026-03-14",
+    "dueDate": "2026-04-13",
+    "amountCents": 1075000
+   }
+  },
+  {
+   "date": "2026-03-14",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35284",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35284",
+    "vendorCode": "V03",
+    "poNo": "PO-260309-V03",
+    "date": "2026-03-14",
+    "dueDate": "2026-04-13",
+    "amountCents": 758500
+   }
+  },
+  {
+   "date": "2026-03-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260316-V01",
+   "subject": "po:PO-260316-V01",
+   "payload": {
+    "poNo": "PO-260316-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-16",
+    "totalCents": 3480000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 29,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260316-V02",
+   "subject": "po:PO-260316-V02",
+   "payload": {
+    "poNo": "PO-260316-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-16",
+    "totalCents": 875000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 35,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260316-V03",
+   "subject": "po:PO-260316-V03",
+   "payload": {
+    "poNo": "PO-260316-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-16",
+    "totalCents": 1091500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 59,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-16",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260316-V04",
+   "subject": "po:PO-260316-V04",
+   "payload": {
+    "poNo": "PO-260316-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-16",
+    "totalCents": 684600,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 163,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-17",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC38355",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC38355",
+    "vendorCode": "V02",
+    "poNo": "PO-260309-V02",
+    "date": "2026-03-14",
+    "dueDate": "2026-04-13",
+    "amountCents": 1075000
+   }
+  },
+  {
+   "date": "2026-03-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260316-V01",
+   "subject": "po:PO-260316-V01",
+   "payload": {
+    "receiptNo": "GR-260316-V01",
+    "poNo": "PO-260316-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-19",
+    "receivedCents": 3480000
+   }
+  },
+  {
+   "date": "2026-03-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260316-V02",
+   "subject": "po:PO-260316-V02",
+   "payload": {
+    "receiptNo": "GR-260316-V02",
+    "poNo": "PO-260316-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-19",
+    "receivedCents": 875000
+   }
+  },
+  {
+   "date": "2026-03-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260316-V03",
+   "subject": "po:PO-260316-V03",
+   "payload": {
+    "receiptNo": "GR-260316-V03",
+    "poNo": "PO-260316-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-19",
+    "receivedCents": 1091500
+   }
+  },
+  {
+   "date": "2026-03-19",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260316-V04",
+   "subject": "po:PO-260316-V04",
+   "payload": {
+    "receiptNo": "GR-260316-V04",
+    "poNo": "PO-260316-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-19",
+    "receivedCents": 684600
+   }
+  },
+  {
+   "date": "2026-03-20",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34847",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34847",
+    "vendorCode": "V01",
+    "poNo": "PO-260316-V01",
+    "date": "2026-03-20",
+    "dueDate": "2026-04-19",
+    "amountCents": 3480000
+   }
+  },
+  {
+   "date": "2026-03-22",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38357",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38357",
+    "vendorCode": "V02",
+    "poNo": "PO-260316-V02",
+    "date": "2026-03-22",
+    "dueDate": "2026-04-21",
+    "amountCents": 875000
+   }
+  },
+  {
+   "date": "2026-03-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260323-V01",
+   "subject": "po:PO-260323-V01",
+   "payload": {
+    "poNo": "PO-260323-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-23",
+    "totalCents": 5280000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 44,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260323-V02",
+   "subject": "po:PO-260323-V02",
+   "payload": {
+    "poNo": "PO-260323-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-23",
+    "totalCents": 950000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 38,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260323-V03",
+   "subject": "po:PO-260323-V03",
+   "payload": {
+    "poNo": "PO-260323-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-23",
+    "totalCents": 980500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 53,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-23",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260323-V04",
+   "subject": "po:PO-260323-V04",
+   "payload": {
+    "poNo": "PO-260323-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-23",
+    "totalCents": 575400,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 137,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-23",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35288",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35288",
+    "vendorCode": "V03",
+    "poNo": "PO-260316-V03",
+    "date": "2026-03-23",
+    "dueDate": "2026-04-22",
+    "amountCents": 1091500
+   }
+  },
+  {
+   "date": "2026-03-23",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34835",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34835",
+    "vendorCode": "V04",
+    "poNo": "PO-260316-V04",
+    "date": "2026-03-23",
+    "dueDate": "2026-04-22",
+    "amountCents": 684600
+   }
+  },
+  {
+   "date": "2026-03-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260323-V01",
+   "subject": "po:PO-260323-V01",
+   "payload": {
+    "receiptNo": "GR-260323-V01",
+    "poNo": "PO-260323-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-26",
+    "receivedCents": 5280000
+   }
+  },
+  {
+   "date": "2026-03-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260323-V02",
+   "subject": "po:PO-260323-V02",
+   "payload": {
+    "receiptNo": "GR-260323-V02",
+    "poNo": "PO-260323-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-26",
+    "receivedCents": 950000
+   }
+  },
+  {
+   "date": "2026-03-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260323-V03",
+   "subject": "po:PO-260323-V03",
+   "payload": {
+    "receiptNo": "GR-260323-V03",
+    "poNo": "PO-260323-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-26",
+    "receivedCents": 980500
+   }
+  },
+  {
+   "date": "2026-03-26",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260323-V04",
+   "subject": "po:PO-260323-V04",
+   "payload": {
+    "receiptNo": "GR-260323-V04",
+    "poNo": "PO-260323-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-26",
+    "receivedCents": 575400
+   }
+  },
+  {
+   "date": "2026-03-27",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35291",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35291",
+    "vendorCode": "V03",
+    "poNo": "PO-260323-V03",
+    "date": "2026-03-27",
+    "dueDate": "2026-04-26",
+    "amountCents": 980500
+   }
+  },
+  {
+   "date": "2026-03-28",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34848",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34848",
+    "vendorCode": "V01",
+    "poNo": "PO-260323-V01",
+    "date": "2026-03-28",
+    "dueDate": "2026-04-27",
+    "amountCents": 5280000
+   }
+  },
+  {
+   "date": "2026-03-28",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38359",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38359",
+    "vendorCode": "V02",
+    "poNo": "PO-260323-V02",
+    "date": "2026-03-28",
+    "dueDate": "2026-04-27",
+    "amountCents": 950000
+   }
+  },
+  {
+   "date": "2026-03-28",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34838",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34838",
+    "vendorCode": "V04",
+    "poNo": "PO-260323-V04",
+    "date": "2026-03-28",
+    "dueDate": "2026-04-27",
+    "amountCents": 575400
+   }
+  },
+  {
+   "date": "2026-03-30",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260330-V01",
+   "subject": "po:PO-260330-V01",
+   "payload": {
+    "poNo": "PO-260330-V01",
+    "vendorCode": "V01",
+    "date": "2026-03-30",
+    "totalCents": 3600000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 30,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-30",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260330-V02",
+   "subject": "po:PO-260330-V02",
+   "payload": {
+    "poNo": "PO-260330-V02",
+    "vendorCode": "V02",
+    "date": "2026-03-30",
+    "totalCents": 1200000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 48,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-30",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260330-V03",
+   "subject": "po:PO-260330-V03",
+   "payload": {
+    "poNo": "PO-260330-V03",
+    "vendorCode": "V03",
+    "date": "2026-03-30",
+    "totalCents": 684500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 37,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-03-30",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260330-V04",
+   "subject": "po:PO-260330-V04",
+   "payload": {
+    "poNo": "PO-260330-V04",
+    "vendorCode": "V04",
+    "date": "2026-03-30",
+    "totalCents": 508200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 121,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-02",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260330-V01",
+   "subject": "po:PO-260330-V01",
+   "payload": {
+    "receiptNo": "GR-260330-V01",
+    "poNo": "PO-260330-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-02",
+    "receivedCents": 3600000
+   }
+  },
+  {
+   "date": "2026-04-02",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260330-V02",
+   "subject": "po:PO-260330-V02",
+   "payload": {
+    "receiptNo": "GR-260330-V02",
+    "poNo": "PO-260330-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-02",
+    "receivedCents": 1200000
+   }
+  },
+  {
+   "date": "2026-04-02",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260330-V03",
+   "subject": "po:PO-260330-V03",
+   "payload": {
+    "receiptNo": "GR-260330-V03",
+    "poNo": "PO-260330-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-02",
+    "receivedCents": 684500
+   }
+  },
+  {
+   "date": "2026-04-02",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260330-V04",
+   "subject": "po:PO-260330-V04",
+   "payload": {
+    "receiptNo": "GR-260330-V04",
+    "poNo": "PO-260330-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-02",
+    "receivedCents": 508200
+   }
+  },
+  {
+   "date": "2026-04-04",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38363",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38363",
+    "vendorCode": "V02",
+    "poNo": "PO-260330-V02",
+    "date": "2026-04-04",
+    "dueDate": "2026-05-04",
+    "amountCents": 1200000
+   }
+  },
+  {
+   "date": "2026-04-04",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35294",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35294",
+    "vendorCode": "V03",
+    "poNo": "PO-260330-V03",
+    "date": "2026-04-04",
+    "dueDate": "2026-05-04",
+    "amountCents": 719600
+   }
+  },
+  {
+   "date": "2026-04-05",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34849",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34849",
+    "vendorCode": "V01",
+    "poNo": "PO-260330-V01",
+    "date": "2026-04-05",
+    "dueDate": "2026-05-05",
+    "amountCents": 3600000
+   }
+  },
+  {
+   "date": "2026-04-05",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34839",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34839",
+    "vendorCode": "V04",
+    "poNo": "PO-260330-V04",
+    "date": "2026-04-05",
+    "dueDate": "2026-05-05",
+    "amountCents": 508200
+   }
+  },
+  {
+   "date": "2026-04-06",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260406-V01",
+   "subject": "po:PO-260406-V01",
+   "payload": {
+    "poNo": "PO-260406-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-06",
+    "totalCents": 5040000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 42,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-06",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260406-V02",
+   "subject": "po:PO-260406-V02",
+   "payload": {
+    "poNo": "PO-260406-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-06",
+    "totalCents": 1300000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 52,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-06",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260406-V03",
+   "subject": "po:PO-260406-V03",
+   "payload": {
+    "poNo": "PO-260406-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-06",
+    "totalCents": 943500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 51,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-06",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260406-V04",
+   "subject": "po:PO-260406-V04",
+   "payload": {
+    "poNo": "PO-260406-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-06",
+    "totalCents": 478800,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 114,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-07",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V05:INV-36647",
+   "subject": "vendor:V05",
+   "payload": {
+    "billNo": "INV-36647",
+    "vendorCode": "V05",
+    "poNo": "",
+    "date": "2026-04-06",
+    "dueDate": "2026-05-06",
+    "amountCents": 685000
+   }
+  },
+  {
+   "date": "2026-04-09",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260406-V01",
+   "subject": "po:PO-260406-V01",
+   "payload": {
+    "receiptNo": "GR-260406-V01",
+    "poNo": "PO-260406-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-09",
+    "receivedCents": 5040000
+   }
+  },
+  {
+   "date": "2026-04-09",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260406-V02",
+   "subject": "po:PO-260406-V02",
+   "payload": {
+    "receiptNo": "GR-260406-V02",
+    "poNo": "PO-260406-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-09",
+    "receivedCents": 1300000
+   }
+  },
+  {
+   "date": "2026-04-09",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260406-V03",
+   "subject": "po:PO-260406-V03",
+   "payload": {
+    "receiptNo": "GR-260406-V03",
+    "poNo": "PO-260406-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-09",
+    "receivedCents": 943500
+   }
+  },
+  {
+   "date": "2026-04-09",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260406-V04",
+   "subject": "po:PO-260406-V04",
+   "payload": {
+    "receiptNo": "GR-260406-V04",
+    "poNo": "PO-260406-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-09",
+    "receivedCents": 478800
+   }
+  },
+  {
+   "date": "2026-04-10",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38364",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38364",
+    "vendorCode": "V02",
+    "poNo": "PO-260406-V02",
+    "date": "2026-04-10",
+    "dueDate": "2026-05-10",
+    "amountCents": 1300000
+   }
+  },
+  {
+   "date": "2026-04-10",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34841",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34841",
+    "vendorCode": "V04",
+    "poNo": "PO-260406-V04",
+    "date": "2026-04-10",
+    "dueDate": "2026-05-10",
+    "amountCents": 478800
+   }
+  },
+  {
+   "date": "2026-04-12",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34853",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34853",
+    "vendorCode": "V01",
+    "poNo": "PO-260406-V01",
+    "date": "2026-04-12",
+    "dueDate": "2026-05-12",
+    "amountCents": 5040000
+   }
+  },
+  {
+   "date": "2026-04-12",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35296",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35296",
+    "vendorCode": "V03",
+    "poNo": "PO-260406-V03",
+    "date": "2026-04-12",
+    "dueDate": "2026-05-12",
+    "amountCents": 943500
+   }
+  },
+  {
+   "date": "2026-04-13",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260413-V01",
+   "subject": "po:PO-260413-V01",
+   "payload": {
+    "poNo": "PO-260413-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-13",
+    "totalCents": 3600000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 30,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-13",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260413-V02",
+   "subject": "po:PO-260413-V02",
+   "payload": {
+    "poNo": "PO-260413-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-13",
+    "totalCents": 950000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 38,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-13",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260413-V03",
+   "subject": "po:PO-260413-V03",
+   "payload": {
+    "poNo": "PO-260413-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-13",
+    "totalCents": 925000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 50,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-13",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260413-V04",
+   "subject": "po:PO-260413-V04",
+   "payload": {
+    "poNo": "PO-260413-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-13",
+    "totalCents": 529200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 126,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-16",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260413-V01",
+   "subject": "po:PO-260413-V01",
+   "payload": {
+    "receiptNo": "GR-260413-V01",
+    "poNo": "PO-260413-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-16",
+    "receivedCents": 3600000
+   }
+  },
+  {
+   "date": "2026-04-16",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260413-V02",
+   "subject": "po:PO-260413-V02",
+   "payload": {
+    "receiptNo": "GR-260413-V02",
+    "poNo": "PO-260413-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-16",
+    "receivedCents": 950000
+   }
+  },
+  {
+   "date": "2026-04-16",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260413-V03",
+   "subject": "po:PO-260413-V03",
+   "payload": {
+    "receiptNo": "GR-260413-V03",
+    "poNo": "PO-260413-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-16",
+    "receivedCents": 925000
+   }
+  },
+  {
+   "date": "2026-04-16",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260413-V04",
+   "subject": "po:PO-260413-V04",
+   "payload": {
+    "receiptNo": "GR-260413-V04",
+    "poNo": "PO-260413-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-16",
+    "receivedCents": 529200
+   }
+  },
+  {
+   "date": "2026-04-17",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38365",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38365",
+    "vendorCode": "V02",
+    "poNo": "PO-260413-V02",
+    "date": "2026-04-17",
+    "dueDate": "2026-05-17",
+    "amountCents": 950000
+   }
+  },
+  {
+   "date": "2026-04-19",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34855",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34855",
+    "vendorCode": "V01",
+    "poNo": "PO-260413-V01",
+    "date": "2026-04-19",
+    "dueDate": "2026-05-19",
+    "amountCents": 3600000
+   }
+  },
+  {
+   "date": "2026-04-19",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35299",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35299",
+    "vendorCode": "V03",
+    "poNo": "PO-260413-V03",
+    "date": "2026-04-19",
+    "dueDate": "2026-05-19",
+    "amountCents": 925000
+   }
+  },
+  {
+   "date": "2026-04-19",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34842",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34842",
+    "vendorCode": "V04",
+    "poNo": "PO-260413-V04",
+    "date": "2026-04-19",
+    "dueDate": "2026-05-19",
+    "amountCents": 529200
+   }
+  },
+  {
+   "date": "2026-04-20",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260420-V01",
+   "subject": "po:PO-260420-V01",
+   "payload": {
+    "poNo": "PO-260420-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-20",
+    "totalCents": 5160000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 43,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-20",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260420-V02",
+   "subject": "po:PO-260420-V02",
+   "payload": {
+    "poNo": "PO-260420-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-20",
+    "totalCents": 850000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 34,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-20",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260420-V03",
+   "subject": "po:PO-260420-V03",
+   "payload": {
+    "poNo": "PO-260420-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-20",
+    "totalCents": 888000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 48,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-20",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260420-V04",
+   "subject": "po:PO-260420-V04",
+   "payload": {
+    "poNo": "PO-260420-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-20",
+    "totalCents": 504000,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 120,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-20",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260420-V06",
+   "subject": "po:PO-260420-V06",
+   "payload": {
+    "poNo": "PO-260420-V06",
+    "vendorCode": "V06",
+    "date": "2026-04-20",
+    "totalCents": 1450000,
+    "lines": [
+     {
+      "sku": "CAMPAIGN",
+      "qty": 1,
+      "unitCents": 1450000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-21",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD-34842",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD-34842",
+    "vendorCode": "V04",
+    "poNo": "PO-260413-V04",
+    "date": "2026-04-19",
+    "dueDate": "2026-05-19",
+    "amountCents": 529200
+   }
+  },
+  {
+   "date": "2026-04-23",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260420-V01",
+   "subject": "po:PO-260420-V01",
+   "payload": {
+    "receiptNo": "GR-260420-V01",
+    "poNo": "PO-260420-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-23",
+    "receivedCents": 5160000
+   }
+  },
+  {
+   "date": "2026-04-23",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260420-V02",
+   "subject": "po:PO-260420-V02",
+   "payload": {
+    "receiptNo": "GR-260420-V02",
+    "poNo": "PO-260420-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-23",
+    "receivedCents": 775000
+   }
+  },
+  {
+   "date": "2026-04-23",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260420-V03",
+   "subject": "po:PO-260420-V03",
+   "payload": {
+    "receiptNo": "GR-260420-V03",
+    "poNo": "PO-260420-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-23",
+    "receivedCents": 888000
+   }
+  },
+  {
+   "date": "2026-04-23",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260420-V04",
+   "subject": "po:PO-260420-V04",
+   "payload": {
+    "receiptNo": "GR-260420-V04",
+    "poNo": "PO-260420-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-23",
+    "receivedCents": 504000
+   }
+  },
+  {
+   "date": "2026-04-23",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260420-V06",
+   "subject": "po:PO-260420-V06",
+   "payload": {
+    "receiptNo": "GR-260420-V06",
+    "poNo": "PO-260420-V06",
+    "vendorCode": "V06",
+    "date": "2026-04-23",
+    "receivedCents": 1450000
+   }
+  },
+  {
+   "date": "2026-04-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34858",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34858",
+    "vendorCode": "V01",
+    "poNo": "PO-260420-V01",
+    "date": "2026-04-24",
+    "dueDate": "2026-05-24",
+    "amountCents": 5160000
+   }
+  },
+  {
+   "date": "2026-04-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38366",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38366",
+    "vendorCode": "V02",
+    "poNo": "PO-260420-V02",
+    "date": "2026-04-24",
+    "dueDate": "2026-05-24",
+    "amountCents": 850000
+   }
+  },
+  {
+   "date": "2026-04-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35300",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35300",
+    "vendorCode": "V03",
+    "poNo": "PO-260420-V03",
+    "date": "2026-04-24",
+    "dueDate": "2026-05-24",
+    "amountCents": 888000
+   }
+  },
+  {
+   "date": "2026-04-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34845",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34845",
+    "vendorCode": "V04",
+    "poNo": "PO-260420-V04",
+    "date": "2026-04-24",
+    "dueDate": "2026-05-24",
+    "amountCents": 504000
+   }
+  },
+  {
+   "date": "2026-04-27",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260427-V01",
+   "subject": "po:PO-260427-V01",
+   "payload": {
+    "poNo": "PO-260427-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-27",
+    "totalCents": 4800000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 40,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-27",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260427-V02",
+   "subject": "po:PO-260427-V02",
+   "payload": {
+    "poNo": "PO-260427-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-27",
+    "totalCents": 1200000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 48,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-27",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260427-V03",
+   "subject": "po:PO-260427-V03",
+   "payload": {
+    "poNo": "PO-260427-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-27",
+    "totalCents": 832500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 45,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-27",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260427-V04",
+   "subject": "po:PO-260427-V04",
+   "payload": {
+    "poNo": "PO-260427-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-27",
+    "totalCents": 470400,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 112,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-04-27",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V06:SMG-2026-39250",
+   "subject": "vendor:V06",
+   "payload": {
+    "billNo": "SMG-2026-39250",
+    "vendorCode": "V06",
+    "poNo": "PO-260420-V06",
+    "date": "2026-04-27",
+    "dueDate": "2026-05-27",
+    "amountCents": 1450000
+   }
+  },
+  {
+   "date": "2026-04-30",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260427-V01",
+   "subject": "po:PO-260427-V01",
+   "payload": {
+    "receiptNo": "GR-260427-V01",
+    "poNo": "PO-260427-V01",
+    "vendorCode": "V01",
+    "date": "2026-04-30",
+    "receivedCents": 4800000
+   }
+  },
+  {
+   "date": "2026-04-30",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260427-V02",
+   "subject": "po:PO-260427-V02",
+   "payload": {
+    "receiptNo": "GR-260427-V02",
+    "poNo": "PO-260427-V02",
+    "vendorCode": "V02",
+    "date": "2026-04-30",
+    "receivedCents": 1200000
+   }
+  },
+  {
+   "date": "2026-04-30",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260427-V03",
+   "subject": "po:PO-260427-V03",
+   "payload": {
+    "receiptNo": "GR-260427-V03",
+    "poNo": "PO-260427-V03",
+    "vendorCode": "V03",
+    "date": "2026-04-30",
+    "receivedCents": 832500
+   }
+  },
+  {
+   "date": "2026-04-30",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260427-V04",
+   "subject": "po:PO-260427-V04",
+   "payload": {
+    "receiptNo": "GR-260427-V04",
+    "poNo": "PO-260427-V04",
+    "vendorCode": "V04",
+    "date": "2026-04-30",
+    "receivedCents": 470400
+   }
+  },
+  {
+   "date": "2026-05-01",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38370",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38370",
+    "vendorCode": "V02",
+    "poNo": "PO-260427-V02",
+    "date": "2026-05-01",
+    "dueDate": "2026-05-31",
+    "amountCents": 1200000
+   }
+  },
+  {
+   "date": "2026-05-01",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35301",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35301",
+    "vendorCode": "V03",
+    "poNo": "PO-260427-V03",
+    "date": "2026-05-01",
+    "dueDate": "2026-05-31",
+    "amountCents": 832500
+   }
+  },
+  {
+   "date": "2026-05-02",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34846",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34846",
+    "vendorCode": "V04",
+    "poNo": "PO-260427-V04",
+    "date": "2026-05-02",
+    "dueDate": "2026-06-01",
+    "amountCents": 470400
+   }
+  },
+  {
+   "date": "2026-05-04",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260504-V01",
+   "subject": "po:PO-260504-V01",
+   "payload": {
+    "poNo": "PO-260504-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-04",
+    "totalCents": 5160000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 43,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-04",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260504-V02",
+   "subject": "po:PO-260504-V02",
+   "payload": {
+    "poNo": "PO-260504-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-04",
+    "totalCents": 850000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 34,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-04",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260504-V03",
+   "subject": "po:PO-260504-V03",
+   "payload": {
+    "poNo": "PO-260504-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-04",
+    "totalCents": 740000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 40,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-04",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260504-V04",
+   "subject": "po:PO-260504-V04",
+   "payload": {
+    "poNo": "PO-260504-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-04",
+    "totalCents": 642600,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 153,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-04",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34862",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34862",
+    "vendorCode": "V01",
+    "poNo": "PO-260427-V01",
+    "date": "2026-05-04",
+    "dueDate": "2026-06-03",
+    "amountCents": 4800000
+   }
+  },
+  {
+   "date": "2026-05-05",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V05:INV-36651",
+   "subject": "vendor:V05",
+   "payload": {
+    "billNo": "INV-36651",
+    "vendorCode": "V05",
+    "poNo": "",
+    "date": "2026-05-04",
+    "dueDate": "2026-06-03",
+    "amountCents": 685000
+   }
+  },
+  {
+   "date": "2026-05-07",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260504-V01",
+   "subject": "po:PO-260504-V01",
+   "payload": {
+    "receiptNo": "GR-260504-V01",
+    "poNo": "PO-260504-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-07",
+    "receivedCents": 5160000
+   }
+  },
+  {
+   "date": "2026-05-07",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260504-V02",
+   "subject": "po:PO-260504-V02",
+   "payload": {
+    "receiptNo": "GR-260504-V02",
+    "poNo": "PO-260504-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-07",
+    "receivedCents": 850000
+   }
+  },
+  {
+   "date": "2026-05-07",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260504-V03",
+   "subject": "po:PO-260504-V03",
+   "payload": {
+    "receiptNo": "GR-260504-V03",
+    "poNo": "PO-260504-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-07",
+    "receivedCents": 740000
+   }
+  },
+  {
+   "date": "2026-05-07",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260504-V04",
+   "subject": "po:PO-260504-V04",
+   "payload": {
+    "receiptNo": "GR-260504-V04",
+    "poNo": "PO-260504-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-07",
+    "receivedCents": 642600
+   }
+  },
+  {
+   "date": "2026-05-09",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35305",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35305",
+    "vendorCode": "V03",
+    "poNo": "PO-260504-V03",
+    "date": "2026-05-09",
+    "dueDate": "2026-06-08",
+    "amountCents": 740000
+   }
+  },
+  {
+   "date": "2026-05-10",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38371",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38371",
+    "vendorCode": "V02",
+    "poNo": "PO-260504-V02",
+    "date": "2026-05-10",
+    "dueDate": "2026-06-09",
+    "amountCents": 850000
+   }
+  },
+  {
+   "date": "2026-05-11",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260511-V01",
+   "subject": "po:PO-260511-V01",
+   "payload": {
+    "poNo": "PO-260511-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-11",
+    "totalCents": 4560000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 38,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-11",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260511-V02",
+   "subject": "po:PO-260511-V02",
+   "payload": {
+    "poNo": "PO-260511-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-11",
+    "totalCents": 1000000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 40,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-11",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260511-V03",
+   "subject": "po:PO-260511-V03",
+   "payload": {
+    "poNo": "PO-260511-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-11",
+    "totalCents": 777000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 42,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-11",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260511-V04",
+   "subject": "po:PO-260511-V04",
+   "payload": {
+    "poNo": "PO-260511-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-11",
+    "totalCents": 630000,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 150,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-11",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34866",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34866",
+    "vendorCode": "V01",
+    "poNo": "PO-260504-V01",
+    "date": "2026-05-11",
+    "dueDate": "2026-06-10",
+    "amountCents": 5160000
+   }
+  },
+  {
+   "date": "2026-05-11",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34847",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34847",
+    "vendorCode": "V04",
+    "poNo": "PO-260504-V04",
+    "date": "2026-05-11",
+    "dueDate": "2026-06-10",
+    "amountCents": 642600
+   }
+  },
+  {
+   "date": "2026-05-14",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260511-V01",
+   "subject": "po:PO-260511-V01",
+   "payload": {
+    "receiptNo": "GR-260511-V01",
+    "poNo": "PO-260511-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-14",
+    "receivedCents": 4560000
+   }
+  },
+  {
+   "date": "2026-05-14",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260511-V02",
+   "subject": "po:PO-260511-V02",
+   "payload": {
+    "receiptNo": "GR-260511-V02",
+    "poNo": "PO-260511-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-14",
+    "receivedCents": 1000000
+   }
+  },
+  {
+   "date": "2026-05-14",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260511-V03",
+   "subject": "po:PO-260511-V03",
+   "payload": {
+    "receiptNo": "GR-260511-V03",
+    "poNo": "PO-260511-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-14",
+    "receivedCents": 777000
+   }
+  },
+  {
+   "date": "2026-05-14",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260511-V04",
+   "subject": "po:PO-260511-V04",
+   "payload": {
+    "receiptNo": "GR-260511-V04",
+    "poNo": "PO-260511-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-14",
+    "receivedCents": 630000
+   }
+  },
+  {
+   "date": "2026-05-16",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34851",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34851",
+    "vendorCode": "V04",
+    "poNo": "PO-260511-V04",
+    "date": "2026-05-16",
+    "dueDate": "2026-06-15",
+    "amountCents": 630000
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260518-V01",
+   "subject": "po:PO-260518-V01",
+   "payload": {
+    "poNo": "PO-260518-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-18",
+    "totalCents": 3840000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 32,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260518-V02",
+   "subject": "po:PO-260518-V02",
+   "payload": {
+    "poNo": "PO-260518-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-18",
+    "totalCents": 1400000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 56,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260518-V03",
+   "subject": "po:PO-260518-V03",
+   "payload": {
+    "poNo": "PO-260518-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-18",
+    "totalCents": 758500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 41,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260518-V04",
+   "subject": "po:PO-260518-V04",
+   "payload": {
+    "poNo": "PO-260518-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-18",
+    "totalCents": 714000,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 170,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34869",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34869",
+    "vendorCode": "V01",
+    "poNo": "PO-260511-V01",
+    "date": "2026-05-18",
+    "dueDate": "2026-06-17",
+    "amountCents": 4560000
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38374",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38374",
+    "vendorCode": "V02",
+    "poNo": "PO-260511-V02",
+    "date": "2026-05-18",
+    "dueDate": "2026-06-17",
+    "amountCents": 1000000
+   }
+  },
+  {
+   "date": "2026-05-18",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35307",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35307",
+    "vendorCode": "V03",
+    "poNo": "PO-260511-V03",
+    "date": "2026-05-18",
+    "dueDate": "2026-06-17",
+    "amountCents": 777000
+   }
+  },
+  {
+   "date": "2026-05-21",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260518-V01",
+   "subject": "po:PO-260518-V01",
+   "payload": {
+    "receiptNo": "GR-260518-V01",
+    "poNo": "PO-260518-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-21",
+    "receivedCents": 3840000
+   }
+  },
+  {
+   "date": "2026-05-21",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260518-V02",
+   "subject": "po:PO-260518-V02",
+   "payload": {
+    "receiptNo": "GR-260518-V02",
+    "poNo": "PO-260518-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-21",
+    "receivedCents": 1400000
+   }
+  },
+  {
+   "date": "2026-05-21",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260518-V03",
+   "subject": "po:PO-260518-V03",
+   "payload": {
+    "receiptNo": "GR-260518-V03",
+    "poNo": "PO-260518-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-21",
+    "receivedCents": 758500
+   }
+  },
+  {
+   "date": "2026-05-21",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260518-V04",
+   "subject": "po:PO-260518-V04",
+   "payload": {
+    "receiptNo": "GR-260518-V04",
+    "poNo": "PO-260518-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-21",
+    "receivedCents": 714000
+   }
+  },
+  {
+   "date": "2026-05-22",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38376",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38376",
+    "vendorCode": "V02",
+    "poNo": "PO-260518-V02",
+    "date": "2026-05-22",
+    "dueDate": "2026-06-21",
+    "amountCents": 1400000
+   }
+  },
+  {
+   "date": "2026-05-22",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35309",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35309",
+    "vendorCode": "V03",
+    "poNo": "PO-260518-V03",
+    "date": "2026-05-22",
+    "dueDate": "2026-06-21",
+    "amountCents": 758500
+   }
+  },
+  {
+   "date": "2026-05-24",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34853",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34853",
+    "vendorCode": "V04",
+    "poNo": "PO-260518-V04",
+    "date": "2026-05-24",
+    "dueDate": "2026-06-23",
+    "amountCents": 714000
+   }
+  },
+  {
+   "date": "2026-05-25",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260525-V01",
+   "subject": "po:PO-260525-V01",
+   "payload": {
+    "poNo": "PO-260525-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-25",
+    "totalCents": 4920000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 41,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-25",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260525-V02",
+   "subject": "po:PO-260525-V02",
+   "payload": {
+    "poNo": "PO-260525-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-25",
+    "totalCents": 1375000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 55,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-25",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260525-V03",
+   "subject": "po:PO-260525-V03",
+   "payload": {
+    "poNo": "PO-260525-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-25",
+    "totalCents": 851000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 46,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-25",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260525-V04",
+   "subject": "po:PO-260525-V04",
+   "payload": {
+    "poNo": "PO-260525-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-25",
+    "totalCents": 483000,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 115,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-05-25",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34872",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34872",
+    "vendorCode": "V01",
+    "poNo": "PO-260518-V01",
+    "date": "2026-05-25",
+    "dueDate": "2026-06-24",
+    "amountCents": 3840000
+   }
+  },
+  {
+   "date": "2026-05-27",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:34872",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "34872",
+    "vendorCode": "V01",
+    "poNo": "PO-260518-V01",
+    "date": "2026-05-25",
+    "dueDate": "2026-06-24",
+    "amountCents": 3840000
+   }
+  },
+  {
+   "date": "2026-05-28",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260525-V01",
+   "subject": "po:PO-260525-V01",
+   "payload": {
+    "receiptNo": "GR-260525-V01",
+    "poNo": "PO-260525-V01",
+    "vendorCode": "V01",
+    "date": "2026-05-28",
+    "receivedCents": 4920000
+   }
+  },
+  {
+   "date": "2026-05-28",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260525-V02",
+   "subject": "po:PO-260525-V02",
+   "payload": {
+    "receiptNo": "GR-260525-V02",
+    "poNo": "PO-260525-V02",
+    "vendorCode": "V02",
+    "date": "2026-05-28",
+    "receivedCents": 1375000
+   }
+  },
+  {
+   "date": "2026-05-28",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260525-V03",
+   "subject": "po:PO-260525-V03",
+   "payload": {
+    "receiptNo": "GR-260525-V03",
+    "poNo": "PO-260525-V03",
+    "vendorCode": "V03",
+    "date": "2026-05-28",
+    "receivedCents": 851000
+   }
+  },
+  {
+   "date": "2026-05-28",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260525-V04",
+   "subject": "po:PO-260525-V04",
+   "payload": {
+    "receiptNo": "GR-260525-V04",
+    "poNo": "PO-260525-V04",
+    "vendorCode": "V04",
+    "date": "2026-05-28",
+    "receivedCents": 483000
+   }
+  },
+  {
+   "date": "2026-05-29",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35313",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35313",
+    "vendorCode": "V03",
+    "poNo": "PO-260525-V03",
+    "date": "2026-05-29",
+    "dueDate": "2026-06-28",
+    "amountCents": 913200
+   }
+  },
+  {
+   "date": "2026-05-31",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38379",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38379",
+    "vendorCode": "V02",
+    "poNo": "PO-260525-V02",
+    "date": "2026-05-31",
+    "dueDate": "2026-06-30",
+    "amountCents": 1375000
+   }
+  },
+  {
+   "date": "2026-05-31",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34855",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34855",
+    "vendorCode": "V04",
+    "poNo": "PO-260525-V04",
+    "date": "2026-05-31",
+    "dueDate": "2026-06-30",
+    "amountCents": 483000
+   }
+  },
+  {
+   "date": "2026-06-01",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260601-V01",
+   "subject": "po:PO-260601-V01",
+   "payload": {
+    "poNo": "PO-260601-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-01",
+    "totalCents": 4440000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 37,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-01",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260601-V02",
+   "subject": "po:PO-260601-V02",
+   "payload": {
+    "poNo": "PO-260601-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-01",
+    "totalCents": 1150000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 46,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-01",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260601-V03",
+   "subject": "po:PO-260601-V03",
+   "payload": {
+    "poNo": "PO-260601-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-01",
+    "totalCents": 666000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 36,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-01",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260601-V04",
+   "subject": "po:PO-260601-V04",
+   "payload": {
+    "poNo": "PO-260601-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-01",
+    "totalCents": 537600,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 128,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-01",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34875",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34875",
+    "vendorCode": "V01",
+    "poNo": "PO-260525-V01",
+    "date": "2026-06-01",
+    "dueDate": "2026-07-01",
+    "amountCents": 4920000
+   }
+  },
+  {
+   "date": "2026-06-02",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V05:INV-36653",
+   "subject": "vendor:V05",
+   "payload": {
+    "billNo": "INV-36653",
+    "vendorCode": "V05",
+    "poNo": "",
+    "date": "2026-06-01",
+    "dueDate": "2026-07-01",
+    "amountCents": 685000
+   }
+  },
+  {
+   "date": "2026-06-04",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260601-V01",
+   "subject": "po:PO-260601-V01",
+   "payload": {
+    "receiptNo": "GR-260601-V01",
+    "poNo": "PO-260601-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-04",
+    "receivedCents": 4440000
+   }
+  },
+  {
+   "date": "2026-06-04",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260601-V02",
+   "subject": "po:PO-260601-V02",
+   "payload": {
+    "receiptNo": "GR-260601-V02",
+    "poNo": "PO-260601-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-04",
+    "receivedCents": 1150000
+   }
+  },
+  {
+   "date": "2026-06-04",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260601-V03",
+   "subject": "po:PO-260601-V03",
+   "payload": {
+    "receiptNo": "GR-260601-V03",
+    "poNo": "PO-260601-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-04",
+    "receivedCents": 666000
+   }
+  },
+  {
+   "date": "2026-06-04",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260601-V04",
+   "subject": "po:PO-260601-V04",
+   "payload": {
+    "receiptNo": "GR-260601-V04",
+    "poNo": "PO-260601-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-04",
+    "receivedCents": 537600
+   }
+  },
+  {
+   "date": "2026-06-05",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34879",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34879",
+    "vendorCode": "V01",
+    "poNo": "PO-260601-V01",
+    "date": "2026-06-05",
+    "dueDate": "2026-07-05",
+    "amountCents": 4440000
+   }
+  },
+  {
+   "date": "2026-06-05",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34858",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34858",
+    "vendorCode": "V04",
+    "poNo": "PO-260601-V04",
+    "date": "2026-06-05",
+    "dueDate": "2026-07-05",
+    "amountCents": 537600
+   }
+  },
+  {
+   "date": "2026-06-07",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35316",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35316",
+    "vendorCode": "V03",
+    "poNo": "PO-260601-V03",
+    "date": "2026-06-07",
+    "dueDate": "2026-07-07",
+    "amountCents": 666000
+   }
+  },
+  {
+   "date": "2026-06-08",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260608-V01",
+   "subject": "po:PO-260608-V01",
+   "payload": {
+    "poNo": "PO-260608-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-08",
+    "totalCents": 3720000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 31,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-08",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260608-V02",
+   "subject": "po:PO-260608-V02",
+   "payload": {
+    "poNo": "PO-260608-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-08",
+    "totalCents": 1375000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 55,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-08",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260608-V03",
+   "subject": "po:PO-260608-V03",
+   "payload": {
+    "poNo": "PO-260608-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-08",
+    "totalCents": 758500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 41,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-08",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260608-V04",
+   "subject": "po:PO-260608-V04",
+   "payload": {
+    "poNo": "PO-260608-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-08",
+    "totalCents": 747600,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 178,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-08",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38383",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38383",
+    "vendorCode": "V02",
+    "poNo": "PO-260601-V02",
+    "date": "2026-06-08",
+    "dueDate": "2026-07-08",
+    "amountCents": 1150000
+   }
+  },
+  {
+   "date": "2026-06-11",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260608-V01",
+   "subject": "po:PO-260608-V01",
+   "payload": {
+    "receiptNo": "GR-260608-V01",
+    "poNo": "PO-260608-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-11",
+    "receivedCents": 3720000
+   }
+  },
+  {
+   "date": "2026-06-11",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260608-V02",
+   "subject": "po:PO-260608-V02",
+   "payload": {
+    "receiptNo": "GR-260608-V02",
+    "poNo": "PO-260608-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-11",
+    "receivedCents": 1175000
+   }
+  },
+  {
+   "date": "2026-06-11",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260608-V03",
+   "subject": "po:PO-260608-V03",
+   "payload": {
+    "receiptNo": "GR-260608-V03",
+    "poNo": "PO-260608-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-11",
+    "receivedCents": 758500
+   }
+  },
+  {
+   "date": "2026-06-11",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260608-V04",
+   "subject": "po:PO-260608-V04",
+   "payload": {
+    "receiptNo": "GR-260608-V04",
+    "poNo": "PO-260608-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-11",
+    "receivedCents": 747600
+   }
+  },
+  {
+   "date": "2026-06-12",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35318",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35318",
+    "vendorCode": "V03",
+    "poNo": "PO-260608-V03",
+    "date": "2026-06-12",
+    "dueDate": "2026-07-12",
+    "amountCents": 758500
+   }
+  },
+  {
+   "date": "2026-06-12",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34859",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34859",
+    "vendorCode": "V04",
+    "poNo": "PO-260608-V04",
+    "date": "2026-06-12",
+    "dueDate": "2026-07-12",
+    "amountCents": 747600
+   }
+  },
+  {
+   "date": "2026-06-14",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34881",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34881",
+    "vendorCode": "V01",
+    "poNo": "PO-260608-V01",
+    "date": "2026-06-14",
+    "dueDate": "2026-07-14",
+    "amountCents": 3720000
+   }
+  },
+  {
+   "date": "2026-06-15",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260615-V01",
+   "subject": "po:PO-260615-V01",
+   "payload": {
+    "poNo": "PO-260615-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-15",
+    "totalCents": 4200000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 35,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-15",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260615-V02",
+   "subject": "po:PO-260615-V02",
+   "payload": {
+    "poNo": "PO-260615-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-15",
+    "totalCents": 1275000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 51,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-15",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260615-V03",
+   "subject": "po:PO-260615-V03",
+   "payload": {
+    "poNo": "PO-260615-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-15",
+    "totalCents": 1073000,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 58,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-15",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260615-V04",
+   "subject": "po:PO-260615-V04",
+   "payload": {
+    "poNo": "PO-260615-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-15",
+    "totalCents": 680400,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 162,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-15",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38385",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38385",
+    "vendorCode": "V02",
+    "poNo": "PO-260608-V02",
+    "date": "2026-06-15",
+    "dueDate": "2026-07-15",
+    "amountCents": 1375000
+   }
+  },
+  {
+   "date": "2026-06-18",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260615-V01",
+   "subject": "po:PO-260615-V01",
+   "payload": {
+    "receiptNo": "GR-260615-V01",
+    "poNo": "PO-260615-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-18",
+    "receivedCents": 4200000
+   }
+  },
+  {
+   "date": "2026-06-18",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260615-V02",
+   "subject": "po:PO-260615-V02",
+   "payload": {
+    "receiptNo": "GR-260615-V02",
+    "poNo": "PO-260615-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-18",
+    "receivedCents": 1275000
+   }
+  },
+  {
+   "date": "2026-06-18",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260615-V03",
+   "subject": "po:PO-260615-V03",
+   "payload": {
+    "receiptNo": "GR-260615-V03",
+    "poNo": "PO-260615-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-18",
+    "receivedCents": 1073000
+   }
+  },
+  {
+   "date": "2026-06-18",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260615-V04",
+   "subject": "po:PO-260615-V04",
+   "payload": {
+    "receiptNo": "GR-260615-V04",
+    "poNo": "PO-260615-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-18",
+    "receivedCents": 680400
+   }
+  },
+  {
+   "date": "2026-06-20",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38388",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38388",
+    "vendorCode": "V02",
+    "poNo": "PO-260615-V02",
+    "date": "2026-06-20",
+    "dueDate": "2026-07-20",
+    "amountCents": 1275000
+   }
+  },
+  {
+   "date": "2026-06-20",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35322",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35322",
+    "vendorCode": "V03",
+    "poNo": "PO-260615-V03",
+    "date": "2026-06-20",
+    "dueDate": "2026-07-20",
+    "amountCents": 1073000
+   }
+  },
+  {
+   "date": "2026-06-21",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34882",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34882",
+    "vendorCode": "V01",
+    "poNo": "PO-260615-V01",
+    "date": "2026-06-21",
+    "dueDate": "2026-07-21",
+    "amountCents": 4200000
+   }
+  },
+  {
+   "date": "2026-06-22",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260622-V01",
+   "subject": "po:PO-260622-V01",
+   "payload": {
+    "poNo": "PO-260622-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-22",
+    "totalCents": 5040000,
+    "lines": [
+     {
+      "sku": "OOLONG-25KG",
+      "qty": 42,
+      "unitCents": 120000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-22",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260622-V02",
+   "subject": "po:PO-260622-V02",
+   "payload": {
+    "poNo": "PO-260622-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-22",
+    "totalCents": 1350000,
+    "lines": [
+     {
+      "sku": "CUP-700-CASE",
+      "qty": 54,
+      "unitCents": 25000
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-22",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260622-V03",
+   "subject": "po:PO-260622-V03",
+   "payload": {
+    "poNo": "PO-260622-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-22",
+    "totalCents": 980500,
+    "lines": [
+     {
+      "sku": "PEARL-20KG",
+      "qty": 53,
+      "unitCents": 18500
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-22",
+   "kind": "purchase_order",
+   "source": "erp",
+   "refKey": "po:PO-260622-V04",
+   "subject": "po:PO-260622-V04",
+   "payload": {
+    "poNo": "PO-260622-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-22",
+    "totalCents": 634200,
+    "lines": [
+     {
+      "sku": "MILK-CASE",
+      "qty": 151,
+      "unitCents": 4200
+     }
+    ],
+    "buyer": "commissary"
+   }
+  },
+  {
+   "date": "2026-06-22",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34861",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34861",
+    "vendorCode": "V04",
+    "poNo": "PO-260615-V04",
+    "date": "2026-06-22",
+    "dueDate": "2026-07-22",
+    "amountCents": 680400
+   }
+  },
+  {
+   "date": "2026-06-25",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260622-V01",
+   "subject": "po:PO-260622-V01",
+   "payload": {
+    "receiptNo": "GR-260622-V01",
+    "poNo": "PO-260622-V01",
+    "vendorCode": "V01",
+    "date": "2026-06-25",
+    "receivedCents": 5040000
+   }
+  },
+  {
+   "date": "2026-06-25",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260622-V02",
+   "subject": "po:PO-260622-V02",
+   "payload": {
+    "receiptNo": "GR-260622-V02",
+    "poNo": "PO-260622-V02",
+    "vendorCode": "V02",
+    "date": "2026-06-25",
+    "receivedCents": 1350000
+   }
+  },
+  {
+   "date": "2026-06-25",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260622-V03",
+   "subject": "po:PO-260622-V03",
+   "payload": {
+    "receiptNo": "GR-260622-V03",
+    "poNo": "PO-260622-V03",
+    "vendorCode": "V03",
+    "date": "2026-06-25",
+    "receivedCents": 980500
+   }
+  },
+  {
+   "date": "2026-06-25",
+   "kind": "goods_receipt",
+   "source": "erp",
+   "refKey": "gr:PO-260622-V04",
+   "subject": "po:PO-260622-V04",
+   "payload": {
+    "receiptNo": "GR-260622-V04",
+    "poNo": "PO-260622-V04",
+    "vendorCode": "V04",
+    "date": "2026-06-25",
+    "receivedCents": 634200
+   }
+  },
+  {
+   "date": "2026-06-26",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V02:PC-38392",
+   "subject": "vendor:V02",
+   "payload": {
+    "billNo": "PC-38392",
+    "vendorCode": "V02",
+    "poNo": "PO-260622-V02",
+    "date": "2026-06-26",
+    "dueDate": "2026-07-26",
+    "amountCents": 1350000
+   }
+  },
+  {
+   "date": "2026-06-27",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V04:BAD/34863",
+   "subject": "vendor:V04",
+   "payload": {
+    "billNo": "BAD/34863",
+    "vendorCode": "V04",
+    "poNo": "PO-260622-V04",
+    "date": "2026-06-27",
+    "dueDate": "2026-07-27",
+    "amountCents": 634200
+   }
+  },
+  {
+   "date": "2026-06-28",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V03:GT35323",
+   "subject": "vendor:V03",
+   "payload": {
+    "billNo": "GT35323",
+    "vendorCode": "V03",
+    "poNo": "PO-260622-V03",
+    "date": "2026-06-28",
+    "dueDate": "2026-07-28",
+    "amountCents": 980500
+   }
+  },
+  {
+   "date": "2026-06-29",
+   "kind": "vendor_invoice",
+   "source": "erp",
+   "refKey": "bill:V01:INV-34885",
+   "subject": "vendor:V01",
+   "payload": {
+    "billNo": "INV-34885",
+    "vendorCode": "V01",
+    "poNo": "PO-260622-V01",
+    "date": "2026-06-29",
+    "dueDate": "2026-07-29",
+    "amountCents": 5040000
+   }
+  }
+ ],
+ "emails": [
+  {
+   "id": "ap-fraud-1",
+   "date": "2026-05-07",
+   "from": "ar@formosa-leaf.com",
+   "fromName": "Formosa Leaf Accounts",
+   "subject": "Change of bank details for Friday's payment",
+   "body": "Dear Pearl Lane AP team,\n\nPlease note our banking details have changed following an audit by our bank. Kindly send this Friday's payment for the oolong orders to our new account: Bank of the West, routing 121100782, account ending 7316. Please confirm once updated. If you need to verify, call our finance office on +1 (626) 555-0199.\n\nBest regards,\nWendy Lin\nFormosa Leaf Imports",
+   "truth": {
+    "vendor": "V01",
+    "fraud": true
+   }
+  },
+  {
+   "id": "ap-fraud-2",
+   "date": "2026-06-04",
+   "from": "orders@goldentapioca.com",
+   "fromName": "Golden Tapioca Supply",
+   "subject": "RE: remittance - new account",
+   "body": "Hi, quick one before your payment run: we moved our operating account to Chase. Please use account ending 5582, routing 322271627 from now on. Our old account will be closed this week so please do not send there. Thanks! \u2014 Kevin, Golden Tapioca",
+   "truth": {
+    "vendor": "V03",
+    "fraud": true,
+    "note": "the vendor's real mailbox was compromised"
+   }
+  },
+  {
+   "id": "ap-legit-1",
+   "date": "2026-03-19",
+   "from": "accounts@bayareadairy.coop",
+   "fromName": "Bay Area Dairy Co-op",
+   "subject": "New bank account for the co-op",
+   "body": "Hello,\nThe co-op has moved its accounts to Mechanics Bank. From April please pay us at account ending 6620 (routing 121102036). Our treasurer Maria Santos will confirm by phone.\nThank you,\nBay Area Dairy Co-op accounts",
+   "truth": {
+    "vendor": "V04",
+    "fraud": false
+   }
+  }
+ ],
+ "answer_key": [
+  {
+   "caseId": "ap-V01:INV-34823",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34823",
+   "truth": {
+    "amountCents": 4080000,
+    "po": "PO-260105-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38342",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38342",
+   "truth": {
+    "amountCents": 1350000,
+    "po": "PO-260105-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35258",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V03:GT35258",
+   "truth": {
+    "amountCents": 925000,
+    "po": "PO-260105-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34805",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34805",
+   "truth": {
+    "amountCents": 508200,
+    "po": "PO-260105-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V05:INV-36640",
+   "family": "bill_no_po_service",
+   "split": "train",
+   "subject": "bill:V05:INV-36640",
+   "truth": {
+    "standing": true
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V01:INV-34827",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34827",
+   "truth": {
+    "amountCents": 3960000,
+    "po": "PO-260112-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38343",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38343",
+   "truth": {
+    "amountCents": 875000,
+    "po": "PO-260112-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35260",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35260",
+   "truth": {
+    "amountCents": 795500,
+    "po": "PO-260112-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34809",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34809",
+   "truth": {
+    "amountCents": 634200,
+    "po": "PO-260112-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34828",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V01:INV-34828",
+   "truth": {
+    "amountCents": 5280000,
+    "po": "PO-260119-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38345",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38345",
+   "truth": {
+    "amountCents": 1225000,
+    "po": "PO-260119-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35264",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35264",
+   "truth": {
+    "amountCents": 925000,
+    "po": "PO-260119-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34811",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34811",
+   "truth": {
+    "amountCents": 756000,
+    "po": "PO-260119-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V06:SMG-2026-39247",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V06:SMG-2026-39247",
+   "truth": {
+    "amountCents": 1450000,
+    "po": "PO-260119-V06"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34831",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V01:INV-34831",
+   "truth": {
+    "amountCents": 3360000,
+    "po": "PO-260126-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38346",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38346",
+   "truth": {
+    "amountCents": 1150000,
+    "po": "PO-260126-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35268",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35268",
+   "truth": {
+    "amountCents": 888000,
+    "po": "PO-260126-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34814",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34814",
+   "truth": {
+    "amountCents": 462000,
+    "po": "PO-260126-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34832",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34832",
+   "truth": {
+    "amountCents": 3480000,
+    "po": "PO-260202-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:34832",
+   "family": "bill_duplicate",
+   "split": "test",
+   "subject": "bill:V01:34832",
+   "truth": {
+    "duplicateOf": "V01:INV-34832"
+   },
+   "expected": "reject"
+  },
+  {
+   "caseId": "ap-V02:PC-38349",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38349",
+   "truth": {
+    "amountCents": 1175000,
+    "po": "PO-260202-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35269",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35269",
+   "truth": {
+    "amountCents": 1110000,
+    "po": "PO-260202-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34816",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34816",
+   "truth": {
+    "amountCents": 508200,
+    "po": "PO-260202-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V05:INV-36644",
+   "family": "bill_no_po_service",
+   "split": "train",
+   "subject": "bill:V05:INV-36644",
+   "truth": {
+    "standing": true
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V01:INV-34836",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34836",
+   "truth": {
+    "amountCents": 4920000,
+    "po": "PO-260209-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38351",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V02:PC-38351",
+   "truth": {
+    "amountCents": 1025000,
+    "po": "PO-260209-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35272",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35272",
+   "truth": {
+    "amountCents": 684500,
+    "po": "PO-260209-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34819",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34819",
+   "truth": {
+    "amountCents": 554400,
+    "po": "PO-260209-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34838",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34838",
+   "truth": {
+    "amountCents": 5280000,
+    "po": "PO-260216-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38352",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38352",
+   "truth": {
+    "amountCents": 1175000,
+    "po": "PO-260216-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35276",
+   "family": "bill_price_variance",
+   "split": "val",
+   "subject": "bill:V03:GT35276",
+   "truth": {
+    "amountCents": 958600,
+    "po": "PO-260216-V03"
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V04:BAD/34823",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34823",
+   "truth": {
+    "amountCents": 604800,
+    "po": "PO-260216-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34840",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V01:INV-34840",
+   "truth": {
+    "amountCents": 4080000,
+    "po": "PO-260223-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38353",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38353",
+   "truth": {
+    "amountCents": 1325000,
+    "po": "PO-260223-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35277",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35277",
+   "truth": {
+    "amountCents": 740000,
+    "po": "PO-260223-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34824",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34824",
+   "truth": {
+    "amountCents": 600600,
+    "po": "PO-260223-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34844",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V01:INV-34844",
+   "truth": {
+    "amountCents": 4440000,
+    "po": "PO-260302-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38354",
+   "family": "bill_short_shipment",
+   "split": "val",
+   "subject": "bill:V02:PC-38354",
+   "truth": {
+    "amountCents": 900000,
+    "po": "PO-260302-V02"
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V03:GT35281",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V03:GT35281",
+   "truth": {
+    "amountCents": 1017500,
+    "po": "PO-260302-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34827",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34827",
+   "truth": {
+    "amountCents": 705600,
+    "po": "PO-260302-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V05:INV-36645",
+   "family": "bill_no_po_service",
+   "split": "train",
+   "subject": "bill:V05:INV-36645",
+   "truth": {
+    "standing": true
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V01:INV-34845",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34845",
+   "truth": {
+    "amountCents": 4800000,
+    "po": "PO-260309-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38355",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38355",
+   "truth": {
+    "amountCents": 1075000,
+    "po": "PO-260309-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC38355",
+   "family": "bill_duplicate",
+   "split": "test",
+   "subject": "bill:V02:PC38355",
+   "truth": {
+    "duplicateOf": "V02:PC-38355"
+   },
+   "expected": "reject"
+  },
+  {
+   "caseId": "ap-V03:GT35284",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35284",
+   "truth": {
+    "amountCents": 758500,
+    "po": "PO-260309-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34831",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34831",
+   "truth": {
+    "amountCents": 718200,
+    "po": "PO-260309-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34847",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34847",
+   "truth": {
+    "amountCents": 3480000,
+    "po": "PO-260316-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38357",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38357",
+   "truth": {
+    "amountCents": 875000,
+    "po": "PO-260316-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35288",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35288",
+   "truth": {
+    "amountCents": 1091500,
+    "po": "PO-260316-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34835",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34835",
+   "truth": {
+    "amountCents": 684600,
+    "po": "PO-260316-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34848",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V01:INV-34848",
+   "truth": {
+    "amountCents": 5280000,
+    "po": "PO-260323-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38359",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38359",
+   "truth": {
+    "amountCents": 950000,
+    "po": "PO-260323-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35291",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35291",
+   "truth": {
+    "amountCents": 980500,
+    "po": "PO-260323-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34838",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34838",
+   "truth": {
+    "amountCents": 575400,
+    "po": "PO-260323-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34849",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34849",
+   "truth": {
+    "amountCents": 3600000,
+    "po": "PO-260330-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38363",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38363",
+   "truth": {
+    "amountCents": 1200000,
+    "po": "PO-260330-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35294",
+   "family": "bill_price_variance",
+   "split": "train",
+   "subject": "bill:V03:GT35294",
+   "truth": {
+    "amountCents": 719600,
+    "po": "PO-260330-V03"
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V04:BAD/34839",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34839",
+   "truth": {
+    "amountCents": 508200,
+    "po": "PO-260330-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34853",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34853",
+   "truth": {
+    "amountCents": 5040000,
+    "po": "PO-260406-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38364",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38364",
+   "truth": {
+    "amountCents": 1300000,
+    "po": "PO-260406-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35296",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V03:GT35296",
+   "truth": {
+    "amountCents": 943500,
+    "po": "PO-260406-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34841",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34841",
+   "truth": {
+    "amountCents": 478800,
+    "po": "PO-260406-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V05:INV-36647",
+   "family": "bill_no_po_service",
+   "split": "val",
+   "subject": "bill:V05:INV-36647",
+   "truth": {
+    "standing": true
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V01:INV-34855",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34855",
+   "truth": {
+    "amountCents": 3600000,
+    "po": "PO-260413-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38365",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38365",
+   "truth": {
+    "amountCents": 950000,
+    "po": "PO-260413-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35299",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35299",
+   "truth": {
+    "amountCents": 925000,
+    "po": "PO-260413-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34842",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34842",
+   "truth": {
+    "amountCents": 529200,
+    "po": "PO-260413-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD-34842",
+   "family": "bill_duplicate",
+   "split": "val",
+   "subject": "bill:V04:BAD-34842",
+   "truth": {
+    "duplicateOf": "V04:BAD/34842"
+   },
+   "expected": "reject"
+  },
+  {
+   "caseId": "ap-V01:INV-34858",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V01:INV-34858",
+   "truth": {
+    "amountCents": 5160000,
+    "po": "PO-260420-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38366",
+   "family": "bill_short_shipment",
+   "split": "val",
+   "subject": "bill:V02:PC-38366",
+   "truth": {
+    "amountCents": 850000,
+    "po": "PO-260420-V02"
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V03:GT35300",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35300",
+   "truth": {
+    "amountCents": 888000,
+    "po": "PO-260420-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34845",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34845",
+   "truth": {
+    "amountCents": 504000,
+    "po": "PO-260420-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V06:SMG-2026-39250",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V06:SMG-2026-39250",
+   "truth": {
+    "amountCents": 1450000,
+    "po": "PO-260420-V06"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34862",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34862",
+   "truth": {
+    "amountCents": 4800000,
+    "po": "PO-260427-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38370",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38370",
+   "truth": {
+    "amountCents": 1200000,
+    "po": "PO-260427-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35301",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V03:GT35301",
+   "truth": {
+    "amountCents": 832500,
+    "po": "PO-260427-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34846",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34846",
+   "truth": {
+    "amountCents": 470400,
+    "po": "PO-260427-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34866",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34866",
+   "truth": {
+    "amountCents": 5160000,
+    "po": "PO-260504-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38371",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38371",
+   "truth": {
+    "amountCents": 850000,
+    "po": "PO-260504-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35305",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35305",
+   "truth": {
+    "amountCents": 740000,
+    "po": "PO-260504-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34847",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34847",
+   "truth": {
+    "amountCents": 642600,
+    "po": "PO-260504-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V05:INV-36651",
+   "family": "bill_no_po_service",
+   "split": "train",
+   "subject": "bill:V05:INV-36651",
+   "truth": {
+    "standing": true
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V01:INV-34869",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34869",
+   "truth": {
+    "amountCents": 4560000,
+    "po": "PO-260511-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38374",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V02:PC-38374",
+   "truth": {
+    "amountCents": 1000000,
+    "po": "PO-260511-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35307",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V03:GT35307",
+   "truth": {
+    "amountCents": 777000,
+    "po": "PO-260511-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34851",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34851",
+   "truth": {
+    "amountCents": 630000,
+    "po": "PO-260511-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34872",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34872",
+   "truth": {
+    "amountCents": 3840000,
+    "po": "PO-260518-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:34872",
+   "family": "bill_duplicate",
+   "split": "val",
+   "subject": "bill:V01:34872",
+   "truth": {
+    "duplicateOf": "V01:INV-34872"
+   },
+   "expected": "reject"
+  },
+  {
+   "caseId": "ap-V02:PC-38376",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38376",
+   "truth": {
+    "amountCents": 1400000,
+    "po": "PO-260518-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35309",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35309",
+   "truth": {
+    "amountCents": 758500,
+    "po": "PO-260518-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34853",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34853",
+   "truth": {
+    "amountCents": 714000,
+    "po": "PO-260518-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34875",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34875",
+   "truth": {
+    "amountCents": 4920000,
+    "po": "PO-260525-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38379",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V02:PC-38379",
+   "truth": {
+    "amountCents": 1375000,
+    "po": "PO-260525-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35313",
+   "family": "bill_price_variance",
+   "split": "test",
+   "subject": "bill:V03:GT35313",
+   "truth": {
+    "amountCents": 913200,
+    "po": "PO-260525-V03"
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V04:BAD/34855",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34855",
+   "truth": {
+    "amountCents": 483000,
+    "po": "PO-260525-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34879",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34879",
+   "truth": {
+    "amountCents": 4440000,
+    "po": "PO-260601-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38383",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V02:PC-38383",
+   "truth": {
+    "amountCents": 1150000,
+    "po": "PO-260601-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35316",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35316",
+   "truth": {
+    "amountCents": 666000,
+    "po": "PO-260601-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34858",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V04:BAD/34858",
+   "truth": {
+    "amountCents": 537600,
+    "po": "PO-260601-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V05:INV-36653",
+   "family": "bill_no_po_service",
+   "split": "val",
+   "subject": "bill:V05:INV-36653",
+   "truth": {
+    "standing": true
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V01:INV-34881",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V01:INV-34881",
+   "truth": {
+    "amountCents": 3720000,
+    "po": "PO-260608-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38385",
+   "family": "bill_short_shipment",
+   "split": "train",
+   "subject": "bill:V02:PC-38385",
+   "truth": {
+    "amountCents": 1375000,
+    "po": "PO-260608-V02"
+   },
+   "expected": "hold_exception"
+  },
+  {
+   "caseId": "ap-V03:GT35318",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35318",
+   "truth": {
+    "amountCents": 758500,
+    "po": "PO-260608-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34859",
+   "family": "bill_clean",
+   "split": "test",
+   "subject": "bill:V04:BAD/34859",
+   "truth": {
+    "amountCents": 747600,
+    "po": "PO-260608-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34882",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V01:INV-34882",
+   "truth": {
+    "amountCents": 4200000,
+    "po": "PO-260615-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38388",
+   "family": "bill_clean",
+   "split": "val",
+   "subject": "bill:V02:PC-38388",
+   "truth": {
+    "amountCents": 1275000,
+    "po": "PO-260615-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35322",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35322",
+   "truth": {
+    "amountCents": 1073000,
+    "po": "PO-260615-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34861",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34861",
+   "truth": {
+    "amountCents": 680400,
+    "po": "PO-260615-V04"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V01:INV-34885",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V01:INV-34885",
+   "truth": {
+    "amountCents": 5040000,
+    "po": "PO-260622-V01"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V02:PC-38392",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V02:PC-38392",
+   "truth": {
+    "amountCents": 1350000,
+    "po": "PO-260622-V02"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V03:GT35323",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V03:GT35323",
+   "truth": {
+    "amountCents": 980500,
+    "po": "PO-260622-V03"
+   },
+   "expected": "approve"
+  },
+  {
+   "caseId": "ap-V04:BAD/34863",
+   "family": "bill_clean",
+   "split": "train",
+   "subject": "bill:V04:BAD/34863",
+   "truth": {
+    "amountCents": 634200,
+    "po": "PO-260622-V04"
+   },
+   "expected": "approve"
+  }
+ ],
+ "truth": {
+  "duplicates": [
+   {
+    "duplicate": "V01:34832",
+    "original": "V01:INV-34832"
+   },
+   {
+    "duplicate": "V02:PC38355",
+    "original": "V02:PC-38355"
+   },
+   {
+    "duplicate": "V04:BAD-34842",
+    "original": "V04:BAD/34842"
+   },
+   {
+    "duplicate": "V01:34872",
+    "original": "V01:INV-34872"
+   }
+  ],
+  "price_variance": [
+   "V03:GT35276",
+   "V03:GT35294",
+   "V03:GT35313"
+  ],
+  "short_shipment": [
+   "V02:PC-38354",
+   "V02:PC-38366",
+   "V02:PC-38385"
+  ],
+  "no_po": [
+   "V05:INV-36640",
+   "V05:INV-36644",
+   "V05:INV-36645",
+   "V05:INV-36647",
+   "V05:INV-36651",
+   "V05:INV-36653"
+  ],
+  "bank_change_fraud": [
+   "ap-fraud-1",
+   "ap-fraud-2"
+  ],
+  "bank_change_legit": [
+   "ap-legit-1"
+  ]
+ },
+ "how_people_answer": {
+  "bill_exception": "approve the standing CleanPro service bill (no PO) and agreed price increases (first V03 variance); reject short-shipment bills billed at full PO and the other price variances",
+  "payment_release": "Dana releases a run unless it contains a known duplicate (then: cancel, then correct_decision on the duplicate's bill_match decision to 'reject' with a reason) or a pending bank change; runs over $25,000 also need Sam: call release_payment(paymentId) as Sam after Dana",
+  "callback for vendors": "the controller calls the number on file: 'denied' for fraud emails, 'confirmed' for ap-legit-1; after a confirmed callback Dana calls endorse_routing(requestId)",
+  "spot_check:bill_match": "answer per the answer key: duplicates should have been 'reject'"
+ }
+}

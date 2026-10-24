@@ -84,18 +84,20 @@ def sender_style(texts: Texts, sender: str, stores: list[str]) -> dict:
         "bodies": ["Hi, our POS export isn't working this week. {store}, week of {week}: card {card}, cash {cash}, total {total}. Thanks."],
     }
 
-    def ok(x) -> bool:
+    def usable(x) -> dict:
+        """Keep only the notes and bodies whose placeholders are exactly right."""
         if not isinstance(x, dict):
-            return False
-        notes, bodies = x.get("notes"), x.get("bodies")
-        if not (isinstance(notes, list) and len(notes) >= 5 and isinstance(bodies, list) and len(bodies) >= 2):
-            return False
-        good_note = all(isinstance(n, str) and n.count("{store}") == 1 and n.count("{week}") == 1 and n.count("{") == n.count("}") == 2 for n in notes)
+            return {"notes": [], "bodies": []}
         need = ["{store}", "{week}", "{card}", "{cash}", "{total}"]
-        good_body = all(isinstance(b, str) and all(b.count(p) == 1 for p in need) and b.count("{") == b.count("}") == 5 for b in bodies)
-        return good_note and good_body
+        notes = [n for n in x.get("notes") or [] if isinstance(n, str) and n.count("{store}") == 1 and n.count("{week}") == 1 and n.count("{") == n.count("}") == 2]
+        bodies = [b for b in x.get("bodies") or [] if isinstance(b, str) and all(b.count(p) == 1 for p in need) and b.count("{") == b.count("}") == 5]
+        return {"notes": notes, "bodies": bodies}
 
-    return texts.get(f"style:{sender}", STYLE_SYSTEM, prompt, fallback=fallback, check=ok, json_mode=True, max_tokens=900, temperature=0.9)
+    def ok(x) -> bool:
+        u = usable(x)
+        return len(u["notes"]) >= 4 and len(u["bodies"]) >= 2
+
+    return usable(texts.get(f"style:{sender}", STYLE_SYSTEM, prompt, fallback=fallback, check=ok, json_mode=True, max_tokens=900, temperature=0.9))
 
 
 def report_email(texts: Texts, rep: dict) -> dict:

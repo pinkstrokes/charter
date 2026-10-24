@@ -16,10 +16,10 @@ import argparse
 from collections import Counter
 
 from cast import COMPANY, CONTRACTS, ENTITIES, STAFF, company_file, entity
-from common import DATA, END, START, WEEKS, add_days, all_days, dollars, set_seed, write_json
+from common import DATA, END, START, WEEKS, add_days, all_days, dollars, read_json, set_seed, write_json
 from economy import make_supply_invoices, settlement_payload, simulate_sales
 from mail import planted_email, report_email
-from scenarios import AUDIT_REACTIONS, PLANNED_AUDITS, S14_CONCERN, SAME_ORDER, Plan
+from scenarios import AUDIT_REACTIONS, PLANNED_AUDITS, S14_CONCERN, SAME_ORDER, Plan, neutral
 from texts import Texts
 
 
@@ -56,6 +56,36 @@ def observations(plan: Plan, sales: dict, supply: dict, texts: Texts) -> list[di
     for o in obs:
         del o["order"]
     return obs
+
+
+def payables(ap: dict | None) -> tuple[list[dict], list[dict], dict]:
+    """The payables desk the coordinator generated (data/companyA/ap_world.json, seed 11): observations, answer key, staff knowledge.
+
+    The three vendor bank-change emails are ingested under opaque ids so the
+    words in the generator's ids ('fraud', 'legit') never reach the database.
+    """
+    if not ap:
+        return [], [], {}
+    last = END.isoformat()
+    obs = [{"date": o["date"], "kind": o["kind"], "source": o["source"], "validAt": o["date"], "refKey": o["refKey"], "subject": o["subject"], "payload": o["payload"]}
+           for o in ap["observations"] if o["date"] <= last]
+    emails = {}
+    for e in ap["emails"]:
+        eid = neutral(f"ap:{e['id']}")
+        domain = e["from"].split("@", 1)[1]
+        payload = {"messageId": f"<{eid}@{domain}>", "from": e["from"], "fromName": e["fromName"], "to": "ap@pearllanetea.com", "subject": e["subject"],
+                   "body": e["body"], "attachments": []}
+        obs.append({"date": e["date"], "kind": "email", "source": "email", "validAt": e["date"], "refKey": f"email:{eid}", "subject": f"sender:{e['from']}", "payload": payload})
+        emails[f"email:{eid}"] = {"id": e["id"], **e["truth"]}
+    variances = ap["truth"]["price_variance"]
+    knowledge = {
+        "bills": {e["subject"]: {"family": e["family"], "expected": e["expected"]} for e in ap["answer_key"]},
+        "duplicates": {d["duplicate"]: d["original"] for d in ap["truth"]["duplicates"]},
+        "approve_exceptions": ap["truth"]["no_po"] + variances[:1],  # the standing service bill and the one agreed price increase
+        "emails": emails,
+        "rules": ap["how_people_answer"],
+    }
+    return obs, ap["answer_key"], knowledge
 
 
 def staff_knowledge(plan: Plan, sales: dict) -> dict:
@@ -119,8 +149,15 @@ META = {
     },
     "families_not_in_contracts_ts": ["card_underreport", "duplicate_payment", "clean_low_cash", "clean_bulk_buy"],
     "human_error": "truth.human_error = true marks a case where, if a person is asked, the simulated staff member answers wrongly on purpose (pre-registered here before the run; run_report.json lists which were actually asked)",
+    "spot_check_slip": "pre-registered rule for spot checks: when sha256('slip|' + subject) mod 25 == 0 the person answering a spot check on that subject gets it wrong (says the seat was wrong when it was right, or right when it was wrong); entries it touches carry truth.spot_check_slip = true",
     "calendar": "business dates 2026-01-05 .. 2026-06-28 are 25 sales weeks; reports for weeks through 2026-06-15 arrive inside the window; the ERP invoices 26 weeks of supplies (the last dated 2026-06-26)",
 }
+
+
+PAYABLES_META = ("Entries with subject bill:{vendor}:{billNo} (domain bill_match: approve / hold_exception / reject) are the payables desk's answer key, "
+                 "copied unchanged from data/companyA/ap_world.json (tools/world_ap/gen_ap.py, seed 11).")
+
+ORDER = {"processor_settlement": 0, "supply_invoice": 1, "purchase_order": 2, "goods_receipt": 3, "vendor_invoice": 4, "bank_txn": 5, "email": 6}
 
 
 def summarize(plan: Plan, obs: list[dict]) -> None:
@@ -147,18 +184,26 @@ def main() -> None:
     plan.plan_reports()
     plan.run()
     plan.finish_key()
+    plan.mark_slips()
     obs = observations(plan, sales, supply, texts)
-    write_json(DATA / "company.json", company_file())
+    ap = read_json(DATA / "ap_world.json")
+    ap_obs, ap_key, ap_knowledge = payables(ap)
+    obs = sorted(obs + ap_obs, key=lambda o: (o["date"], ORDER.get(o["kind"], 9), o["refKey"]))
+    company = company_file()
+    company["entities"] += ap["vendors"] if ap else []
+    write_json(DATA / "company.json", company)
     write_json(DATA / "world.json", {
         "seed": args.seed, "company": COMPANY["name"], "window": [START.isoformat(), END.isoformat()], "days": len(all_days()),
         "concern": S14_CONCERN, "staff_roster": {k: {"role": v["role"], "full": v["full"]} for k, v in STAFF.items()},
         "bank": {**plan.bank_rules, "payer_names": {e[0]: entity(e[0])["name"].upper().replace(".", "") for e in ENTITIES}},
-        "staff": staff_knowledge(plan, sales),
+        "staff": {**staff_knowledge(plan, sales), "payables": ap_knowledge},
         "observations": obs,
     }, indent=None)
-    write_json(DATA / "answer_key.json", plan.key)
-    write_json(DATA / "answer_key.meta.json", {**META, "seed": args.seed, "entries": len(plan.key), "contracts": list(CONTRACTS),
-                                                "families": dict(Counter(e["family"] for e in plan.key))})
+    key = plan.key + ap_key
+    write_json(DATA / "answer_key.json", key)
+    write_json(DATA / "answer_key.meta.json", {**META, "seed": args.seed, "entries": len(key), "receivables_entries": len(plan.key), "payables_entries": len(ap_key),
+                                                "payables": PAYABLES_META if ap else None, "contracts": list(CONTRACTS),
+                                                "families": dict(Counter(e["family"] for e in key))})
     if not args.offline:
         texts.prune(("email:", "style:"))
     summarize(plan, obs)
