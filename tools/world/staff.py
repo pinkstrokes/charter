@@ -25,8 +25,16 @@ from scenarios import audit_payment_txn
 from texts import Texts
 
 ENTITY_BY_NAME = {e[1]: e[0] for e in ENTITIES}
-WRONG_TURN = {"accept": "flag_audit", "flag_audit": "accept", "ask_consultant": "accept", "hold": "chase", "chase": "hold",
-              "apply_unique": "leave_unapplied_ask", "apply_by_terms": "leave_unapplied_ask", "leave_unapplied_ask": "apply_unique"}
+# The wrong answer a person gives when they slip on a spot check. It is always one the team would accept,
+# never one that breaks a domain safety rule (chasing inside the grace period, applying cash the payer did not place).
+WRONG_TURN = {"accept": "flag_audit", "flag_audit": "accept", "ask_consultant": "accept", "chase": "hold",
+              "apply_unique": "leave_unapplied_ask", "apply_by_terms": "leave_unapplied_ask", "leave_unapplied_ask": "apply_by_terms"}
+
+
+def wrong_turn(decided: str, features: dict) -> str | None:
+    if decided == "hold":  # 'chase' only where chasing is allowed at all
+        return "chase" if float(features.get("days_past_due", 0)) > float(features.get("grace_days", 0)) else "escalate_controller"
+    return WRONG_TURN.get(decided)
 ESCALATE = {"flag_audit", "ask_consultant"}
 REASON_SYSTEM = ("You are {voice}. Your finance team's software asked you a question and you have decided the answer. "
                  "Write ONE plain sentence (at most 30 words) giving your reason, in your own voice. No preamble, no quotes, do not restate the question.")
@@ -217,27 +225,34 @@ class Staff:
             self.s["ap_second"].append({"payment": a["subject"].split(":", 1)[1], "date": day})
         return "Dana", "release", "routine:payment_release:release", None
 
+    def _same_day(self, a) -> str:
+        """Cash application is cleared daily: the controller answers on the business day the question is raised."""
+        return min(business_day_on_or_after(a["created_at"]), a["deadline"])
+
     def _allocation(self, day, a):
         txn = a["subject"].split(":", 1)[1]
         rc = self.receipts.get(txn)
         options = json.loads(a["options"] or "[]")
+        today = self._same_day(a)
         if not rc:
-            return "Dana", "apply oldest first", "you could not tell what this payment was for", None
+            return "Dana", "apply oldest first", "you could not tell what this payment was for", today
         wrong = self.k["human_errors"].get(a["subject"])
         if wrong:
-            return "Dana", wrong, "a busy close week; you took the contract-order option without opening the remittance", None
+            return "Dana", wrong, "a busy close week; you took the contract-order option without opening the remittance", today
         # Where the money belongs: the one invoice the payer named, the set their remittance listed, or (only if that is the truth) contract order.
         want = sorted(rc["intended"] or [])
-        if rc["family"] == "duplicate_payment":  # no option is right: it should stay unapplied until it is refunded
+        if rc["family"] == "duplicate_payment":  # it should stay unapplied until it is refunded
+            if "leave unapplied" in options:
+                return "Dana", "leave unapplied", "this wire repeats an invoice the debit already collected; it waits for the refund", today
             self._skip(a, "duplicate payment: left unapplied for the refund")
             return None
         if len(want) == 1 and want[0] in options:
             why = "the payment names that invoice; it is short only by the amount the owner disputes" if rc["family"] == "short_payment" else "the payment names that invoice"
-            return "Dana", want[0], why, None
+            return "Dana", want[0], why, today
         match = next((o for o in options if o != "apply oldest first" and sorted(o.split(" + ")) == want), None)
         if match:
-            return "Dana", match, f"the payer's remittance lists exactly {' + '.join(want)}", None
-        return "Dana", "apply oldest first", "nothing the payer said points at particular invoices, so the agreement's order applies", None
+            return "Dana", match, f"the payer's remittance lists exactly {' + '.join(want)}", today
+        return "Dana", "apply oldest first", "nothing the payer said points at particular invoices, so the agreement's order applies", today
 
     def _identify(self, day, a):
         rc = self.receipts.get(a["subject"].split(":", 1)[1])
@@ -250,8 +265,8 @@ class Staff:
     def _unapplied(self, day, a):
         rc = self.receipts.get(a["subject"].split(":", 1)[1], {})
         if rc.get("family") == "duplicate_payment":
-            return "Dana", "refund", "the wire repeats an invoice that the Wednesday debit already collected; the owner should get it back", None
-        return "Dana", "keep as credit", "money with nothing to pay yet; keep it on account for the next invoice", None
+            return "Dana", "refund", "the wire repeats an invoice that the Wednesday debit already collected; the owner should get it back", self._same_day(a)
+        return "Dana", "keep as credit", "money with nothing to pay yet; keep it on account for the next invoice", self._same_day(a)
 
     def _refund(self, day, a):
         if day < self._default_day(a):
@@ -330,8 +345,8 @@ class Staff:
                 return who, "flag_audit", "the cash share looked low to you and you did not check the store's history first", None
         expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
         right = expected is None or decided is None or same_treatment(domain, decided, expected)
-        if domain in ("underreport", "allocation", "pre_chase") and spot_check_slip(a["subject"]):  # the pre-registered slip
-            wrong = "correct" if not right else WRONG_TURN.get(decided)
+        if spot_check_slip(domain, a["subject"]):  # the pre-registered slip
+            wrong = "correct" if not right else wrong_turn(decided, ev.get("features", {}))
             if wrong in options:
                 self._slip = True
                 return who, wrong, ("it looked fine at a glance" if wrong == "correct" else f"you misread the case and thought '{wrong}'"), None

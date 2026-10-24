@@ -92,9 +92,10 @@ def sender_style(texts: Texts, sender: str, stores: list[str]) -> dict:
             return {"notes": [], "bodies": []}
         need = ["{store}", "{week}", "{card}", "{cash}", "{total}"]
         notes = [n for n in x.get("notes") or [] if isinstance(n, str) and n.count("{store}") == 1 and n.count("{week}") == 1 and n.count("{") == n.count("}") == 2]
-        # {week} is the Monday the week starts; a template that calls it the week's end makes the date unreadable.
+        # {week} is the Monday the week starts; drop templates that would make it read as the week's end or as one day.
         bodies = [b for b in x.get("bodies") or [] if isinstance(b, str) and all(b.count(p) == 1 for p in need) and b.count("{") == b.count("}") == 5
-                  and not re.search(r"(end(ing|ed)?|through|thru|closing)\W{0,3}(\w+\W{0,3}){0,2}\{week\}", b, re.I)]
+                  and not re.search(r"(end(ing|ed)?|through|thru|closing)\W{0,3}(\w+\W{0,3}){0,2}\{week\}", b, re.I)
+                  and not re.search(r"(past|last|period of)\W*\{week\}", b, re.I)]
         return {"notes": notes, "bodies": bodies}
 
     def ok(x) -> bool:
@@ -113,8 +114,8 @@ def report_email(texts: Texts, rep: dict) -> dict:
     store_ref = f"#{code[1:].lstrip('0')} {s['name'].split('#', 1)[1].split(' ', 1)[1]} ({code})"
     attachments = []
     if rep["format"] == "body":
-        body = style["bodies"][k % len(style["bodies"])].format(store=store_ref, week=long_date(week), card=money(rep["card"]), cash=money(rep["cash"]),
-                                                                total=money(rep["card"] + rep["cash"]))
+        template = style["bodies"][k % len(style["bodies"])]
+        body = template.format(store=store_ref, week=week_phrase(template, week), card=money(rep["card"]), cash=money(rep["cash"]), total=money(rep["card"] + rep["cash"]))
     else:
         body = style["notes"][k % len(style["notes"])].format(store=store_ref, week=short_date(week))
         csv = csv_text(rep["format"], code, week, rep["card"], rep["cash"], rep.get("csv_notes", ""))
@@ -131,6 +132,14 @@ def report_email(texts: Texts, rep: dict) -> dict:
     if rep.get("forward"):
         subject = "Fwd: " + subject
     return payload(rep["id"], rep["from"], rep["from_name"], subject, body, attachments)
+
+
+def week_phrase(template: str, week: str) -> str:
+    """'the week of Monday, March 23, 2026', unless the template already says 'week of' / 'week starting' just before it."""
+    before = template.split("{week}", 1)[0].lower()
+    if re.search(r"week\s+(of|starting|beginning|commencing)\W*$", before):
+        return long_date(week)
+    return f"the week of {long_date(week)}"
 
 
 def payload(email_id: str, sender: str, sender_name: str, subject: str, body: str, attachments: list[dict]) -> dict:

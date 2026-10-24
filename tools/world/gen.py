@@ -151,7 +151,7 @@ META = {
     },
     "families_not_in_contracts_ts": ["card_underreport", "duplicate_payment", "clean_low_cash", "clean_bulk_buy"],
     "human_error": "truth.human_error = true marks a case where, if a person is asked, the simulated staff member answers wrongly on purpose (pre-registered here before the run; run_report.json lists which were actually asked)",
-    "spot_check_slip": "pre-registered rule for spot checks: when sha256('slip|' + subject) mod 25 == 0 the person answering a spot check on that subject gets it wrong (says the seat was wrong when it was right, or right when it was wrong); entries it touches carry truth.spot_check_slip = true",
+    "spot_check_slip": "pre-registered rule for spot checks (common.spot_check_slip): when sha256('slip|' + subject) mod N == 0, with N = 14 for underreport and pre_chase and 25 for allocation, the person answering a spot check on that subject gets it wrong (says the seat was wrong when it was right, or right when it was wrong); entries it touches carry truth.spot_check_slip = true",
     "calendar": "business dates 2026-01-05 .. 2026-06-28 are 25 sales weeks; reports for weeks through 2026-06-15 arrive inside the window; the ERP invoices 26 weeks of supplies (the last dated 2026-06-26)",
 }
 
@@ -193,6 +193,10 @@ def main() -> None:
     obs = sorted(obs + ap_obs, key=lambda o: (o["date"], ORDER.get(o["kind"], 9), o["refKey"]))
     company = company_file()
     company["entities"] += ap["vendors"] if ap else []
+    on_file = {e["bankAccount"]: e["code"] for e in company["entities"]}
+    for b in plan.bank:
+        acct, ent = b["payload"]["counterpartyAccount"], plan.receipts[b["payload"]["txnId"]]["entity"]
+        assert on_file.get(acct, ent) == ent, f"{b['payload']['txnId']} pays from {acct}, which is on file for {on_file[acct]}"
     write_json(DATA / "company.json", company)
     write_json(DATA / "world.json", {
         "seed": args.seed, "company": COMPANY["name"], "window": [START.isoformat(), END.isoformat()], "days": len(all_days()),

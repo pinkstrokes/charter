@@ -100,9 +100,12 @@ def split_for(case_id: str) -> str:
     return "train" if h < 50 else "val" if h < 75 else "test"
 
 
-def spot_check_slip(subject: str) -> bool:
-    """Pre-registered human error: on one subject in 25, a person answering a spot check gets it wrong."""
-    return stable_int("slip", subject) % 25 == 0
+SLIP_EVERY = {"underreport": 14, "pre_chase": 14, "allocation": 25}
+
+
+def spot_check_slip(domain: str, subject: str) -> bool:
+    """Pre-registered human error: on one subject in SLIP_EVERY[domain], a person answering a spot check gets it wrong."""
+    return domain in SLIP_EVERY and stable_int("slip", subject) % SLIP_EVERY[domain] == 0
 
 
 def bp_of(amount: int, bp: int) -> int:

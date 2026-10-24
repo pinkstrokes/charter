@@ -15,8 +15,8 @@ import hashlib
 from collections import defaultdict
 
 from cast import ENTITIES, LOW_CASH_STORES, STORES, entity, report_sender, store, terms_for_entity, terms_for_store
-from common import (WEEKS, add_days, all_days, bp_of, days_between, dollars, is_business_day, money, next_business_day, rng_for, split_for,
-                    spot_check_slip, stable_int, weekday)
+from common import (WEEKS, add_days, all_days, bp_of, days_between, dollars, is_business_day, long_date, money, next_business_day, rng_for,
+                    split_for, spot_check_slip, stable_int, weekday)
 from economy import BULK_BUYS, cash_cut_for_share, implied_gross
 from ledger import Ledger, apply_by_terms, find_subsets
 
@@ -462,7 +462,7 @@ class Plan:
 
     def payer_aliases(self) -> None:
         """payer_alias: money from names the bank feed cannot place; a person says whose it is, and next time it resolves itself."""
-        plan = [("PL TEA 14 HOLDINGS LLC", "****8840", "F05", "S14", [("2026-01-16", "2026-01-22"), ("2026-02-20", "2026-02-26")]),
+        plan = [("PL TEA 14 HOLDINGS LLC", "****8817", "F05", "S14", [("2026-01-16", "2026-01-22"), ("2026-02-20", "2026-02-26")]),
                 ("M CHEN", "****1029", "F05", "S14", [("2026-05-29", "2026-06-02")]),  # first time is the audit payment (see AUDIT_REACTIONS)
                 ("NGUYEN FAMILY TRUST", "****5502", "F07", "S16", [("2026-04-10", "2026-04-13"), ("2026-05-22", "2026-05-26")])]
         for payer, account, ent, code, payments in plan:
@@ -543,8 +543,8 @@ class Plan:
             self._dispute("SP2", "2026-05-13", "F09", [inv], "uphold", "2026-05-14",
                           f"They deducted the $92.50 fuel surcharge from {inv} and wired {money(amount)}; they say their franchise agreement does not allow "
                           "freight surcharges.", family="short_payment", valid=False)
-            self.corrections.append({"date": "2026-05-13", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "apply_to_reference",
-                                     "why": f"the wire names {inv} and is short only by the disputed surcharge; it belonged on that invoice, not on royalties by contract order"})
+            self.corrections.append({"date": "2026-05-13", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "leave_unapplied_ask",
+                                     "why": f"the wire names {inv} and is short only by the disputed surcharge; this should have come to me, it belongs on that invoice"})
         self.hooks["2026-05-12"].append(sp2)
 
         def sp3(d):  # missing goods the delivery receipt shows were signed for
@@ -586,6 +586,7 @@ class Plan:
         def dup2(d):  # nothing else open: Linda prepays her supplies, so the duplicate has nowhere to go
             inv = self.L.inv["R-S27-2026-02-09"]
             rc = self.receipt(d, self.txn_id("WIRE", d), "wire_in", inv.amount, "F11", reference=inv.id, family="duplicate_payment", intended=[])
+            self._key_receipt(rc, "leave_unapplied_ask", why="nothing is open: a duplicate of an invoice the debit collected; it waits for the refund")
             self.entry(f"UC-{rc['txn']}", "duplicate_payment", f"ask:unapplied_cash:receipt:{rc['txn']}",
                        {"amount_cents": inv.amount, "paid_invoice": inv.id, "paid_by": "D-F11-2026-02-18"}, "refund")
             self.entry(f"RF-{rc['txn']}", "duplicate_payment", f"ask:refund_release:F11:{rc['txn']}", {"amount_cents": inv.amount}, "release")
@@ -605,8 +606,8 @@ class Plan:
                                 "Please refund the duplicate to our account on file.\n\nK. Lau", family="duplicate_payment",
                                 truth={"type": "refund_request", "amount": dollars(inv.amount), "invoice_refs": [inv.id]})
             self.refunds.append({"entity": "F01", "amount": inv.amount, "txn": rc["txn"], "refKey": refkey})
-            self.corrections.append({"date": "2026-04-27", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "leave_unapplied_ask",
-                                     "why": "the wire duplicated an invoice the debit had already collected; it was applied to next week's royalty instead of held for a refund"})
+            self.corrections.append({"date": "2026-05-01", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "leave_unapplied_ask",
+                                     "why": "Kevin called about his refund: this wire paid R-S01-2026-04-06 a second time and was spread over next week's royalty instead of held for a refund"})
         self.hooks["2026-04-24"].append(dup1)
 
     def returns_and_fees(self) -> None:
@@ -630,10 +631,13 @@ class Plan:
                 amount = sum(self.L.inv[f].open for f in fees)
                 e = entity(ent)
                 self.promises.append({"entity": ent, "date": d, "amount": amount})
-                self.email(f"{cid}-promise", d, e["email"], e["owner"], f"Payment sent - check #{check_no}",
-                           f"{why} They mailed check #{check_no} for {money(amount)} today to cover {', '.join(fees)}.", [money(amount), check_no],
-                           f"Hi,\n\nCheck #{check_no} for {money(amount)} went in the mail today for {', '.join(fees)}.\n\n{e['owner']}", family="payment_in_transit",
-                           truth={"type": "promise_to_pay", "amount": dollars(amount), "invoice_refs": fees})
+                # A promise, not a remittance: the money has not arrived, and the owner asks us to wait for it.
+                self.email(f"{cid}-promise", d, e["email"], e["owner"], f"Check #{check_no} on its way",
+                           f"{why} They are putting check #{check_no} for {money(amount)} in the mail today; it should arrive by {long_date(arrives)}. "
+                           "Ask the team to hold off on further notices or fees until it arrives. Do not list invoice numbers.", [money(amount), check_no],
+                           f"Hi,\n\nI'm putting check #{check_no} for {money(amount)} in the mail today, so you should have it by {long_date(arrives)}. "
+                           f"Please hold off on any more notices until it gets there.\n\n{e['owner']}", family="payment_in_transit",
+                           truth={"type": "promise_to_pay", "amount": dollars(amount)})
                 self.windows.append({"entity": ent, "from": d, "to": add_days(arrives, -1), "expected": "hold", "family": "payment_in_transit", "case": cid,
                                      "answer": "hold 7 days"})
 
@@ -802,7 +806,8 @@ class Plan:
     def mark_slips(self) -> None:
         """Record in the key where the pre-registered spot-check slip rule (common.spot_check_slip) applies."""
         for e in self.key:
-            if e["subject"].split(":", 1)[0] in ("store", "receipt", "entity") and spot_check_slip(e["subject"]):
+            domain = {"store": "underreport", "receipt": "allocation", "entity": "pre_chase"}.get(e["subject"].split(":", 1)[0])
+            if domain and spot_check_slip(domain, e["subject"]):
                 e["truth"]["spot_check_slip"] = True
 
     def _after_return(self, ent: str, day: str) -> bool:
