@@ -22,7 +22,8 @@ def last(admin, command):
 
 def main():
     admin = Client(admin_token(), "admin")
-    admin.call("reset_company")
+    if "--keep" not in sys.argv:
+        admin.call("reset_company")
     people = {}
     for role, name in [("controller", "Dana"), ("controller", "Sam"), ("consultant", "Lee"), ("world", "feeder"), ("evolver", "evolver")]:
         ident, tok = new_identity()
@@ -71,13 +72,15 @@ def main():
                   "Please update your vendor master today. Regards, Pacific Cup accounts", "", "")
     world.call("set_sim_date", "2026-04-09")
     world.call("run_seats")
-    rr = admin.sql("SELECT entity_code, status FROM routing_request")
-    check("vendor bank change from a look-alike domain is held", rr and rr[0]["entity_code"] == "V02" and rr[0]["status"] == "held", str(rr))
+    rr = [r for r in admin.sql("SELECT entity_code, status FROM routing_request") if r["entity_code"] == "V02"]
+    check("vendor bank change from a look-alike domain is held", rr and rr[0]["status"] == "held", str(rr))
 
     # The team's rule from receivables, extended to payables by the policy search.
     tpl = {"t": "forbid_when", "action": "release_payment", "fact": "routing_changed_unverified"}
     evo.call("propose_policy", json.dumps(tpl), "No vendor payment is released while a change of that vendor's bank account is unverified.", "policy search: sibling of the debit rule", json.dumps({"gate": "pass"}))
-    dana.call("decide_policy", "P-1@1", True)
+    proposed = [p for p in admin.sql("SELECT key, status, template FROM policy") if p["status"] == "proposed" and json.loads(p["template"]).get("action") == "release_payment"]
+    dana.call("decide_policy", proposed[0]["key"], True)
+    rule_id = proposed[0]["key"].split("@")[0]
 
     world.call("set_sim_date", "2026-04-10")  # Friday
     world.call("run_seats")
@@ -88,7 +91,7 @@ def main():
     asks = {a["subject"]: a for a in admin.sql("SELECT id, kind, subject, status FROM ask") if a["kind"] == "payment_release"}
     dana.call("answer_ask", asks[f"payment:{pays['V02']['id']}"]["id"], "release", "routine run")
     r = last(admin, "release_payment")
-    check("the learned rule stops even the controller while the bank change is unverified", r["outcome"] == "denied" and any("P-1" in x for x in json.loads(r["reasons"])), r["reasons"][:160])
+    check("the learned rule stops even the controller while the bank change is unverified", r["outcome"] == "denied" and any(rule_id in x for x in json.loads(r["reasons"])), r["reasons"][:160])
 
     # Dana spots the duplicate in the run, corrects the bill decision and cancels.
     dana.call("answer_ask", asks[f"payment:{pays['V01']['id']}"]["id"], "cancel", "run includes a duplicate")
