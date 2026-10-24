@@ -235,6 +235,17 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     takeovers.set(r.rule, t);
   }
   const thin = [...takeovers.entries()].filter(([, t]) => t.n < MIN_SUPPORT || t.disagree > 0);
+  // No evidence, no removal: a rule of the current version may be changed or
+  // dropped only if a labeled case shows it deciding wrongly.
+  const sig = (r: SkillProgram['rules'][number]) => JSON.stringify([r.when, r.then?.decide]);
+  const keptRules = new Set(candidate.rules?.map(sig) ?? []);
+  const wrongBy = new Set<number>();
+  for (const e of examples) {
+    const r = runRule(current, e.features);
+    if (r && !agrees(domain, r.decide, e.label)) wrongBy.add(r.rule);
+  }
+  const dropped = current.rules.flatMap((r, i) => (!keptRules.has(sig(r)) && !wrongBy.has(i) ? [`rule ${i} ("${r.then.note ?? r.then.decide}")`] : []));
+  if (candidate.otherwise?.decide !== current.otherwise.decide && !wrongBy.has(-1)) dropped.push(`the default ("${current.otherwise.decide}")`);
   const offenders = new Set<number>(thin.map(([rule]) => rule));
   for (const e of examples) if (broken.includes(e.subject)) offenders.add(runRule(candidate, e.features)?.rule ?? -1);
   // People's answers carry slips: a candidate must handle at least one case they
@@ -271,6 +282,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   if (budget && budget.rate > budget.limit) why.push(`would send ${(budget.rate * 100).toFixed(1)}% of store-weeks to audit (limit ${budget.limit * 100}%)`);
   if (changed.rate > changed.limit) why.push(`changes ${(changed.rate * 100).toFixed(1)}% of past decisions (limit ${changed.limit * 100}%)`);
   if (safety.length) why.push(`${safety.length} safety violation(s)`);
+  for (const d of dropped) why.push(`changes or drops ${d} of the current version though no labeled case shows it was wrong`);
   for (const [rule, t] of thin) why.push(`rule ${rule} would take over work people did on the strength of ${t.n} labeled case(s)${t.disagree ? `, ${t.disagree} of which disagree` : ''} (needs ${MIN_SUPPORT}, unanimous)`);
   return {
     problems,
