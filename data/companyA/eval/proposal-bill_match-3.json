@@ -1,0 +1,316 @@
+{
+  "program": {
+    "domain": "bill_match",
+    "rules": [
+      {
+        "when": {
+          "op": "cmp",
+          "c": "ge",
+          "a": {
+            "op": "feat",
+            "name": "duplicate_score"
+          },
+          "b": {
+            "op": "num",
+            "v": 1
+          }
+        },
+        "then": {
+          "decide": "reject",
+          "note": "exact duplicate bill detected"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "a": {
+            "op": "feat",
+            "name": "po_found"
+          }
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "no purchase order for this bill"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "a": {
+            "op": "feat",
+            "name": "receipt_found"
+          }
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "nothing has been received against the order"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "amount_vs_received"
+              },
+              "b": {
+                "op": "num",
+                "v": 1.05
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "le",
+              "a": {
+                "op": "feat",
+                "name": "amount_vs_po"
+              },
+              "b": {
+                "op": "num",
+                "v": 1.066
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "reject",
+          "note": "billed for more than was received while matching PO, indicating short shipment"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "gt",
+          "a": {
+            "op": "feat",
+            "name": "amount_vs_received"
+          },
+          "b": {
+            "op": "num",
+            "v": 1.02
+          }
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "billed for more than was received"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "approve"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "bill_match",
+    "parent": "bill_match@2",
+    "lesson": {
+      "subjects": [
+        "bill:V05:INV-36640",
+        "bill:V05:INV-36644",
+        "bill:V03:GT35276",
+        "bill:V05:INV-36645",
+        "bill:V02:PC-38354",
+        "bill:V03:GT35294",
+        "bill:V05:INV-36647",
+        "bill:V02:PC-38366",
+        "bill:V05:INV-36651",
+        "bill:V05:INV-36653",
+        "bill:V02:PC-38385"
+      ],
+      "required": 0,
+      "handled": [],
+      "optionalFixed": 4,
+      "optionalTotal": 11,
+      "cases": [
+        {
+          "subject": "bill:V05:INV-36640",
+          "label": "approve",
+          "source": "ask #2 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service is contractually exempt from POs, and this amount matches the agreed rate in the ledger.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36644",
+          "label": "approve",
+          "source": "ask #65 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no purchase order by design and the amount matches the contract rate.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V03:GT35276",
+          "label": "approve",
+          "source": "ask #122 answered by controller:Dana",
+          "reason": "The ledger confirms purchasing agreed to this price increase with Golden Tapioca, so the variance is authorized.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36645",
+          "label": "approve",
+          "source": "ask #151 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no PO by design, and the amount matches the contract rate.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V02:PC-38354",
+          "label": "reject",
+          "source": "ask #160 answered by controller:Dana",
+          "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount; reject this bill.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V03:GT35294",
+          "label": "reject",
+          "source": "ask #245 answered by controller:Dana",
+          "reason": "Reject GT35294 because the unit price exceeds the PO and lacks mutual agreement.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36647",
+          "label": "approve",
+          "source": "ask #264 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no purchase order and the amount matches the contract rate, so approve it.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V02:PC-38366",
+          "label": "reject",
+          "source": "ask #309 answered by controller:Dana",
+          "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount as billed.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36651",
+          "label": "approve",
+          "source": "ask #352 answered by controller:Dana",
+          "reason": "Approve it, as the monthly service contract rate requires no purchase order per our agreement.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36653",
+          "label": "approve",
+          "source": "ask #463 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no PO per the agreement, and this amount matches the contract rate.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V02:PC-38385",
+          "label": "reject",
+          "source": "ask #492 answered by controller:Dana",
+          "reason": "Reject this invoice because the receiving log confirms a short shipment, meaning we cannot pay for goods that were not actually delivered.",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 37,
+      "correctBefore": 26,
+      "correctAfter": 30,
+      "fixed": [
+        "bill:V02:PC-38354",
+        "bill:V03:GT35294",
+        "bill:V02:PC-38366",
+        "bill:V02:PC-38385"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 0,
+      "total": 83,
+      "rate": 0,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 23,
+    "robustness": 0.7849099099099099,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+        "robustness": 0.7849099099099099,
+        "newLeads": 0,
+        "complexity": 23
+      }
+    ],
+    "origin": "qwen3.8-max style 1, unsupported rules removed by replay, thresholds centred by replay",
+    "rationale": "Added a safe carve-out for recurring no-PO services that show a consistent billing pattern (duplicate_score > 0.2) to auto-approve them, while keeping all other no-PO bills on hold per the safety rule. Also introduced two independent signals—comparing billed amounts against both received goods and the PO—to distinguish legitimate price increases from short shipments or unauthorized over-billing before escalating.",
+    "candidatesTried": 5,
+    "candidatesPassed": 2,
+    "seconds": 0.1,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "bill_clean": {
+          "n": 51,
+          "current": 51,
+          "candidate": 51
+        },
+        "bill_no_po_service": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "bill_price_variance": {
+          "n": 1,
+          "current": 1,
+          "candidate": 0
+        },
+        "bill_short_shipment": {
+          "n": 1,
+          "current": 1,
+          "candidate": 0
+        }
+      },
+      "test": {
+        "bill_clean": {
+          "n": 21,
+          "current": 21,
+          "candidate": 21
+        },
+        "bill_duplicate": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "bill_price_variance": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        }
+      },
+      "val": {
+        "bill_clean": {
+          "n": 19,
+          "current": 19,
+          "candidate": 19
+        },
+        "bill_price_variance": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "bill_short_shipment": {
+          "n": 2,
+          "current": 2,
+          "candidate": 0
+        },
+        "bill_no_po_service": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "bill_duplicate": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:38:19.090Z"
+  }
+}

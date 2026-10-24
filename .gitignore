@@ -19,3 +19,8 @@ docs/research/
 data/research_samples/
 data/benchrec/
 data/benchrec_eval/submission.csv
+
+# per-run working files
+data/*/eval/evolve_log.jsonl
+data/*/run_state.json
+data/dev/

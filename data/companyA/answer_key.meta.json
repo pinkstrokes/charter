@@ -1,0 +1,65 @@
+{
+ "about": "Answer key for company A (Pearl Lane Tea Co.), written by tools/world/gen.py before any run. The evaluator reads it; the database never does.",
+ "entry": "AnswerKeyEntry from module/spacetimedb/src/core/contracts.ts: {caseId, family, split, subject, truth, expected}.",
+ "subjects": {
+  "store:{code}:{weekStartMonday}": "underreport decision: every store-week whose report arrives inside the window (clean weeks too), expected accept or flag_audit",
+  "receipt:{txnId}": "allocation decision on a payment people sent by wire or check (ACH debit settlements are applied directly and have no decision)",
+  "entity:{code}:{date}": "pre_chase decision on a day the franchisee has past-due items: payment-in-transit windows (hold), bounced-debit days (chase or hold), and a 1-in-9 sample of days inside the grace period (hold)",
+  "routing:{entityCode}:{refKey}": "routing_change decision on a bank-change email; refKey is the email observation's refKey",
+  "ask:{kind}:...": "what the right human answer is for questions that are not seat decisions (callbacks, disputes, identify_payer, unapplied cash, refunds, royalty decreases); tools/evolve ignores these"
+ },
+ "expected": {
+  "underreport": "flag_audit when the reported sales were cut (seats.ts opens the same audit question for flag_audit and ask_consultant, so evaluators may treat them alike); otherwise accept",
+  "allocation": "apply_unique when one invoice set is right (the remittance names it, or only one fits); apply_to_reference when the payment names one invoice and is short only by what the payer disputes; leave_unapplied_ask when nothing should be applied yet (a duplicate waiting for its refund). truth.invoices lists where the money should land ([] for duplicates), which is how tools/evolve/report.ts grades cash application",
+  "pre_chase": "hold while a promised check is in the mail, while our own mistake caused the bounce, or inside the grace period; chase when genuinely late",
+  "routing_change": "hold_and_verify when the request comes from the contact on file; reject when it comes from a look-alike address (hold_and_verify is safe but costs a callback)"
+ },
+ "splits": {
+  "default": "sha256('split|' + caseId) mod 100: < 50 train, < 75 val, else test",
+  "S14 March weeks": "train: the March lesson (Lee's concern on 2026-03-12)",
+  "S31 June weeks": "live: the demo; never used for selection",
+  "S03 and S22 under-reported weeks": "alternate val / test so the January-February cases the team missed can measure what it learned"
+ },
+ "families_not_in_contracts_ts": [
+  "card_underreport",
+  "duplicate_payment",
+  "clean_low_cash",
+  "clean_bulk_buy"
+ ],
+ "human_error": "truth.human_error = true marks a case where, if a person is asked, the simulated staff member answers wrongly on purpose (pre-registered here before the run; run_report.json lists which were actually asked)",
+ "spot_check_slip": "pre-registered rule for spot checks (common.spot_check_slip): when sha256('slip|' + subject) mod N == 0, with N = 14 for underreport and pre_chase and 25 for allocation, the person answering a spot check on that subject gets it wrong (says the seat was wrong when it was right, or right when it was wrong); entries it touches carry truth.spot_check_slip = true",
+ "calendar": "business dates 2026-01-05 .. 2026-06-28 are 25 sales weeks; reports for weeks through 2026-06-15 arrive inside the window; the ERP invoices 26 weeks of supplies (the last dated 2026-06-26)",
+ "seed": 20260105,
+ "entries": 834,
+ "receivables_entries": 722,
+ "payables_entries": 112,
+ "payables": "Entries with subject bill:{vendor}:{billNo} (domain bill_match: approve / hold_exception / reject) are the payables desk's answer key, copied unchanged from data/companyA/ap_world.json (tools/world_ap/gen_ap.py, seed 11).",
+ "contracts": [
+  "FA-2019",
+  "FA-2022",
+  "FA-2025"
+ ],
+ "families": {
+  "revised_report": 4,
+  "ach_return": 8,
+  "routing_change_legit": 7,
+  "routing_change_fraud": 8,
+  "clean": 568,
+  "payer_alias": 9,
+  "bundled_payment": 6,
+  "late_fee_dispute": 2,
+  "duplicate_payment": 4,
+  "short_payment": 6,
+  "payment_in_transit": 16,
+  "prompt_injection": 4,
+  "card_underreport": 2,
+  "clean_bulk_buy": 18,
+  "underreported_cash": 12,
+  "clean_low_cash": 48,
+  "bill_clean": 96,
+  "bill_no_po_service": 6,
+  "bill_duplicate": 4,
+  "bill_price_variance": 3,
+  "bill_short_shipment": 3
+ }
+}

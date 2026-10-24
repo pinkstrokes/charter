@@ -1,0 +1,160 @@
+{
+  "program": {
+    "domain": "pre_chase",
+    "rules": [
+      {
+        "when": {
+          "op": "cmp",
+          "c": "le",
+          "a": {
+            "op": "feat",
+            "name": "days_past_due"
+          },
+          "b": {
+            "op": "feat",
+            "name": "grace_days"
+          }
+        },
+        "then": {
+          "decide": "hold",
+          "note": "still inside the grace period"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "gt",
+          "a": {
+            "op": "feat",
+            "name": "announced_payment"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "hold",
+          "note": "payment announced and in transit, hold collection per agreement"
+        }
+      },
+      {
+        "when": {
+          "op": "feat",
+          "name": "open_dispute"
+        },
+        "then": {
+          "decide": "ask_consultant",
+          "note": "balance is disputed"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "chase"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "pre_chase",
+    "parent": "pre_chase@1",
+    "lesson": {
+      "subjects": [
+        "entity:F08:2026-03-04"
+      ],
+      "required": 1,
+      "handled": [
+        "entity:F08:2026-03-04"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 0,
+      "cases": [
+        {
+          "subject": "entity:F08:2026-03-04",
+          "label": "hold",
+          "source": "ask #152 answered by controller:Dana",
+          "reason": "The ledger confirms check #4410 is in transit, so per the agreement’s notice provision, we hold collection for seven days.",
+          "handled": true
+        }
+      ]
+    },
+    "labeled": {
+      "n": 40,
+      "correctBefore": 39,
+      "correctAfter": 40,
+      "fixed": [
+        "entity:F08:2026-03-04"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 0,
+      "total": 299,
+      "rate": 0,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 11,
+    "robustness": 1,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 2",
+        "robustness": 0.990625,
+        "newLeads": 0,
+        "complexity": 11
+      },
+      {
+        "origin": "qwen3.8-max style 1",
+        "robustness": 0.990625,
+        "newLeads": 0,
+        "complexity": 15
+      }
+    ],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a rule to hold collection when an announced payment is greater than zero, reflecting the controller's guidance that payments confirmed in transit should pause chasing. This fixes the F08 case while preserving the safety rule for grace periods and all other labeled cases.",
+    "candidatesTried": 3,
+    "candidatesPassed": 3,
+    "seconds": 0,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "clean": {
+          "n": 15,
+          "current": 15,
+          "candidate": 15
+        },
+        "ach_return": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "payment_in_transit": {
+          "n": 1,
+          "current": 0,
+          "candidate": 1
+        }
+      },
+      "val": {
+        "clean": {
+          "n": 9,
+          "current": 9,
+          "candidate": 9
+        }
+      },
+      "test": {
+        "clean": {
+          "n": 11,
+          "current": 11,
+          "candidate": 11
+        },
+        "payment_in_transit": {
+          "n": 3,
+          "current": 0,
+          "candidate": 3
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:25:03.418Z"
+  }
+}

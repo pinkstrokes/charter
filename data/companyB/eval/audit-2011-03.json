@@ -1,0 +1,563 @@
+{
+ "period": "2011-03",
+ "auditor": "internal audit (read-only)",
+ "reader": "deepseek-v4-pro",
+ "controls": [
+  {
+   "id": "SOD",
+   "name": "nobody released or approved what they requested",
+   "population": 0,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "TRUSTED",
+   "name": "money moved only to accounts from a trusted source",
+   "population": 0,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "TWO_PERSON",
+   "name": "large refunds and payments had two approvals",
+   "population": 0,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "HUMAN_ONLY",
+   "name": "only people endorsed bank changes, activated knowledge or closed books",
+   "population": 6,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CALLBACK",
+   "name": "every applied bank change was confirmed by calling the number on file",
+   "population": 0,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CHAIN",
+   "name": "the activity record is complete and unaltered",
+   "population": 4938,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "LEDGER",
+   "name": "the ledger ties to independently kept totals",
+   "population": 7,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CLOSED",
+   "name": "nothing was written into a closed month",
+   "population": 3,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CHANGE",
+   "name": "every new skill version and promoted policy passed its gate before going live",
+   "population": 1,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "DECISIONS",
+   "name": "recorded decisions re-run to the same outcome",
+   "population": 25,
+   "exceptions": 0,
+   "examples": []
+  }
+ ],
+ "samples": [
+  {
+   "name": "receivables billed",
+   "population": 271,
+   "bookCents": 24535038,
+   "tolerableCents": 1226752,
+   "intervalCents": 408917,
+   "sampleSize": 51,
+   "items": [
+    {
+     "id": "545320",
+     "kind": "invoice:trade",
+     "book": 254115,
+     "audited": 254115,
+     "notes": [
+      "traced to trade_invoice:545320, hash verified"
+     ]
+    },
+    {
+     "id": "545288",
+     "kind": "invoice:trade",
+     "book": 139006,
+     "audited": 139006,
+     "notes": [
+      "traced to trade_invoice:545288, hash verified"
+     ]
+    },
+    {
+     "id": "545226",
+     "kind": "invoice:trade",
+     "book": 194340,
+     "audited": 194340,
+     "notes": [
+      "traced to trade_invoice:545226, hash verified"
+     ]
+    },
+    {
+     "id": "546731",
+     "kind": "invoice:trade",
+     "book": 96156,
+     "audited": 96156,
+     "notes": [
+      "traced to trade_invoice:546731, hash verified"
+     ]
+    },
+    {
+     "id": "546543",
+     "kind": "invoice:trade",
+     "book": 17486,
+     "audited": 17486,
+     "notes": [
+      "traced to trade_invoice:546543, hash verified"
+     ]
+    },
+    {
+     "id": "546530",
+     "kind": "invoice:trade",
+     "book": 440028,
+     "audited": 440028,
+     "notes": [
+      "traced to trade_invoice:546530, hash verified"
+     ]
+    },
+    {
+     "id": "546526",
+     "kind": "invoice:trade",
+     "book": 28500,
+     "audited": 28500,
+     "notes": [
+      "traced to trade_invoice:546526, hash verified"
+     ]
+    },
+    {
+     "id": "546479",
+     "kind": "invoice:trade",
+     "book": 47940,
+     "audited": 47940,
+     "notes": [
+      "traced to trade_invoice:546479, hash verified"
+     ]
+    },
+    {
+     "id": "546438",
+     "kind": "invoice:trade",
+     "book": 384088,
+     "audited": 384088,
+     "notes": [
+      "traced to trade_invoice:546438, hash verified"
+     ]
+    },
+    {
+     "id": "546384",
+     "kind": "invoice:trade",
+     "book": 82607,
+     "audited": 82607,
+     "notes": [
+      "traced to trade_invoice:546384, hash verified"
+     ]
+    },
+    {
+     "id": "546328",
+     "kind": "invoice:trade",
+     "book": 168717,
+     "audited": 168717,
+     "notes": [
+      "traced to trade_invoice:546328, hash verified"
+     ]
+    },
+    {
+     "id": "546251",
+     "kind": "invoice:trade",
+     "book": 57610,
+     "audited": 57610,
+     "notes": [
+      "traced to trade_invoice:546251, hash verified"
+     ]
+    },
+    {
+     "id": "546212",
+     "kind": "invoice:trade",
+     "book": 350050,
+     "audited": 350050,
+     "notes": [
+      "traced to trade_invoice:546212, hash verified"
+     ]
+    },
+    {
+     "id": "546160",
+     "kind": "invoice:trade",
+     "book": 327724,
+     "audited": 327724,
+     "notes": [
+      "traced to trade_invoice:546160, hash verified"
+     ]
+    },
+    {
+     "id": "546112",
+     "kind": "invoice:trade",
+     "book": 33000,
+     "audited": 33000,
+     "notes": [
+      "traced to trade_invoice:546112, hash verified"
+     ]
+    },
+    {
+     "id": "545999",
+     "kind": "invoice:trade",
+     "book": 119595,
+     "audited": 119595,
+     "notes": [
+      "traced to trade_invoice:545999, hash verified"
+     ]
+    },
+    {
+     "id": "545865",
+     "kind": "invoice:trade",
+     "book": 259740,
+     "audited": 259740,
+     "notes": [
+      "traced to trade_invoice:545865, hash verified"
+     ]
+    },
+    {
+     "id": "545821",
+     "kind": "invoice:trade",
+     "book": 59102,
+     "audited": 59102,
+     "notes": [
+      "traced to trade_invoice:545821, hash verified"
+     ]
+    },
+    {
+     "id": "545693",
+     "kind": "invoice:trade",
+     "book": 79686,
+     "audited": 79686,
+     "notes": [
+      "traced to trade_invoice:545693, hash verified"
+     ]
+    },
+    {
+     "id": "545653",
+     "kind": "invoice:trade",
+     "book": 93554,
+     "audited": 93554,
+     "notes": [
+      "traced to trade_invoice:545653, hash verified"
+     ]
+    },
+    {
+     "id": "545582",
+     "kind": "invoice:trade",
+     "book": 354734,
+     "audited": 354734,
+     "notes": [
+      "traced to trade_invoice:545582, hash verified"
+     ]
+    },
+    {
+     "id": "545475",
+     "kind": "invoice:trade",
+     "book": 1672684,
+     "audited": 1672684,
+     "notes": [
+      "traced to trade_invoice:545475, hash verified"
+     ]
+    },
+    {
+     "id": "545466",
+     "kind": "invoice:trade",
+     "book": 139600,
+     "audited": 139600,
+     "notes": [
+      "traced to trade_invoice:545466, hash verified"
+     ]
+    },
+    {
+     "id": "548169",
+     "kind": "invoice:trade",
+     "book": 210646,
+     "audited": 210646,
+     "notes": [
+      "traced to trade_invoice:548169, hash verified"
+     ]
+    },
+    {
+     "id": "548011",
+     "kind": "invoice:trade",
+     "book": 1571956,
+     "audited": 1571956,
+     "notes": [
+      "traced to trade_invoice:548011, hash verified"
+     ]
+    },
+    {
+     "id": "548010",
+     "kind": "invoice:trade",
+     "book": 252794,
+     "audited": 252794,
+     "notes": [
+      "traced to trade_invoice:548010, hash verified"
+     ]
+    },
+    {
+     "id": "547947",
+     "kind": "invoice:trade",
+     "book": 218850,
+     "audited": 218850,
+     "notes": [
+      "traced to trade_invoice:547947, hash verified"
+     ]
+    },
+    {
+     "id": "547832",
+     "kind": "invoice:trade",
+     "book": 396206,
+     "audited": 396206,
+     "notes": [
+      "traced to trade_invoice:547832, hash verified"
+     ]
+    },
+    {
+     "id": "547821",
+     "kind": "invoice:trade",
+     "book": 96000,
+     "audited": 96000,
+     "notes": [
+      "traced to trade_invoice:547821, hash verified"
+     ]
+    },
+    {
+     "id": "547812",
+     "kind": "invoice:trade",
+     "book": 551332,
+     "audited": 551332,
+     "notes": [
+      "traced to trade_invoice:547812, hash verified"
+     ]
+    },
+    {
+     "id": "547796",
+     "kind": "invoice:trade",
+     "book": 140786,
+     "audited": 140786,
+     "notes": [
+      "traced to trade_invoice:547796, hash verified"
+     ]
+    },
+    {
+     "id": "547708",
+     "kind": "invoice:trade",
+     "book": 1134320,
+     "audited": 1134320,
+     "notes": [
+      "traced to trade_invoice:547708, hash verified"
+     ]
+    },
+    {
+     "id": "547706",
+     "kind": "invoice:trade",
+     "book": 227880,
+     "audited": 227880,
+     "notes": [
+      "traced to trade_invoice:547706, hash verified"
+     ]
+    },
+    {
+     "id": "547580",
+     "kind": "invoice:trade",
+     "book": 71395,
+     "audited": 71395,
+     "notes": [
+      "traced to trade_invoice:547580, hash verified"
+     ]
+    },
+    {
+     "id": "547516",
+     "kind": "invoice:trade",
+     "book": 38580,
+     "audited": 38580,
+     "notes": [
+      "traced to trade_invoice:547516, hash verified"
+     ]
+    },
+    {
+     "id": "547378",
+     "kind": "invoice:trade",
+     "book": 90510,
+     "audited": 90510,
+     "notes": [
+      "traced to trade_invoice:547378, hash verified"
+     ]
+    },
+    {
+     "id": "547334",
+     "kind": "invoice:trade",
+     "book": 34670,
+     "audited": 34670,
+     "notes": [
+      "traced to trade_invoice:547334, hash verified"
+     ]
+    },
+    {
+     "id": "547201",
+     "kind": "invoice:trade",
+     "book": 48912,
+     "audited": 48912,
+     "notes": [
+      "traced to trade_invoice:547201, hash verified"
+     ]
+    },
+    {
+     "id": "547066",
+     "kind": "invoice:trade",
+     "book": 56263,
+     "audited": 56263,
+     "notes": [
+      "traced to trade_invoice:547066, hash verified"
+     ]
+    },
+    {
+     "id": "547047",
+     "kind": "invoice:trade",
+     "book": 98208,
+     "audited": 98208,
+     "notes": [
+      "traced to trade_invoice:547047, hash verified"
+     ]
+    },
+    {
+     "id": "547023",
+     "kind": "invoice:trade",
+     "book": 83310,
+     "audited": 83310,
+     "notes": [
+      "traced to trade_invoice:547023, hash verified"
+     ]
+    },
+    {
+     "id": "546992",
+     "kind": "invoice:trade",
+     "book": 466644,
+     "audited": 466644,
+     "notes": [
+      "traced to trade_invoice:546992, hash verified"
+     ]
+    },
+    {
+     "id": "546899",
+     "kind": "invoice:trade",
+     "book": 94620,
+     "audited": 94620,
+     "notes": [
+      "traced to trade_invoice:546899, hash verified"
+     ]
+    },
+    {
+     "id": "546789",
+     "kind": "invoice:trade",
+     "book": 1006500,
+     "audited": 1006500,
+     "notes": [
+      "traced to trade_invoice:546789, hash verified"
+     ]
+    },
+    {
+     "id": "546785",
+     "kind": "invoice:trade",
+     "book": 30252,
+     "audited": 30252,
+     "notes": [
+      "traced to trade_invoice:546785, hash verified"
+     ]
+    },
+    {
+     "id": "546739",
+     "kind": "invoice:trade",
+     "book": 301834,
+     "audited": 301834,
+     "notes": [
+      "traced to trade_invoice:546739, hash verified"
+     ]
+    },
+    {
+     "id": "548497",
+     "kind": "invoice:trade",
+     "book": 162241,
+     "audited": 162241,
+     "notes": [
+      "traced to trade_invoice:548497, hash verified"
+     ]
+    },
+    {
+     "id": "548493",
+     "kind": "invoice:trade",
+     "book": 84038,
+     "audited": 84038,
+     "notes": [
+      "traced to trade_invoice:548493, hash verified"
+     ]
+    },
+    {
+     "id": "548406",
+     "kind": "invoice:trade",
+     "book": 87256,
+     "audited": 87256,
+     "notes": [
+      "traced to trade_invoice:548406, hash verified"
+     ]
+    },
+    {
+     "id": "548318",
+     "kind": "invoice:trade",
+     "book": 45305,
+     "audited": 45305,
+     "notes": [
+      "traced to trade_invoice:548318, hash verified"
+     ]
+    },
+    {
+     "id": "548190",
+     "kind": "invoice:trade",
+     "book": 25818,
+     "audited": 25818,
+     "notes": [
+      "traced to trade_invoice:548190, hash verified"
+     ]
+    }
+   ],
+   "projectedCents": 0,
+   "upperLimitCents": 1226752
+  },
+  {
+   "name": "payables approved",
+   "population": 0,
+   "bookCents": 0,
+   "tolerableCents": 0,
+   "intervalCents": 0,
+   "sampleSize": 0,
+   "items": [],
+   "projectedCents": 0,
+   "upperLimitCents": 0
+  }
+ ],
+ "opinion": "clean",
+ "method": "monetary-unit sampling at 95% confidence, tolerable misstatement 5% of each population, Poisson factors; controls tested over 100% of the population"
+}

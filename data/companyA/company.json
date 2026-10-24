@@ -1,0 +1,439 @@
+{
+ "company": {
+  "name": "Pearl Lane Tea Co.",
+  "kind": "franchisor",
+  "currency": "USD",
+  "startDate": "2026-01-05"
+ },
+ "contracts": [
+  {
+   "version": "FA-2019",
+   "terms": {
+    "version": "FA-2019",
+    "royaltyBp": 500,
+    "graceDays": 15,
+    "lateFeeCents": 5000,
+    "interestBpPerMonth": 150,
+    "nsfFeeCents": 2500,
+    "auditThresholdBp": 200,
+    "paymentTermsDays": 3,
+    "applicationOrder": [
+     "royalty",
+     "supply",
+     "audit",
+     "fee",
+     "interest",
+     "trade"
+    ]
+   }
+  },
+  {
+   "version": "FA-2022",
+   "terms": {
+    "version": "FA-2022",
+    "royaltyBp": 600,
+    "graceDays": 10,
+    "lateFeeCents": 7500,
+    "interestBpPerMonth": 150,
+    "nsfFeeCents": 3500,
+    "auditThresholdBp": 200,
+    "paymentTermsDays": 2,
+    "applicationOrder": [
+     "interest",
+     "fee",
+     "royalty",
+     "audit",
+     "supply",
+     "trade"
+    ]
+   }
+  },
+  {
+   "version": "FA-2025",
+   "terms": {
+    "version": "FA-2025",
+    "royaltyBp": 650,
+    "graceDays": 5,
+    "lateFeeCents": 10000,
+    "interestBpPerMonth": 150,
+    "nsfFeeCents": 3500,
+    "auditThresholdBp": 200,
+    "paymentTermsDays": 2,
+    "applicationOrder": [
+     "interest",
+     "fee",
+     "royalty",
+     "audit",
+     "supply",
+     "trade"
+    ]
+   }
+  }
+ ],
+ "entities": [
+  {
+   "code": "F01",
+   "name": "Golden Gate Tea House LLC",
+   "kind": "franchisee",
+   "contactEmail": "kevin@goldengateteahouse.com",
+   "phoneOnFile": "+1-415-555-0118",
+   "bankAccount": "****2207",
+   "status": "active",
+   "country": "US",
+   "owner": "Kevin Lau"
+  },
+  {
+   "code": "F02",
+   "name": "Patel Brews Inc",
+   "kind": "franchisee",
+   "contactEmail": "raj@patelbrews.com",
+   "phoneOnFile": "+1-408-555-0142",
+   "bankAccount": "****7310",
+   "status": "active",
+   "country": "US",
+   "owner": "Raj Patel"
+  },
+  {
+   "code": "F03",
+   "name": "Oakland Leaf & Pearl LLC",
+   "kind": "franchisee",
+   "contactEmail": "henry@oaklandleafpearl.com",
+   "phoneOnFile": "+1-510-555-0163",
+   "bankAccount": "****5528",
+   "status": "active",
+   "country": "US",
+   "owner": "Henry Tam"
+  },
+  {
+   "code": "F04",
+   "name": "Telegraph Tea Co. LLC",
+   "kind": "franchisee",
+   "contactEmail": "sofia@telegraphtea.com",
+   "phoneOnFile": "+1-510-555-0177",
+   "bankAccount": "****0934",
+   "status": "active",
+   "country": "US",
+   "owner": "Sofia Ramirez"
+  },
+  {
+   "code": "F05",
+   "name": "Chen Tea LLC",
+   "kind": "franchisee",
+   "contactEmail": "maya@chentea.com",
+   "phoneOnFile": "+1-415-555-0101",
+   "bankAccount": "****4421",
+   "status": "active",
+   "country": "US",
+   "owner": "Maya Chen"
+  },
+  {
+   "code": "F06",
+   "name": "Peninsula Boba Partners LLC",
+   "kind": "franchisee",
+   "contactEmail": "grace@peninsulaboba.com",
+   "phoneOnFile": "+1-650-555-0129",
+   "bankAccount": "****6612",
+   "status": "active",
+   "country": "US",
+   "owner": "Grace Liu"
+  },
+  {
+   "code": "F07",
+   "name": "Valley Pearl Holdings Inc",
+   "kind": "franchisee",
+   "contactEmail": "tommy@valleypearlholdings.com",
+   "phoneOnFile": "+1-916-555-0155",
+   "bankAccount": "****3385",
+   "status": "active",
+   "country": "US",
+   "owner": "Tommy Nguyen"
+  },
+  {
+   "code": "F08",
+   "name": "Fremont Tea Works LLC",
+   "kind": "franchisee",
+   "contactEmail": "anita@fremontteaworks.com",
+   "phoneOnFile": "+1-510-555-0190",
+   "bankAccount": "****8046",
+   "status": "active",
+   "country": "US",
+   "owner": "Anita Desai"
+  },
+  {
+   "code": "F09",
+   "name": "SoCal Sip Group LLC",
+   "kind": "franchisee",
+   "contactEmail": "jason@socalsip.com",
+   "phoneOnFile": "+1-213-555-0137",
+   "bankAccount": "****1793",
+   "status": "active",
+   "country": "US",
+   "owner": "Jason Park"
+  },
+  {
+   "code": "F10",
+   "name": "Arroyo Tea LLC",
+   "kind": "franchisee",
+   "contactEmail": "carmen@arroyotea.com",
+   "phoneOnFile": "+1-626-555-0148",
+   "bankAccount": "****4459",
+   "status": "active",
+   "country": "US",
+   "owner": "Carmen Ortiz"
+  },
+  {
+   "code": "F11",
+   "name": "Spectrum Boba Inc",
+   "kind": "franchisee",
+   "contactEmail": "linda@spectrumboba.com",
+   "phoneOnFile": "+1-949-555-0112",
+   "bankAccount": "****9071",
+   "status": "active",
+   "country": "US",
+   "owner": "Linda Huang"
+  },
+  {
+   "code": "F12",
+   "name": "Emerald City Tea LLC",
+   "kind": "franchisee",
+   "contactEmail": "ben@emeraldcitytea.com",
+   "phoneOnFile": "+1-206-555-0166",
+   "bankAccount": "****2618",
+   "status": "active",
+   "country": "US",
+   "owner": "Ben Okafor"
+  },
+  {
+   "code": "F13",
+   "name": "Lakeside Tea Co. LLC",
+   "kind": "franchisee",
+   "contactEmail": "emily@lakesideteaco.com",
+   "phoneOnFile": "+1-206-555-0184",
+   "bankAccount": "****2290",
+   "status": "active",
+   "country": "US",
+   "owner": "Emily Johansson"
+  },
+  {
+   "code": "F14",
+   "name": "FiDi Pearl LLC",
+   "kind": "franchisee",
+   "contactEmail": "marcus@fidipearl.com",
+   "phoneOnFile": "+1-415-555-0173",
+   "bankAccount": "****5864",
+   "status": "active",
+   "country": "US",
+   "owner": "Marcus Bell"
+  },
+  {
+   "code": "V01",
+   "name": "Formosa Leaf Imports",
+   "kind": "vendor",
+   "contactEmail": "ar@formosaleaf.com",
+   "phoneOnFile": "+1-626-555-0141",
+   "bankAccount": "****6610"
+  },
+  {
+   "code": "V02",
+   "name": "Pacific Cup & Lid Co.",
+   "kind": "vendor",
+   "contactEmail": "billing@pacificcup.com",
+   "phoneOnFile": "+1-562-555-0142",
+   "bankAccount": "****3305"
+  },
+  {
+   "code": "V03",
+   "name": "Golden Tapioca Supply",
+   "kind": "vendor",
+   "contactEmail": "orders@goldentapioca.com",
+   "phoneOnFile": "+1-408-555-0143",
+   "bankAccount": "****9184"
+  },
+  {
+   "code": "V04",
+   "name": "Bay Area Dairy Co-op",
+   "kind": "vendor",
+   "contactEmail": "accounts@bayareadairy.coop",
+   "phoneOnFile": "+1-510-555-0144",
+   "bankAccount": "****2077"
+  },
+  {
+   "code": "V05",
+   "name": "CleanPro Facilities",
+   "kind": "vendor",
+   "contactEmail": "invoices@cleanprofacilities.com",
+   "phoneOnFile": "+1-415-555-0145",
+   "bankAccount": "****5521"
+  },
+  {
+   "code": "V06",
+   "name": "Signal Marketing Group",
+   "kind": "vendor",
+   "contactEmail": "finance@signalmktg.com",
+   "phoneOnFile": "+1-213-555-0146",
+   "bankAccount": "****8840"
+  }
+ ],
+ "stores": [
+  {
+   "code": "S01",
+   "entityCode": "F01",
+   "name": "Pearl Lane #1 Union Square",
+   "city": "San Francisco",
+   "contractVersion": "FA-2019",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S03",
+   "entityCode": "F03",
+   "name": "Pearl Lane #3 Oakland Chinatown",
+   "city": "Oakland",
+   "contractVersion": "FA-2019",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S05",
+   "entityCode": "F04",
+   "name": "Pearl Lane #5 Telegraph Ave",
+   "city": "Berkeley",
+   "contractVersion": "FA-2022",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S07",
+   "entityCode": "F08",
+   "name": "Pearl Lane #7 Fremont Hub",
+   "city": "Fremont",
+   "contractVersion": "FA-2025",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S09",
+   "entityCode": "F06",
+   "name": "Pearl Lane #9 Serramonte",
+   "city": "Daly City",
+   "contractVersion": "FA-2022",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S11",
+   "entityCode": "F12",
+   "name": "Pearl Lane #11 Capitol Hill",
+   "city": "Seattle",
+   "contractVersion": "FA-2019",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S12",
+   "entityCode": "F06",
+   "name": "Pearl Lane #12 Downtown San Mateo",
+   "city": "San Mateo",
+   "contractVersion": "FA-2022",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S14",
+   "entityCode": "F05",
+   "name": "Pearl Lane #14 Mission",
+   "city": "San Francisco",
+   "contractVersion": "FA-2025",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S16",
+   "entityCode": "F07",
+   "name": "Pearl Lane #16 Midtown",
+   "city": "Sacramento",
+   "contractVersion": "FA-2019",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S18",
+   "entityCode": "F07",
+   "name": "Pearl Lane #18 Elk Grove",
+   "city": "Elk Grove",
+   "contractVersion": "FA-2019",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S20",
+   "entityCode": "F07",
+   "name": "Pearl Lane #20 Davis Downtown",
+   "city": "Davis",
+   "contractVersion": "FA-2019",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S22",
+   "entityCode": "F09",
+   "name": "Pearl Lane #22 Koreatown",
+   "city": "Los Angeles",
+   "contractVersion": "FA-2022",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S23",
+   "entityCode": "F14",
+   "name": "Pearl Lane #23 Financial District",
+   "city": "San Francisco",
+   "contractVersion": "FA-2022",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S26",
+   "entityCode": "F10",
+   "name": "Pearl Lane #26 Old Pasadena",
+   "city": "Pasadena",
+   "contractVersion": "FA-2022",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S27",
+   "entityCode": "F11",
+   "name": "Pearl Lane #27 Irvine Spectrum",
+   "city": "Irvine",
+   "contractVersion": "FA-2025",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S29",
+   "entityCode": "F02",
+   "name": "Pearl Lane #29 Cupertino Village",
+   "city": "Cupertino",
+   "contractVersion": "FA-2025",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S31",
+   "entityCode": "F02",
+   "name": "Pearl Lane #31 Santana Row",
+   "city": "San Jose",
+   "contractVersion": "FA-2025",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S34",
+   "entityCode": "F02",
+   "name": "Pearl Lane #34 Castro Street",
+   "city": "Mountain View",
+   "contractVersion": "FA-2025",
+   "consultant": "Lee"
+  },
+  {
+   "code": "S36",
+   "entityCode": "F13",
+   "name": "Pearl Lane #36 South Lake Union",
+   "city": "Seattle",
+   "contractVersion": "FA-2025",
+   "consultant": "Priya"
+  },
+  {
+   "code": "S38",
+   "entityCode": "F09",
+   "name": "Pearl Lane #38 Sawtelle",
+   "city": "Los Angeles",
+   "contractVersion": "FA-2022",
+   "consultant": "Priya"
+  }
+ ]
+}

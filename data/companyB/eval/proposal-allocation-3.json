@@ -1,0 +1,245 @@
+{
+  "program": {
+    "domain": "allocation",
+    "rules": [
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "exactly one subset sums to the receipt"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "payment reference matches one open invoice exactly, confirming which of several subsets is correct"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "reference_gap_cents"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "reference names a single open invoice with no overpayment; applying there even though no subset matches exactly"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "no subset matches; apply by contract order"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "leave_unapplied_ask",
+      "note": "unclear allocation; ask controller"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "allocation",
+    "parent": "allocation@2",
+    "lesson": {
+      "subjects": [
+        "receipt:BACS-540157-DUP"
+      ],
+      "required": 1,
+      "handled": [
+        "receipt:BACS-540157-DUP"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 0,
+      "cases": [
+        {
+          "subject": "receipt:BACS-540157-DUP",
+          "label": "leave_unapplied_ask",
+          "source": "ask #5884 answered by controller:Dana",
+          "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
+          "handled": true
+        }
+      ]
+    },
+    "labeled": {
+      "n": 53,
+      "correctBefore": 52,
+      "correctAfter": 53,
+      "fixed": [
+        "receipt:BACS-540157-DUP"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 1,
+      "total": 258,
+      "rate": 0.003875968992248062,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 23,
+    "robustness": 1,
+    "alternatives": [],
+    "origin": "qwen3.8-max style 2",
+    "rationale": "The mistake occurred because the previous skill applied cash to a referenced invoice that was massively overpaid (negative reference_gap_cents), which looked like a duplicate payment. Adding a check that reference_gap_cents >= 0 before using apply_to_reference prevents auto-applying when the payment far exceeds the invoice balance, correctly routing such cases to leave_unapplied_ask.",
+    "candidatesTried": 3,
+    "candidatesPassed": 1,
+    "seconds": 144.2,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "payment_prompt": {
+          "n": 130,
+          "current": 116,
+          "candidate": 116
+        },
+        "payment_parent": {
+          "n": 13,
+          "current": 11,
+          "candidate": 11
+        },
+        "payment_late": {
+          "n": 14,
+          "current": 13,
+          "candidate": 13
+        },
+        "payment_duplicate": {
+          "n": 1,
+          "current": 0,
+          "candidate": 1
+        },
+        "payment_statement_with_remittance": {
+          "n": 16,
+          "current": 16,
+          "candidate": 16
+        }
+      },
+      "val": {
+        "payment_prompt": {
+          "n": 60,
+          "current": 59,
+          "candidate": 59
+        },
+        "payment_parent": {
+          "n": 8,
+          "current": 8,
+          "candidate": 8
+        },
+        "payment_duplicate": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "payment_late": {
+          "n": 7,
+          "current": 7,
+          "candidate": 7
+        },
+        "payment_statement_with_remittance": {
+          "n": 8,
+          "current": 8,
+          "candidate": 8
+        }
+      },
+      "test": {
+        "payment_prompt": {
+          "n": 67,
+          "current": 61,
+          "candidate": 61
+        },
+        "payment_parent": {
+          "n": 12,
+          "current": 12,
+          "candidate": 12
+        },
+        "payment_late": {
+          "n": 8,
+          "current": 8,
+          "candidate": 8
+        },
+        "payment_duplicate": {
+          "n": 3,
+          "current": 0,
+          "candidate": 0
+        },
+        "payment_statement_with_remittance": {
+          "n": 9,
+          "current": 8,
+          "candidate": 8
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T11:56:15.860Z"
+  }
+}

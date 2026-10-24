@@ -1,0 +1,253 @@
+{
+  "program": {
+    "domain": "allocation",
+    "rules": [
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "exactly one subset sums to the receipt"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "payment reference matches one open invoice exactly, confirming which of several subsets is correct"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "reference_gap_cents"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "reference names a single open invoice with no overpayment; applying there even though no subset matches exactly"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "leave_unapplied_ask",
+      "note": "unclear allocation; ask controller"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "allocation",
+    "parent": "allocation@3",
+    "lesson": {
+      "subjects": [
+        "receipt:BACS-544282-DUP"
+      ],
+      "required": 1,
+      "handled": [
+        "receipt:BACS-544282-DUP"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 1,
+      "cases": [
+        {
+          "subject": "receipt:BACS-544282-DUP",
+          "label": "leave_unapplied_ask",
+          "source": "ask #5978 answered by controller:Dana",
+          "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
+          "handled": true
+        },
+        {
+          "subject": "receipt:STMT-B-17389-2011-02",
+          "label": "apply_unique",
+          "source": "ask #5943 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 79,
+      "correctBefore": 77,
+      "correctAfter": 78,
+      "fixed": [
+        "receipt:BACS-544282-DUP"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 0,
+      "total": 407,
+      "rate": 0,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 19,
+    "robustness": 0.9873417721518988,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+        "robustness": 0.9873417721518988,
+        "newLeads": 0,
+        "complexity": 25
+      },
+      {
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.9873417721518988,
+        "newLeads": 0,
+        "complexity": 32
+      },
+      {
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.9873417721518988,
+        "newLeads": 0,
+        "complexity": 32
+      }
+    ],
+    "origin": "qwen3.8-max style 0, unsupported rules removed by replay",
+    "rationale": "Added a guard to the apply_by_terms rule so it skips cases where the payment reference points to an already-paid invoice (which should fall through to leave_unapplied_ask), and added a new rule to apply_unique when a consistent remittance confirms the exact match among multiple solutions.",
+    "candidatesTried": 10,
+    "candidatesPassed": 7,
+    "seconds": 16.6,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "payment_prompt": {
+          "n": 191,
+          "current": 172,
+          "candidate": 172
+        },
+        "payment_parent": {
+          "n": 20,
+          "current": 18,
+          "candidate": 18
+        },
+        "payment_late": {
+          "n": 30,
+          "current": 29,
+          "candidate": 29
+        },
+        "payment_duplicate": {
+          "n": 2,
+          "current": 1,
+          "candidate": 2
+        },
+        "payment_statement_with_remittance": {
+          "n": 36,
+          "current": 35,
+          "candidate": 35
+        }
+      },
+      "val": {
+        "payment_prompt": {
+          "n": 88,
+          "current": 82,
+          "candidate": 82
+        },
+        "payment_parent": {
+          "n": 15,
+          "current": 15,
+          "candidate": 15
+        },
+        "payment_duplicate": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "payment_late": {
+          "n": 13,
+          "current": 13,
+          "candidate": 13
+        },
+        "payment_statement_with_remittance": {
+          "n": 11,
+          "current": 11,
+          "candidate": 11
+        }
+      },
+      "test": {
+        "payment_prompt": {
+          "n": 94,
+          "current": 87,
+          "candidate": 87
+        },
+        "payment_parent": {
+          "n": 18,
+          "current": 18,
+          "candidate": 18
+        },
+        "payment_late": {
+          "n": 12,
+          "current": 12,
+          "candidate": 12
+        },
+        "payment_duplicate": {
+          "n": 3,
+          "current": 0,
+          "candidate": 3
+        },
+        "payment_statement_with_remittance": {
+          "n": 13,
+          "current": 11,
+          "candidate": 11
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T11:57:05.929Z"
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "program": {
+    "domain": "allocation",
+    "rules": [
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_paid"
+            }
+          ]
+        },
+        "then": {
+          "decide": "leave_unapplied_ask",
+          "note": "no subset matches and the referenced invoice is already paid"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 1
+          }
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "one subset explains the amount within tolerance"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "no subset matches; apply by contract order"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "leave_unapplied_ask",
+      "askRole": "controller",
+      "note": "several invoice sets explain this amount"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "allocation",
+    "parent": "allocation@1",
+    "lesson": {
+      "subjects": [
+        "receipt:WIRE-260105-4137",
+        "receipt:WIRE-260424-5099"
+      ],
+      "required": 2,
+      "handled": [
+        "receipt:WIRE-260424-5099"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 0,
+      "cases": [
+        {
+          "subject": "receipt:WIRE-260105-4137",
+          "label": "leave_unapplied_ask",
+          "source": "ask #1 answered by controller:Dana",
+          "reason": "I misread the case file and incorrectly determined that the receipt should have been left unapplied pending clarification.",
+          "handled": false
+        },
+        {
+          "subject": "receipt:WIRE-260424-5099",
+          "label": "leave_unapplied_ask",
+          "source": "ask #306 answered by controller:Dana",
+          "reason": "The ledger shows no matching terms for receipt WIRE-260424-5099, so the seat wrongly applied it instead of leaving it unapplied for inquiry.",
+          "handled": true
+        }
+      ]
+    },
+    "labeled": {
+      "n": 13,
+      "correctBefore": 11,
+      "correctAfter": 12,
+      "fixed": [
+        "receipt:WIRE-260424-5099"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 0,
+      "total": 32,
+      "rate": 0,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 21,
+    "robustness": 0.9230769230769231,
+    "alternatives": [],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a rule before the solution_count=0 fallback to leave unapplied when no subset matches and the payment reference points to an already-paid invoice, fixing WIRE-260424-5099. The earlier mistake case WIRE-260105-4137 was actually correct per the controller's own admission, so existing rules remain unchanged.",
+    "candidatesTried": 3,
+    "candidatesPassed": 1,
+    "seconds": 12.1,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "clean": {
+          "n": 11,
+          "current": 11,
+          "candidate": 11
+        },
+        "bundled_payment": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payer_alias": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_in_transit": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "prompt_injection": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        }
+      },
+      "val": {
+        "clean": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "payer_alias": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_in_transit": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "duplicate_payment": {
+          "n": 1,
+          "current": 0,
+          "candidate": 1
+        }
+      },
+      "test": {
+        "short_payment": {
+          "n": 1,
+          "current": 0,
+          "candidate": 0
+        },
+        "clean": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "bundled_payment": {
+          "n": 1,
+          "current": 0,
+          "candidate": 0
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:29:32.667Z"
+  }
+}

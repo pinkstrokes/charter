@@ -1,0 +1,1073 @@
+{
+ "db": "charter-a",
+ "generatedAt": "2026-10-24T12:39:57.724Z",
+ "answerKeyEntries": 834,
+ "outcomes": {
+  "val": {
+   "routing_change_legit": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "routing_change_fraud": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "clean": {
+    "n": 143,
+    "right": 135,
+    "missing": 8
+   },
+   "payer_alias": {
+    "n": 3,
+    "right": 3,
+    "missing": 0
+   },
+   "payment_in_transit": {
+    "n": 4,
+    "right": 3,
+    "missing": 0
+   },
+   "duplicate_payment": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "bundled_payment": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "short_payment": {
+    "n": 1,
+    "right": 0,
+    "missing": 0
+   },
+   "clean_bulk_buy": {
+    "n": 5,
+    "right": 5,
+    "missing": 0
+   },
+   "underreported_cash": {
+    "n": 3,
+    "right": 1,
+    "missing": 0
+   },
+   "prompt_injection": {
+    "n": 2,
+    "right": 2,
+    "missing": 0
+   },
+   "clean_low_cash": {
+    "n": 16,
+    "right": 16,
+    "missing": 0
+   },
+   "bill_clean": {
+    "n": 19,
+    "right": 19,
+    "missing": 0
+   },
+   "bill_price_variance": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "bill_short_shipment": {
+    "n": 2,
+    "right": 2,
+    "missing": 0
+   },
+   "bill_no_po_service": {
+    "n": 2,
+    "right": 2,
+    "missing": 0
+   },
+   "bill_duplicate": {
+    "n": 2,
+    "right": 1,
+    "missing": 0
+   }
+  },
+  "train": {
+   "routing_change_legit": {
+    "n": 3,
+    "right": 1,
+    "missing": 0
+   },
+   "routing_change_fraud": {
+    "n": 3,
+    "right": 2,
+    "missing": 0
+   },
+   "clean": {
+    "n": 295,
+    "right": 274,
+    "missing": 21
+   },
+   "bundled_payment": {
+    "n": 4,
+    "right": 3,
+    "missing": 0
+   },
+   "duplicate_payment": {
+    "n": 1,
+    "right": 0,
+    "missing": 1
+   },
+   "payer_alias": {
+    "n": 3,
+    "right": 3,
+    "missing": 0
+   },
+   "payment_in_transit": {
+    "n": 9,
+    "right": 6,
+    "missing": 0
+   },
+   "prompt_injection": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "card_underreport": {
+    "n": 2,
+    "right": 2,
+    "missing": 0
+   },
+   "clean_bulk_buy": {
+    "n": 8,
+    "right": 8,
+    "missing": 0
+   },
+   "underreported_cash": {
+    "n": 2,
+    "right": 2,
+    "missing": 0
+   },
+   "revised_report": {
+    "n": 3,
+    "right": 3,
+    "missing": 0
+   },
+   "clean_low_cash": {
+    "n": 18,
+    "right": 18,
+    "missing": 0
+   },
+   "ach_return": {
+    "n": 4,
+    "right": 4,
+    "missing": 0
+   },
+   "bill_clean": {
+    "n": 56,
+    "right": 55,
+    "missing": 1
+   },
+   "bill_no_po_service": {
+    "n": 4,
+    "right": 4,
+    "missing": 0
+   },
+   "bill_price_variance": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "bill_short_shipment": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   }
+  },
+  "test": {
+   "short_payment": {
+    "n": 2,
+    "right": 1,
+    "missing": 0
+   },
+   "clean": {
+    "n": 130,
+    "right": 121,
+    "missing": 9
+   },
+   "bundled_payment": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "underreported_cash": {
+    "n": 4,
+    "right": 2,
+    "missing": 0
+   },
+   "clean_bulk_buy": {
+    "n": 5,
+    "right": 5,
+    "missing": 0
+   },
+   "prompt_injection": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "clean_low_cash": {
+    "n": 14,
+    "right": 14,
+    "missing": 0
+   },
+   "payment_in_transit": {
+    "n": 3,
+    "right": 0,
+    "missing": 0
+   },
+   "ach_return": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   },
+   "bill_clean": {
+    "n": 21,
+    "right": 21,
+    "missing": 0
+   },
+   "bill_duplicate": {
+    "n": 2,
+    "right": 0,
+    "missing": 0
+   },
+   "bill_price_variance": {
+    "n": 1,
+    "right": 1,
+    "missing": 0
+   }
+  },
+  "live": {
+   "underreported_cash": {
+    "n": 3,
+    "right": 1,
+    "missing": 0
+   }
+  }
+ },
+ "cashLanded": {
+  "train": {
+   "clean": {
+    "n": 14,
+    "right": 14
+   },
+   "bundled_payment": {
+    "n": 4,
+    "right": 3
+   },
+   "duplicate_payment": {
+    "n": 1,
+    "right": 1
+   },
+   "payer_alias": {
+    "n": 3,
+    "right": 3
+   },
+   "payment_in_transit": {
+    "n": 1,
+    "right": 1
+   },
+   "prompt_injection": {
+    "n": 1,
+    "right": 1
+   },
+   "card_underreport": {
+    "n": 1,
+    "right": 1
+   }
+  },
+  "val": {
+   "clean": {
+    "n": 6,
+    "right": 6
+   },
+   "payer_alias": {
+    "n": 3,
+    "right": 3
+   },
+   "payment_in_transit": {
+    "n": 2,
+    "right": 2
+   },
+   "duplicate_payment": {
+    "n": 1,
+    "right": 1
+   },
+   "bundled_payment": {
+    "n": 1,
+    "right": 1
+   },
+   "short_payment": {
+    "n": 1,
+    "right": 0
+   }
+  },
+  "test": {
+   "short_payment": {
+    "n": 2,
+    "right": 1
+   },
+   "clean": {
+    "n": 7,
+    "right": 7
+   },
+   "bundled_payment": {
+    "n": 1,
+    "right": 1
+   }
+  }
+ },
+ "learnedPolicies": [
+  {
+   "key": "P-1@1",
+   "status": "active",
+   "text": "No debit is initiated while a bank-account change is pending and has not been confirmed out of band.",
+   "template": {
+    "t": "forbid_when",
+    "action": "initiate_debit",
+    "fact": "routing_changed_unverified"
+   },
+   "source": "policy search over past money movements",
+   "approvedBy": "controller:Dana",
+   "approvedAt": "2026-04-19",
+   "learnedFrom": [
+    {
+     "activityId": 2642,
+     "at": "2026-04-08",
+     "why": "the debit was returned by the bank"
+    }
+   ],
+   "extendsFrom": null,
+   "blocked": []
+  },
+  {
+   "key": "P-2@1",
+   "status": "active",
+   "text": "No refund is released while a bank-account change is pending and has not been confirmed out of band.",
+   "template": {
+    "t": "forbid_when",
+    "action": "issue_refund",
+    "fact": "routing_changed_unverified"
+   },
+   "source": "extension of a proposed rule",
+   "approvedBy": "controller:Dana",
+   "approvedAt": "2026-04-19",
+   "learnedFrom": [],
+   "extendsFrom": "{\"t\":\"forbid_when\",\"action\":\"initiate_debit\",\"fact\":\"routing_changed_unverified\"}",
+   "blocked": []
+  },
+  {
+   "key": "P-3@1",
+   "status": "active",
+   "text": "No vendor payment is released while a bank-account change is pending and has not been confirmed out of band.",
+   "template": {
+    "t": "forbid_when",
+    "action": "release_payment",
+    "fact": "routing_changed_unverified"
+   },
+   "source": "extension of a proposed rule",
+   "approvedBy": "controller:Dana",
+   "approvedAt": "2026-04-19",
+   "learnedFrom": [],
+   "extendsFrom": "{\"t\":\"forbid_when\",\"action\":\"initiate_debit\",\"fact\":\"routing_changed_unverified\"}",
+   "blocked": []
+  }
+ ],
+ "knowingWhenToAsk": {
+  "allocation": {
+   "handledAlone": 9,
+   "wrong": 1,
+   "upper95": 0.42913554703143497
+  },
+  "underreport": {
+   "handledAlone": 112,
+   "wrong": 4,
+   "upper95": 0.07986159843498467
+  },
+  "pre_chase": {
+   "handledAlone": 30,
+   "wrong": 3,
+   "upper95": 0.23859785729325117
+  },
+  "bill_match": {
+   "handledAlone": 23,
+   "wrong": 2,
+   "upper95": 0.24924874982025982
+  }
+ },
+ "generations": [
+  {
+   "key": "allocation@1",
+   "status": "retired",
+   "createdAt": "2026-01-05",
+   "activatedAt": null,
+   "test": {
+    "short_payment": {
+     "n": 2,
+     "right": 0
+    },
+    "clean": {
+     "n": 7,
+     "right": 7
+    },
+    "bundled_payment": {
+     "n": 1,
+     "right": 0
+    }
+   }
+  },
+  {
+   "key": "allocation@2",
+   "status": "retired",
+   "createdAt": "2026-04-26",
+   "activatedAt": "2026-04-26",
+   "test": {
+    "short_payment": {
+     "n": 2,
+     "right": 0
+    },
+    "clean": {
+     "n": 7,
+     "right": 7
+    },
+    "bundled_payment": {
+     "n": 1,
+     "right": 0
+    }
+   }
+  },
+  {
+   "key": "allocation@3",
+   "status": "retired",
+   "createdAt": "2026-05-10",
+   "activatedAt": "2026-05-10",
+   "test": {
+    "short_payment": {
+     "n": 2,
+     "right": 0
+    },
+    "clean": {
+     "n": 7,
+     "right": 7
+    },
+    "bundled_payment": {
+     "n": 1,
+     "right": 0
+    }
+   }
+  },
+  {
+   "key": "allocation@4",
+   "status": "active",
+   "createdAt": "2026-05-17",
+   "activatedAt": "2026-05-17",
+   "test": {
+    "short_payment": {
+     "n": 2,
+     "right": 0
+    },
+    "clean": {
+     "n": 7,
+     "right": 7
+    },
+    "bundled_payment": {
+     "n": 1,
+     "right": 0
+    }
+   }
+  },
+  {
+   "key": "bill_match@1",
+   "status": "retired",
+   "createdAt": "2026-01-05",
+   "activatedAt": null,
+   "test": {
+    "bill_clean": {
+     "n": 21,
+     "right": 21
+    },
+    "bill_duplicate": {
+     "n": 2,
+     "right": 0
+    },
+    "bill_price_variance": {
+     "n": 1,
+     "right": 1
+    }
+   }
+  },
+  {
+   "key": "bill_match@2",
+   "status": "retired",
+   "createdAt": "2026-04-26",
+   "activatedAt": "2026-04-26",
+   "test": {
+    "bill_clean": {
+     "n": 21,
+     "right": 21
+    },
+    "bill_duplicate": {
+     "n": 2,
+     "right": 2
+    },
+    "bill_price_variance": {
+     "n": 1,
+     "right": 1
+    }
+   }
+  },
+  {
+   "key": "bill_match@3",
+   "status": "active",
+   "createdAt": "2026-06-21",
+   "activatedAt": "2026-06-21",
+   "test": {
+    "bill_clean": {
+     "n": 21,
+     "right": 21
+    },
+    "bill_duplicate": {
+     "n": 2,
+     "right": 2
+    },
+    "bill_price_variance": {
+     "n": 1,
+     "right": 1
+    }
+   }
+  },
+  {
+   "key": "pre_chase@1",
+   "status": "retired",
+   "createdAt": "2026-01-05",
+   "activatedAt": null,
+   "test": {
+    "clean": {
+     "n": 26,
+     "right": 26
+    },
+    "payment_in_transit": {
+     "n": 3,
+     "right": 0
+    },
+    "ach_return": {
+     "n": 1,
+     "right": 1
+    }
+   }
+  },
+  {
+   "key": "pre_chase@2",
+   "status": "retired",
+   "createdAt": "2026-03-08",
+   "activatedAt": "2026-03-08",
+   "test": {
+    "clean": {
+     "n": 26,
+     "right": 26
+    },
+    "payment_in_transit": {
+     "n": 3,
+     "right": 3
+    },
+    "ach_return": {
+     "n": 1,
+     "right": 1
+    }
+   }
+  },
+  {
+   "key": "pre_chase@3",
+   "status": "active",
+   "createdAt": "2026-04-19",
+   "activatedAt": "2026-04-19",
+   "test": {
+    "clean": {
+     "n": 26,
+     "right": 26
+    },
+    "payment_in_transit": {
+     "n": 3,
+     "right": 3
+    },
+    "ach_return": {
+     "n": 1,
+     "right": 0
+    }
+   }
+  },
+  {
+   "key": "routing_change@1",
+   "status": "retired",
+   "createdAt": "2026-01-05",
+   "activatedAt": null,
+   "test": {}
+  },
+  {
+   "key": "routing_change@2",
+   "status": "active",
+   "createdAt": "2026-02-08",
+   "activatedAt": "2026-02-08",
+   "test": {}
+  },
+  {
+   "key": "underreport@1",
+   "status": "retired",
+   "createdAt": "2026-01-05",
+   "activatedAt": null,
+   "test": {
+    "clean": {
+     "n": 88,
+     "right": 88
+    },
+    "underreported_cash": {
+     "n": 4,
+     "right": 0
+    },
+    "clean_bulk_buy": {
+     "n": 5,
+     "right": 5
+    },
+    "prompt_injection": {
+     "n": 1,
+     "right": 1
+    },
+    "clean_low_cash": {
+     "n": 14,
+     "right": 14
+    }
+   }
+  },
+  {
+   "key": "underreport@2",
+   "status": "active",
+   "createdAt": "2026-03-01",
+   "activatedAt": "2026-03-01",
+   "test": {
+    "clean": {
+     "n": 88,
+     "right": 88
+    },
+    "underreported_cash": {
+     "n": 4,
+     "right": 3
+    },
+    "clean_bulk_buy": {
+     "n": 5,
+     "right": 5
+    },
+    "prompt_injection": {
+     "n": 1,
+     "right": 1
+    },
+    "clean_low_cash": {
+     "n": 14,
+     "right": 14
+    }
+   }
+  }
+ ],
+ "trend": [
+  {
+   "month": "2026-01",
+   "domains": {
+    "allocation": {
+     "decisions": 6,
+     "alone": 6,
+     "aloneGraded": 6,
+     "aloneRight": 6,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "bill_match": {
+     "decisions": 18,
+     "alone": 17,
+     "aloneGraded": 17,
+     "aloneRight": 17,
+     "questions": 1,
+     "aloneShare": 0.9444444444444444,
+     "aloneAccuracy": 1
+    },
+    "underreport": {
+     "decisions": 60,
+     "alone": 60,
+     "aloneGraded": 60,
+     "aloneRight": 59,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 0.9833333333333333
+    },
+    "pre_chase": {
+     "decisions": 99,
+     "alone": 99,
+     "aloneGraded": 12,
+     "aloneRight": 12,
+     "questions": 0,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "payments": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 1,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    }
+   }
+  },
+  {
+   "month": "2026-02",
+   "domains": {
+    "pre_chase": {
+     "decisions": 168,
+     "alone": 168,
+     "aloneGraded": 18,
+     "aloneRight": 18,
+     "questions": 2,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "allocation": {
+     "decisions": 10,
+     "alone": 10,
+     "aloneGraded": 8,
+     "aloneRight": 8,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "underreport": {
+     "decisions": 81,
+     "alone": 81,
+     "aloneGraded": 81,
+     "aloneRight": 76,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 0.9382716049382716
+    },
+    "bill_match": {
+     "decisions": 18,
+     "alone": 16,
+     "aloneGraded": 16,
+     "aloneRight": 15,
+     "questions": 2,
+     "aloneShare": 0.8888888888888888,
+     "aloneAccuracy": 0.9375
+    },
+    "routing_change": {
+     "decisions": 1,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 1,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "payments": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 18,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "refunds": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 1,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    }
+   }
+  },
+  {
+   "month": "2026-03",
+   "domains": {
+    "pre_chase": {
+     "decisions": 173,
+     "alone": 172,
+     "aloneGraded": 19,
+     "aloneRight": 16,
+     "questions": 1,
+     "aloneShare": 0.9942196531791907,
+     "aloneAccuracy": 0.8421052631578947
+    },
+    "underreport": {
+     "decisions": 102,
+     "alone": 97,
+     "aloneGraded": 97,
+     "aloneRight": 97,
+     "questions": 7,
+     "aloneShare": 0.9509803921568627,
+     "aloneAccuracy": 1
+    },
+    "allocation": {
+     "decisions": 14,
+     "alone": 13,
+     "aloneGraded": 8,
+     "aloneRight": 8,
+     "questions": 1,
+     "aloneShare": 0.9285714285714286,
+     "aloneAccuracy": 1
+    },
+    "bill_match": {
+     "decisions": 18,
+     "alone": 16,
+     "aloneGraded": 16,
+     "aloneRight": 15,
+     "questions": 2,
+     "aloneShare": 0.8888888888888888,
+     "aloneAccuracy": 0.9375
+    },
+    "routing_change": {
+     "decisions": 2,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 2,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "payments": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 17,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    }
+   }
+  },
+  {
+   "month": "2026-04",
+   "domains": {
+    "pre_chase": {
+     "decisions": 167,
+     "alone": 166,
+     "aloneGraded": 35,
+     "aloneRight": 31,
+     "questions": 1,
+     "aloneShare": 0.9940119760479041,
+     "aloneAccuracy": 0.8857142857142857
+    },
+    "underreport": {
+     "decisions": 81,
+     "alone": 80,
+     "aloneGraded": 80,
+     "aloneRight": 80,
+     "questions": 2,
+     "aloneShare": 0.9876543209876543,
+     "aloneAccuracy": 1
+    },
+    "bill_match": {
+     "decisions": 19,
+     "alone": 15,
+     "aloneGraded": 15,
+     "aloneRight": 15,
+     "questions": 4,
+     "aloneShare": 0.7894736842105263,
+     "aloneAccuracy": 1
+    },
+    "allocation": {
+     "decisions": 8,
+     "alone": 8,
+     "aloneGraded": 8,
+     "aloneRight": 7,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 0.875
+    },
+    "routing_change": {
+     "decisions": 2,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 1,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "payments": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 15,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    }
+   }
+  },
+  {
+   "month": "2026-05",
+   "domains": {
+    "pre_chase": {
+     "decisions": 182,
+     "alone": 182,
+     "aloneGraded": 23,
+     "aloneRight": 23,
+     "questions": 0,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "bill_match": {
+     "decisions": 21,
+     "alone": 19,
+     "aloneGraded": 19,
+     "aloneRight": 19,
+     "questions": 2,
+     "aloneShare": 0.9047619047619048,
+     "aloneAccuracy": 1
+    },
+    "allocation": {
+     "decisions": 10,
+     "alone": 9,
+     "aloneGraded": 9,
+     "aloneRight": 7,
+     "questions": 4,
+     "aloneShare": 0.9,
+     "aloneAccuracy": 0.7777777777777778
+    },
+    "underreport": {
+     "decisions": 81,
+     "alone": 81,
+     "aloneGraded": 81,
+     "aloneRight": 81,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "routing_change": {
+     "decisions": 2,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 0,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "payments": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 21,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "refunds": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 1,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    }
+   }
+  },
+  {
+   "month": "2026-06",
+   "domains": {
+    "allocation": {
+     "decisions": 8,
+     "alone": 8,
+     "aloneGraded": 7,
+     "aloneRight": 7,
+     "questions": 0,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "underreport": {
+     "decisions": 80,
+     "alone": 79,
+     "aloneGraded": 79,
+     "aloneRight": 77,
+     "questions": 1,
+     "aloneShare": 0.9875,
+     "aloneAccuracy": 0.9746835443037974
+    },
+    "pre_chase": {
+     "decisions": 157,
+     "alone": 157,
+     "aloneGraded": 19,
+     "aloneRight": 19,
+     "questions": 0,
+     "aloneShare": 1,
+     "aloneAccuracy": 1
+    },
+    "bill_match": {
+     "decisions": 17,
+     "alone": 15,
+     "aloneGraded": 15,
+     "aloneRight": 15,
+     "questions": 2,
+     "aloneShare": 0.8823529411764706,
+     "aloneAccuracy": 1
+    },
+    "routing_change": {
+     "decisions": 2,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 1,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    },
+    "payments": {
+     "decisions": 0,
+     "alone": 0,
+     "aloneGraded": 0,
+     "aloneRight": 0,
+     "questions": 16,
+     "aloneShare": 0,
+     "aloneAccuracy": null
+    }
+   }
+  }
+ ],
+ "money": {
+  "duplicateBillsStoppedCents": 8924200,
+  "duplicateBillsPaidCents": 0,
+  "auditInvoicesCents": 150408,
+  "auditInvoices": 10,
+  "refundsReleased": 2
+ },
+ "security": {
+  "prompt_injection_ignored": 5,
+  "routing_fraud_stopped": 2,
+  "lookalike_sender": 4
+ },
+ "attempts": {
+  "total": 5113,
+  "denied": 20,
+  "rejected": 0
+ },
+ "invariants": {
+  "trialBalance": true,
+  "arRoyaltyTrade": true,
+  "arSupply": true,
+  "arFees": true,
+  "unapplied": true,
+  "cashEqualsBank": true
+ },
+ "chain": {
+  "rows": 5113,
+  "verified": 5113,
+  "firstBreak": null,
+  "head": "3a83cf2c003050bdb90ee95431de5006b78594e6077e7e9eaa2a78e08fb1a5cd"
+ }
+}

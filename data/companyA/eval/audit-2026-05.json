@@ -1,0 +1,781 @@
+{
+ "period": "2026-05",
+ "auditor": "internal audit (read-only)",
+ "reader": "deepseek-v4-pro",
+ "controls": [
+  {
+   "id": "SOD",
+   "name": "nobody released or approved what they requested",
+   "population": 72,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "TRUSTED",
+   "name": "money moved only to accounts from a trusted source",
+   "population": 348,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "TWO_PERSON",
+   "name": "large refunds and payments had two approvals",
+   "population": 72,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "HUMAN_ONLY",
+   "name": "only people endorsed bank changes, activated knowledge or closed books",
+   "population": 18,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CALLBACK",
+   "name": "every applied bank change was confirmed by calling the number on file",
+   "population": 3,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CHAIN",
+   "name": "the activity record is complete and unaltered",
+   "population": 4359,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "LEDGER",
+   "name": "the ledger ties to independently kept totals",
+   "population": 7,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CLOSED",
+   "name": "nothing was written into a closed month",
+   "population": 4,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "CHANGE",
+   "name": "every new skill version and promoted policy passed its gate before going live",
+   "population": 8,
+   "exceptions": 0,
+   "examples": []
+  },
+  {
+   "id": "DECISIONS",
+   "name": "recorded decisions re-run to the same outcome",
+   "population": 25,
+   "exceptions": 0,
+   "examples": []
+  }
+ ],
+ "samples": [
+  {
+   "name": "receivables billed",
+   "population": 182,
+   "bookCents": 30519939,
+   "tolerableCents": 1525997,
+   "intervalCents": 508666,
+   "sampleSize": 60,
+   "items": [
+    {
+     "id": "R-S36-2026-04-27",
+     "kind": "invoice:royalty",
+     "book": 76982,
+     "audited": 76982,
+     "notes": [
+      "traced to email:mb5496a86ee, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24343",
+     "kind": "invoice:supply",
+     "book": 240770,
+     "audited": 240770,
+     "notes": [
+      "traced to sup:SUP-24343, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24346",
+     "kind": "invoice:supply",
+     "book": 211570,
+     "audited": 211570,
+     "notes": [
+      "traced to sup:SUP-24346, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24348",
+     "kind": "invoice:supply",
+     "book": 274500,
+     "audited": 274500,
+     "notes": [
+      "traced to sup:SUP-24348, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24353",
+     "kind": "invoice:supply",
+     "book": 264960,
+     "audited": 264960,
+     "notes": [
+      "traced to sup:SUP-24353, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24355",
+     "kind": "invoice:supply",
+     "book": 263090,
+     "audited": 263090,
+     "notes": [
+      "traced to sup:SUP-24355, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24356",
+     "kind": "invoice:supply",
+     "book": 264030,
+     "audited": 264030,
+     "notes": [
+      "traced to sup:SUP-24356, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24358",
+     "kind": "invoice:supply",
+     "book": 281670,
+     "audited": 281670,
+     "notes": [
+      "traced to sup:SUP-24358, hash verified"
+     ]
+    },
+    {
+     "id": "R-S34-2026-04-27",
+     "kind": "invoice:royalty",
+     "book": 90155,
+     "audited": 90155,
+     "notes": [
+      "traced to email:mde8f908514, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "R-S29-2026-04-27",
+     "kind": "invoice:royalty",
+     "book": 89413,
+     "audited": 89413,
+     "notes": [
+      "traced to email:m5c2f599e6d, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "R-S22-2026-05-04",
+     "kind": "invoice:royalty",
+     "book": 81578,
+     "audited": 81578,
+     "notes": [
+      "traced to email:m28eec8c9b4, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24364",
+     "kind": "invoice:supply",
+     "book": 239700,
+     "audited": 239700,
+     "notes": [
+      "traced to sup:SUP-24364, hash verified"
+     ]
+    },
+    {
+     "id": "R-S14-2026-05-11",
+     "kind": "invoice:royalty",
+     "book": 86680,
+     "audited": 86680,
+     "notes": [
+      "traced to email:mb1a390cee8, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24374",
+     "kind": "invoice:supply",
+     "book": 222140,
+     "audited": 222140,
+     "notes": [
+      "traced to sup:SUP-24374, hash verified"
+     ]
+    },
+    {
+     "id": "R-S34-2026-05-11",
+     "kind": "invoice:royalty",
+     "book": 95582,
+     "audited": 95582,
+     "notes": [
+      "traced to email:me0f7eb8e4b, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24352",
+     "kind": "invoice:supply",
+     "book": 264360,
+     "audited": 264360,
+     "notes": [
+      "traced to sup:SUP-24352, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24361",
+     "kind": "invoice:supply",
+     "book": 284380,
+     "audited": 284380,
+     "notes": [
+      "traced to sup:SUP-24361, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24380",
+     "kind": "invoice:supply",
+     "book": 203200,
+     "audited": 203200,
+     "notes": [
+      "traced to sup:SUP-24380, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24373",
+     "kind": "invoice:supply",
+     "book": 285710,
+     "audited": 285710,
+     "notes": [
+      "traced to sup:SUP-24373, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24362",
+     "kind": "invoice:supply",
+     "book": 222820,
+     "audited": 222820,
+     "notes": [
+      "traced to sup:SUP-24362, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24370",
+     "kind": "invoice:supply",
+     "book": 151810,
+     "audited": 151810,
+     "notes": [
+      "traced to sup:SUP-24370, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24381",
+     "kind": "invoice:supply",
+     "book": 434220,
+     "audited": 434220,
+     "notes": [
+      "traced to sup:SUP-24381, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24384",
+     "kind": "invoice:supply",
+     "book": 241370,
+     "audited": 241370,
+     "notes": [
+      "traced to sup:SUP-24384, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24388",
+     "kind": "invoice:supply",
+     "book": 278090,
+     "audited": 278090,
+     "notes": [
+      "traced to sup:SUP-24388, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24390",
+     "kind": "invoice:supply",
+     "book": 177920,
+     "audited": 177920,
+     "notes": [
+      "traced to sup:SUP-24390, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24393",
+     "kind": "invoice:supply",
+     "book": 295290,
+     "audited": 295290,
+     "notes": [
+      "traced to sup:SUP-24393, hash verified"
+     ]
+    },
+    {
+     "id": "R-S34-2026-05-18",
+     "kind": "invoice:royalty",
+     "book": 91362,
+     "audited": 91362,
+     "notes": [
+      "traced to email:m7737b8ec9c, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24396",
+     "kind": "invoice:supply",
+     "book": 310630,
+     "audited": 310630,
+     "notes": [
+      "traced to sup:SUP-24396, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24400",
+     "kind": "invoice:supply",
+     "book": 283690,
+     "audited": 283690,
+     "notes": [
+      "traced to sup:SUP-24400, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24367",
+     "kind": "invoice:supply",
+     "book": 241440,
+     "audited": 241440,
+     "notes": [
+      "traced to sup:SUP-24367, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24391",
+     "kind": "invoice:supply",
+     "book": 183750,
+     "audited": 183750,
+     "notes": [
+      "traced to sup:SUP-24391, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24368",
+     "kind": "invoice:supply",
+     "book": 258580,
+     "audited": 258580,
+     "notes": [
+      "traced to sup:SUP-24368, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24379",
+     "kind": "invoice:supply",
+     "book": 248270,
+     "audited": 248270,
+     "notes": [
+      "traced to sup:SUP-24379, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24378",
+     "kind": "invoice:supply",
+     "book": 271370,
+     "audited": 271370,
+     "notes": [
+      "traced to sup:SUP-24378, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24394",
+     "kind": "invoice:supply",
+     "book": 258220,
+     "audited": 258220,
+     "notes": [
+      "traced to sup:SUP-24394, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24387",
+     "kind": "invoice:supply",
+     "book": 319660,
+     "audited": 319660,
+     "notes": [
+      "traced to sup:SUP-24387, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24401",
+     "kind": "invoice:supply",
+     "book": 225800,
+     "audited": 225800,
+     "notes": [
+      "traced to sup:SUP-24401, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24404",
+     "kind": "invoice:supply",
+     "book": 226700,
+     "audited": 226700,
+     "notes": [
+      "traced to sup:SUP-24404, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24406",
+     "kind": "invoice:supply",
+     "book": 228530,
+     "audited": 228530,
+     "notes": [
+      "traced to sup:SUP-24406, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24408",
+     "kind": "invoice:supply",
+     "book": 261680,
+     "audited": 261680,
+     "notes": [
+      "traced to sup:SUP-24408, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24411",
+     "kind": "invoice:supply",
+     "book": 176730,
+     "audited": 176730,
+     "notes": [
+      "traced to sup:SUP-24411, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24413",
+     "kind": "invoice:supply",
+     "book": 262410,
+     "audited": 262410,
+     "notes": [
+      "traced to sup:SUP-24413, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24415",
+     "kind": "invoice:supply",
+     "book": 243310,
+     "audited": 243310,
+     "notes": [
+      "traced to sup:SUP-24415, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24417",
+     "kind": "invoice:supply",
+     "book": 322810,
+     "audited": 322810,
+     "notes": [
+      "traced to sup:SUP-24417, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24419",
+     "kind": "invoice:supply",
+     "book": 256760,
+     "audited": 256760,
+     "notes": [
+      "traced to sup:SUP-24419, hash verified"
+     ]
+    },
+    {
+     "id": "R-S12-2026-05-11",
+     "kind": "invoice:royalty",
+     "book": 76890,
+     "audited": 76890,
+     "notes": [
+      "traced to email:m6fbdca0983, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24383",
+     "kind": "invoice:supply",
+     "book": 342430,
+     "audited": 342430,
+     "notes": [
+      "traced to sup:SUP-24383, hash verified"
+     ]
+    },
+    {
+     "id": "R-S22-2026-05-11",
+     "kind": "invoice:royalty",
+     "book": 85146,
+     "audited": 85146,
+     "notes": [
+      "traced to email:md91d11add3, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "R-S26-2026-05-18",
+     "kind": "invoice:royalty",
+     "book": 74715,
+     "audited": 74715,
+     "notes": [
+      "traced to email:m2f1353f975, hash verified",
+      "royalty recomputed from csv re-read: agrees"
+     ]
+    },
+    {
+     "id": "SUP-24421",
+     "kind": "invoice:supply",
+     "book": 324400,
+     "audited": 324400,
+     "notes": [
+      "traced to sup:SUP-24421, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24422",
+     "kind": "invoice:supply",
+     "book": 232140,
+     "audited": 232140,
+     "notes": [
+      "traced to sup:SUP-24422, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24424",
+     "kind": "invoice:supply",
+     "book": 246820,
+     "audited": 246820,
+     "notes": [
+      "traced to sup:SUP-24424, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24427",
+     "kind": "invoice:supply",
+     "book": 272810,
+     "audited": 272810,
+     "notes": [
+      "traced to sup:SUP-24427, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24428",
+     "kind": "invoice:supply",
+     "book": 302160,
+     "audited": 302160,
+     "notes": [
+      "traced to sup:SUP-24428, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24431",
+     "kind": "invoice:supply",
+     "book": 188400,
+     "audited": 188400,
+     "notes": [
+      "traced to sup:SUP-24431, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24433",
+     "kind": "invoice:supply",
+     "book": 259370,
+     "audited": 259370,
+     "notes": [
+      "traced to sup:SUP-24433, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24435",
+     "kind": "invoice:supply",
+     "book": 295010,
+     "audited": 295010,
+     "notes": [
+      "traced to sup:SUP-24435, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24437",
+     "kind": "invoice:supply",
+     "book": 332880,
+     "audited": 332880,
+     "notes": [
+      "traced to sup:SUP-24437, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24438",
+     "kind": "invoice:supply",
+     "book": 292840,
+     "audited": 292840,
+     "notes": [
+      "traced to sup:SUP-24438, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24440",
+     "kind": "invoice:supply",
+     "book": 213500,
+     "audited": 213500,
+     "notes": [
+      "traced to sup:SUP-24440, hash verified"
+     ]
+    }
+   ],
+   "projectedCents": 0,
+   "upperLimitCents": 1525997
+  },
+  {
+   "name": "payables approved",
+   "population": 19,
+   "bookCents": 30918000,
+   "tolerableCents": 1545900,
+   "intervalCents": 515300,
+   "sampleSize": 18,
+   "items": [
+    {
+     "id": "V05:INV-36651",
+     "kind": "bill",
+     "book": 685000,
+     "audited": 685000,
+     "notes": []
+    },
+    {
+     "id": "V03:GT35301",
+     "kind": "bill",
+     "book": 832500,
+     "audited": 832500,
+     "notes": []
+    },
+    {
+     "id": "V02:PC-38370",
+     "kind": "bill",
+     "book": 1200000,
+     "audited": 1200000,
+     "notes": []
+    },
+    {
+     "id": "V01:INV-34862",
+     "kind": "bill",
+     "book": 4800000,
+     "audited": 4800000,
+     "notes": []
+    },
+    {
+     "id": "V03:GT35305",
+     "kind": "bill",
+     "book": 740000,
+     "audited": 740000,
+     "notes": []
+    },
+    {
+     "id": "V02:PC-38371",
+     "kind": "bill",
+     "book": 850000,
+     "audited": 850000,
+     "notes": []
+    },
+    {
+     "id": "V04:BAD/34847",
+     "kind": "bill",
+     "book": 642600,
+     "audited": 642600,
+     "notes": []
+    },
+    {
+     "id": "V01:INV-34866",
+     "kind": "bill",
+     "book": 5160000,
+     "audited": 5160000,
+     "notes": []
+    },
+    {
+     "id": "V04:BAD/34851",
+     "kind": "bill",
+     "book": 630000,
+     "audited": 630000,
+     "notes": []
+    },
+    {
+     "id": "V03:GT35307",
+     "kind": "bill",
+     "book": 777000,
+     "audited": 777000,
+     "notes": []
+    },
+    {
+     "id": "V02:PC-38374",
+     "kind": "bill",
+     "book": 1000000,
+     "audited": 1000000,
+     "notes": []
+    },
+    {
+     "id": "V01:INV-34869",
+     "kind": "bill",
+     "book": 4560000,
+     "audited": 4560000,
+     "notes": []
+    },
+    {
+     "id": "V03:GT35309",
+     "kind": "bill",
+     "book": 758500,
+     "audited": 758500,
+     "notes": []
+    },
+    {
+     "id": "V02:PC-38376",
+     "kind": "bill",
+     "book": 1400000,
+     "audited": 1400000,
+     "notes": []
+    },
+    {
+     "id": "V04:BAD/34853",
+     "kind": "bill",
+     "book": 714000,
+     "audited": 714000,
+     "notes": []
+    },
+    {
+     "id": "V01:INV-34872",
+     "kind": "bill",
+     "book": 3840000,
+     "audited": 3840000,
+     "notes": []
+    },
+    {
+     "id": "V04:BAD/34855",
+     "kind": "bill",
+     "book": 483000,
+     "audited": 483000,
+     "notes": []
+    },
+    {
+     "id": "V02:PC-38379",
+     "kind": "bill",
+     "book": 1375000,
+     "audited": 1375000,
+     "notes": []
+    }
+   ],
+   "projectedCents": 0,
+   "upperLimitCents": 953400
+  }
+ ],
+ "opinion": "clean",
+ "method": "monetary-unit sampling at 95% confidence, tolerable misstatement 5% of each population, Poisson factors; controls tested over 100% of the population"
+}

@@ -1,0 +1,336 @@
+{
+  "program": {
+    "domain": "pre_chase",
+    "rules": [
+      {
+        "when": {
+          "op": "cmp",
+          "c": "le",
+          "a": {
+            "op": "feat",
+            "name": "days_past_due"
+          },
+          "b": {
+            "op": "feat",
+            "name": "grace_days"
+          }
+        },
+        "then": {
+          "decide": "hold",
+          "note": "still inside the grace period"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "gt",
+          "a": {
+            "op": "feat",
+            "name": "announced_payment"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "hold",
+          "note": "payment announced and in transit, hold collection per agreement"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "notices_last_30d"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "le",
+              "a": {
+                "op": "feat",
+                "name": "open_amount"
+              },
+              "b": {
+                "op": "num",
+                "v": 100000
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "hold",
+          "note": "already noticed recently on a smaller balance; wait for response before chasing again"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "open_amount"
+              },
+              "b": {
+                "op": "num",
+                "v": 300000
+              }
+            },
+            {
+              "op": "or",
+              "args": [
+                {
+                  "op": "feat",
+                  "name": "recent_return"
+                },
+                {
+                  "op": "feat",
+                  "name": "bank_change_recent"
+                },
+                {
+                  "op": "cmp",
+                  "c": "ge",
+                  "a": {
+                    "op": "feat",
+                    "name": "open_amount"
+                  },
+                  "b": {
+                    "op": "num",
+                    "v": 500000
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "decide": "escalate_controller",
+          "note": "large exposure with independent risk signal requires controller review"
+        }
+      },
+      {
+        "when": {
+          "op": "feat",
+          "name": "open_dispute"
+        },
+        "then": {
+          "decide": "ask_consultant",
+          "note": "balance is disputed"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "ge",
+          "a": {
+            "op": "feat",
+            "name": "open_amount"
+          },
+          "b": {
+            "op": "num",
+            "v": 100000
+          }
+        },
+        "then": {
+          "decide": "chase",
+          "note": "past due beyond grace with material balance, proceed to chase"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "chase"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "pre_chase",
+    "parent": "pre_chase@2",
+    "lesson": {
+      "subjects": [
+        "entity:F07:2026-03-10",
+        "entity:F14:2026-03-10",
+        "entity:F12:2026-03-30",
+        "entity:F10:2026-04-01",
+        "entity:F03:2026-04-04",
+        "entity:F04:2026-04-04",
+        "entity:F09:2026-04-14",
+        "entity:F10:2026-04-13",
+        "entity:F10:2026-04-15"
+      ],
+      "required": 9,
+      "handled": [
+        "entity:F10:2026-04-13",
+        "entity:F10:2026-04-15"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 1,
+      "cases": [
+        {
+          "subject": "entity:F07:2026-03-10",
+          "label": "escalate_controller",
+          "source": "ask #171 answered by controller:Dana",
+          "reason": "I misread the case file, so I cannot confirm whether the hold decision on entity F07 was correct under current ledger standards.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F14:2026-03-10",
+          "label": "escalate_controller",
+          "source": "ask #172 answered by controller:Dana",
+          "reason": "The ledger confirms this entity requires immediate escalation, so the system’s hold decision was incorrect.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F12:2026-03-30",
+          "label": "escalate_controller",
+          "source": "ask #231 answered by controller:Dana",
+          "reason": "The ledger confirms the hold was correct, so no escalation is required.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F10:2026-04-01",
+          "label": "escalate_controller",
+          "source": "ask #234 answered by controller:Dana",
+          "reason": "The ledger shows no basis for a hold, so the seat’s decision was incorrect and requires immediate escalation to me.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F03:2026-04-04",
+          "label": "escalate_controller",
+          "source": "ask #241 answered by controller:Dana",
+          "reason": "I misread the case, so I cannot confirm whether holding entity F03 was correct.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F04:2026-04-04",
+          "label": "escalate_controller",
+          "source": "ask #242 answered by controller:Dana",
+          "reason": "I misread the ledger and incorrectly flagged this hold for escalation instead of confirming its validity.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F09:2026-04-14",
+          "label": "escalate_controller",
+          "source": "ask #282 answered by controller:Dana",
+          "reason": "The ledger confirms a hold, but your spot check flagged an escalation error, so the decision was incorrect.",
+          "handled": false
+        },
+        {
+          "subject": "entity:F10:2026-04-13",
+          "label": "hold",
+          "source": "ask #284 answered by controller:Dana",
+          "reason": "Carmen's check #2207 for the NSF fee was mailed Monday; hold collections until it arrives",
+          "handled": true
+        },
+        {
+          "subject": "entity:F10:2026-04-15",
+          "label": "hold",
+          "source": "ask #285 answered by controller:Dana",
+          "reason": "The ledger confirms the correct action was hold, rendering the seat’s chase decision a variance that must be corrected in the audit trail.",
+          "handled": true
+        },
+        {
+          "subject": "entity:F13:2026-04-14",
+          "label": "chase",
+          "source": "ask #283 answered by controller:Dana",
+          "reason": "Send a demand letter citing the ledger, as an eight-day delinquency on $5,186.68 requires immediate collection action regardless of any unsubstantiated dispute.",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 87,
+      "correctBefore": 77,
+      "correctAfter": 79,
+      "fixed": [
+        "entity:F10:2026-04-13",
+        "entity:F10:2026-04-15"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 3,
+      "total": 527,
+      "rate": 0.0056925996204933585,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 34,
+    "robustness": 0.9080459770114943,
+    "alternatives": [],
+    "origin": "qwen3.8-max style 1",
+    "rationale": "Escalation now requires two independent signals—high exposure (>=300k) combined with either a payment anomaly or very high exposure (>=500k)—to avoid flagging legitimately different stores while catching cases the controller must review. A new hold rule pauses re-chasing when a notice was already sent recently on balances under 100k, correcting prior over-chasing mistakes.",
+    "candidatesTried": 3,
+    "candidatesPassed": 1,
+    "seconds": 13,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "clean": {
+          "n": 32,
+          "current": 32,
+          "candidate": 32
+        },
+        "ach_return": {
+          "n": 3,
+          "current": 3,
+          "candidate": 1
+        },
+        "payment_in_transit": {
+          "n": 4,
+          "current": 2,
+          "candidate": 4
+        },
+        "routing_change_legit": {
+          "n": 2,
+          "current": 0,
+          "candidate": 0
+        }
+      },
+      "val": {
+        "clean": {
+          "n": 14,
+          "current": 14,
+          "candidate": 14
+        },
+        "payment_in_transit": {
+          "n": 1,
+          "current": 0,
+          "candidate": 0
+        }
+      },
+      "test": {
+        "clean": {
+          "n": 17,
+          "current": 17,
+          "candidate": 17
+        },
+        "payment_in_transit": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "ach_return": {
+          "n": 1,
+          "current": 1,
+          "candidate": 0
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:28:23.066Z"
+  }
+}

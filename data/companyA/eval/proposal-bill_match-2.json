@@ -1,0 +1,239 @@
+{
+  "program": {
+    "domain": "bill_match",
+    "rules": [
+      {
+        "when": {
+          "op": "cmp",
+          "c": "ge",
+          "a": {
+            "op": "feat",
+            "name": "duplicate_score"
+          },
+          "b": {
+            "op": "num",
+            "v": 1
+          }
+        },
+        "then": {
+          "decide": "reject",
+          "note": "exact duplicate bill detected"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "a": {
+            "op": "feat",
+            "name": "po_found"
+          }
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "no purchase order for this bill"
+        }
+      },
+      {
+        "when": {
+          "op": "not",
+          "a": {
+            "op": "feat",
+            "name": "receipt_found"
+          }
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "nothing has been received against the order"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "gt",
+          "a": {
+            "op": "feat",
+            "name": "amount_vs_received"
+          },
+          "b": {
+            "op": "num",
+            "v": 1.02
+          }
+        },
+        "then": {
+          "decide": "hold_exception",
+          "note": "billed for more than was received"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "approve"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "bill_match",
+    "parent": "bill_match@1",
+    "lesson": {
+      "subjects": [
+        "bill:V04:BAD-34842"
+      ],
+      "required": 1,
+      "handled": [
+        "bill:V04:BAD-34842"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 8,
+      "cases": [
+        {
+          "subject": "bill:V04:BAD-34842",
+          "label": "reject",
+          "source": "ask #303 answered by controller:Dana",
+          "reason": "The ledger confirms this is a duplicate of V02:PC-38355, so reject it immediately.",
+          "handled": true
+        },
+        {
+          "subject": "bill:V05:INV-36640",
+          "label": "approve",
+          "source": "ask #2 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service is contractually exempt from POs, and this amount matches the agreed rate in the ledger.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36644",
+          "label": "approve",
+          "source": "ask #65 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no purchase order by design and the amount matches the contract rate.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V03:GT35276",
+          "label": "approve",
+          "source": "ask #122 answered by controller:Dana",
+          "reason": "The ledger confirms purchasing agreed to this price increase with Golden Tapioca, so the variance is authorized.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36645",
+          "label": "approve",
+          "source": "ask #151 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no PO by design, and the amount matches the contract rate.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V02:PC-38354",
+          "label": "reject",
+          "source": "ask #160 answered by controller:Dana",
+          "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount; reject this bill.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V03:GT35294",
+          "label": "reject",
+          "source": "ask #245 answered by controller:Dana",
+          "reason": "Reject GT35294 because the unit price exceeds the PO and lacks mutual agreement.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V05:INV-36647",
+          "label": "approve",
+          "source": "ask #264 answered by controller:Dana",
+          "reason": "CleanPro’s monthly service requires no purchase order and the amount matches the contract rate, so approve it.",
+          "handled": false
+        },
+        {
+          "subject": "bill:V02:PC-38366",
+          "label": "reject",
+          "source": "ask #309 answered by controller:Dana",
+          "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount as billed.",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 31,
+      "correctBefore": 22,
+      "correctAfter": 23,
+      "fixed": [
+        "bill:V04:BAD-34842"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 0,
+      "total": 56,
+      "rate": 0,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 15,
+    "robustness": 0.75,
+    "alternatives": [],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a rule at the top to reject bills with a duplicate_score of 1 or higher, fixing the mistake where an exact duplicate was incorrectly approved. All other rules remain unchanged to preserve existing behavior.",
+    "candidatesTried": 3,
+    "candidatesPassed": 1,
+    "seconds": 10.7,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "bill_clean": {
+          "n": 37,
+          "current": 37,
+          "candidate": 37
+        },
+        "bill_no_po_service": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "bill_price_variance": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        }
+      },
+      "test": {
+        "bill_clean": {
+          "n": 14,
+          "current": 14,
+          "candidate": 14
+        },
+        "bill_duplicate": {
+          "n": 2,
+          "current": 0,
+          "candidate": 2
+        }
+      },
+      "val": {
+        "bill_clean": {
+          "n": 10,
+          "current": 10,
+          "candidate": 10
+        },
+        "bill_price_variance": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "bill_short_shipment": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "bill_no_po_service": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "bill_duplicate": {
+          "n": 1,
+          "current": 0,
+          "candidate": 1
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:29:43.426Z"
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "program": {
+    "domain": "allocation",
+    "rules": [
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "exactly one subset sums to the receipt"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "payment reference matches one open invoice exactly, confirming which of several subsets is correct"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "reference names a single open invoice; applying there even though no subset matches exactly"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "no subset matches; apply by contract order"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "leave_unapplied_ask",
+      "note": "unclear allocation; ask controller"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "allocation",
+    "parent": "allocation@1",
+    "lesson": {
+      "subjects": [
+        "receipt:BACS-536784"
+      ],
+      "required": 1,
+      "handled": [
+        "receipt:BACS-536784"
+      ],
+      "optionalFixed": 8,
+      "optionalTotal": 8,
+      "cases": [
+        {
+          "subject": "receipt:BACS-536784",
+          "label": "apply_to_reference",
+          "source": "ask #5695 answered by controller:Dana",
+          "reason": "BACS-536792 names 536792 for its amount",
+          "handled": true
+        },
+        {
+          "subject": "receipt:BACS-536751",
+          "label": "apply_unique",
+          "source": "ask #5668 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536688",
+          "label": "apply_unique",
+          "source": "ask #5669 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536753",
+          "label": "apply_unique",
+          "source": "ask #5671 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536791",
+          "label": "apply_unique",
+          "source": "ask #5677 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536601",
+          "label": "apply_unique",
+          "source": "ask #5680 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536610",
+          "label": "apply_unique",
+          "source": "ask #5681 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536366",
+          "label": "apply_unique",
+          "source": "ask #5687 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536630",
+          "label": "apply_unique",
+          "source": "ask #5688 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 17,
+      "correctBefore": 8,
+      "correctAfter": 17,
+      "fixed": [
+        "receipt:BACS-536751",
+        "receipt:BACS-536688",
+        "receipt:BACS-536753",
+        "receipt:BACS-536791",
+        "receipt:BACS-536601",
+        "receipt:BACS-536610",
+        "receipt:BACS-536366",
+        "receipt:BACS-536630",
+        "receipt:BACS-536784"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 2,
+      "total": 31,
+      "rate": 0.06451612903225806,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 20,
+    "robustness": 1,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 2",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 27
+      },
+      {
+        "origin": "qwen3.8-max style 0",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 30
+      }
+    ],
+    "origin": "qwen3.8-max style 1",
+    "rationale": "The new rules first handle unambiguous unique matches, then use reference_matches_open combined with exact_match as an independent signal to disambiguate multiple solutions safely. When no subset matches but the payment reference names exactly one open invoice, we now apply_to_reference instead of incorrectly falling through to apply_unique.",
+    "candidatesTried": 3,
+    "candidatesPassed": 3,
+    "seconds": 11.3,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "payment_prompt": {
+          "n": 17,
+          "current": 11,
+          "candidate": 15
+        },
+        "payment_parent": {
+          "n": 3,
+          "current": 3,
+          "candidate": 2
+        }
+      },
+      "test": {
+        "payment_prompt": {
+          "n": 4,
+          "current": 2,
+          "candidate": 3
+        }
+      },
+      "val": {
+        "payment_parent": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "payment_prompt": {
+          "n": 7,
+          "current": 3,
+          "candidate": 7
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T11:53:30.350Z"
+  }
+}

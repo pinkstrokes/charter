@@ -1,0 +1,230 @@
+{
+  "program": {
+    "domain": "underreport",
+    "rules": [
+      {
+        "when": {
+          "op": "cmp",
+          "c": "lt",
+          "a": {
+            "op": "feat",
+            "name": "reported_card"
+          },
+          "b": {
+            "op": "arith",
+            "f": "mul",
+            "args": [
+              {
+                "op": "feat",
+                "name": "card_settled"
+              },
+              {
+                "op": "num",
+                "v": 0.98
+              }
+            ]
+          }
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "reported card sales below what the processor settled"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "supply_implied_gross"
+              },
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "reported_gross"
+                  },
+                  {
+                    "op": "num",
+                    "v": 1.209
+                  }
+                ]
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "lt",
+              "a": {
+                "op": "feat",
+                "name": "cash_share"
+              },
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "peer_cash_share"
+                  },
+                  {
+                    "op": "num",
+                    "v": 0.505
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "accept"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "underreport",
+    "parent": "underreport@1",
+    "lesson": {
+      "subjects": [
+        "store:S22:2026-02-16"
+      ],
+      "required": 1,
+      "handled": [
+        "store:S22:2026-02-16"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 0,
+      "cases": [
+        {
+          "subject": "store:S22:2026-02-16",
+          "label": "flag_audit",
+          "source": "ask #124 answered by consultant:Priya",
+          "reason": "The decision to accept S22 was incorrect because the data indicated a need for flag_audit, so I am marking this spot check as failed.",
+          "handled": true
+        }
+      ]
+    },
+    "labeled": {
+      "n": 26,
+      "correctBefore": 25,
+      "correctAfter": 26,
+      "fixed": [
+        "store:S22:2026-02-16"
+      ],
+      "broken": []
+    },
+    "budget": {
+      "flagged": 2,
+      "total": 105,
+      "rate": 0.01904761904761905,
+      "limit": 0.06
+    },
+    "changed": {
+      "n": 1,
+      "total": 105,
+      "rate": 0.009523809523809525,
+      "limit": 0.1
+    },
+    "newLeads": [
+      "store:S03:2026-01-19"
+    ],
+    "safetyViolations": 0,
+    "complexity": 19,
+    "robustness": 0.5865384615384616,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay, thresholds centred by replay",
+        "robustness": 0.5833333333333334,
+        "newLeads": 2,
+        "complexity": 28
+      },
+      {
+        "origin": "qwen3.8-max style 0",
+        "robustness": 0.5785256410256411,
+        "newLeads": 1,
+        "complexity": 19
+      },
+      {
+        "origin": "qwen3.8-max style 2",
+        "robustness": 0.5785256410256411,
+        "newLeads": 1,
+        "complexity": 19
+      }
+    ],
+    "origin": "qwen3.8-max style 2, thresholds centred by replay",
+    "rationale": "Added a rule to flag cases where supply-implied gross is more than 30% above reported gross and the store's cash share is less than half the peer median, which catches S22:2026-02-16 where massive underreporting was hidden by matching card figures. This pattern correctly distinguishes genuine low-cash stores like S36 (whose own history matches) from stores suppressing cash revenue.",
+    "candidatesTried": 7,
+    "candidatesPassed": 6,
+    "seconds": 0.3,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "val": {
+        "clean": {
+          "n": 34,
+          "current": 34,
+          "candidate": 34
+        },
+        "underreported_cash": {
+          "n": 3,
+          "current": 0,
+          "candidate": 2
+        },
+        "clean_low_cash": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "prompt_injection": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        }
+      },
+      "train": {
+        "clean": {
+          "n": 55,
+          "current": 55,
+          "candidate": 55
+        },
+        "clean_low_cash": {
+          "n": 7,
+          "current": 7,
+          "candidate": 7
+        },
+        "revised_report": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        }
+      },
+      "test": {
+        "clean": {
+          "n": 29,
+          "current": 29,
+          "candidate": 29
+        },
+        "underreported_cash": {
+          "n": 3,
+          "current": 0,
+          "candidate": 2
+        },
+        "clean_low_cash": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:24:32.670Z"
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "program": {
+    "domain": "allocation",
+    "rules": [
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "exactly one subset sums to the receipt"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "payment reference matches one open invoice exactly, confirming which of several subsets is correct"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "remittance_present"
+            },
+            {
+              "op": "feat",
+              "name": "remittance_consistent"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "the customer's remittance lists these invoices"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "reference_gap_cents"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "reference names a single open invoice with no overpayment; applying there even though no subset matches exactly"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "leave_unapplied_ask",
+      "note": "unclear allocation; ask controller"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "allocation",
+    "parent": "allocation@4",
+    "lesson": {
+      "subjects": [
+        "receipt:STMT-B-17389-2011-02",
+        "receipt:STMT-B-12921-2011-03",
+        "receipt:STMT-B-13089-2011-04",
+        "receipt:STMT-B-17841-2011-04"
+      ],
+      "required": 0,
+      "handled": [],
+      "optionalFixed": 4,
+      "optionalTotal": 4,
+      "cases": [
+        {
+          "subject": "receipt:STMT-B-17389-2011-02",
+          "label": "apply_unique",
+          "source": "ask #5943 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-B-12921-2011-03",
+          "label": "apply_unique",
+          "source": "ask #6025 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-B-13089-2011-04",
+          "label": "apply_unique",
+          "source": "ask #6112 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-B-17841-2011-04",
+          "label": "apply_unique",
+          "source": "ask #6113 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        }
+      ]
+    },
+    "labeled": {
+      "n": 115,
+      "correctBefore": 111,
+      "correctAfter": 115,
+      "fixed": [
+        "receipt:STMT-B-17389-2011-02",
+        "receipt:STMT-B-12921-2011-03",
+        "receipt:STMT-B-13089-2011-04",
+        "receipt:STMT-B-17841-2011-04"
+      ],
+      "broken": []
+    },
+    "budget": null,
+    "changed": {
+      "n": 0,
+      "total": 635,
+      "rate": 0,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 23,
+    "robustness": 1,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 23
+      },
+      {
+        "origin": "qwen3.8-max style 2",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 23
+      }
+    ],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a rule that applies uniquely when the payer provided a remittance and it is consistent with a valid subset, safely resolving ambiguity per the safety rule. This handles all new lessons without disturbing existing behavior.",
+    "candidatesTried": 3,
+    "candidatesPassed": 3,
+    "seconds": 8.2,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "train": {
+        "payment_prompt": {
+          "n": 281,
+          "current": 258,
+          "candidate": 258
+        },
+        "payment_parent": {
+          "n": 36,
+          "current": 34,
+          "candidate": 34
+        },
+        "payment_late": {
+          "n": 56,
+          "current": 55,
+          "candidate": 55
+        },
+        "payment_duplicate": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_statement_with_remittance": {
+          "n": 57,
+          "current": 54,
+          "candidate": 57
+        }
+      },
+      "val": {
+        "payment_prompt": {
+          "n": 134,
+          "current": 127,
+          "candidate": 127
+        },
+        "payment_parent": {
+          "n": 22,
+          "current": 22,
+          "candidate": 22
+        },
+        "payment_duplicate": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_late": {
+          "n": 20,
+          "current": 20,
+          "candidate": 20
+        },
+        "payment_statement_with_remittance": {
+          "n": 24,
+          "current": 23,
+          "candidate": 24
+        }
+      },
+      "test": {
+        "payment_prompt": {
+          "n": 132,
+          "current": 123,
+          "candidate": 123
+        },
+        "payment_parent": {
+          "n": 22,
+          "current": 22,
+          "candidate": 22
+        },
+        "payment_late": {
+          "n": 23,
+          "current": 23,
+          "candidate": 23
+        },
+        "payment_duplicate": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
+        },
+        "payment_statement_with_remittance": {
+          "n": 26,
+          "current": 20,
+          "candidate": 26
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-24T12:00:39.477Z"
+  }
+}
