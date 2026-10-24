@@ -3,6 +3,7 @@
 // Every path goes through the kernel, so a person is bound by the same policies.
 import type { CallbackPayload } from './core/contracts';
 import { DOMAINS } from './core/dsl';
+import { allocationLabel } from './core/labels';
 import { applyByTerms, allocationsForSubset } from './core/matching';
 import { addDays, bpOf } from './core/money';
 import type { Principal } from './core/policy';
@@ -32,6 +33,8 @@ export function answerAsk(tx: Tx, who: Principal, askId: bigint, answer: string,
 }
 
 type AskRow = NonNullable<ReturnType<Tx['db']['ask']['id']['find']>>;
+
+
 
 function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string {
   const today = simDate(tx);
@@ -72,12 +75,15 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       const receiptId = a.subject.replace('receipt:', '');
       const r = tx.db.receipt.id.find(receiptId);
       if (!r) return 'unknown receipt';
-      recordCheck(tx, 'allocation', a.subject, answer !== 'apply oldest first' && (evidence.features?.remittance_consistent === true || evidence.features?.reference_matches_open === true) ? 'apply_unique' : 'leave_unapplied_ask', 'answer', who.id);
+      recordCheck(tx, 'allocation', a.subject, allocationLabel(evidence, answer), 'answer', who.id);
       const items = openItemsFor(tx, r.entityCode);
+      const picked = answer.split(' + ').filter(id => items.some(i => i.id === id));
       const allocations =
         answer === 'apply oldest first'
           ? applyByTerms(Number(r.unappliedCents), items, termsForEntity(tx, r.entityCode)?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations
-          : allocationsForSubset(answer.split(' + ').filter(id => items.some(i => i.id === id)), items);
+          : picked.length === 1
+            ? [{ id: picked[0], cents: Math.min(Number(r.unappliedCents), items.find(i => i.id === picked[0])!.openCents) }]
+            : allocationsForSubset(picked, items);
       return applyAllocations(tx, CASH, receiptId, allocations, plan) ? `applied ${receiptId} as told` : `could not apply ${receiptId}`;
     }
     case 'identify_payer': {

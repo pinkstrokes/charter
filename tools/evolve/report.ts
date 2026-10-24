@@ -26,9 +26,9 @@ function domainOf(subject: string): Domain | null {
   if (subject.startsWith('store:')) return 'underreport';
   if (subject.startsWith('receipt:')) return 'allocation';
   if (subject.startsWith('entity:')) return 'pre_chase';
-  routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
-  bill_match: ['hold_exception'],
-};
+  if (subject.startsWith('routing:')) return 'routing_change';
+  if (subject.startsWith('bill:')) return 'bill_match';
+  return null;
 }
 
 // Exact one-sided 95% upper bound on an error rate (Clopper-Pearson), by bisection.
@@ -58,7 +58,7 @@ async function main(): Promise<void> {
   const keyPath = `${DIR}/answer_key.json`;
   const keyRaw = existsSync(keyPath) ? JSON.parse(readFileSync(keyPath, 'utf8')) : [];
   const key = (Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { caseId: string; family: string; split: string; subject: string; expected: string }[];
-  const [decisions, skills, activity, gl, controls, invoices, security, refunds] = await Promise.all([
+  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications] = await Promise.all([
     db.sql('SELECT id, domain, subject, features, skill_key, outcome, shadow FROM decision'),
     db.sql('SELECT key, domain, version, status, program, created_at FROM skill'),
     db.sql('SELECT id, at, principal, role, kind, command, params, used, plan, outcome, reasons, claims, context, prev_hash, hash FROM activity'),
@@ -67,6 +67,7 @@ async function main(): Promise<void> {
     db.sql('SELECT id, kind, amount_cents, open_cents, status FROM invoice'),
     db.sql('SELECT kind, subject FROM security_event'),
     db.sql('SELECT entity_code, amount_cents, bank_account, status FROM refund'),
+    db.sql('SELECT receipt_id, invoice_id, reversed FROM application'),
   ]);
   const latest = new Map<string, Row>();
   for (const d of decisions.sort((a, b) => a.id - b.id)) if (!d.shadow) latest.set(d.subject, d);
@@ -91,6 +92,17 @@ async function main(): Promise<void> {
       a.n++;
       if (!right) a.wrong++;
     }
+  }
+  // Cash application judged by where the money landed, not by the outcome label.
+  const landed: Record<string, Record<string, { n: number; right: number }>> = {};
+  const appliedTo = new Map<string, Set<string>>();
+  for (const a of applications) if (!a.reversed) (appliedTo.get(a.receipt_id) ?? appliedTo.set(a.receipt_id, new Set()).get(a.receipt_id)!).add(a.invoice_id);
+  for (const e of key as { split: string; family: string; subject: string; truth?: { invoices?: string[] } }[]) {
+    if (!e.subject.startsWith('receipt:') || !e.truth?.invoices) continue;
+    const got = [...(appliedTo.get(e.subject.slice(8)) ?? new Set<string>())].sort().join(',');
+    const cell = ((landed[e.split] ??= {})[e.family] ??= { n: 0, right: 0 });
+    cell.n++;
+    if (got === [...e.truth.invoices].sort().join(',')) cell.right++;
   }
   const knowingWhenToAsk = Object.fromEntries(Object.entries(auto).map(([d, a]) => [d, { handledAlone: a.n, wrong: a.wrong, upper95: upper95(a.wrong, a.n) }]));
 
@@ -147,6 +159,7 @@ async function main(): Promise<void> {
     generatedAt: new Date().toISOString(),
     answerKeyEntries: key.length,
     outcomes,
+    cashLanded: landed,
     knowingWhenToAsk,
     generations,
     money: {
@@ -161,7 +174,7 @@ async function main(): Promise<void> {
   };
   mkdirSync(`${DIR}/eval`, { recursive: true });
   writeFileSync(`${DIR}/eval/report.json`, JSON.stringify(report, null, 1));
-  console.log(JSON.stringify({ outcomes: report.outcomes, knowingWhenToAsk, generations: generations.map(g => ({ key: g.key, test: g.test })), invariants, chain: report.chain }, null, 1));
+  console.log(JSON.stringify({ outcomes: report.outcomes, cashLanded: landed, knowingWhenToAsk, generations: generations.map(g => ({ key: g.key, test: g.test })), invariants, chain: report.chain }, null, 1));
 }
 
 main().catch(e => {

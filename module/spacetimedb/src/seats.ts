@@ -654,6 +654,7 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
   const referenced = [...tx.db.invoice.entityCode.filter(r.entityCode)].filter(i => r.reference.includes(i.id));
   // The payment reference names one open invoice whose balance is exactly the payment.
   const named = items.filter(i => r.reference.includes(i.id) && Math.abs(i.openCents - amount) <= 100);
+  const mentioned = items.filter(i => r.reference.includes(i.id));
   const features: FeatureMap = {
     solution_count: Math.min(search.solutions.length, 3),
     exact_match: search.residuals[0] === 0,
@@ -663,6 +664,8 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
     receipt_amount: amount,
     reference_paid: referenced.length > 0 && referenced.every(i => i.openCents === 0n),
     reference_matches_open: named.length === 1,
+    reference_names_open: mentioned.length === 1,
+    reference_gap_cents: mentioned.length === 1 ? mentioned[0].openCents - amount : 0,
     open_items: items.length,
   };
   if (items.length === 0) {
@@ -686,6 +689,9 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
     // The payer's word, when it is consistent, decides which invoices are paid.
     const chosen = remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0];
     allocations = allocationsForSubset(chosen, items);
+  } else if (d.decide === 'apply_to_reference' && mentioned.length === 1) {
+    // Short payments stay open on the invoice the payer named; extra cash stays unapplied.
+    allocations = [{ id: mentioned[0].id, cents: Math.min(amount, mentioned[0].openCents) }];
   } else if (d.decide === 'apply_by_terms') {
     allocations = applyByTerms(amount, items, terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations;
   } else {
@@ -694,8 +700,8 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
       subject: `receipt:${r.id}`,
       toRole: d.askRole,
       question: `${money(amount)} from ${r.payerName} can be explained by ${search.solutions.length} different sets of invoices. Which should it pay?`,
-      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(named.length === 1 ? [named[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first']),
-      evidence: { features, solutions: search.solutions, skill: d.key },
+      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first']),
+      evidence: { features, solutions: search.solutions, skill: d.key, referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs },
       confidence: 0.3,
       workItemId: workId,
     });

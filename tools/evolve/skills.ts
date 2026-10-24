@@ -4,6 +4,7 @@
 import { complexity, DOMAINS, ESCALATING, run, validate, type Expr, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { createHash } from 'node:crypto';
 import { llmJson, parseJson, type Db, type Row } from './lib';
+import { allocationLabel } from '../../module/spacetimedb/src/core/labels';
 
 export type Domain = keyof typeof DOMAINS;
 
@@ -52,7 +53,12 @@ export function agrees(domain: Domain, a: string, b: string): boolean {
 const SAFETY: Record<Domain, (f: FeatureMap, outcome: string) => string | null> = {
   underreport: () => null,
   pre_chase: (f, o) => (o === 'chase' && Number(f.days_past_due) <= Number(f.grace_days) ? 'chases inside the contractual grace period' : null),
-  allocation: (f, o) => (o === 'apply_unique' && Number(f.solution_count) > 1 && f.remittance_consistent !== true ? 'applies cash when several invoice sets fit and the payer did not say which' : null),
+  allocation: (f, o) =>
+    o === 'apply_unique' && Number(f.solution_count) > 1 && f.remittance_consistent !== true && f.reference_matches_open !== true
+      ? 'applies cash when several invoice sets fit and the payer did not say which'
+      : o === 'apply_to_reference' && f.reference_names_open !== true
+        ? 'applies to a reference that names no single open invoice'
+        : null,
   routing_change: (f, o) => (o === 'ask_controller' && f.source_trusted !== true && f.callback_status !== 'confirmed' ? 'sends an unverified bank change to approval' : null),
   bill_match: (f, o) => (o === 'approve' && f.po_found !== true ? 'approves a bill with no purchase order' : null),
 };
@@ -61,7 +67,7 @@ const SAFETY: Record<Domain, (f: FeatureMap, outcome: string) => string | null> 
 export const SAFETY_TEXT: Record<Domain, string> = {
   underreport: 'none beyond the audit budget',
   pre_chase: 'never chase inside the contractual grace period',
-  allocation: 'never apply cash when several invoice sets fit unless the payer said which (remittance_consistent)',
+  allocation: 'never apply cash when several invoice sets fit unless the payer said which (remittance_consistent or reference_matches_open); apply_to_reference only when reference_names_open',
   routing_change: 'never send an unverified bank change to approval',
   bill_match: 'never approve a bill that has no purchase order',
 };
@@ -107,7 +113,7 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
       label = a.answer === 'correct' ? String((ev as { decided?: string }).decided ?? '') : a.answer;
     } else if (a.kind === 'allocation' && domain === 'allocation') {
       // The person picked the payer's own list when it was there: the seat could have applied it.
-      label = a.answer !== 'apply oldest first' && (ev.features?.remittance_consistent === true || ev.features?.reference_matches_open === true) ? 'apply_unique' : 'leave_unapplied_ask';
+      label = allocationLabel(ev as never, a.answer);
     } else {
       const spec = ASK_LABELS[a.kind];
       if (!spec || spec.domain !== domain) continue;
@@ -215,7 +221,8 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     const f = parseJson<FeatureMap>(d.features, {});
     const o = decide(candidate, f);
     const c = decide(current, f);
-    if (!agrees(domain, o, c)) changedN++;
+    // Labeled cases are judged by fixed/broken; the budget guards unknown territory.
+    if (!agrees(domain, o, c) && !labeledSubjects.has(d.subject)) changedN++;
     if (domain === 'underreport' && ESCALATE.has(o)) flagged++;
     if (domain === 'underreport' && ESCALATE.has(o) && !ESCALATE.has(c) && !labeledSubjects.has(d.subject)) newLeads.push(d.subject);
     const s = SAFETY[domain](f, o);

@@ -9,6 +9,8 @@ in by code so they are exact.
 """
 from __future__ import annotations
 
+import re
+
 from cast import AR_INBOX, VOICES, store
 from common import dollars, long_date, money, short_date, stable_int
 from texts import Texts
@@ -90,7 +92,9 @@ def sender_style(texts: Texts, sender: str, stores: list[str]) -> dict:
             return {"notes": [], "bodies": []}
         need = ["{store}", "{week}", "{card}", "{cash}", "{total}"]
         notes = [n for n in x.get("notes") or [] if isinstance(n, str) and n.count("{store}") == 1 and n.count("{week}") == 1 and n.count("{") == n.count("}") == 2]
-        bodies = [b for b in x.get("bodies") or [] if isinstance(b, str) and all(b.count(p) == 1 for p in need) and b.count("{") == b.count("}") == 5]
+        # {week} is the Monday the week starts; a template that calls it the week's end makes the date unreadable.
+        bodies = [b for b in x.get("bodies") or [] if isinstance(b, str) and all(b.count(p) == 1 for p in need) and b.count("{") == b.count("}") == 5
+                  and not re.search(r"(end(ing|ed)?|through|thru|closing)\W{0,3}(\w+\W{0,3}){0,2}\{week\}", b, re.I)]
         return {"notes": notes, "bodies": bodies}
 
     def ok(x) -> bool:

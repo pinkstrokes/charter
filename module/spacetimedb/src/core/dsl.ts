@@ -92,7 +92,7 @@ export const DOMAINS = {
   },
   allocation: {
     doc: 'Decide how to apply a receipt whose matching is not exact or not unique.',
-    outcomes: ['apply_unique', 'apply_by_terms', 'leave_unapplied_ask'],
+    outcomes: ['apply_unique', 'apply_to_reference', 'apply_by_terms', 'leave_unapplied_ask'],
     features: {
       solution_count: { type: 'number', doc: 'invoice subsets that explain the amount within tolerance (capped at 3)' },
       exact_match: { type: 'bool', doc: 'a subset sums exactly to the receipt' },
@@ -102,6 +102,8 @@ export const DOMAINS = {
       receipt_amount: { type: 'number', doc: 'amount received (cents)' },
       reference_paid: { type: 'bool', doc: 'the payment reference names an invoice that is already paid' },
       reference_matches_open: { type: 'bool', doc: 'the payment reference names one open invoice whose balance is exactly the payment' },
+      reference_names_open: { type: 'bool', doc: 'the payment reference names exactly one open invoice, whatever its balance' },
+      reference_gap_cents: { type: 'number', doc: 'balance of the named invoice minus the payment (positive when short-paid)' },
       open_items: { type: 'number', doc: 'open invoices this payer has' },
     },
   },

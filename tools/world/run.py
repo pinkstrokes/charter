@@ -92,6 +92,7 @@ class Runner:
         self.ratified: list[str] = []
         self.hook_log: list[dict] = []
         self.close_log: list[dict] = []
+        self.failures = 0
 
     def setup(self) -> None:
         if self.args.reset:
@@ -130,6 +131,10 @@ class Runner:
                 feeder.ingest("bank_txn", "bank", day, f"bank:{p['payload']['txnId']}", f"account:{p['payload']['counterpartyAccount']}", p["payload"])
             bank = self.bank.step(day)
             seats = self.run_seats()
+            self.failures = self.failures + 1 if "FAILED" in seats else 0
+            if self.failures >= 2:
+                print(f"{day}: run_seats failed twice in a row; stopping (see run.log and `spacetime logs {self.args.db}`)")
+                break
             people = self.staff.step(day)
             extra = []
             if weekday(day) == 6:

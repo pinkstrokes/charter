@@ -14,9 +14,9 @@ from __future__ import annotations
 import hashlib
 from collections import defaultdict
 
-from cast import CONTRACTS, ENTITIES, LOW_CASH_STORES, STORES, entity, report_sender, stores_of, store, terms_for_entity, terms_for_store
-from common import (WEEKS, add_days, all_days, bp_of, business_day_on_or_after, days_between, dollars, is_business_day, money,
-                    next_business_day, rng_for, split_for, spot_check_slip, stable_int, weekday)
+from cast import ENTITIES, LOW_CASH_STORES, STORES, entity, report_sender, store, terms_for_entity, terms_for_store
+from common import (WEEKS, add_days, all_days, bp_of, days_between, dollars, is_business_day, money, next_business_day, rng_for, split_for,
+                    spot_check_slip, stable_int, weekday)
 from economy import BULK_BUYS, cash_cut_for_share, implied_gross
 from ledger import Ledger, apply_by_terms, find_subsets
 
@@ -58,6 +58,14 @@ REVISIONS = [  # honest corrections sent a few days after the original report
     {"store": "S16", "week": "2026-03-16", "revised_on": "2026-03-25", "field": "card", "delta": +118_050, "why": "Saturday's card batch was entered twice"},
 ]  # delta = original report minus truth, in cents
 SAME_ORDER = {(c, w): src for (c, w, src) in [("S20", 10, "S18"), ("S34", 16, "S29")]}  # identical standing orders that week
+
+# Reports that must arrive on Monday because a planted payment names the royalty
+# invoice they create (a bundled wire, a short payment, a duplicate, a revision).
+ON_TIME_REPORTS = {("S05", "2026-02-16"), ("S09", "2026-02-16"), ("S12", "2026-02-16"), ("S22", "2026-04-20"), ("S38", "2026-04-20"),
+                   ("S01", "2026-04-13"), ("S01", "2026-04-06"), ("S22", "2026-05-04"), ("S38", "2026-05-04"), ("S01", "2026-05-11"),
+                   ("S26", "2026-05-04"), ("S16", "2026-03-16"), ("S16", "2026-05-18"), ("S18", "2026-05-18"), ("S20", "2026-05-18"),
+                   ("S11", "2026-04-27"), ("S11", "2026-04-20"), ("S26", "2026-03-09"), ("S26", "2026-03-02"),
+                   ("S18", "2026-03-09"), ("S16", "2026-05-25"), ("S18", "2026-05-25"), ("S20", "2026-05-25")}
 
 
 class Plan:
@@ -124,11 +132,6 @@ class Plan:
 
     def plan_reports(self) -> None:
         """Who sends each store's weekly report, when, in what format, and what it says."""
-        force_monday = {("S05", "2026-02-16"), ("S09", "2026-02-16"), ("S12", "2026-02-16"), ("S22", "2026-04-20"), ("S38", "2026-04-20"),
-                        ("S01", "2026-04-13"), ("S01", "2026-04-06"), ("S22", "2026-05-04"), ("S38", "2026-05-04"), ("S01", "2026-05-11"),
-                        ("S26", "2026-05-04"), ("S16", "2026-03-16"), ("S16", "2026-05-18"), ("S18", "2026-05-18"), ("S20", "2026-05-18"),
-                        ("S11", "2026-04-27"), ("S11", "2026-04-20"), ("S26", "2026-03-09"), ("S26", "2026-03-02"),
-                        ("S18", "2026-03-09"), ("S16", "2026-05-25"), ("S18", "2026-05-25"), ("S20", "2026-05-25")}
         body_habit = {"henry@oaklandleafpearl.com": 0.40, "ben@emeraldcitytea.com": 0.30}
         for code, *_ in STORES:
             name, addr = report_sender(code)
@@ -156,10 +159,10 @@ class Plan:
                             card += rv["delta"]
                         rep["revision"] = rv
                 lateness = 0
-                if fa != "FA-2025" and (code, week) not in force_monday:  # FA-2025 requires the report by Monday night
+                if fa != "FA-2025" and (code, week) not in ON_TIME_REPORTS:  # FA-2025 requires the report by Monday night
                     lateness = r.choices([0, 1, 2, 3], weights=[70, 15, 10, 5])[0]
                 rep["date"] = add_days(week, 7 + lateness)
-                rep["pinned"] = (code, week) in force_monday
+                rep["pinned"] = (code, week) in ON_TIME_REPORTS
                 rep["card"], rep["cash"] = card, cash
                 rep["format"] = "body" if r.random() < body_habit.get(addr, 0.08) else (fmt_home if r.random() < 0.9 else "plain")
                 if addr == "sanmateo@peninsulaboba.com" and r.random() < 0.25:
