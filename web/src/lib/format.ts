@@ -166,6 +166,7 @@ export const ASK_LABEL: Record<string, string> = {
   allocation: 'Apply a receipt',
   identify_payer: 'Identify a payer',
   unapplied_cash: 'Unapplied cash',
+  misapplied: 'Cash applied to the wrong invoice?',
   collections: 'Collections',
   dispute: 'Dispute',
   refund_release: 'Release a refund',

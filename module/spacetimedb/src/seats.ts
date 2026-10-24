@@ -691,6 +691,25 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
     reference_gap_cents: mentioned.length === 1 ? mentioned[0].openCents - amount : 0,
     open_items: items.length,
   };
+  const overturn = paidByInference(tx, r.id, amount, referenced);
+  if (overturn) {
+    // The payer's own words outrank our inference: this payment names an invoice,
+    // for its amount, that an earlier receipt paid without its payer naming it.
+    // Either the earlier application was wrong or this payment is a duplicate.
+    openAsk(tx, {
+      kind: 'misapplied',
+      subject: `receipt:${r.id}`,
+      toRole: 'controller',
+      question: `${money(amount)} from ${r.payerName} names invoice ${overturn.invoice} for exactly its amount, but ${overturn.invoice} was already paid by ${overturn.earlier} (reference "${overturn.earlierReference}"), whose payer did not name it. Undo that application, apply this payment to ${overturn.invoice} and re-apply ${overturn.earlier}?`,
+      options: ['undo the earlier application', 'duplicate: keep as credit', 'duplicate: refund'],
+      evidence: { features, invoice: overturn.invoice, earlier: overturn.earlier, earlierDecision: Number(overturn.decision) },
+      confidence: 0.6,
+      workItemId: workId,
+      by: CASH.id,
+    });
+    closeWork(tx, workId, 'waiting');
+    return;
+  }
   if (items.length === 0) {
     // Nothing to apply it to: a prepayment or a duplicate. A person decides.
     openAsk(tx, {
@@ -734,6 +753,32 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
   }
   applyAllocations(tx, CASH, r.id, allocations, [d.key], features, [`decision:${d.id}`]);
   closeWork(tx, workId, 'done', { decision: d.decide });
+}
+
+// An invoice this payment names for its amount that an earlier receipt paid by
+// our inference: its payer named another invoice, or nothing and a seat matched
+// a subset. Applications the payer asked for (reference, remittance advice, a
+// debit instruction) and contract-order applications of unnamed cash stand.
+function paidByInference(tx: Tx, receiptId: string, amount: number, referenced: { id: string; amountCents: bigint; openCents: bigint }[]): { invoice: string; earlier: string; earlierReference: string; decision: bigint } | null {
+  for (const inv of referenced) {
+    if (inv.openCents !== 0n || Math.abs(Number(inv.amountCents) - amount) > 100) continue;
+    for (const app of tx.db.application.invoiceId.filter(inv.id)) {
+      if (app.reversed || app.receiptId === receiptId) continue;
+      const earlier = tx.db.receipt.id.find(app.receiptId);
+      const act = tx.db.activity.id.find(app.activityId);
+      if (!earlier || !act || earlier.reference.includes(inv.id)) continue;
+      const used = JSON.parse(act.used) as string[];
+      if (used.some(u => u.startsWith('debit:'))) continue;
+      const remitted = factsOf(tx, `entity:${earlier.entityCode}`, 'remittance').some(f => Math.abs(f.value.amount - Number(earlier.amountCents)) <= 100 && (f.value.refs as string[]).includes(inv.id));
+      if (remitted) continue;
+      const ref = used.find(u => u.startsWith('decision:'));
+      const decision = ref ? tx.db.decision.id.find(BigInt(ref.slice(9))) : undefined;
+      const namedOther = [...tx.db.invoice.entityCode.filter(earlier.entityCode)].some(i => i.id !== inv.id && earlier.reference.includes(i.id));
+      if (!namedOther && decision?.outcome !== 'apply_unique') continue;
+      return { invoice: inv.id, earlier: earlier.id, earlierReference: earlier.reference, decision: decision?.id ?? 0n };
+    }
+  }
+  return null;
 }
 
 export function applyAllocations(tx: Tx, who: Principal, receiptId: string, allocations: { id: string; cents: number }[], plan: string[], features: FeatureMap = {}, extraUsed: string[] = []): boolean {

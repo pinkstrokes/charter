@@ -58,7 +58,7 @@ async function main(): Promise<void> {
   const keyPath = `${DIR}/answer_key.json`;
   const keyRaw = existsSync(keyPath) ? JSON.parse(readFileSync(keyPath, 'utf8')) : [];
   const key = (Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { caseId: string; family: string; split: string; subject: string; expected: string }[];
-  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications, policies, asks, bills] = await Promise.all([
+  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications, policies, asks, bills, receipts] = await Promise.all([
     db.sql('SELECT id, at, domain, subject, features, skill_key, outcome, shadow FROM decision'),
     db.sql('SELECT key, domain, version, status, program, created_at FROM skill'),
     db.sql('SELECT id, at, principal, role, kind, command, params, used, plan, outcome, reasons, claims, context, prev_hash, hash FROM activity'),
@@ -71,6 +71,7 @@ async function main(): Promise<void> {
     db.sql('SELECT key, policy_id, status, text, template, source_skill, approved_by, approved_at, proof FROM policy'),
     db.sql('SELECT id, created_at, kind, status FROM ask'),
     db.sql('SELECT id, amount_cents, status FROM bill'),
+    db.sql('SELECT id FROM receipt'),
   ]);
   const latest = new Map<string, Row>();
   for (const d of decisions.sort((a, b) => a.id - b.id)) if (!d.shadow) latest.set(d.subject, d);
@@ -105,8 +106,10 @@ async function main(): Promise<void> {
   }
   // Cash application judged by where the money landed, not by the outcome label.
   const landed: Record<string, Record<string, { n: number; right: number }>> = {};
+  // Only money that has arrived: payments the world schedules after the last day are not judged.
+  const arrived = new Set(receipts.map(r => `receipt:${r.id}`));
   for (const e of key as { split: string; family: string; subject: string; truth?: { invoices?: string[] } }[]) {
-    if (!e.subject.startsWith('receipt:') || !e.truth?.invoices) continue;
+    if (!e.subject.startsWith('receipt:') || !e.truth?.invoices || !arrived.has(e.subject)) continue;
     const got = [...(appliedTo.get(e.subject.slice(8)) ?? new Set<string>())].sort().join(',');
     const cell = ((landed[e.split] ??= {})[e.family] ??= { n: 0, right: 0 });
     cell.n++;
@@ -195,7 +198,7 @@ async function main(): Promise<void> {
   type Cell = { decisions: number; alone: number; aloneGraded: number; aloneRight: number; questions: number };
   const blank = (): Cell => ({ decisions: 0, alone: 0, aloneGraded: 0, aloneRight: 0, questions: 0 });
   const trend: Record<string, Record<string, Cell>> = {};
-  const ASK_DOMAIN: Record<string, string> = { audit: 'underreport', allocation: 'allocation', identify_payer: 'allocation', unapplied_cash: 'allocation', collections: 'pre_chase', callback: 'routing_change', bill_exception: 'bill_match', payment_release: 'payments', refund_release: 'refunds' };
+  const ASK_DOMAIN: Record<string, string> = { audit: 'underreport', allocation: 'allocation', identify_payer: 'allocation', unapplied_cash: 'allocation', misapplied: 'allocation', collections: 'pre_chase', callback: 'routing_change', bill_exception: 'bill_match', payment_release: 'payments', refund_release: 'refunds' };
   for (const d of decisions) {
     if (d.shadow) continue;
     const m = String(d.at).slice(0, 7);

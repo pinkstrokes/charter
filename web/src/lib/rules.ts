@@ -49,6 +49,7 @@ export const ASK_DOMAIN: Record<string, string> = {
   callback: 'routing_change',
   allocation: 'allocation',
   unapplied_cash: 'allocation',
+  misapplied: 'allocation',
   collections: 'pre_chase',
   bill_exception: 'bill_match',
 };

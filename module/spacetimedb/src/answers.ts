@@ -145,6 +145,30 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       }
       return `${money(Number(r.unappliedCents))} kept as credit for ${r.entityCode}`;
     }
+    case 'misapplied': {
+      const r = tx.db.receipt.id.find(a.subject.replace('receipt:', ''));
+      if (!r) return 'unknown receipt';
+      if (answer === 'duplicate: refund') {
+        openWork(tx, 'refunds', 'refund_request', `entity:${r.entityCode}`, { amount: Number(r.unappliedCents), obs: 0, newAccount: '', receipt: r.id }, who.id);
+        return `duplicate: refund of ${money(Number(r.unappliedCents))} handed to the refunds seat`;
+      }
+      if (answer !== 'undo the earlier application') return `duplicate: ${money(Number(r.unappliedCents))} kept as credit for ${r.entityCode}`;
+      const reason = `${r.id} names ${evidence.invoice} for its amount`;
+      // What the earlier seat should have done: follow the invoice its payer named, or ask.
+      const d = evidence.earlierDecision ? tx.db.decision.id.find(BigInt(evidence.earlierDecision)) : undefined;
+      const should = d && JSON.parse(d.features).reference_names_open === true ? 'apply_to_reference' : 'leave_unapplied_ask';
+      let undone: string;
+      if (d && d.outcome !== should && d.outcome !== 'leave_unapplied_ask') undone = correctDecision(tx, who, d.id, should, reason);
+      else {
+        undone = reverseApplications(tx, who, evidence.earlier, reason)?.summary ?? `nothing of ${evidence.earlier} left to undo`;
+        const e = tx.db.receipt.id.find(evidence.earlier);
+        if (e && e.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${e.entityCode}`, { receiptId: e.id }, who.id);
+      }
+      const inv = tx.db.invoice.id.find(evidence.invoice);
+      if (!inv || inv.openCents === 0n) return `${undone}; ${evidence.invoice} is still paid`;
+      const applied = applyAllocations(tx, CASH, r.id, [{ id: inv.id, cents: Math.min(Number(r.unappliedCents), Number(inv.openCents)) }], plan);
+      return `${undone}; ${applied ? `applied ${r.id} to ${inv.id}` : `could not apply ${r.id}`}`;
+    }
     case 'reading_conflict': {
       const obsId = BigInt(evidence.observation);
       if (answer === 'ignore the email') {

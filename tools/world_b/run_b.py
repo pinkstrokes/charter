@@ -172,6 +172,12 @@ def answer(admin, dana, truth):
             dana.call("answer_ask", a["id"], match or "apply oldest first", "the customer's remittance lists these invoices" if match else "apply to the oldest")
         elif k == "identify_payer":
             dana.call("answer_ask", a["id"], t.get("customer", opts[0] if opts else ""), "parent company pays for this customer")
+        elif k == "misapplied":
+            ev = json.loads(a["evidence"] or "{}")
+            if t and ev.get("invoice") in t.get("invoices", []):
+                dana.call("answer_ask", a["id"], "undo the earlier application", f"this payment is the one for {ev.get('invoice')}; {ev.get('earlier')} was put on it by guesswork")
+            else:
+                dana.call("answer_ask", a["id"], "duplicate: keep as credit", "the customer paid this invoice twice")
         elif k == "unapplied_cash":
             dana.call("answer_ask", a["id"], "keep as credit", "customer paid twice; keep it against the next invoice")
         elif k == "spot_check:allocation":
