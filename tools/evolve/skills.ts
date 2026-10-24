@@ -5,7 +5,7 @@ import { ASKS, complexity, DOMAINS, ESCALATING, outcomeFor, parseTreatments, run
 import { createHash } from 'node:crypto';
 import { llmJson, parseJson, type Db, type Row } from './lib';
 import { allocationLabel, labelBreach, landing } from '../../module/spacetimedb/src/core/labels';
-import { upper95 } from '../../module/spacetimedb/src/core/stats';
+import { lower95, upper95 } from '../../module/spacetimedb/src/core/stats';
 
 export type Domain = keyof typeof DOMAINS;
 
@@ -234,6 +234,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   // Handing cases back to people is paid for in mistakes stopped and work taken over.
   let stopped = 0;
   let handedBack = 0;
+  let handedBackWrong = 0;
   let takenOver = 0;
   let newAlone = 0; // labeled cases it settles alone, and not the way the current version did
   const escalating = ESCALATING[domain] ?? [];
@@ -253,7 +254,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     if (!a && candAlone && (b || !curAlone)) broken.push(e.subject);
     else if (b && !a) asksAgain.push(e.subject);
     if (curAlone && !b && (a || !candAlone)) stopped++;
-    if (curAlone && !candAlone) handedBack++;
+    if (curAlone && !candAlone) (handedBack++, (handedBackWrong += b ? 0 : 1));
     if (!curAlone && candAlone && a) takenOver++;
     if (candAlone && !(curAlone && agrees(domain, cand, cur, e.treatments))) newAlone++;
   }
@@ -319,11 +320,11 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   // A new mistake on a labeled case fails the gate, unless the record of its new
   // decisions proves, at 95%, that they are wrong less often than the domain tolerates.
   if (broken.length && upper95(broken.length, newAlone) > tolerable) why.push(`gets ${broken.length} case(s) wrong that the current version gets right`);
-  // Handing cases back to people must stop real mistakes and be worth it: at the
-  // tolerable error rate acting alone and asking cost the same, so one mistake is
-  // worth 1/TOLERABLE questions.
-  if (handedBack && (stopped < MIN_SUPPORT || handedBack > stopped / tolerable + takenOver))
-    why.push(`hands ${handedBack} case(s) back to people to stop ${stopped} mistake(s) (needs ${MIN_SUPPORT}, and a mistake is worth ${Math.round(1 / tolerable)} questions here)`);
+  // Handing cases back to people needs the evidence that suspends a rule: at least
+  // MIN_SUPPORT mistakes among them, and 95% certainty that the current version is
+  // wrong on them more often than the domain tolerates. A few slips are not that.
+  if (handedBack && (handedBackWrong < MIN_SUPPORT || lower95(handedBackWrong, handedBack) <= tolerable))
+    why.push(`hands ${handedBack} case(s) back to people, of which the current version got ${handedBackWrong} wrong: not proof that it is wrong there more than ${tolerable * 100}% of the time`);
   if (budget && budget.rate > budget.limit) why.push(`would send ${(budget.rate * 100).toFixed(1)}% of store-weeks to audit (limit ${budget.limit * 100}%)`);
   if (changed.rate > changed.limit) why.push(`changes ${(changed.rate * 100).toFixed(1)}% of past decisions (limit ${changed.limit * 100}%)`);
   if (safety.length) why.push(`${safety.length} safety violation(s)`);
