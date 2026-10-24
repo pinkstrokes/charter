@@ -115,6 +115,8 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 
 **Books.** Trial balance, receivables and payables controls, unapplied cash and cash-to-bank tie after every run; every row of every activity chain re-verifies.
 
+**How stable these numbers are.** Each number above is one run, and each run replays exactly on the same engine: the committed caches of model calls (the evolver's proposals, company A's email readings) make a replay on a fresh database reproduce it row for row, which we checked for company A. Change anything upstream and the run takes another path, because the model is asked again wherever a prompt reads differently. Company A's under-reporting desk is the most sensitive: across three runs (this one, a replay whose only difference was its row ids, and the replay on maincloud) its final rule caught 3, 1 and 4 of the 4 test weeks, while the collections and payables desks ended at 3 of 3 and 2 of 2 every time. The public page watches the maincloud replays, which process some same-day work in another order than the local engine: there company B landed the same 310 of 314 test payments (wrong on 4 of the 298 it settled alone, with three new versions instead of four), and company C, started from that B's skill, landed 320 of 324.
+
 ## What is new here
 
 1. **Later evidence overturns earlier guesses.** When a payment names an invoice the team paid by inference, it asks, undoes its own application, re-applies both, and the rule that guessed loses autonomy.
