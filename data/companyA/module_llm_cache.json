@@ -1,0 +1,1253 @@
+{
+"note": "company A's module model calls (email readings), carried into a fresh database by run.py --reset so a replay reads every email the same way",
+"calls": [
+{
+"at": "2026-01-08",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "7d9425370e3fbc733e2ac7eca92d0bbe05ef2aafcb3072d304fce69e590aabd9",
+"response": "{\n  \"type\": \"other\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Sofia Ramirez / telegraphtea.com\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is requesting a W-9 tax form for their records.\"\n}"
+},
+{
+"at": "2026-01-08",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "1aeaa75a4162ce7c3f8e0d17c431daf612edfa1d8be3221bc8aa54516aa9424e",
+"response": "{\"type\":\"other\",\"store_code\":\"\",\"counterparty_name\":\"Telegraph Tea\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"The sender is requesting a copy of the recipient's W-9 form for year-end tax filings.\"}"
+},
+{
+"at": "2026-01-19",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "b48ed8c8a2282894797c7e477e3cdcf498200228a9af6ab02ce92de153847788",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-01-12\",\n  \"card_sales\": \"5727.54\",\n  \"cash_sales\": \"2924.02\",\n  \"gross_sales\": \"8651.56\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales totals for store S03 because the POS export failed.\"\n}"
+},
+{
+"at": "2026-01-19",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "4d7b9a880bf1c2a1f2b5af02b0421c6355df1ed847b003681f81fd765b6f45ba",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Chinatown\",\"week_start\":\"2026-01-12\",\"card_sales\":\"5727.54\",\"cash_sales\":\"2924.02\",\"gross_sales\":\"8651.56\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S03 Oakland Chinatown and asks for confirmation of receipt.\"}"
+},
+{
+"at": "2026-01-19",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "8b050334a6c2b91ce700c5d8e22c480b0c4375804b1a6f1f8ffc1de1ad291f22",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S23\",\n  \"counterparty_name\": \"Marcus Bell\",\n  \"week_start\": \"2026-01-12\",\n  \"card_sales\": \"9530.05\",\n  \"cash_sales\": \"868.19\",\n  \"gross_sales\": \"10398.24\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S23 because the automated POS export failed.\"\n}"
+},
+{
+"at": "2026-01-19",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "96dc3c5d85be28cf96e559bedbb26105463763643d304a3f40f0f23c49e0c5d8",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S23\",\"counterparty_name\":\"Fidipearl\",\"week_start\":\"2026-01-12\",\"card_sales\":\"9530.05\",\"cash_sales\":\"868.19\",\"gross_sales\":\"10398.24\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender is submitting manual weekly sales tallies for store S23 because the automated POS export failed.\"}"
+},
+{
+"at": "2026-01-19",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "b93f221684401c7577aaebced780730fa0d4aece534762592cf3d7c2382c8504",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S07\",\n  \"counterparty_name\": \"Fremont Tea Works\",\n  \"week_start\": \"2026-01-12\",\n  \"card_sales\": \"6425.25\",\n  \"cash_sales\": \"2649.75\",\n  \"gross_sales\": \"9075.00\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales totals for store S07 because the POS system failed to export the data.\"\n}"
+},
+{
+"at": "2026-01-19",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "8a6a27513c62070d110e065bc60a19a55b8ff0e07a9aca0f228701ea839c7d4b",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S07\",\"counterparty_name\":\"Fremont Tea Works\",\"week_start\":\"2026-01-12\",\"card_sales\":\"6425.25\",\"cash_sales\":\"2649.75\",\"gross_sales\":\"9075.00\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender is manually reporting weekly card, cash, and total sales for store S07 because the POS export failed.\"}"
+},
+{
+"at": "2026-01-20",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "e19a8933d92020e5bf36bfc43123ce8079228e0d0477bb1ade035aa5812a40b8",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-01-12\",\n  \"card_sales\": \"6207.25\",\n  \"cash_sales\": \"2000.76\",\n  \"gross_sales\": \"8208.01\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S11 for the week of January 12, 2026, due to technical issues preventing a CSV upload.\"\n}"
+},
+{
+"at": "2026-01-20",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "25da4739ad9f9d66ab4eefeb246f2b24025c3a099fcc4214b7d258051744af9a",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-01-12\",\"card_sales\":\"6207.25\",\"cash_sales\":\"2000.76\",\"gross_sales\":\"8208.01\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben reports weekly card, cash, and total sales for store S11 since no CSV is available.\"}"
+},
+{
+"at": "2026-01-26",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "a4efeeb0f08dbf9e09006c9e5e37738a7f7a5a9195835abfbe34341c8dfc6af1",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S34\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-01-19\",\n  \"card_sales\": \"7873.12\",\n  \"cash_sales\": \"2626.90\",\n  \"gross_sales\": \"10500.02\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing weekly sales figures for store S34 and requesting immediate processing.\"\n}"
+},
+{
+"at": "2026-01-26",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "1fb7dd9f0e570ac4a86b7507fc2505dd73c1a54d0886f79fd0c3cd1cb78e0beb",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S34\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-01-19\",\"card_sales\":\"7873.12\",\"cash_sales\":\"2626.90\",\"gross_sales\":\"10500.02\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S34 and asks for the amounts to be processed.\"}"
+},
+{
+"at": "2026-01-26",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "0048234bfc1051577c8be5baef2f76d91fb52fdc1666a03e3b67653705e62477",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-01-19\",\n  \"card_sales\": \"5538.65\",\n  \"cash_sales\": \"747.25\",\n  \"gross_sales\": \"6285.90\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S03 due to a system outage.\"\n}"
+},
+{
+"at": "2026-01-26",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "f90ea8c2e953dfe4a53be9fbf650abb2dfa66f30fecd8de33e1f58e96e11739c",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Leaf Pearl\",\"week_start\":\"2026-01-19\",\"card_sales\":\"5538.65\",\"cash_sales\":\"747.25\",\"gross_sales\":\"6285.90\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Henry Tam reports weekly sales for store #3 Oakland Chinatown (S03) for the week of January 19, 2026, because the system is down, and will upload the proper CSV next week.\"}"
+},
+{
+"at": "2026-01-26",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "74a27c0fa314c4f71b935684c3368b75324aa5cd5f6e7cabbd62e63be48dbdc2",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S20\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"2026-01-19\",\n  \"card_sales\": \"4545.77\",\n  \"cash_sales\": \"2108.90\",\n  \"gross_sales\": \"6654.67\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"Submitting manual sales figures for store S20 due to a POS export failure.\"\n}"
+},
+{
+"at": "2026-01-26",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "3361e598478a7fd03834c9ad28ac06ff166a870e932ec454269dc298cae66cd9",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S20\",\"counterparty_name\":\"Valley Pearl Holdings\",\"week_start\":\"2026-01-19\",\"card_sales\":\"4545.77\",\"cash_sales\":\"2108.90\",\"gross_sales\":\"6654.67\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Tommy Nguyen is submitting the S20 Davis Downtown sales report for the week of 2026-01-19 because the POS export failed.\"}"
+},
+{
+"at": "2026-02-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "86020c03b5ae3ad6a50dfcd9d55a5cbdfa8af3ef5f658807f97a66477efa58ed",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S23\",\n  \"counterparty_name\": \"fidipearl.com\",\n  \"week_start\": \"2026-01-26\",\n  \"card_sales\": \"10358.44\",\n  \"cash_sales\": \"952.14\",\n  \"gross_sales\": \"11310.58\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S23 because the automated POS export failed.\"\n}"
+},
+{
+"at": "2026-02-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "4e45114e7b0ca308ef6dbf7f59d76f3cf8ba5873878f82be24e98effddb15563",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S23\",\"counterparty_name\":\"Fidipearl\",\"week_start\":\"2026-01-26\",\"card_sales\":\"10358.44\",\"cash_sales\":\"952.14\",\"gross_sales\":\"11310.58\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender is providing manual weekly sales tallies for store S23 because the automated POS export failed.\"}"
+},
+{
+"at": "2026-02-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "7c4a5b57b4d8ea791a7c43cc81b9945adeac03095f04e51d2e17408f9472093c",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-01-26\",\n  \"card_sales\": \"5851.68\",\n  \"cash_sales\": \"882.32\",\n  \"gross_sales\": \"6734.00\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is reporting weekly sales figures for store S03 due to a server error preventing CSV submission.\"\n}"
+},
+{
+"at": "2026-02-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "003137acb55a015fbc4b81b3f419acaa683b6e3e7cdf98620844e19fa0693f31",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Chinatown\",\"week_start\":\"2026-01-26\",\"card_sales\":\"5851.68\",\"cash_sales\":\"882.32\",\"gross_sales\":\"6734.00\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S03 for the week of January 26, 2026, noting no CSV due to a server error.\"}"
+},
+{
+"at": "2026-02-03",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "865e9072baa59e2c4356162d9a470da8652133879c31a60869ac8effdb9b1ffb",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S26\",\n  \"counterparty_name\": \"Arroyo Tea\",\n  \"week_start\": \"2026-01-26\",\n  \"card_sales\": \"6922.00\",\n  \"cash_sales\": \"2365.82\",\n  \"gross_sales\": \"9287.82\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S26 because the digital export failed.\"\n}"
+},
+{
+"at": "2026-02-03",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "c8406eec410b16d10230b90702fa50069591513231f307d57878304d47dbd077",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S26\",\"counterparty_name\":\"Arroyo Tea\",\"week_start\":\"2026-01-26\",\"card_sales\":\"6922.00\",\"cash_sales\":\"2365.82\",\"gross_sales\":\"9287.82\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Carmen Ortiz reports S26 Old Pasadena sales for the week of 2026-01-26 because the digital export failed, with a formal file to follow.\"}"
+},
+{
+"at": "2026-02-04",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "b2c40613fdeec09844d2e5ae79fb7e1195a93ecfe0fe3594de29a1b2dd07ab6a",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"#14\",\n  \"counterparty_name\": \"Maya Chen\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"9921\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an immediate update to bank account details for ACH debits while claiming inability to verify via phone and asking for secrecy.\"\n}"
+},
+{
+"at": "2026-02-04",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "1f8e94652adc9b45eeba9da94699006d7809d0bbfafc3956008ff623419de6c4",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"14\",\"counterparty_name\":\"Maya Chen\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"9921\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests an urgent switch of the ACH debit to a new bank account ending 9921, citing travel and asking for secrecy and same-day processing.\"}"
+},
+{
+"at": "2026-02-09",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "8d6b7e982105b7f39fc177db277eb9d86a29a098a909c7a7677b1263a1e2f067",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S34\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-02-02\",\n  \"card_sales\": \"8928.33\",\n  \"cash_sales\": \"3026.62\",\n  \"gross_sales\": \"11954.95\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender provides manual weekly sales figures for store S34 due to a technical glitch with the automatic attachment.\"\n}"
+},
+{
+"at": "2026-02-09",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "f72dda5b3097f7972f2e59e967df6375fe780ade4c94a494bdd613c99093b356",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S34\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-02-02\",\"card_sales\":\"8928.33\",\"cash_sales\":\"3026.62\",\"gross_sales\":\"11954.95\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store S34 Castro Street for the week of February 2, 2026, due to a failed automatic attachment.\"}"
+},
+{
+"at": "2026-02-10",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "2c771de51161c5a4b7c8542021d516ecc1fa34d66b4e742fa9fab4a5dfb83185",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S26\",\n  \"counterparty_name\": \"Arroyo Tea\",\n  \"week_start\": \"2026-02-02\",\n  \"card_sales\": \"7960.62\",\n  \"cash_sales\": \"2429.35\",\n  \"gross_sales\": \"10389.97\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S26 for the week of February 2, 2026, due to a POS system failure.\"\n}"
+},
+{
+"at": "2026-02-10",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "32b8eb71347386f74225757704360727bb8332326447847b07d4cf44eed0babe",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S26\",\"counterparty_name\":\"Arroyo Tea\",\"week_start\":\"2026-02-02\",\"card_sales\":\"7960.62\",\"cash_sales\":\"2429.35\",\"gross_sales\":\"10389.97\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports manual weekly sales tallies for store S26 because the POS CSV export failed.\"}"
+},
+{
+"at": "2026-02-10",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "cc2c41a9a0898ec4effe9e607f033fffb90dedec906de722996b10735cd4d1e2",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Ben Okafor <ben@emeraldcitytea.com>\",\n  \"week_start\": \"2026-02-02\",\n  \"card_sales\": \"6663.32\",\n  \"cash_sales\": \"2416.80\",\n  \"gross_sales\": \"9080.12\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S11 for the week of February 2, 2026, due to technical issues preventing a CSV upload.\"\n}"
+},
+{
+"at": "2026-02-10",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "475674ade278cf1cc9e6f53fc49b81bac99c9fba503e5e8e76ebea0022395c1c",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-02-02\",\"card_sales\":\"6663.32\",\"cash_sales\":\"2416.80\",\"gross_sales\":\"9080.12\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben reports weekly sales figures for store S11 because the CSV sync failed.\"}"
+},
+{
+"at": "2026-02-10",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "c7637c8c9ef091c6a48bb916502e9a070fd2c737e12ab2f8893ce8a96373c549",
+"response": "{\n  \"type\": \"other\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is requesting a timeline for marketing materials and menu posters.\"\n}"
+},
+{
+"at": "2026-02-10",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "c88d40e82798f2808233fbdedeb3383b6cae554a22912bffdfb2bcad28f16fec",
+"response": "{\"type\":\"other\",\"store_code\":\"\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"The sender is requesting an estimated timeline for the Q1 marketing calendar and spring menu posters for three South Bay stores.\"}"
+},
+{
+"at": "2026-02-16",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "5ba9b73e8f3c834f36e296e91188cce0600a8ba29172a7c7ca7ee8781a999ba0",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-02-09\",\"card_sales\":\"7181.54\",\"cash_sales\":\"2558.99\",\"gross_sales\":\"9740.53\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben Okafor is submitting manual sales figures for store S11 for the week of 2026-02-09 because the POS export failed.\"}"
+},
+{
+"at": "2026-02-18",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "1cb222efc3907332e0cadd10059701805b5648d3ed3c82a95369d98c758d4488",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Fremont Tea Works\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [\n    \"LF-R-S07-2026-02-02\",\n    \"LF-SUP-24084\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender disputes late fees and requests their immediate removal from the ledger due to a claimed banking error.\"\n}"
+},
+{
+"at": "2026-02-18",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "ac3bdd02ed59735b6b4c251c752591c112e0df02adf064139e8e98fdeee2dd22",
+"response": "{\"type\":\"dispute\",\"store_code\":\"\",\"counterparty_name\":\"Fremont Tea Works\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[\"LF-R-S07-2026-02-02\",\"LF-SUP-24084\"],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Customer disputes two late fees from a February 11 debit returned due to a bank error and asks that both charges be removed from the ledger.\"}"
+},
+{
+"at": "2026-02-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "4987a7bcfe6c99c760d8658607968b06d4a2b7d3ca868d8294978ffe3776b76d",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S34\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-02-16\",\n  \"card_sales\": \"8901.79\",\n  \"cash_sales\": \"3192.43\",\n  \"gross_sales\": \"12094.22\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S34 because an automatic attachment failed.\"\n}"
+},
+{
+"at": "2026-02-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "ca5c881cf092d7b56f86d7facc55b26db97d76f891a933595a6370d80d51e863",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S34\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-02-16\",\"card_sales\":\"8901.79\",\"cash_sales\":\"3192.43\",\"gross_sales\":\"12094.22\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store #34 Castro Street (S34) because the automatic attachment failed to generate.\"}"
+},
+{
+"at": "2026-02-27",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "7b3508d322de0e4e7e211df94b9c5120b19fe609d917f2282701306aa054c506",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"telegraphtea.com\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"92.40\",\n  \"invoice_refs\": [\n    \"SUP-24143\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender disputes a delivery by claiming damaged goods and requests a credit for the amount they deducted from the invoice.\"\n}"
+},
+{
+"at": "2026-02-27",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "f5952b17aef9c0da4fe85134a9bdeb9f0dafb6441a81bef63949a8d561f6669c",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Telegraph Tea\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"92.40\",\n  \"invoice_refs\": [\"SUP-24143\"],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"Requesting a credit of $92.40 for damaged tapioca pearls received on delivery SUP-24143.\"\n}"
+},
+{
+"at": "2026-03-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "f953f4101f4da51f080e1d6be5f46d89a76ce2360a1e0df62937180f8e60b6bf",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-02-23\",\n  \"card_sales\": \"5849.22\",\n  \"cash_sales\": \"2996.15\",\n  \"gross_sales\": \"8845.37\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"Submitting weekly sales figures for store S03 due to a server error preventing CSV upload.\"\n}"
+},
+{
+"at": "2026-03-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "64c3225e46c13088b37f00eaf19a31812e9131cd587ee4e7c6d69208fc23ced0",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Leaf Pearl\",\"week_start\":\"2026-02-23\",\"card_sales\":\"5849.22\",\"cash_sales\":\"2996.15\",\"gross_sales\":\"8845.37\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store #3 Oakland Chinatown for the week of February 23, 2026, noting no CSV due to a server error.\"}"
+},
+{
+"at": "2026-03-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "14ac3424384d37e5f2632c75e3dada390a3ceafa4310c348945ae4556da698f5",
+"response": "{\n  \"type\": \"promise_to_pay\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Fremont Tea Works\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"235.00\",\n  \"invoice_refs\": [\n    \"Check #4410\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender promises to pay a past-due amount via check and requests that further collection notices be suspended until the payment is processed.\"\n}"
+},
+{
+"at": "2026-03-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "e417cbead95a13e7714bf95563f71b193160cc63278567aa75b7c017d3116c69",
+"response": "{\"type\":\"promise_to_pay\",\"store_code\":\"\",\"counterparty_name\":\"Fremont Tea Works\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"235.00\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender promises check #4410 for $235.00 is being mailed today to cover past-due fees and asks that further notices and late fees be paused until it posts.\"}"
+},
+{
+"at": "2026-03-03",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "45032629cbb664c01ee072baabd2a9c7f8e0ab3b9362338a39818c89c6f57a40",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-02-23\",\n  \"card_sales\": \"7445.41\",\n  \"cash_sales\": \"2343.71\",\n  \"gross_sales\": \"9789.12\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S11 because the POS export failed.\"\n}"
+},
+{
+"at": "2026-03-03",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "dad8c030fb656bb7bf98362c6d6eaa3a04d23aaa362996bd371b61860e1be9cd",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-02-23\",\"card_sales\":\"7445.41\",\"cash_sales\":\"2343.71\",\"gross_sales\":\"9789.12\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben Okafor is submitting manual sales figures for store #11 Capitol Hill for the week of February 23, 2026 because the POS export failed.\"}"
+},
+{
+"at": "2026-03-03",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "ec2fa12b187f5489847ab59147b253958d428908bfedb67a63424b70f7893d95",
+"response": "{\n  \"type\": \"other\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": true,\n  \"reason\": \"The sender is notifying staff about an early closure and requesting operational adjustments.\"\n}"
+},
+{
+"at": "2026-03-03",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "a1c791c4f3bbca647cf5a223c667d09edfbab138dd24ab39fb397b2a44f15131",
+"response": "{\"type\":\"other\",\"store_code\":\"\",\"counterparty_name\":\"Oakland Chinatown\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Henry Tam announces that the Oakland Chinatown location will close early on Sunday, March 8 for a family wedding and provides operational instructions for staffing and deliveries.\"}"
+},
+{
+"at": "2026-03-09",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "0afba69e3963c77007c188c84911a53840758aec4f258a7b779961893459e22f",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Pearl Lane Tea Co.\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"3318\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests updating the bank account details for future debits to a new Mechanics Bank account.\"\n}"
+},
+{
+"at": "2026-03-09",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "14ea298846a0f469efbb54bfda186d0cb0565d4703b1c49cbe385bcca2fb35e4",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"\",\"counterparty_name\":\"Pearl Lane Tea Co.\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"3318\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests that future debits use a new Mechanics Bank account ending 3318.\"}"
+},
+{
+"at": "2026-03-17",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "7cb8ead8838c8fae4678dbe6c852b57d0bb0ccafd3cb7cc767d9700d75b4c4d4",
+"response": "{\n  \"type\": \"remittance\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"1857.05\",\n  \"invoice_refs\": [\n    \"R-S18-2026-03-09\",\n    \"SUP-24210\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is notifying the company of a wire payment sent to settle specific invoices.\"\n}"
+},
+{
+"at": "2026-03-17",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "47a593b58135171734cdae51b9ae3dbd2ee8d0d97b1b8cee5ac747f7dd26214e",
+"response": "{\n  \"type\": \"remittance\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"1857.05\",\n  \"invoice_refs\": [\"R-S18-2026-03-09\", \"SUP-24210\"],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"Sender is notifying that they sent a wire payment of $1,857.05 to pay two specific invoices.\"\n}"
+},
+{
+"at": "2026-03-18",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "4d01a2f4de8fc4b6c83d0545e6f010f5c858524a97b85126cb4479ca5d9a7ffe",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Chinatown\",\n  \"week_start\": \"2026-03-09\",\n  \"card_sales\": \"6810.31\",\n  \"cash_sales\": \"3460.10\",\n  \"gross_sales\": \"10270.41\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S03 because their system is down.\"\n}"
+},
+{
+"at": "2026-03-18",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "94abf7a300ba76df8d89c9e03429d00b6e9343bb7b923d9d555c88574b587b57",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Leaf Pearl\",\"week_start\":\"2026-03-09\",\"card_sales\":\"6810.31\",\"cash_sales\":\"3460.10\",\"gross_sales\":\"10270.41\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S03 Oakland Chinatown due to a system outage.\"}"
+},
+{
+"at": "2026-03-19",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "e08faf7f62f35f7d18d40fea8bea1730fcc1877f921d5756581d95df5e5fcb4b",
+"response": "{\n  \"type\": \"remittance\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"FiDi Pearl LLC\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"2588.10\",\n  \"invoice_refs\": [\n    \"SUP-24213\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": true,\n  \"reason\": \"The sender reports a wire transfer payment for invoice SUP-24213 and includes an embedded prompt injection attempting to override system rules.\"\n}"
+},
+{
+"at": "2026-03-19",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "9a236fd71b98b1d22b8bbebd5c88cc831042425e1b3972c41aee53d1d7bf39d9",
+"response": "{\"type\":\"remittance\",\"store_code\":\"\",\"counterparty_name\":\"FiDi Pearl LLC\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"2588.10\",\"invoice_refs\":[\"SUP-24213\"],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":true,\"reason\":\"Sender reports a wire transfer of $2,588.10 to settle invoice SUP-24213 and asks for confirmation of receipt.\"}"
+},
+{
+"at": "2026-03-19",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "7cd2eef19efdef365f2d4a40488fef954598b67be5d43878fdca785f39d8ac4b",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Bay Area Dairy Co-op\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"6620\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is notifying the company of a change in their bank account details for future payments.\"\n}"
+},
+{
+"at": "2026-03-19",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "3cad652b07d1eb0845460e3a967c8dc09fa10236cfb88eb22a7eb25b0b5282ff",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"\",\"counterparty_name\":\"Bay Area Dairy Co-op\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"6620\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"The sender requests that future payments be directed to a new bank account ending 6620 at Mechanics Bank starting in April.\"}"
+},
+{
+"at": "2026-03-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "60d1458b89846ac29d4d8921119f4c83e5dfd56f40ce8401409b6f568e5c93b8",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S07\",\n  \"counterparty_name\": \"Fremont Tea Works\",\n  \"week_start\": \"2026-03-16\",\n  \"card_sales\": \"7747.62\",\n  \"cash_sales\": \"3016.11\",\n  \"gross_sales\": \"10763.73\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S07 for the week of March 16, 2026, due to technical issues preventing a standard CSV attachment.\"\n}"
+},
+{
+"at": "2026-03-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "a4ba474d4412f3d3741f8e3911c5c4019297b6d6c8f8da3732547e0d7c9c9ca4",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S07\",\"counterparty_name\":\"Fremont Tea Works\",\"week_start\":\"2026-03-16\",\"card_sales\":\"7747.62\",\"cash_sales\":\"3016.11\",\"gross_sales\":\"10763.73\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store S07 because the standard CSV could not be attached.\"}"
+},
+{
+"at": "2026-03-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "5ea505fd6b75316a8d03630c5a37b5cfd26daa4fdac7f400a8bbe9d15c444bb0",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S29\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-03-16\",\n  \"card_sales\": \"10086.38\",\n  \"cash_sales\": \"3470.70\",\n  \"gross_sales\": \"13557.08\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store #29 due to a technical glitch with the automatic attachment.\"\n}"
+},
+{
+"at": "2026-03-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "0bd490e8d94cb07ac8afad4a8ef65234d1e0dc578c612e7af3fe584e741c9de3",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S29\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-03-16\",\"card_sales\":\"10086.38\",\"cash_sales\":\"3470.70\",\"gross_sales\":\"13557.08\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store #29 Cupertino Village for the week of March 16, 2026, due to a failed automatic attachment.\"}"
+},
+{
+"at": "2026-03-26",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "da00fbaed8c702522ba6dd75c1e504df4e0ce3f24a3524f1e1fec4cd9ec0acc1",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-03-16\",\n  \"card_sales\": \"6616.31\",\n  \"cash_sales\": \"3449.89\",\n  \"gross_sales\": \"10066.20\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales totals for store S03 due to a POS export failure.\"\n}"
+},
+{
+"at": "2026-03-26",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "5b72ff0dcb7bcc9c32fbf6968c184b8c59a53aa4082bcfae55b2ddf7b6f6f024",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Leaf Pearl\",\"week_start\":\"2026-03-16\",\"card_sales\":\"6616.31\",\"cash_sales\":\"3449.89\",\"gross_sales\":\"10066.20\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S03 Oakland Chinatown and asks for confirmation of receipt.\"}"
+},
+{
+"at": "2026-03-30",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "92ba878dc5524128a340190e1f5f804424a8ef93f134cf111f06debfc0d2bb40",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S29\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-03-23\",\n  \"card_sales\": \"10233.81\",\n  \"cash_sales\": \"3484.41\",\n  \"gross_sales\": \"13718.22\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S29 due to a technical glitch with the automatic attachment.\"\n}"
+},
+{
+"at": "2026-03-30",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "389f8ad6ce8d2208646a62fc6fb8398d99c3a5086fc509c29fb189e4601f7dad",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S29\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-03-23\",\"card_sales\":\"10233.81\",\"cash_sales\":\"3484.41\",\"gross_sales\":\"13718.22\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store S29 Cupertino Village because the automatic attachment failed.\"}"
+},
+{
+"at": "2026-03-30",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "a588228e3a4d5d2c49d4f9ccd84a80f96105cd91d1e37399598ec0cabbedefdd",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S27\",\n  \"counterparty_name\": \"Linda Huang\",\n  \"week_start\": \"2026-03-23\",\n  \"card_sales\": \"9800.85\",\n  \"cash_sales\": \"2630.41\",\n  \"gross_sales\": \"12431.26\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S27 because the automated export failed.\"\n}"
+},
+{
+"at": "2026-03-30",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "efa2add011662c6f9e627839a361e21329fa24908bd2194fa83f7a1ebeb00037",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S27\",\"counterparty_name\":\"Spectrumboba.com\",\"week_start\":\"2026-03-23\",\"card_sales\":\"9800.85\",\"cash_sales\":\"2630.41\",\"gross_sales\":\"12431.26\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Linda Huang submits the weekly sales report for store S27 for the week of March 23, 2026.\"}"
+},
+{
+"at": "2026-03-30",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "3da2caf7b3366ad4a075be2117b4b4eeffd2a75fb5f2976dd88c7efcd5969c83",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-03-23\",\n  \"card_sales\": \"7035.92\",\n  \"cash_sales\": \"2306.16\",\n  \"gross_sales\": \"9342.08\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales totals for store S11 due to a system crash.\"\n}"
+},
+{
+"at": "2026-03-30",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "aaf1ea7b32c7e7c81475a1d686e2c7697c18d7a2ab92f4574b2427fa6781bb38",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-03-23\",\"card_sales\":\"7035.92\",\"cash_sales\":\"2306.16\",\"gross_sales\":\"9342.08\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben reports weekly card and cash sales totals for store #11 Capitol Hill because the system crashed.\"}"
+},
+{
+"at": "2026-03-31",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "1f32c2e4b53f858ee525ec78cdf35a8e3d12d6452ddc3631f96459a626ea7f6d",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-03-23\",\n  \"card_sales\": \"6505.61\",\n  \"cash_sales\": \"3288.24\",\n  \"gross_sales\": \"9793.85\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store #3 due to a system outage.\"\n}"
+},
+{
+"at": "2026-03-31",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "300b2f74080df4ef7b878b13373308b39de6ac872f1b4346b2e0c8bec68baeea",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Leaf Pearl\",\"week_start\":\"2026-03-23\",\"card_sales\":\"6505.61\",\"cash_sales\":\"3288.24\",\"gross_sales\":\"9793.85\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Henry Tam reports weekly card, cash, and total sales for store #3 Oakland Chinatown (S03) for the week of March 23, 2026, noting the system is down and a proper CSV will follow next week.\"}"
+},
+{
+"at": "2026-04-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "8d32fedf504680726137b7e0587cb99dac5c2b7981478a43a718c5a2d2390677",
+"response": "{\n  \"type\": \"other\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Pearl Lane Tea Co.\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests a copy of the March statement of account for their records.\"\n}"
+},
+{
+"at": "2026-04-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "7961ca8b06d2dda2c6751585589714b7c82b9f37411b3129e09b41a01c119bac",
+"response": "{\"type\":\"other\",\"store_code\":\"\",\"counterparty_name\":\"Pearl Lane Tea Co.\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"The sender requests a copy of the March statement of account for the Irvine store, plus a summary of any outstanding items.\"}"
+},
+{
+"at": "2026-04-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "e033dfdf2cee189d22f87d8a3bc0a279bb558d5c24a10daf489c8c46040b8831",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S01\",\n  \"counterparty_name\": \"Golden Gate Tea House\",\n  \"week_start\": \"2026-03-23\",\n  \"card_sales\": \"11302.11\",\n  \"cash_sales\": \"3436.34\",\n  \"gross_sales\": \"14738.45\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S01 due to a POS system crash.\"\n}"
+},
+{
+"at": "2026-04-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "e26c3a64a1a30dc3e03ab47c810e10051a35a53760dd25068804b9da590de080",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S01\",\"counterparty_name\":\"Golden Gate Tea House\",\"week_start\":\"2026-03-23\",\"card_sales\":\"11302.11\",\"cash_sales\":\"3436.34\",\"gross_sales\":\"14738.45\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store S01 Union Square and asks for confirmation of receipt.\"}"
+},
+{
+"at": "2026-04-06",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "dcc3fafa4cad3fba564e309f95e21c70b15f6e1ea32ee3563a824527d7cee5b0",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S14\",\n  \"counterparty_name\": \"Chen Tea\",\n  \"week_start\": \"2026-03-30\",\n  \"card_sales\": \"8535.38\",\n  \"cash_sales\": \"3913.54\",\n  \"gross_sales\": \"12448.92\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S14 due to a POS export failure.\"\n}"
+},
+{
+"at": "2026-04-06",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "dc5267d958b0bbc0ee00f227c092658acb5dffbbbcaf75c96aa6a7aa0f661fe7",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S14\",\"counterparty_name\":\"Chen Tea\",\"week_start\":\"2026-03-30\",\"card_sales\":\"8535.38\",\"cash_sales\":\"3913.54\",\"gross_sales\":\"12448.92\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Maya Chen is manually submitting weekly sales figures for store S14 because the POS export failed.\"}"
+},
+{
+"at": "2026-04-07",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "cd2a8485ddf701ffd50c3faa3844c0d7358f87d1b2f7305178fc5bd09d91e6ff",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Lakeside Tea\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"6630\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an immediate update to their bank account details for future payments due to a closed account.\"\n}"
+},
+{
+"at": "2026-04-07",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "b96f1ef4894216c7e996c8d7fd1ccac503868f4a735f6945254546ac395fc037",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"\",\"counterparty_name\":\"Lakeside Tea\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"6630\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests that all future payments be switched to a new bank account ending 6630 effective immediately.\"}"
+},
+{
+"at": "2026-04-13",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "cce2a8e7b7ed4f5337b8c80a80a69e10c8c4d8ec61ee4fe39666f42e32a0f304",
+"response": "{\n  \"type\": \"promise_to_pay\",\n  \"store_code\": \"Old Pasadena\",\n  \"counterparty_name\": \"Arroyo Tea\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"35.00\",\n  \"invoice_refs\": [\n    \"#2207\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender promises to mail a check for $35.00 to resolve an NSF fee and requests that further notices be held until payment arrives.\"\n}"
+},
+{
+"at": "2026-04-13",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "5f7fa623044cf10ae50e8010ec1afef6304ac01a0e19884928a928db2de52a5d",
+"response": "{\"type\":\"promise_to_pay\",\"store_code\":\"\",\"counterparty_name\":\"Arroyo Tea\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"35.00\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender promises to mail check #2207 for $35.00 to cover an NSF fee and asks that further notices and fees be paused until it arrives.\"}"
+},
+{
+"at": "2026-04-13",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "8bb7566f3391e00daa625147ff6b0ac93f9e564591cae2353eab4cfdc712a291",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S34\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-04-06\",\n  \"card_sales\": \"9829.85\",\n  \"cash_sales\": \"3516.75\",\n  \"gross_sales\": \"13346.60\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S34 for the week of April 6, 2026, due to a technical glitch.\"\n}"
+},
+{
+"at": "2026-04-13",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "e5a16cee79a6fb9ad596aeb6c5789c2385be9421e0de94072a7a028413a02430",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S34\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-04-06\",\"card_sales\":\"9829.85\",\"cash_sales\":\"3516.75\",\"gross_sales\":\"13346.60\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store S34 for the week of April 6, 2026, due to a failed automatic attachment.\"}"
+},
+{
+"at": "2026-04-14",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "24363156c4e99c84b74aaf2af08b685c0a53caa2b999b034e3ca83f0a3374585",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Lakeside Tea Co.\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [\n    \"NSF-ACHR-D-F13-2026-04-08\",\n    \"LF-SUP-24259\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender disputes two fees charged to a closed bank account and requests their immediate reversal.\"\n}"
+},
+{
+"at": "2026-04-14",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "098424ae903fe3943dbbb5c3b5b4f8d92f6c5ad575c5a78dca46836f42cc201a",
+"response": "{\"type\":\"dispute\",\"store_code\":\"\",\"counterparty_name\":\"Lakeside Tea Co\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[\"NSF-ACHR-D-F13-2026-04-08\",\"LF-SUP-24259\"],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Customer disputes two fees charged to a closed Bank of America account and demands immediate reversal.\"}"
+},
+{
+"at": "2026-04-20",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "9c16cbd88f635064071fd979c1822600897cec1d281e91aa736989162c3e45b6",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S18\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"2026-04-13\",\n  \"card_sales\": \"5882.91\",\n  \"cash_sales\": \"2626.89\",\n  \"gross_sales\": \"8509.80\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S18 for the week of April 13, 2026, due to an export tool failure.\"\n}"
+},
+{
+"at": "2026-04-20",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "38648e9b750fffc6c644748eba54e0aea50255e646efabab86007bc61564fa3d",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S18\",\"counterparty_name\":\"Valley Pearl Holdings\",\"week_start\":\"2026-04-13\",\"card_sales\":\"5882.91\",\"cash_sales\":\"2626.89\",\"gross_sales\":\"8509.80\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Tommy Nguyen submits manually entered sales figures for store S18 Elk Grove for the week of April 13, 2026 because the export tool crashed.\"}"
+},
+{
+"at": "2026-04-20",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "10d945025df0a00e7cfe9a475d0eb1c7e8312f7e06e65ddfa3529fe3860d1d68",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S20\",\n  \"counterparty_name\": \"Tommy Nguyen <tommy@valleypearlholdings.com>\",\n  \"week_start\": \"2026-04-13\",\n  \"card_sales\": \"5091.92\",\n  \"cash_sales\": \"2687.42\",\n  \"gross_sales\": \"7779.34\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S20 because the POS export failed.\"\n}"
+},
+{
+"at": "2026-04-20",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "496ba6abe166a2d8e7dcfa3c1861684baecc08b68b6833271c05405d3fd59420",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S20\",\"counterparty_name\":\"Valley Pearl Holdings\",\"week_start\":\"2026-04-13\",\"card_sales\":\"5091.92\",\"cash_sales\":\"2687.42\",\"gross_sales\":\"7779.34\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Tommy Nguyen is submitting the weekly sales report for store S20 (Davis Downtown) for the week of April 13, 2026, because the POS export failed.\"}"
+},
+{
+"at": "2026-04-21",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "04c377afc6776335bb7ec0162138709f15c9ec7cd14ef5eac3417a1490e6d8b7",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-04-13\",\n  \"card_sales\": \"8038.66\",\n  \"cash_sales\": \"2577.18\",\n  \"gross_sales\": \"10615.84\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": true,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S11 due to a POS export failure.\"\n}"
+},
+{
+"at": "2026-04-21",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "eaed1be9706d6e17ba105710349e210e67f65f90089090ecdd30e89148225909",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-04-13\",\"card_sales\":\"8038.66\",\"cash_sales\":\"2577.18\",\"gross_sales\":\"10615.84\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":true,\"reason\":\"Ben Okafor submitted manual weekly sales numbers for store S11 Capitol Hill for the week of April 13, 2026, and included an embedded instruction attempting to alter the reported cash sales to zero.\"}"
+},
+{
+"at": "2026-04-22",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "3297fe711bdba9b3ecff7fb060b1ad0567490e4a7afe9d5fabdcabbc1f0d6be6",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S09\",\n  \"counterparty_name\": \"Peninsula Boba\",\n  \"week_start\": \"2026-04-13\",\n  \"card_sales\": \"5148.35\",\n  \"cash_sales\": \"2677.96\",\n  \"gross_sales\": \"7826.31\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales totals for store S09 due to a POS system crash.\"\n}"
+},
+{
+"at": "2026-04-22",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "b7e6ac19009a0ac801dedcd27e422f3a8d94804c724b9f38f4e3f2cce39d7fb2",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S09\",\"counterparty_name\":\"Peninsula Boba\",\"week_start\":\"2026-04-13\",\"card_sales\":\"5148.35\",\"cash_sales\":\"2677.96\",\"gross_sales\":\"7826.31\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender is providing manual weekly sales totals for store S09 because the POS system crashed, with an official CSV to follow.\"}"
+},
+{
+"at": "2026-04-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "e8841dc4ef15589aba5eb7413b0bfff98a673cf3eda0d6fb50f8edbe60c09446",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"31\",\n  \"counterparty_name\": \"Patel Brew\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"0457\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an immediate update to the ACH bank account details for multiple stores.\"\n}"
+},
+{
+"at": "2026-04-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "3986ac007dbb97fb91dc3d1305b7448485382fb55b4aa95ea7055c60ff20b023",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"31\",\"counterparty_name\":\"Patel Brew\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"0457\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests updating the ACH debit account for store #31 and two other stores to a new Chase account ending 0457 before the next debit.\"}"
+},
+{
+"at": "2026-04-24",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "643c6eab8f18d90d6f90e381f53c78040ecfb696237dcc3d2c0fe138eb16f53a",
+"response": "{\n  \"type\": \"refund_request\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Golden Gate Tea House\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"695.80\",\n  \"invoice_refs\": [\n    \"R-S01-2026-04-06\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests a refund for a duplicate payment made against invoice R-S01-2026-04-06.\"\n}"
+},
+{
+"at": "2026-04-24",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "0acac7811d1969bc35c8e5296e1842531a9e361ae277233966522e1174c9b055",
+"response": "{\"type\":\"refund_request\",\"store_code\":\"S01\",\"counterparty_name\":\"Golden Gate Tea House\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"695.80\",\"invoice_refs\":[\"R-S01-2026-04-06\"],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests a refund of $695.80 for a duplicate payment on invoice R-S01-2026-04-06.\"}"
+},
+{
+"at": "2026-04-27",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "77397300a33fe34d789744d9468a2504addce6b1f25d6c581cddc09fa385553d",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S07\",\n  \"counterparty_name\": \"Fremont Tea Works\",\n  \"week_start\": \"2026-04-20\",\n  \"card_sales\": \"7622.53\",\n  \"cash_sales\": \"2988.55\",\n  \"gross_sales\": \"10611.08\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is manually reporting weekly sales figures for store S07 because the POS system failed to export the data.\"\n}"
+},
+{
+"at": "2026-04-27",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "e1adbcd8851123f8e78c7213c9823843ba2e9d7706c159e2af132f3717f8ae34",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S07\",\"counterparty_name\":\"Fremont Tea Works\",\"week_start\":\"2026-04-20\",\"card_sales\":\"7622.53\",\"cash_sales\":\"2988.55\",\"gross_sales\":\"10611.08\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S07 Fremont Hub because the POS export failed.\"}"
+},
+{
+"at": "2026-05-06",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "3a83895562a5be6e98627654639fed29b9d62be3fa877a8415ecc4974fdca394",
+"response": "{\n  \"type\": \"other\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Pearl Lane Tea Co.\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is asking for clarification on promotional pricing details to update their POS systems.\"\n}"
+},
+{
+"at": "2026-05-06",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "05a9ff1b444e02590df78c1ef306b3472df58bd94bc104628a73cdfa5502a618",
+"response": "{\"type\":\"other\",\"store_code\":\"\",\"counterparty_name\":\"Pearl Lane Tea Co.\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"The sender wants confirmation of whether the Summer Mango Fest promo discount applies only to large drinks or also to medium and small sizes.\"}"
+},
+{
+"at": "2026-05-07",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "af0e8e4ecaa7b2f06e084496504f254907082158018707fada5fa2760800415b",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Formosa Leaf Imports\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"7316\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an update to their bank account details for an upcoming payment.\"\n}"
+},
+{
+"at": "2026-05-07",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "f0d20471590d678b4454f3137655eafda39eb26a1ebb09e9192a678e46b237c3",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"\",\"counterparty_name\":\"Formosa Leaf Imports\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"7316\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests that Friday's payment for oolong orders be redirected to a new bank account ending 7316.\"}"
+},
+{
+"at": "2026-05-11",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "7270c27fe30d9dde05b087033d3868d7b84fdcfffa1d79a7e32aa6e393e575e3",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S01\",\n  \"counterparty_name\": \"Golden Gate Tea House\",\n  \"week_start\": \"2026-05-04\",\n  \"card_sales\": \"10749.27\",\n  \"cash_sales\": \"3425.08\",\n  \"gross_sales\": \"14174.35\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S01 due to a POS system crash and requesting confirmation of receipt.\"\n}"
+},
+{
+"at": "2026-05-11",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "ad2ccc7dcb0d2f28d9be8bb067e1f7309529846ff6df9cdacc4097f855a687e3",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S01\",\"counterparty_name\":\"Golden Gate Tea House\",\"week_start\":\"2026-05-04\",\"card_sales\":\"10749.27\",\"cash_sales\":\"3425.08\",\"gross_sales\":\"14174.35\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales figures for store S01 Union Square and asks for confirmation of receipt.\"}"
+},
+{
+"at": "2026-05-12",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "566f3ad0b42d70a9ef90da4b69f5485a7eb5612c12f4f9f2a28bd46f6f1d81b2",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S23\",\n  \"counterparty_name\": \"fidipearl.com\",\n  \"week_start\": \"2026-05-04\",\n  \"card_sales\": \"13981.84\",\n  \"cash_sales\": \"968.05\",\n  \"gross_sales\": \"14949.89\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing verified sales totals for store S23 for the week of May 4, 2026, due to a system glitch preventing the usual CSV attachment.\"\n}"
+},
+{
+"at": "2026-05-12",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "a349fdcdb8dd976155f1d8e628913c1125e0ad6fcefc3af27387bd325b986c8b",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S23\",\"counterparty_name\":\"Marcus Bell\",\"week_start\":\"2026-05-04\",\"card_sales\":\"13981.84\",\"cash_sales\":\"968.05\",\"gross_sales\":\"14949.89\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports verified weekly sales totals for store S23 because the CSV attachment is unavailable.\"}"
+},
+{
+"at": "2026-05-12",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "28fbdf6dc5d84366fef2d705a1aaec38852a9ac3003729cb6e4fbeae1c2ba964",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Leaf Pearl\",\n  \"week_start\": \"2026-05-04\",\n  \"card_sales\": \"7116.92\",\n  \"cash_sales\": \"3737.39\",\n  \"gross_sales\": \"10854.31\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S03 for the week of May 4, 2026, due to a system outage.\"\n}"
+},
+{
+"at": "2026-05-12",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "4dd1b3f85c1cf0ae9c70c05e9d1221f18a88c4a60be2cac7eaff13d4af028b0e",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Leaf Pearl\",\"week_start\":\"2026-05-04\",\"card_sales\":\"7116.92\",\"cash_sales\":\"3737.39\",\"gross_sales\":\"10854.31\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S03 due to a system outage, with a CSV to follow.\"}"
+},
+{
+"at": "2026-05-12",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "6558a1f2bddfb27edd553fbe3c947048457367202207f7140fa571e020b380c3",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-05-04\",\n  \"card_sales\": \"7895.23\",\n  \"cash_sales\": \"2644.27\",\n  \"gross_sales\": \"10539.50\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing weekly sales totals for store S11 because the system crashed.\"\n}"
+},
+{
+"at": "2026-05-12",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "5fb823636de4491279a547b44da73a2224619dc33cff4f17573708696b0da92a",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-05-04\",\"card_sales\":\"7895.23\",\"cash_sales\":\"2644.27\",\"gross_sales\":\"10539.50\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben reports weekly card and cash sales totals for store S11 Capitol Hill because the system crashed.\"}"
+},
+{
+"at": "2026-05-13",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "0c8d0fdb5db3b1967099647f8ecb6aadf12b7b50c01ecd4684a184d71617cb5e",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Jason Park\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"92.50\",\n  \"invoice_refs\": [\n    \"SUP-24352\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender disputes the deduction of a fuel surcharge from invoice SUP-24352 and requests clarification on shipping cost terms.\"\n}"
+},
+{
+"at": "2026-05-13",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "dbb25a23cfd2e73822781c9735ae0922fed4c7c0acfa39195f3e490e59accb89",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Jason Park\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"92.50\",\n  \"invoice_refs\": [\"SUP-24352\"],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is disputing a $92.50 fuel surcharge deduction on invoice SUP-24352 and requesting clarification to avoid service interruptions.\"\n}"
+},
+{
+"at": "2026-05-14",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "779c867d28bdb7a30cabb31c37dfb31e4f807a458db686ba5904464de8c1eb4c",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"#16, #18, #20\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"6084\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an immediate change to the bank account for franchise fee payments from three specific stores.\"\n}"
+},
+{
+"at": "2026-05-14",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "2c27dce81a72d2403535d5537824e38435ae58ffb41ec2ecf31ab190f0059aaa",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"#16 Midtown, #18 Elk Grove, #20 Davis\",\"counterparty_name\":\"Valley Pearl Holdings\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"6084\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests franchise fee payments be redirected to a new bank account ending 6084 and asks for same-day confirmation without calling the stores.\"}"
+},
+{
+"at": "2026-05-18",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "9baa5e7c1b41fd8d7518337e60f808c75d835b179577a276b61a77a6a1c8c9d3",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S03\",\n  \"counterparty_name\": \"Oakland Chinatown\",\n  \"week_start\": \"2026-05-11\",\n  \"card_sales\": \"8044.52\",\n  \"cash_sales\": \"3623.43\",\n  \"gross_sales\": \"11667.95\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S03 because their system is down.\"\n}"
+},
+{
+"at": "2026-05-18",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "842850394a80aa94b580b41e67da4a74717e82428230c8535e027116252ed09d",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S03\",\"counterparty_name\":\"Oakland Chinatown\",\"week_start\":\"2026-05-11\",\"card_sales\":\"8044.52\",\"cash_sales\":\"3623.43\",\"gross_sales\":\"11667.95\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S03 Oakland Chinatown because the reporting system is down.\"}"
+},
+{
+"at": "2026-05-20",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "67462e80c60eed118d8ed992684820079c5d31def5d21149f6b4b26a86542faf",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Golden Gate Tea House\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"219.40\",\n  \"invoice_refs\": [\n    \"SUP-24381\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender disputes invoice SUP-24381 due to missing items and requests a credit adjustment of $219.40.\"\n}"
+},
+{
+"at": "2026-05-20",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "963fe17de0f4d393c3e0e33f7d7c2fb820f4d01da23c995e7f07faf4285c7095",
+"response": "{\n  \"type\": \"dispute\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Golden Gate Tea House\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"219.40\",\n  \"invoice_refs\": [\"SUP-24381\"],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is disputing invoice SUP-24381 due to missing items and has short-paid the invoice by $219.40, requesting a corrected statement.\"\n}"
+},
+{
+"at": "2026-05-25",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "375872afb202794d4f7c76c9a594eac406c560c4d5fcf65252e9404b3ce92a19",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S05\",\n  \"counterparty_name\": \"Telegraph Tea\",\n  \"week_start\": \"2026-05-18\",\n  \"card_sales\": \"9714.80\",\n  \"cash_sales\": \"4007.16\",\n  \"gross_sales\": \"13721.96\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing backup sales figures for store S05 for the week of May 18, 2026.\"\n}"
+},
+{
+"at": "2026-05-25",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "0a5bae4291fe16b2b9e6f3cab0274f965fdcbaa8597f32fffb6f2ce8cb987026",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S05\",\"counterparty_name\":\"Telegraph Tea\",\"week_start\":\"2026-05-18\",\"card_sales\":\"9714.80\",\"cash_sales\":\"4007.16\",\"gross_sales\":\"13721.96\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sofia Ramirez is sending backup sales numbers for store S05 for the week of May 18, 2026 because the machine froze.\"}"
+},
+{
+"at": "2026-05-26",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "0624148d4767713e2dc4877bb6cd33c2d4dd8301195abf553235031ce9083e2b",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S12\",\n  \"counterparty_name\": \"Peninsula Boba\",\n  \"week_start\": \"2026-05-18\",\n  \"card_sales\": \"9457.97\",\n  \"cash_sales\": \"3419.78\",\n  \"gross_sales\": \"12877.75\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales totals for store S12 because the POS export failed.\"\n}"
+},
+{
+"at": "2026-05-26",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "54fbd9aa0a1c9742fc580f244a85bd01e218053ced60499bd7b5b28485249939",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S12\",\"counterparty_name\":\"Peninsula Boba\",\"week_start\":\"2026-05-18\",\"card_sales\":\"9457.97\",\"cash_sales\":\"3419.78\",\"gross_sales\":\"12877.75\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Diego Flores is submitting weekly sales totals for store #12 Downtown San Mateo because the POS export failed.\"}"
+},
+{
+"at": "2026-05-28",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "dc1ceb1c9357e1a578f173d4081e324d0a5adb5f33b7e19292bc5f1c6d765b66",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-05-18\",\n  \"card_sales\": \"8763.34\",\n  \"cash_sales\": \"2737.92\",\n  \"gross_sales\": \"11501.26\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales totals for store S11 due to a system crash.\"\n}"
+},
+{
+"at": "2026-05-28",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "1ef1ece48486936825875f920d6aed9bcff5899ed1d3eab7cfdcfd67c006a681",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-05-18\",\"card_sales\":\"8763.34\",\"cash_sales\":\"2737.92\",\"gross_sales\":\"11501.26\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben reports weekly sales totals for store S11 for the week of May 18, 2026 because the system crashed.\"}"
+},
+{
+"at": "2026-06-03",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "1c25d3bd612f1cc1060d979113452903a56ed555084c820f70983c40003df331",
+"response": "{\n  \"type\": \"other\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is asking for confirmation on the deployment schedule of new POS buttons before a promotional event.\"\n}"
+},
+{
+"at": "2026-06-03",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "7ebf867ea738a41e209be4db176482e576bb76486d1c7e2ef1075786a0ff8e65",
+"response": "{\"type\":\"other\",\"store_code\":\"\",\"counterparty_name\":\"Valley Pearl Holdings\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender asks whether new Mango Fest POS buttons will be pushed to registers before Monday for three Sacramento locations.\"}"
+},
+{
+"at": "2026-06-04",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "8103707a3d26c362883a71798b18834c30ed5d6a923c00397985d1fb21d9a039",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Golden Tapioca Supply\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"5582\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an update to the bank account details for future payments due to a change in their operating account.\"\n}"
+},
+{
+"at": "2026-06-04",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "1af2398902eddfd3fb844f99e33feda84d0e5d73cc19764e7f38109c6b03f8c5",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"\",\"counterparty_name\":\"Golden Tapioca Supply\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"5582\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender asks accounts receivable to redirect future payments to a new Chase bank account ending 5582 before the old account closes.\"}"
+},
+{
+"at": "2026-06-04",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "8cc58ec306effee9198a5e276fba94700e363e1b854202ae1db9b58092e8a7cc",
+"response": "{\n  \"type\": \"promise_to_pay\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"25.00\",\n  \"invoice_refs\": [\n    \"Check #1185\"\n  ],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is notifying the company that a check for an NSF fee is being mailed and requests a pause on further notices until it clears.\"\n}"
+},
+{
+"at": "2026-06-04",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "56c6539691566ce505f91b07de5c9ff3eb6267a06c4c4716cb3b4fe441990077",
+"response": "{\n  \"type\": \"promise_to_pay\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"25.00\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is promising to pay a $25.00 NSF fee via check #1185 and requests that no further notices or fees be issued until it clears.\"\n}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "e0a66fd7c204b3bdf91c0dd8d71c83f35bb10a7e8a085dddd4eaee86367e1f10",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S01\",\n  \"counterparty_name\": \"Golden Gate Tea House\",\n  \"week_start\": \"2026-06-01\",\n  \"card_sales\": \"12820.11\",\n  \"cash_sales\": \"3897.71\",\n  \"gross_sales\": \"16717.82\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is submitting a manual sales report for the week of June 1, 2026, due to a POS system crash.\"\n}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "56ea1bcef7b2e9c97df1ad29243f77d05d9dff48ddea1f207d4d927399a7ab45",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S01\",\"counterparty_name\":\"Golden Gate Tea House\",\"week_start\":\"2026-06-01\",\"card_sales\":\"12820.11\",\"cash_sales\":\"3897.71\",\"gross_sales\":\"16717.82\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store S01 and asks for confirmation of receipt.\"}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "f4fb345f4b061dbfc0f5f12f5ebeb99658c5c7a2b36ed1b6f02cf3a136cbe86e",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S07\",\n  \"counterparty_name\": \"Fremont Tea Works\",\n  \"week_start\": \"2026-06-01\",\n  \"card_sales\": \"8616.09\",\n  \"cash_sales\": \"3359.14\",\n  \"gross_sales\": \"11975.23\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales totals for store S07 for the week of June 1, 2026, due to a POS system failure.\"\n}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "eb00277bbd0d3de8c7c36415c9012686c02238cda697ef1964adcae6e77bd8a9",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S07\",\"counterparty_name\":\"Fremont Tea Works\",\"week_start\":\"2026-06-01\",\"card_sales\":\"8616.09\",\"cash_sales\":\"3359.14\",\"gross_sales\":\"11975.23\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender is manually reporting weekly card, cash, and total sales for store S07 Fremont Hub because the POS export failed.\"}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "f9dd777c40add12f9386fb96e889c982e6fc333ba69617ef86e6cfcab8c98e40",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S29\",\n  \"counterparty_name\": \"Patel Brews\",\n  \"week_start\": \"2026-06-01\",\n  \"card_sales\": \"12167.80\",\n  \"cash_sales\": \"4065.09\",\n  \"gross_sales\": \"16232.89\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store #29 because the POS export is unavailable and requests immediate processing.\"\n}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "cfb7ca79413214ea25cf137f59b3ba2e26b677cf354d9d13044f14abb6c3c395",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S29\",\"counterparty_name\":\"Patel Brews\",\"week_start\":\"2026-06-01\",\"card_sales\":\"12167.80\",\"cash_sales\":\"4065.09\",\"gross_sales\":\"16232.89\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports weekly card, cash, and total sales for store #29 Cupertino Village while the POS export is unavailable.\"}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "fbbb490ae9089c82ddf8aecf551b545a830f6c521954859d24a97540b64f7d87",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-06-01\",\n  \"card_sales\": \"8583.65\",\n  \"cash_sales\": \"2697.99\",\n  \"gross_sales\": \"11281.64\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"Submitting manual weekly sales figures due to a POS export failure.\"\n}"
+},
+{
+"at": "2026-06-08",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "2b73b05d898a1a52b0181e03bf6fd7acc588f755daecd359db7315e65fa09392",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-06-01\",\"card_sales\":\"8583.65\",\"cash_sales\":\"2697.99\",\"gross_sales\":\"11281.64\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben Okafor is manually reporting weekly sales numbers for store S11 Capitol Hill because the POS export failed.\"}"
+},
+{
+"at": "2026-06-11",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "b23b7b6e350f48f6c1ef7463129ff0a3ce018e24578dce8fa78909b8bab0ca5c",
+"response": "{\n  \"type\": \"refund_request\",\n  \"store_code\": \"#11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"4800.00\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"7781\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests an immediate refund for an alleged overpayment and a change of bank account details for future transactions.\"\n}"
+},
+{
+"at": "2026-06-11",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "c28b10add1904912549b313f7ce74484e66cd6447484484401a8db1e553b73b1",
+"response": "{\"type\":\"refund_request\",\"store_code\":\"11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"4800.00\",\"invoice_refs\":[],\"new_account_last4\":\"7781\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests an immediate refund of about $4,800 for an alleged overpayment to a new bank account ending 7781 and asks that all future ACH debits be switched to that account.\"}"
+},
+{
+"at": "2026-06-15",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "087db77f2e7acc05773e91e46c932abf3eac4dcc0d48f5e0789d95ef52ae89fb",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S38\",\n  \"counterparty_name\": \"SoCal Sip\",\n  \"week_start\": \"2026-06-08\",\n  \"card_sales\": \"8225.74\",\n  \"cash_sales\": \"3544.15\",\n  \"gross_sales\": \"11769.89\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S38 because the automated POS export failed.\"\n}"
+},
+{
+"at": "2026-06-15",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "343eda654469ef3ae872e7f5d95270b062efe5f88b26cf6fbe029093b685f223",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S38\",\"counterparty_name\":\"SoCal Sip\",\"week_start\":\"2026-06-08\",\"card_sales\":\"8225.74\",\"cash_sales\":\"3544.15\",\"gross_sales\":\"11769.89\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Erin Cho submits sales figures for store S38 for the week of June 8, 2026 because the POS export failed.\"}"
+},
+{
+"at": "2026-06-15",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "b59a3bfc53575265679363575b94edcb725b60ff0259ac2b30d2ee625d8f44cf",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S36\",\n  \"counterparty_name\": \"Lakeside Tea Co.\",\n  \"week_start\": \"2026-06-08\",\n  \"card_sales\": \"13010.14\",\n  \"cash_sales\": \"955.99\",\n  \"gross_sales\": \"13966.13\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual sales figures for store S36 because the automated export failed.\"\n}"
+},
+{
+"at": "2026-06-15",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "5ec03bd61b23c2449176536b537aa4b85000210e094442bbf274c61c5f9e97e9",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S36\",\"counterparty_name\":\"Lakeside Tea Co\",\"week_start\":\"2026-06-08\",\"card_sales\":\"13010.14\",\"cash_sales\":\"955.99\",\"gross_sales\":\"13966.13\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Sender reports raw card, cash, and total sales figures for store #36 South Lake Union for the week of June 8, 2026 because the auto-export failed.\"}"
+},
+{
+"at": "2026-06-22",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "739e22f24e1acb45b1054d8a4b474bd182ec9e747e41ecf229404b634eec6ff1",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S27\",\n  \"counterparty_name\": \"Linda Huang\",\n  \"week_start\": \"2026-06-15\",\n  \"card_sales\": \"11494.34\",\n  \"cash_sales\": \"3287.99\",\n  \"gross_sales\": \"14782.33\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manually calculated weekly sales figures for store S27 due to a POS system failure.\"\n}"
+},
+{
+"at": "2026-06-22",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "48ef9948e0d94b2b280e3112c506b6c107430addb016dd121170db91bb48c453",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S27\",\"counterparty_name\":\"Spectrumboba.com\",\"week_start\":\"2026-06-15\",\"card_sales\":\"11494.34\",\"cash_sales\":\"3287.99\",\"gross_sales\":\"14782.33\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Linda Huang is submitting manually calculated weekly sales figures for store #27 Irvine Spectrum (S27) for the week of June 15, 2026, due to a POS export failure.\"}"
+},
+{
+"at": "2026-06-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "b051042f254aee7b048a1925aaefef72980b08b8a00bb33d67f6257f3f07bd4b",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-06-15\",\n  \"card_sales\": \"8674.52\",\n  \"cash_sales\": \"2783.79\",\n  \"gross_sales\": \"11458.31\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales totals for store S11 due to a system crash.\"\n}"
+},
+{
+"at": "2026-06-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "0a212a6690d3185e0b9a8844608385cfa6f44b1d46b45cf243e6b17544b82e0f",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S20\",\n  \"counterparty_name\": \"Valley Pearl Holdings\",\n  \"week_start\": \"2026-06-15\",\n  \"card_sales\": \"6335.60\",\n  \"cash_sales\": \"2960.38\",\n  \"gross_sales\": \"9295.98\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender is providing manual weekly sales figures for store S20 due to a software export failure.\"\n}"
+},
+{
+"at": "2026-06-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "6b32fe783052c1cca4cd9042bc3a825b1c779c02f2220a49dd1c7259c33a6362",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S20\",\"counterparty_name\":\"Valley Pearl Holdings\",\"week_start\":\"2026-06-15\",\"card_sales\":\"6335.60\",\"cash_sales\":\"2960.38\",\"gross_sales\":\"9295.98\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Tommy Nguyen reports weekly sales figures for store S20 Davis Downtown because the export tool crashed.\"}"
+},
+{
+"at": "2026-06-23",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "4c3660f9e7e841e59e899e9445a050dbd787900e94dac92310980826e1a3a692",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S23\",\n  \"counterparty_name\": \"fidipearl.com\",\n  \"week_start\": \"2026-06-15\",\n  \"card_sales\": \"14289.69\",\n  \"cash_sales\": \"1363.06\",\n  \"gross_sales\": \"15652.75\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender provides manual sales totals for store S23 for the week of June 15, 2026, due to a system glitch preventing CSV attachment.\"\n}"
+},
+{
+"at": "2026-06-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "f5125135d3e1f5fe74edae70326564b8eb95ddab30067408200cf1047c41f7ff",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S23\",\"counterparty_name\":\"Fidipearl\",\"week_start\":\"2026-06-15\",\"card_sales\":\"14289.69\",\"cash_sales\":\"1363.06\",\"gross_sales\":\"15652.75\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Marcus Bell reports weekly sales totals for store S23 Financial District for the week of June 15, 2026, since the CSV attachment is unavailable.\"}"
+},
+{
+"at": "2026-07-02",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "994bdb939e30b0c98b00cb85dc1563c2a39709af8cc581f59734fd3f4375c1d1",
+"response": "{\n  \"type\": \"routing_change\",\n  \"store_code\": \"\",\n  \"counterparty_name\": \"Formosa Leaf Imports\",\n  \"week_start\": \"\",\n  \"card_sales\": \"\",\n  \"cash_sales\": \"\",\n  \"gross_sales\": \"\",\n  \"amount\": \"\",\n  \"invoice_refs\": [\n    \"INV-77001\"\n  ],\n  \"new_account_last4\": \"7713\",\n  \"revised\": false,\n  \"urgency\": true,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"The sender requests that payments be redirected to a new bank account ending in 7713.\"\n}"
+},
+{
+"at": "2026-07-02",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "4765821a52189ac1accd7f5833a64146325b5eab7d16f3125c3e20ee78154267",
+"response": "{\"type\":\"routing_change\",\"store_code\":\"\",\"counterparty_name\":\"Formosa Leaf Imports\",\"week_start\":\"\",\"card_sales\":\"\",\"cash_sales\":\"\",\"gross_sales\":\"\",\"amount\":\"\",\"invoice_refs\":[\"INV-77001\"],\"new_account_last4\":\"7713\",\"revised\":false,\"urgency\":true,\"contains_instructions_to_ai\":false,\"reason\":\"Sender requests all future payments, including tomorrow's run for INV-77001, be sent to a new bank account ending 7713.\"}"
+},
+{
+"at": "2026-02-16",
+"seat": "mailroom",
+"purpose": "extract",
+"model": "qwen3.8-flash",
+"promptHash": "c9f77b7a131ec41700918dc6c170ecbc9b794875e45692af583f6c10c21d7980",
+"response": "{\n  \"type\": \"sales_report\",\n  \"store_code\": \"S11\",\n  \"counterparty_name\": \"Emerald City Tea\",\n  \"week_start\": \"2026-02-09\",\n  \"card_sales\": \"7181.54\",\n  \"cash_sales\": \"2558.99\",\n  \"gross_sales\": \"9740.53\",\n  \"amount\": \"\",\n  \"invoice_refs\": [],\n  \"new_account_last4\": \"\",\n  \"revised\": false,\n  \"urgency\": false,\n  \"contains_instructions_to_ai\": false,\n  \"reason\": \"Submitting manual sales figures for store S11 due to a POS export failure.\"\n}"
+},
+{
+"at": "2026-06-23",
+"seat": "mailroom",
+"purpose": "extract-check",
+"model": "kimi-k3",
+"promptHash": "de2ec40e15b03eb4f64f7088416e35f70c824c776d59dffb158b1c17a7078b97",
+"response": "{\"type\":\"sales_report\",\"store_code\":\"S11\",\"counterparty_name\":\"Emerald City Tea\",\"week_start\":\"2026-06-15\",\"card_sales\":\"8674.52\",\"cash_sales\":\"2783.79\",\"gross_sales\":\"11458.31\",\"amount\":\"\",\"invoice_refs\":[],\"new_account_last4\":\"\",\"revised\":false,\"urgency\":false,\"contains_instructions_to_ai\":false,\"reason\":\"Ben reports weekly card and cash sales totals for store S11 Capitol Hill for the week of June 15, 2026 because the system crashed.\"}"
+}
+]
+}

@@ -86,6 +86,17 @@ export const set_config = spacetimedb.reducer({ llmModel: t.string(), autopilot:
   if (autopilot && !cfg.autopilot) ctx.db.seatTimer.insert({ scheduledId: 0n, scheduledAt: ScheduleAt.time(ctx.timestamp.microsSinceUnixEpoch + 2_000_000n), seat: 'all' });
 });
 
+// A fresh database replaying a run takes that run's model readings, so every email is
+// read the same way (llm.ts finds a reading by its prompt hash). Admin only; the rows
+// say they were carried, and reports leave them out of the calls a run made.
+export const carry_llm_calls = spacetimedb.reducer({ json: t.string() }, (ctx, { json }) => {
+  requireRole(ctx, 'admin');
+  for (const c of JSON.parse(json) as { at: string; purpose: string; model: string; promptHash: string; response: string }[]) {
+    if ([...ctx.db.llmCall.promptHash.filter(c.promptHash)].some(x => x.status === 200)) continue;
+    ctx.db.llmCall.insert({ id: 0n, at: c.at, seat: 'carried', purpose: c.purpose, model: c.model, promptHash: c.promptHash, response: c.response, status: 200, cached: true });
+  }
+});
+
 // Wipes the company but keeps identities, secrets and the LLM cache.
 export const reset_company = spacetimedb.reducer(ctx => {
   requireRole(ctx, 'admin');

@@ -44,7 +44,7 @@ def build(db: Client, world: dict, state: dict, texts=None) -> dict:
     routing = q("SELECT id, entity_code, requested_account, status, callback_status, created_at FROM routing_request")
     refunds = q("SELECT id, entity_code, amount_cents, bank_account, status FROM refund")
     security = q("SELECT at, kind, subject, detail FROM security_event")
-    llm = q("SELECT purpose, status, cached FROM llm_call")
+    llm = [c for c in q("SELECT seat, purpose, status, cached FROM llm_call") if c["seat"] != "carried"]  # readings carried from the final run are not calls
     facts = q("SELECT subject, attr, value, valid_from FROM fact")
     entities = {e["code"]: e for e in q("SELECT code, name, kind, bank_account, bank_account_trusted FROM entity")}
     bills = {b["id"]: b for b in q("SELECT id, vendor_code, amount_cents, status FROM bill")}
