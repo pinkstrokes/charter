@@ -1,0 +1,737 @@
+{
+  "source": {
+    "dataset": "Online Retail II (UCI Machine Learning Repository, id 502)",
+    "page": "https://archive.ics.uci.edu/dataset/502/online+retail+ii",
+    "download_url": "https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip",
+    "doi": "https://doi.org/10.24432/C5CG6D",
+    "license": "CC BY 4.0",
+    "xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+    "rows_per_sheet": {
+      "Year 2009-2010": 525461,
+      "Year 2010-2011": 541910
+    },
+    "rows_after_overlap_removal": 1044848,
+    "sheet_overlap": {
+      "rows_per_sheet_in_source": {
+        "Year 2009-2010": 525461,
+        "Year 2010-2011": 541910
+      },
+      "overlap_from": "2010-12-01T08:26:00",
+      "overlap_to": "2010-12-09T20:01:00",
+      "duplicate_rows_removed": 22523,
+      "duplicate_invoices_removed": 1088,
+      "rule": "rows of 'Year 2009-2010' dated on/after 2010-12-01T08:26:00 are exact copies of rows in 'Year 2010-2011' and were dropped"
+    }
+  },
+  "selection": {
+    "window_start": "2010-12-01",
+    "window_end_inclusive": "2011-05-31",
+    "top_n_by_net_revenue": 120,
+    "min_invoices_in_window": 3,
+    "rule": "customers with a Customer ID and >= min invoices (non-C documents) in the window, ranked by net revenue (all lines incl. credit notes) in the window, ties by id",
+    "customers_active_in_window": 2767,
+    "customers_with_min_invoices": 828,
+    "selected": 120,
+    "cutoff_net_revenue_pence": 358262,
+    "next_excluded_net_revenue_pence": 358233,
+    "selected_share_of_window_customer_revenue": 0.415
+  },
+  "window_context": {
+    "rows": 209029,
+    "rows_with_customer_id": 149053,
+    "documents": 10783,
+    "documents_with_customer_id": 8998,
+    "net_value_pence_all_rows": 370682764,
+    "net_value_pence_with_customer_id": 312048809
+  },
+  "counts": {
+    "customers": 120,
+    "invoices": 1645,
+    "credit_notes": 380,
+    "invoice_lines": 28836,
+    "credit_note_lines": 963,
+    "lines_by_type": {
+      "bank_charges": 2,
+      "discount": 9,
+      "manual": 51,
+      "postage": 122,
+      "product": 29615
+    },
+    "credit_notes_linked": 356,
+    "credit_notes_linked_in_window": 305,
+    "credit_notes_by_reason_guess": {
+      "cancellation": 11,
+      "manual_adjustment": 29,
+      "return": 340
+    },
+    "linked_confidence_bands": {
+      "0.2-0.5": 59,
+      "0.5-0.8": 92,
+      "<0.2": 22,
+      ">=0.8": 183
+    },
+    "customers_by_currency_guess": {
+      "EUR": 16,
+      "GBP": 104
+    }
+  },
+  "totals": {
+    "invoices_gross_pence": 134160724,
+    "invoices_postage_pence": 1731675,
+    "invoices_manual_pence": 1055061,
+    "invoices_fees_pence": 3000,
+    "invoices_net_pence": 136950460,
+    "credit_notes_pence": 7450081,
+    "net_revenue_pence": 129500379,
+    "by_currency_guess": {
+      "EUR": {
+        "customers": 16,
+        "invoices": 200,
+        "credit_notes": 43,
+        "net_revenue_pence": 25966935
+      },
+      "GBP": {
+        "customers": 104,
+        "invoices": 1445,
+        "credit_notes": 337,
+        "net_revenue_pence": 103533444
+      }
+    }
+  },
+  "share_of_customers_with_credit_notes": 0.825,
+  "customers_with_credit_notes": 99,
+  "credit_to_invoice_value_ratio": 0.0544,
+  "per_country": {
+    "United Kingdom": {
+      "customers": 100,
+      "invoices": 1424,
+      "credit_notes": 328,
+      "net_revenue_pence": 95568496
+    },
+    "France": {
+      "customers": 6,
+      "invoices": 47,
+      "credit_notes": 7,
+      "net_revenue_pence": 3360579
+    },
+    "Germany": {
+      "customers": 3,
+      "invoices": 30,
+      "credit_notes": 16,
+      "net_revenue_pence": 1879011
+    },
+    "EIRE": {
+      "customers": 2,
+      "invoices": 79,
+      "credit_notes": 16,
+      "net_revenue_pence": 7541994
+    },
+    "Spain": {
+      "customers": 2,
+      "invoices": 9,
+      "credit_notes": 1,
+      "net_revenue_pence": 1093345
+    },
+    "Netherlands": {
+      "customers": 1,
+      "invoices": 25,
+      "credit_notes": 1,
+      "net_revenue_pence": 11066812
+    },
+    "Australia": {
+      "customers": 1,
+      "invoices": 7,
+      "credit_notes": 2,
+      "net_revenue_pence": 5029020
+    },
+    "Japan": {
+      "customers": 1,
+      "invoices": 4,
+      "credit_notes": 3,
+      "net_revenue_pence": 1270185
+    },
+    "Sweden": {
+      "customers": 1,
+      "invoices": 6,
+      "credit_notes": 2,
+      "net_revenue_pence": 1248562
+    },
+    "Finland": {
+      "customers": 1,
+      "invoices": 6,
+      "credit_notes": 2,
+      "net_revenue_pence": 623623
+    },
+    "Singapore": {
+      "customers": 1,
+      "invoices": 4,
+      "credit_notes": 2,
+      "net_revenue_pence": 417181
+    },
+    "Portugal": {
+      "customers": 1,
+      "invoices": 4,
+      "credit_notes": 0,
+      "net_revenue_pence": 401571
+    }
+  },
+  "invoice_net_pence_percentiles": {
+    "p0": 95,
+    "p5": 2220,
+    "p10": 7109,
+    "p25": 20400,
+    "p50": 41654,
+    "p75": 79777,
+    "p90": 168465,
+    "p95": 271902,
+    "p99": 894338,
+    "p100": 2153590
+  },
+  "invoice_net_pence_mean": 83253,
+  "invoice_line_count_percentiles": {
+    "p0": 1,
+    "p5": 1,
+    "p10": 1,
+    "p25": 4,
+    "p50": 11,
+    "p75": 25,
+    "p90": 41,
+    "p95": 53,
+    "p99": 92,
+    "p100": 294
+  },
+  "credit_note_amount_pence_percentiles": {
+    "p0": 72,
+    "p5": 210,
+    "p10": 374,
+    "p25": 750,
+    "p50": 1910,
+    "p75": 5464,
+    "p90": 16927,
+    "p95": 44425,
+    "p99": 286148,
+    "p100": 2299840
+  },
+  "messy_phenomena": [
+    {
+      "id": "credit_note_without_findable_original",
+      "scope": "selected",
+      "count": 24,
+      "description": "credit notes for which no earlier invoice of the same customer contains the credited items (or, for manual/discount/postage credits, a matching amount)",
+      "amount_pence": 1079172,
+      "examples": [
+        "C537597",
+        "C538897",
+        "C539073",
+        "C542244",
+        "C543624"
+      ]
+    },
+    {
+      "id": "credit_note_against_pre_window_invoice",
+      "scope": "selected",
+      "count": 51,
+      "description": "credit notes whose most likely original was invoiced before the window (likely already settled, so the credit becomes an unapplied balance)",
+      "amount_pence": 672315,
+      "examples": [
+        "C536383",
+        "C536543",
+        "C536622",
+        "C536757",
+        "C536817"
+      ]
+    },
+    {
+      "id": "credit_note_ambiguous_original",
+      "scope": "selected",
+      "count": 69,
+      "description": "credit notes with at least one other earlier invoice scoring >= 50% of the chosen one (the customer re-ordered the same items)",
+      "examples": [
+        "C536543",
+        "C536622",
+        "C536758",
+        "C537530",
+        "C537602"
+      ]
+    },
+    {
+      "id": "credit_note_partially_traceable",
+      "scope": "selected",
+      "count": 29,
+      "description": "linked credit notes where part of the credited value is not on the linked invoice (items spread over several invoices, or more units credited than invoiced there)",
+      "examples": [
+        "C537602",
+        "C537797",
+        "C537805",
+        "C538350",
+        "C538833"
+      ]
+    },
+    {
+      "id": "credit_note_price_differs_from_original",
+      "scope": "selected",
+      "count": 51,
+      "description": "credited unit price differs from the unit price on the linked invoice for some items",
+      "examples": [
+        "C536757",
+        "C536827",
+        "C538082",
+        "C538650",
+        "C538771"
+      ]
+    },
+    {
+      "id": "credit_note_exceeds_linked_invoice",
+      "scope": "selected",
+      "count": 1,
+      "description": "credit note amount is larger than the whole linked invoice",
+      "examples": [
+        "C542805"
+      ]
+    },
+    {
+      "id": "credit_note_spans_several_invoices",
+      "scope": "selected",
+      "count": 79,
+      "description": "one credit note reverses items from two or more earlier invoices (see additional_linked_invoice_nos / allocations)",
+      "examples": [
+        "C536979",
+        "C537203",
+        "C537602",
+        "C537805",
+        "C538350"
+      ]
+    },
+    {
+      "id": "credit_line_neighbouring_stock_code",
+      "scope": "selected",
+      "count": 2,
+      "description": "a credited stock code is one character away from a code on the linked invoice with the same quantity and price, on an invoice that matches the credit note otherwise (wrong variant keyed, e.g. 47566B 'TEA TIME PARTY BUNTING' credited against 47556B 'TEA TIME TEA TOWELS')",
+      "examples": [
+        "C545525",
+        "C550456"
+      ]
+    },
+    {
+      "id": "cancel_and_rebill",
+      "scope": "selected",
+      "count": 10,
+      "description": "credit note reverses an earlier invoice and a near-identical invoice follows within 2 days",
+      "examples": [
+        "C538847",
+        "C542799",
+        "C546325",
+        "C546327",
+        "C548851"
+      ]
+    },
+    {
+      "id": "credit_note_precedes_matching_invoice",
+      "scope": "selected",
+      "count": 1,
+      "description": "no good earlier original, but an invoice with the same items/amount is raised within 2 days AFTER the credit note (out-of-order entry)",
+      "examples": [
+        "C551685"
+      ]
+    },
+    {
+      "id": "duplicate_looking_credit_notes",
+      "scope": "selected",
+      "count": 8,
+      "description": "credit notes with exactly the same amount as an earlier credit note of the same customer within 31 days (possible double credit)",
+      "amount_pence": 187201,
+      "examples": [
+        "C543787",
+        "C546238",
+        "C546327",
+        "C548857",
+        "C550009"
+      ]
+    },
+    {
+      "id": "invoice_with_multiple_credit_notes",
+      "scope": "selected",
+      "count": 51,
+      "description": "in-window invoices that more than one credit note links to",
+      "examples": [
+        "536390",
+        "536576",
+        "536591",
+        "538174",
+        "538353"
+      ]
+    },
+    {
+      "id": "invoice_fully_credited",
+      "scope": "selected",
+      "count": 17,
+      "description": "in-window invoices whose linked credit notes total >= 90% of the invoice",
+      "examples": [
+        "539101",
+        "539109",
+        "539320",
+        "540815",
+        "540818"
+      ]
+    },
+    {
+      "id": "duplicate_looking_invoices",
+      "scope": "selected",
+      "count": 28,
+      "description": "different invoice numbers for the same customer on the same day with the same net amount",
+      "groups": 8,
+      "examples": [
+        "536366",
+        "536372",
+        "536373",
+        "536375",
+        "536377"
+      ]
+    },
+    {
+      "id": "identical_content_invoices",
+      "scope": "selected",
+      "count": 40,
+      "description": "invoices whose line items (code, quantity, price) are identical to another invoice of the same customer, any day",
+      "examples": [
+        "536366",
+        "536372",
+        "536373",
+        "536375",
+        "536377"
+      ]
+    },
+    {
+      "id": "invoice_with_multiple_timestamps",
+      "scope": "selected",
+      "count": 6,
+      "description": "invoices whose lines carry more than one timestamp (invoice_date uses the earliest)",
+      "examples": [
+        "536591",
+        "542217",
+        "544667",
+        "544926",
+        "550320"
+      ]
+    },
+    {
+      "id": "exact_duplicate_lines_within_document",
+      "scope": "selected",
+      "count": 193,
+      "description": "the same line (code, description, quantity, price) appears more than once on one document",
+      "documents": 85,
+      "examples": [
+        "536557",
+        "537136",
+        "537140",
+        "537154",
+        "537155"
+      ]
+    },
+    {
+      "id": "stock_code_repeated_within_document",
+      "scope": "selected",
+      "count": 328,
+      "description": "a stock code appears on several lines of one document (split lines)",
+      "with_different_prices": 14,
+      "examples": [
+        "536381",
+        "536557",
+        "537136",
+        "537140",
+        "537154"
+      ]
+    },
+    {
+      "id": "zero_unit_price_lines",
+      "scope": "selected",
+      "count": 5,
+      "description": "lines with unit price 0.00",
+      "examples": [
+        "539722:22423",
+        "540372:22090",
+        "540372:22553",
+        "548318:22055",
+        "554037:22619"
+      ]
+    },
+    {
+      "id": "negative_unit_price_lines",
+      "scope": "selected",
+      "count": 0,
+      "description": "lines with a negative unit price"
+    },
+    {
+      "id": "sub_penny_unit_prices",
+      "scope": "selected",
+      "count": 0,
+      "description": "unit prices with fractions of a penny (e.g. 0.001); line totals are rounded to the penny"
+    },
+    {
+      "id": "negative_quantity_line_not_marked_C",
+      "scope": "selected",
+      "count": 0,
+      "description": "negative-quantity lines on invoices whose number does not start with C"
+    },
+    {
+      "id": "positive_quantity_line_on_credit_note",
+      "scope": "selected",
+      "count": 0,
+      "description": "positive-quantity lines on C-numbered credit notes"
+    },
+    {
+      "id": "very_large_quantity_lines",
+      "scope": "selected",
+      "count": 45,
+      "description": "lines with |quantity| >= 1000",
+      "examples": [
+        "536890:17084R",
+        "537659:22189",
+        "537659:22188",
+        "537981:22492",
+        "539101:22693"
+      ]
+    },
+    {
+      "id": "manual_lines",
+      "scope": "selected",
+      "count": 51,
+      "description": "special 'manual' lines (M) kept as flagged lines",
+      "on_invoices": 24,
+      "on_invoices_pence": 1055061,
+      "on_credit_notes": 27,
+      "on_credit_notes_pence": -1848963,
+      "examples": [
+        "537140",
+        "537225",
+        "537800",
+        "537804",
+        "540021"
+      ]
+    },
+    {
+      "id": "discount_lines",
+      "scope": "selected",
+      "count": 9,
+      "description": "special 'discount' lines (D) kept as flagged lines",
+      "on_invoices": 0,
+      "on_invoices_pence": 0,
+      "on_credit_notes": 9,
+      "on_credit_notes_pence": -76945,
+      "examples": [
+        "C537597",
+        "C537857",
+        "C538897",
+        "C543752",
+        "C543789"
+      ]
+    },
+    {
+      "id": "postage_lines",
+      "scope": "selected",
+      "count": 122,
+      "description": "special 'postage' lines (C2, DOT, POST) kept as flagged lines",
+      "on_invoices": 113,
+      "on_invoices_pence": 1731675,
+      "on_credit_notes": 9,
+      "on_credit_notes_pence": -832249,
+      "examples": [
+        "536540",
+        "536974",
+        "537065",
+        "537368",
+        "537378"
+      ]
+    },
+    {
+      "id": "bank_charges_lines",
+      "scope": "selected",
+      "count": 2,
+      "description": "special 'bank_charges' lines (BANK CHARGES) kept as flagged lines",
+      "on_invoices": 2,
+      "on_invoices_pence": 3000,
+      "on_credit_notes": 0,
+      "on_credit_notes_pence": 0,
+      "examples": [
+        "541505",
+        "549717"
+      ]
+    },
+    {
+      "id": "credit_note_special_lines_only",
+      "scope": "selected",
+      "count": 29,
+      "description": "credit notes made only of Manual/Discount/POSTAGE/... lines (no stock codes to trace)",
+      "examples": [
+        "C537597",
+        "C537857",
+        "C538897",
+        "C539073",
+        "C542376"
+      ]
+    },
+    {
+      "id": "stock_code_with_several_descriptions",
+      "scope": "selected",
+      "count": 47,
+      "description": "stock codes that appear with more than one description",
+      "examples": [
+        "20725",
+        "20914",
+        "21112",
+        "21811",
+        "21928"
+      ]
+    },
+    {
+      "id": "rows_without_customer_id",
+      "scope": "window_all_customers",
+      "count": 59976,
+      "description": "window rows with no Customer ID (excluded from the world)",
+      "documents": 1785,
+      "value_pence": 58633955,
+      "examples": [
+        "536414",
+        "536544",
+        "536545",
+        "536546",
+        "536547"
+      ]
+    },
+    {
+      "id": "negative_quantity_line_not_marked_C",
+      "scope": "window_all_customers",
+      "count": 651,
+      "description": "negative-quantity lines on non-C invoices anywhere in the window (stock write-offs such as 'damaged', 'thrown away')",
+      "with_customer_id": 0,
+      "examples": [
+        "536589",
+        "536764",
+        "536996",
+        "536997",
+        "536998"
+      ]
+    },
+    {
+      "id": "zero_unit_price_lines",
+      "scope": "window_all_customers",
+      "count": 1292,
+      "description": "lines with unit price 0.00 anywhere in the window",
+      "with_customer_id": 13,
+      "examples": [
+        "536414",
+        "536545",
+        "536546",
+        "536547",
+        "536549"
+      ]
+    },
+    {
+      "id": "credit_notes_without_customer_id",
+      "scope": "window_all_customers",
+      "count": 89,
+      "description": "C-numbered documents with no Customer ID (cannot be put on any account)",
+      "examples": [
+        "C537251",
+        "C537572",
+        "C537581",
+        "C537600",
+        "C537610"
+      ]
+    },
+    {
+      "id": "positive_quantity_line_on_credit_note",
+      "scope": "window_all_customers",
+      "count": 0,
+      "description": "positive-quantity lines on C-numbered documents anywhere in the window"
+    },
+    {
+      "id": "cross_sheet_duplicate_rows",
+      "scope": "source",
+      "count": 22523,
+      "description": "rows present in both sheets (sheet 1 runs to 2010-12-09, sheet 2 restarts on 2010-12-01); the sheet-1 copy is dropped",
+      "documents": 1088
+    },
+    {
+      "id": "bad_debt_adjustment_documents",
+      "scope": "source",
+      "count": 6,
+      "description": "A-numbered 'Adjust bad debt' documents (negative prices, no customer)",
+      "value_pence": -14761408,
+      "examples": [
+        "A506401",
+        "A516228",
+        "A528059",
+        "A563185",
+        "A563186"
+      ]
+    },
+    {
+      "id": "negative_quantity_line_not_marked_C",
+      "scope": "source",
+      "count": 3393,
+      "description": "negative-quantity lines on non-C invoices in the whole source",
+      "with_customer_id": 0,
+      "examples": [
+        "489463",
+        "489464",
+        "489467",
+        "489521",
+        "489655"
+      ]
+    },
+    {
+      "id": "negative_unit_price_lines",
+      "scope": "source",
+      "count": 5,
+      "description": "lines with a negative unit price in the whole source",
+      "examples": [
+        "A506401",
+        "A516228",
+        "A528059",
+        "A563186",
+        "A563187"
+      ]
+    },
+    {
+      "id": "sub_penny_unit_prices",
+      "scope": "source",
+      "count": 18,
+      "description": "unit prices with fractions of a penny in the whole source",
+      "examples": [
+        "494914:PADS",
+        "496222:PADS",
+        "496473:PADS",
+        "496643:PADS",
+        "497935:PADS"
+      ]
+    },
+    {
+      "id": "stock_code_spelling_variants",
+      "scope": "source",
+      "count": 174,
+      "description": "stock codes that occur in several spellings (case, e.g. 15056BL/15056bl, or trailing spaces); matched case-insensitively",
+      "examples": [
+        "15056BL",
+        "15056N",
+        "15056P",
+        "15060B",
+        "18096C"
+      ]
+    },
+    {
+      "id": "customer_with_several_countries",
+      "scope": "source",
+      "count": 13,
+      "description": "customer ids that appear with more than one country",
+      "in_selection": 0,
+      "examples": [
+        12370,
+        12394,
+        12413,
+        12417,
+        12422
+      ]
+    }
+  ]
+}

@@ -419,7 +419,7 @@ def _one_char_apart(a: str, b: str) -> bool:
     """Same length and either one substituted character or two swapped neighbours (typo-like)."""
     if len(a) != len(b) or a == b:
         return False
-    diff = [i for i, (x, y) in enumerate(zip(a, b)) if x != y]
+    diff = [i for i, (x, y) in enumerate(zip(a, b, strict=True)) if x != y]
     if len(diff) == 1:
         return True
     return len(diff) == 2 and diff[1] == diff[0] + 1 and a[diff[0]] == b[diff[1]] and a[diff[1]] == b[diff[0]]
@@ -499,7 +499,8 @@ def evaluate_special(cn: Doc, inv: Doc, lag_days: float) -> Match | None:
         return None
     pool = Counter((ln.line_type, ln.total_pence) for ln in inv.lines if ln.line_type not in GOODS_LINE_TYPES)
     goods_lines = [ln for ln in inv.lines if ln.line_type in GOODS_LINE_TYPES and ln.quantity > 0]
-    explained = 0.0
+    explained = 0.0          # evidence-weighted
+    explained_any = 0.0      # amount of credit lines with any evidence
     all_same_line = True
     bases: set[str] = set()
     recent = lag_days <= DISCOUNT_LOOKBACK_DAYS
@@ -533,14 +534,16 @@ def evaluate_special(cn: Doc, inv: Doc, lag_days: float) -> Match | None:
             weight, basis = max(rules)
             bases.add(basis)
             explained += weight * amount
+            explained_any += amount
     if explained <= 0 and -cn.total_pence != inv.total_pence:
         return None
-    cov = eff = explained / total
+    cov, eff = explained_any / total, explained / total
     full = (all_same_line and sum(pool.values()) == 0 and not goods_lines) or (-cn.total_pence == inv.total_pence)
     if -cn.total_pence == inv.total_pence:   # amount-only evidence: fully explained, but weaker than line matches
         cov, eff = 1.0, max(eff, 0.9)
+        explained_any = total
         bases.add("amount_equals_invoice_total")
-    share = min(1.0, explained / inv.total_pence) if inv.total_pence > 0 else 0.0
+    share = min(1.0, explained_any / inv.total_pence) if inv.total_pence > 0 else 0.0
     return Match(cov, cov, eff, 0.0, 1.0 if full else share, full, "+".join(sorted(bases)))
 
 
@@ -647,7 +650,7 @@ def link_credit_note(cn: Doc, earlier: list[Doc], later: list[Doc]) -> Link:
             residual = _residual(residual, best[2].matched)
         if extra:
             cov, pcov = _combined(cn.goods, [m] + [mx for _, mx in extra])
-    effective = (cov + pcov) / 2
+    effective = (cov + pcov) / 2 if has_goods else m.effective
     linked = [(inv, m)] + extra
     if has_goods:
         share = sum(mx.covered_value for _, mx in linked) / max(sum(d.goods_pence for d, _ in linked), 1)
@@ -768,7 +771,7 @@ def select_customers(window_rows: list[Row], p: Params) -> tuple[list[int], dict
 
 
 def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
-    """Pure function: raw rows in, the five output documents (as Python objects) out."""
+    """Pure function: raw rows in, the four output documents (as Python objects) out."""
     rows, overlap = drop_sheet_overlap(all_rows)
     window_rows = [r for r in rows if p.t0 <= r.ts < p.t1]
     selected_ids, selection_info = select_customers(window_rows, p)
@@ -984,7 +987,7 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
         })
 
     stats = build_stats(rows, window_rows, overlap, selection_info, p, source_sha256, docs, invoices, credits,
-                        links, invoice_records, credit_records, customer_records)
+                        invoice_records, credit_records, customer_records)
     return {
         "customers": customer_records,
         "invoices": invoice_records,
@@ -993,7 +996,7 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
     }
 
 
-def build_stats(rows, window_rows, overlap, selection_info, p, sha, docs, invoices, credits, links,
+def build_stats(rows, window_rows, overlap, selection_info, p, sha, docs, invoices, credits,
                 invoice_records, credit_records, customer_records) -> dict:
     sel_lines = [(d, ln) for d in invoices + credits for ln in d.lines]
     cust_country = {c["customer_code"]: c["country"] for c in customer_records}
@@ -1149,7 +1152,7 @@ def build_stats(rows, window_rows, overlap, selection_info, p, sha, docs, invoic
     ph.append(phenomenon("credit_note_special_lines_only", "selected",
                          "credit notes made only of Manual/Discount/POSTAGE/... lines (no stock codes to trace)", len(x), x))
     desc_var = defaultdict(set)
-    for d, ln in sel_lines:
+    for _, ln in sel_lines:
         if ln.line_type in GOODS_LINE_TYPES and ln.description:
             desc_var[ln.key].add(ln.description)
     multi_desc = sorted(k for k, v in desc_var.items() if len(v) > 1)
