@@ -286,6 +286,12 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
     tx.db.securityEvent.insert({ id: 0n, at: today, kind: 'prompt_injection_ignored', subject: entityCode || p.from, detail: `instructions in "${p.subject}" were read as data, not followed`, stoppedBy: 'quarantined reader', observationId: obsId });
   }
   addFact(tx, entityCode ? `entity:${entityCode}` : `sender:${p.from}`, `email_${x.type}`, { ...x, from: p.from, subject: p.subject, senderMatches, injection }, today, obsId, false);
+  // Claims that would steer collections or cash application count only from the
+  // contact on file; from anyone else they are kept as untrusted text and flagged.
+  if ((x.type === 'promise_to_pay' || x.type === 'remittance' || x.type === 'dispute') && entityCode && !senderMatches) {
+    tx.db.securityEvent.insert({ id: 0n, at: today, kind: `unverified_${x.type}_ignored`, subject: entityCode, detail: `${p.from} is not the contact on file; "${p.subject}" was not allowed to change collections or cash application`, stoppedBy: 'sender not on file', observationId: obsId });
+    return;
+  }
   switch (x.type) {
     case 'sales_report': {
       const store = resolveStore(tx, x.store_code);

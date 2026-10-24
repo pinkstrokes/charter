@@ -2,11 +2,15 @@
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 
+// Same value semantics as JSON.stringify (undefined object fields are dropped,
+// undefined array items become null), so any JSON parser can rebuild the input.
 export function canonical(value: unknown): string {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value, (_k, v) => (typeof v === 'bigint' ? v.toString() : v));
-  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
-  const keys = Object.keys(value as Record<string, unknown>).sort();
-  return `{${keys.map(k => `${JSON.stringify(k)}:${canonical((value as Record<string, unknown>)[k])}`).join(',')}}`;
+  if (value === undefined) return 'null';
+  if (value === null || typeof value !== 'object') return JSON.stringify(value, (_k, v) => (typeof v === 'bigint' ? v.toString() : v)) ?? 'null';
+  if (Array.isArray(value)) return `[${value.map(v => canonical(v)).join(',')}]`;
+  const obj = value as Record<string, unknown>;
+  const keys = Object.keys(obj).filter(k => obj[k] !== undefined).sort();
+  return `{${keys.map(k => `${JSON.stringify(k)}:${canonical(obj[k])}`).join(',')}}`;
 }
 
 export function sha256Hex(text: string): string {

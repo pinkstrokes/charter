@@ -1,0 +1,35 @@
+{
+  "company": { "name": "Pearl Lane Tea Co.", "kind": "franchisor", "currency": "USD", "startDate": "2026-04-06" },
+  "ar_mailbox": "ar@pearllane.example",
+  "staff": { "controller": "Dana Ruiz", "cfo": "Marcus Webb", "consultant": "Lee Park" },
+  "contracts": [
+    {
+      "version": "FA-2022",
+      "terms": { "version": "FA-2022", "royaltyBp": 600, "graceDays": 10, "lateFeeCents": 7500, "interestBpPerMonth": 150, "nsfFeeCents": 3500, "auditThresholdBp": 200, "paymentTermsDays": 2, "applicationOrder": ["interest", "fee", "royalty", "supply", "trade", "audit"] }
+    }
+  ],
+  "entities": [
+    { "code": "F11", "name": "Lotus Leaf Tea LLC", "owner": "Amy Tran", "kind": "franchisee", "contactEmail": "amy@lotusleaftea.com", "phoneOnFile": "+1-650-555-0111", "bankAccount": "****2210" },
+    { "code": "F12", "name": "Golden Pearl Partners", "owner": "Ben Okafor", "kind": "franchisee", "contactEmail": "ben@goldenpearl.co", "phoneOnFile": "+1-510-555-0112", "bankAccount": "****8836" },
+    { "code": "F13", "name": "Brew & Boba Inc", "owner": "Carla Mendes", "kind": "franchisee", "contactEmail": "carla@brewboba.com", "phoneOnFile": "+1-408-555-0113", "bankAccount": "****5519" },
+    { "code": "F14", "name": "Taro Street Holdings", "owner": "Dev Malhotra", "kind": "franchisee", "contactEmail": "dev@tarostreet.com", "phoneOnFile": "+1-415-555-0114", "bankAccount": "****7702" }
+  ],
+  "stores": [
+    { "code": "S41", "entityCode": "F11", "name": "Pearl Lane #41 University Ave", "city": "Palo Alto", "contractVersion": "FA-2022", "consultant": "Lee" },
+    { "code": "S42", "entityCode": "F12", "name": "Pearl Lane #42 Lakeshore", "city": "Oakland", "contractVersion": "FA-2022", "consultant": "Lee" },
+    { "code": "S43", "entityCode": "F12", "name": "Pearl Lane #43 Telegraph", "city": "Berkeley", "contractVersion": "FA-2022", "consultant": "Lee" },
+    { "code": "S44", "entityCode": "F13", "name": "Pearl Lane #44 Stevens Creek", "city": "Cupertino", "contractVersion": "FA-2022", "consultant": "Lee" },
+    { "code": "S45", "entityCode": "F14", "name": "Pearl Lane #45 Valencia", "city": "San Francisco", "contractVersion": "FA-2022", "consultant": "Lee" }
+  ],
+  "open_invoices": [
+    { "invoiceNo": "SUP-4101", "storeCode": "S41", "entityCode": "F11", "date": "2026-03-27", "dueDate": "2026-04-06", "totalCents": 184000, "impliedDrinks": 2400 },
+    { "invoiceNo": "SUP-4201", "storeCode": "S42", "entityCode": "F12", "date": "2026-03-27", "dueDate": "2026-04-06", "totalCents": 80000, "impliedDrinks": 1300 },
+    { "invoiceNo": "SUP-4301", "storeCode": "S43", "entityCode": "F12", "date": "2026-03-27", "dueDate": "2026-04-06", "totalCents": 126500, "impliedDrinks": 1800 },
+    { "invoiceNo": "SUP-4401", "storeCode": "S44", "entityCode": "F13", "date": "2026-03-20", "dueDate": "2026-03-30", "totalCents": 211000, "impliedDrinks": 2900 },
+    { "invoiceNo": "SUP-4501", "storeCode": "S45", "entityCode": "F14", "date": "2026-03-27", "dueDate": "2026-04-06", "totalCents": 99000, "impliedDrinks": 1500 }
+  ],
+  "overpayments": [
+    { "txnId": "WIRE-9001", "entityCode": "F12", "amountCents": 331500, "counterpartyName": "GOLDEN PEARL PARTNERS", "counterpartyAccount": "****8836", "reference": "SUP-4201 SUP-4301 + prepay" },
+    { "txnId": "WIRE-9002", "entityCode": "F14", "amountCents": 163000, "counterpartyName": "TARO STREET HOLDINGS", "counterpartyAccount": "****7702", "reference": "SUP-4501" }
+  ]
+}
