@@ -75,6 +75,7 @@ function Header({ screen }: { screen: Screen }) {
           <div className="brand-co">{cfg?.companyName || 'connecting…'}</div>
         </div>
       </div>
+      <CompanySwitcher />
       <nav className="nav" aria-label="Screens">
         {SCREENS.map(s => (
           <button key={s} className="nav-item" aria-current={screen === s ? 'page' : undefined} onClick={() => go(s)}>
@@ -95,6 +96,26 @@ function Header({ screen }: { screen: Screen }) {
         <PersonaSwitcher />
       </div>
     </header>
+  );
+}
+
+// On the public page: the companies a visitor can look at, one database each.
+function CompanySwitcher() {
+  const info = useCharter();
+  if (info.companies.length < 2) return null;
+  const open = (db: string) => {
+    const u = new URL(window.location.href);
+    u.searchParams.set('db', db);
+    window.location.assign(u.toString());
+  };
+  return (
+    <div className="companies" role="group" aria-label="Company">
+      {info.companies.map(c => (
+        <button key={c.db} type="button" className="btn small option" aria-pressed={c.db === info.db} onClick={() => open(c.db)}>
+          {c.label}
+        </button>
+      ))}
+    </div>
   );
 }
 

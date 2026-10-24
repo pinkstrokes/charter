@@ -36,7 +36,7 @@ Two other moments the judges can trigger themselves:
 | BenchRec, a Tier-1 institution's cash account | 68,975 reconciled bank lines to learn from and 32,048 to reconcile, with the benchmark's own solution (CC BY 4.0) | — | the benchmark's scoring: precision must clear 99.8% before match rate counts |
 | Company A, Pearl Lane Tea Co., a franchisor | franchise terms modelled on practice | six months: 20 stores, sales reports, card settlements, supply orders, debits, vendors, bills, emails, people who make mistakes; planted errors with an answer key | answer key, locked test split, a live split for June |
 | Attacks | — | 36 emails written by deepseek-v4-pro, another model family | same emails against tool-using LLM agents |
-| People | — | a script decides what each controller and consultant answers from the simulated truth, including pre-registered wrong answers (about 5%); a model writes the one-line reason in their voice | the answer key knows which answers were slips; in the live demo the judges play the people |
+| People | — | a script decides what each controller and consultant answers from the simulated truth, including pre-registered wrong answers (about 5%); a model writes the one-line reason in their voice | the answer key knows which answers were slips, so how the team treats a person's mistake is measured; in the live demo a judge can give it an instruction directly, and it pushes back on a wrong one |
 
 ## Results
 

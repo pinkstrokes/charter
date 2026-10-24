@@ -1,4 +1,5 @@
 import { Check, FileJson, RefreshCw, X } from 'lucide-react';
+import { charterApi } from '../stdb/api';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { TrendSection, type TrendMonth, type VersionMark } from '../components/Trend';
 import { BenchRecSection, isBenchRec } from '../components/BenchRec';
@@ -28,7 +29,7 @@ export function Proof() {
   const [err, setErr] = useState('');
   const load = useCallback(async () => {
     try {
-      const res = await fetch(`/__charter/proof?db=${encodeURIComponent(charter.info.db)}${dir ? `&dir=${encodeURIComponent(dir)}` : ''}`);
+      const res = await fetch(charterApi('proof', charter.info.db, dir));
       const body = await res.json();
       if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
       setData(body);

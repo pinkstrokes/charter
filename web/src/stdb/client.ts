@@ -4,6 +4,7 @@
 // exists only so that reducers are called as that person and the kernel judges
 // that identity, not ours.
 import { useSyncExternalStore } from 'react';
+import { charterApi, isPublic, type Company } from './api';
 import { setGlobalLogLevel } from 'spacetimedb';
 import { DbConnection } from '../module_bindings';
 
@@ -37,6 +38,7 @@ export interface ClientInfo {
   warning: string; // e.g. watching read-only because no identities file exists yet
   personas: PersonaConn[];
   active: string;
+  companies: Company[]; // what a public page lets a visitor switch between
 }
 
 const FACT_ATTRS = [
@@ -89,7 +91,7 @@ const QUERIES = [
 type Listener = () => void;
 
 class Charter {
-  info: ClientInfo = { db: '', wsBase: '', httpBase: '', source: '', managed: false, error: '', warning: '', personas: [], active: '' };
+  info: ClientInfo = { db: '', wsBase: '', httpBase: '', source: '', managed: false, error: '', warning: '', personas: [], active: '', companies: [] };
   private listeners = new Set<Listener>();
   private observer: DbConnection | null = null;
   private extra = new Set<string>();
@@ -114,10 +116,10 @@ class Charter {
     this.started = true;
     const params = new URLSearchParams(window.location.search);
     try {
-      const env = (await (await fetch('/__charter/env')).json()) as { defaultDb: string; wsBase: string; httpBase: string };
+      const env = (await (await fetch(charterApi('env'))).json()) as { defaultDb: string; wsBase: string; httpBase: string; companies?: Company[] };
       const db = params.get('db') || (import.meta.env.VITE_CHARTER_DB as string | undefined) || env.defaultDb;
       const wsBase = params.get('ws') || (import.meta.env.VITE_STDB_WS as string | undefined) || env.wsBase;
-      this.set({ db, wsBase, httpBase: env.httpBase });
+      this.set({ db, wsBase, httpBase: env.httpBase, companies: env.companies ?? [] });
       document.title = `Charter · ${db}`;
       await this.loadPersonas(db, false);
     } catch (e) {
@@ -128,6 +130,7 @@ class Charter {
 
   // Bind the same identities again (after a reseed); reconnect only if the tokens changed.
   async rebind(): Promise<void> {
+    if (isPublic) return; // a public page binds nobody
     const res = await fetch(`/__charter/personas/rebind?db=${encodeURIComponent(this.info.db)}`, { method: 'POST' });
     const body = (await res.json()) as { error?: string; personas: Persona[] };
     if (!res.ok || body.error) {
@@ -139,7 +142,7 @@ class Charter {
   }
 
   private async loadPersonas(db: string, rebind: boolean): Promise<void> {
-    const res = await fetch(`/__charter/personas${rebind ? '/rebind' : ''}?db=${encodeURIComponent(db)}`, { method: rebind ? 'POST' : 'GET' });
+    const res = rebind ? await fetch(`/__charter/personas/rebind?db=${encodeURIComponent(db)}`, { method: 'POST' }) : await fetch(charterApi('personas', db));
     const body = (await res.json()) as { error?: string; warning?: string; source: string; managed: boolean; personas: Persona[] };
     if (!res.ok || body.error) throw new Error(body.error || `personas: HTTP ${res.status}`);
     for (const p of this.info.personas) p.conn?.disconnect();

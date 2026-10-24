@@ -11,6 +11,8 @@ const repoRoot = path.resolve(webRoot, '..');
 // interpreter and the hash function) so the browser checks exactly what the
 // kernel runs. Those files import @noble/hashes, resolved from web/node_modules.
 export default defineConfig({
+  // The public build is served from a sub-path (GitHub Pages: /charter/).
+  base: process.env.CHARTER_BASE ?? '/',
   plugins: [react(), charterDev({ repoRoot, webRoot })],
   resolve: {
     alias: [

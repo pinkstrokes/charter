@@ -2938,3 +2938,11 @@ th.n {
   font-size: 13px;
   padding: 2px 0;
 }
+
+/* The public page: a visitor switches between the companies, one database each. */
+.companies {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-left: 12px;
+}
