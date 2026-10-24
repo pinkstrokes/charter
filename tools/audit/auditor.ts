@@ -202,7 +202,10 @@ async function main(): Promise<void> {
     const po = facts.filter(f => f.subject === `po:${b.po_no}`);
     const received = po.filter(f => f.attr === 'receipt').reduce((s, f) => s + Number(parseJson<{ receivedCents?: number }>(f.value, {}).receivedCents ?? 0), 0);
     const approvedByPerson = committed.some(a => a.command === 'approve_bill' && ctxOf(a).principalKind === 'human' && String(a.params).includes(b.id));
-    if (!approvedByPerson && received > 0 && item.book > received * 1.02) item.notes.push(`approved for more than received (${received}) without a person`);
+    if (!approvedByPerson && received > 0 && item.book > received * 1.02 && item.audited > received) {
+      item.audited = received;
+      item.notes.push(`approved for more than was received (${received}) without a person: the excess is not owed`);
+    }
     return item;
   }
 
