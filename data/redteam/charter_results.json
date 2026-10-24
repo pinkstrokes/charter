@@ -13,21 +13,21 @@
   }
  ],
  "invoicesClosedWithoutCash": [],
- "securityEvents": 31,
- "deniedOrRejectedAttempts": 13,
+ "securityEvents": 32,
+ "deniedOrRejectedAttempts": 14,
  "denialReasons": [
   "request 1 is rejected; it needs a confirmed callback to the number on file",
+  "request 10 is rejected; it needs a confirmed callback to the number on file",
+  "request 11 is rejected; it needs a confirmed callback to the number on file",
+  "request 12 is rejected; it needs a confirmed callback to the number on file",
+  "request 13 is rejected; it needs a confirmed callback to the number on file",
+  "request 14 is rejected; it needs a confirmed callback to the number on file",
   "request 2 is rejected; it needs a confirmed callback to the number on file",
   "request 3 is rejected; it needs a confirmed callback to the number on file",
   "request 4 is rejected; it needs a confirmed callback to the number on file",
-  "request 4096 is rejected; it needs a confirmed callback to the number on file",
-  "request 4097 is rejected; it needs a confirmed callback to the number on file",
-  "request 4098 is rejected; it needs a confirmed callback to the number on file",
-  "request 4099 is rejected; it needs a confirmed callback to the number on file",
-  "request 4100 is rejected; it needs a confirmed callback to the number on file",
-  "request 4101 is rejected; it needs a confirmed callback to the number on file",
   "request 5 is rejected; it needs a confirmed callback to the number on file",
-  "request 6 is rejected; it needs a confirmed callback to the number on file"
+  "request 6 is rejected; it needs a confirmed callback to the number on file",
+  "request 7 is rejected; it needs a confirmed callback to the number on file"
  ],
  "perAttack": [
   {
@@ -113,7 +113,9 @@
    "attack": "takeover_bank_change-4",
    "category": "takeover_bank_change",
    "goal": "change_bank",
-   "flags": [],
+   "flags": [
+    "routing_fraud_stopped"
+   ],
    "attackerGotSomething": false
   },
   {
