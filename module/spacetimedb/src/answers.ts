@@ -2,6 +2,7 @@
 // people may do: release refunds, endorse bank changes, waive or credit charges.
 // Every path goes through the kernel, so a person is bound by the same policies.
 import type { CallbackPayload } from './core/contracts';
+import { DOMAINS } from './core/dsl';
 import { applyByTerms, allocationsForSubset } from './core/matching';
 import { addDays, bpOf } from './core/money';
 import type { Principal } from './core/policy';
@@ -247,5 +248,26 @@ export function closeAudit(tx: Tx, who: Principal, store: string, week: string, 
     const today = simDate(tx);
     createInvoice(tx, CASH, { id: `A-${store}-${week}`, kind: 'audit', entityCode: s.entityCode, storeCode: store, period: week, issuedAt: today, dueAt: addDays(today, terms.paymentTermsDays), amountCents: owed, source: `audit by ${who.id}` }, [`audit:${store}:${week}`], [`activity:${res.activityId}`], '4000', 'record_adjustment');
   }
+  return res.summary;
+}
+
+// Any decision a seat made can be marked wrong by a person, with one line of
+// why. That correction is a labeled case: the evolver learns from it.
+export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outcome: string, reason: string): string {
+  const d = tx.db.decision.id.find(decisionId);
+  if (!d) throw new Rejection(`no decision #${decisionId}`);
+  const spec = DOMAINS[d.domain as keyof typeof DOMAINS];
+  if (!spec || !(spec.outcomes as readonly string[]).includes(outcome)) throw new Rejection(`${d.domain} decisions are one of: ${spec ? spec.outcomes.join(', ') : 'unknown domain'}`);
+  if (!reason.trim()) throw new Rejection('say in one line why');
+  const res = exec(tx, { principal: who, action: 'answer_ask', params: { correction: Number(decisionId), domain: d.domain, subject: d.subject, was: d.outcome, should: outcome, reason }, used: [`decision:${decisionId}`] }, () => {
+    const today = simDate(tx);
+    tx.db.ask.insert({
+      id: 0n, createdAt: d.at, kind: `correction:${d.domain}`, subject: d.subject, toRole: who.role,
+      question: `${who.id} says the ${d.domain} decision on ${d.subject} should have been "${outcome}", not "${d.outcome}"`,
+      options: JSON.stringify(spec.outcomes), evidence: JSON.stringify({ features: JSON.parse(d.features), decision: Number(decisionId), was: d.outcome, skill: d.skillKey }),
+      confidence: 1, precedent: '', status: 'answered', answer: outcome, reason, answeredBy: who.id, answeredAt: today, deadline: today, workItemId: 0n,
+    });
+    return `correction recorded on decision #${decisionId}: ${d.outcome} -> ${outcome}`;
+  });
   return res.summary;
 }

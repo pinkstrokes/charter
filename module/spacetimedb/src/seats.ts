@@ -46,12 +46,31 @@ interface Decided {
 // Subjects follow the answer-key convention: underreport `store:{code}:{week}`,
 // allocation `receipt:{txnId}`, pre_chase `entity:{code}:{date}`,
 // routing_change `routing:{entity}:{refKey}`.
+// When a person has corrected a near-identical case, the seat does not repeat
+// the mistake: it takes the case to a person instead (the precedent tier).
+const ASK_OUTCOME: Record<string, string> = { underreport: 'ask_consultant', pre_chase: 'escalate_controller', allocation: 'leave_unapplied_ask' };
+
+function correctedPrecedent(tx: Tx, domain: string, features: FeatureMap, outcome: string): { id: bigint; text: string } | null {
+  if (!ASK_OUTCOME[domain]) return null;
+  for (const a of tx.db.ask.status.filter('answered')) {
+    if (a.kind !== `correction:${domain}` || a.answer === outcome) continue;
+    const past = (JSON.parse(a.evidence || '{}') as { features?: FeatureMap }).features;
+    if (past && featureDistance(features, past) < 0.08) return { id: a.id, text: `${a.answeredBy} corrected a near-identical case on ${a.answeredAt} to "${a.answer}": ${a.reason}` };
+  }
+  return null;
+}
+
 function decide(tx: Tx, seat: string, domain: string, subject: string, features: FeatureMap): Decided {
   const s = skillFor(tx, domain, subject);
   if (!s) return { key: 'none', decide: 'ask', note: 'no active skill', askRole: 'controller', used: {} };
-  const { outcome, trace } = run(s.program, features);
+  let { outcome, trace } = run(s.program, features);
+  const prior = correctedPrecedent(tx, domain, features, outcome.decide);
+  if (prior) {
+    outcome = { decide: ASK_OUTCOME[domain], askRole: domain === 'underreport' ? 'consultant' : 'controller', note: prior.text };
+    trace = { ruleIndex: -2, used: { precedent: Number(prior.id) } };
+  }
   const at = simDate(tx);
-  tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: JSON.stringify(features), skillKey: s.key, outcome: outcome.decide, ruleIndex: trace.ruleIndex, note: outcome.note ?? '', shadow: false });
+  tx.db.decision.insert({ id: 0n, at, seat, domain, subject, features: JSON.stringify(features), skillKey: prior ? `${s.key}+precedent#${prior.id}` : s.key, outcome: outcome.decide, ruleIndex: trace.ruleIndex, note: outcome.note ?? '', shadow: false });
   // Shadow versions decide the same case on the record but never act.
   for (const sh of [...tx.db.skill.domain.filter(domain)]) {
     if (sh.status !== 'shadow') continue;

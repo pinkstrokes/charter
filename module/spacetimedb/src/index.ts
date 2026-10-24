@@ -10,7 +10,7 @@ import type { SkillProgram } from './core/dsl';
 import type { PolicyTemplate, Principal, Role } from './core/policy';
 import { appendActivity, checkInvariants, Rejection, simDate, type Ctx, type Tx } from './kernel';
 import type { ProcCtx } from './llm';
-import { answerAsk, closeAudit, endorseRouting, raiseConcern, releaseRefund, waiveFee } from './answers';
+import { answerAsk, closeAudit, correctDecision, endorseRouting, raiseConcern, releaseRefund, waiveFee } from './answers';
 import { decidePolicy, proposePolicy, proposeSkill, seedGovernance, setSkillStatus } from './governance';
 import { cashAppCycle, collectionsCycle, refundsCycle, triage } from './seats';
 import { ingest } from './world';
@@ -193,6 +193,11 @@ export const waive_fee = spacetimedb.reducer({ invoiceId: t.string(), reason: t.
 export const raise_concern = spacetimedb.reducer({ store: t.string(), week: t.string(), note: t.string() }, (ctx, { store, week, note }) => {
   const who = requireRole(ctx, 'consultant', 'controller');
   guard(() => raiseConcern(ctx, who, store, week, note));
+});
+
+export const correct_decision = spacetimedb.reducer({ decisionId: t.u64(), outcome: t.string(), reason: t.string() }, (ctx, { decisionId, outcome, reason }) => {
+  const who = requireRole(ctx, 'controller', 'consultant');
+  guard(() => correctDecision(ctx, who, decisionId, outcome, reason));
 });
 
 export const close_audit = spacetimedb.reducer({ store: t.string(), week: t.string(), auditedGrossCents: t.i64(), note: t.string() }, (ctx, { store, week, auditedGrossCents, note }) => {

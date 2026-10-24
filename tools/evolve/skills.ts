@@ -70,12 +70,22 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
   const latest = latestBySubject(h, domain);
   const bySubject = new Map<string, Example>();
   for (const a of [...h.asks].sort((x, y) => x.id - y.id)) {
-    const spec = ASK_LABELS[a.kind];
-    if (!spec || spec.domain !== domain || a.status !== 'answered') continue;
-    const label = spec.map[a.answer];
-    if (!label) continue;
-    const subject = domain === 'pre_chase' ? `${a.subject}:${a.created_at}` : a.subject;
+    if (a.status !== 'answered') continue;
     const ev = parseJson<{ features?: FeatureMap }>(a.evidence, {});
+    let label: string | undefined;
+    let subject = a.subject;
+    if (a.kind === `correction:${domain}`) {
+      label = a.answer; // a person marked a decision wrong and said what it should have been
+    } else if (a.kind === 'allocation' && domain === 'allocation') {
+      // The person picked the payer's own list when it was there: the seat could have applied it.
+      label = a.answer !== 'apply oldest first' && ev.features?.remittance_consistent === true ? 'apply_unique' : 'leave_unapplied_ask';
+    } else {
+      const spec = ASK_LABELS[a.kind];
+      if (!spec || spec.domain !== domain) continue;
+      label = spec.map[a.answer];
+      if (domain === 'pre_chase') subject = `${a.subject}:${a.created_at}`;
+    }
+    if (!label) continue;
     const features = ev.features ?? parseJson<FeatureMap>(latest.get(subject)?.features ?? '{}', {});
     if (!Object.keys(features).length) continue;
     bySubject.set(subject, { subject, features, label, source: `ask #${a.id} answered by ${a.answered_by}`, reason: a.reason, at: a.answered_at });

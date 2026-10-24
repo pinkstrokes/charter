@@ -20,7 +20,7 @@ for (let i = 2; i < process.argv.length; i++) {
 const DB = args.get('db') ?? process.env.STDB_DB ?? 'charter-iqwfr';
 const COMPANY_DIR = args.get('data') ?? (DB === 'charter-a' ? 'data/companyA' : DB === 'charter-b' ? 'data/companyB' : 'data/dev');
 const MODEL = args.get('model') ?? 'qwen3.8-max';
-const DOMAINS_TO_EVOLVE: Domain[] = args.has('domain') ? [args.get('domain') as Domain] : ['underreport', 'pre_chase'];
+const DOMAINS_TO_EVOLVE: Domain[] = args.has('domain') ? [args.get('domain') as Domain] : ['underreport', 'pre_chase', 'allocation', 'routing_change'];
 
 interface KeyEntry {
   caseId: string;
