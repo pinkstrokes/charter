@@ -7,7 +7,7 @@ Two databases on the projector: `charter-b` (company B, real UCI invoices, finis
 ```bash
 spacetime start
 STDB_DB=charter-a python3 tools/world/run.py --reset   # six months, ~45 min; or reuse the finished database
-STDB_DB=charter-a python3 tools/demo_prep.py           # Thursday 2 July: a $48,000 Formosa Leaf bill due next week, seats on autopilot
+STDB_DB=charter-a python3 tools/demo_prep.py           # Thursday 2 July: bills for Formosa Leaf ($48,000), Golden Tapioca and Pacific Cup due over two weeks; seats on autopilot
 npx tsx tools/evolve/evolve.ts --db charter-a --watch  # the evolver, live: every answer teaches
 cd web && npm run dev
 ```
@@ -21,7 +21,7 @@ cd web && npm run dev
 | 0:45 | Proof → company B trend | "Month by month on these books it settles more alone, asks people less, and on the locked test split it was wrong once in 292 payments it settled alone." |
 | 1:00 | charter-a, Security → send the bank-change email from Formosa Leaf's own address | "Now try to steal from us: new bank details the day before a $48,000 payment run." |
 | 1:15 | Inbox: the callback question | "Two models read it; the change is held; the controller is asked to call the number we already had." |
-| 1:25 | `python3 tools/demo_prep.py --friday`, then Payables → release | "Friday. The controller presses release — refused, for the controller too, by P-3." |
+| 1:25 | `python3 tools/demo_prep.py --friday` (the next Friday's run), then Payables → release | "Friday. The controller presses release — refused, for the controller too, by P-3." |
 | 1:40 | Knowledge → Policies → P-1, P-2, P-3 | "Nobody wrote P-3. A debit bounced in April during a bank change nobody verified; Charter replayed every past money movement, found the one rule that would have stopped it without holding back anything legitimate, and extended it to refunds and vendor payments." |
 | 2:05 | Any hold decision inside a grace period → "This was wrong" → chase | "Tell it to chase a franchisee inside the grace period: it keeps its decision and says the agreement forbids it. That verdict is never counted against the rule and never learned." |
 | 2:20 | Proof → BenchRec | "On a real bank's reconciliation, the same earned-autonomy rule matched 84% of bank lines at 99.9% precision — the benchmark's floor is 99.8%; the matcher shipped with the dataset misses it." |
@@ -30,7 +30,7 @@ cd web && npm run dev
 ## Judges' turn
 
 - **Correct anything.** Open any decision, "This was wrong", one line of why. The evolver (watch mode) proposes a new version with its replay proof within a minute — or explains why one answer is not enough evidence. Activate it as the controller; it starts on probation with spot checks.
-- **Attack it.** Security → compose any email: look-alike domains, prompt injection in a remittance, a refund to a new account, an authority impersonation. Two readers, the sender check and the kernel decide; every refusal is on the record.
+- **Attack it.** Security → compose any email (Formosa Leaf was attacked in rehearsal; Golden Tapioca and Pacific Cup have bills in next Friday's run): look-alike domains, prompt injection in a remittance, a refund to a new account, an authority impersonation. Two readers, the sender check and the kernel decide; every refusal is on the record.
 - **Ask why.** Every row opens a Why panel: who, what it asked for, the policies the kernel checked, the facts the check saw, the evidence it used, and the row's place in the hash chain.
 - **Close a month.** Proof → Audit: the auditor's opinion with its 95% upper misstatement limit; `close_period` produces a hashed certificate; `python3 tools/anchor.py data/companyA` anchors it in git.
 
