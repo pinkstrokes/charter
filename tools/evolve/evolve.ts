@@ -103,7 +103,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
       for (const v of repair(domain, current, p.program, ev, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, unsupported rules removed by replay`, rationale: p.rationale });
     }
   }
-  const rank = (a: Scored, b: Scored) => b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity;
+  const rank = (a: Scored, b: Scored) => b.ev.lesson.handled.length - a.ev.lesson.handled.length || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity;
   const passing = scored.filter(s => s.ev.gate === 'pass').sort(rank);
   // The leading candidates get their new thresholds centred between the known cases.
   for (const c of passing.slice(0, 3)) {
@@ -129,7 +129,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     gate: 'pass',
     domain,
     parent: active.key,
-    lesson: { subjects: (lesson.length ? lesson : optional).map(e => e.subject), required: lesson.length, optionalFixed: best.ev.lesson.optionalFixed, optionalTotal: optional.length, cases: [...lesson, ...optional].slice(0, 20).map(e => ({ subject: e.subject, label: e.label, source: e.source, reason: e.reason })) },
+    lesson: { subjects: (lesson.length ? lesson : optional).map(e => e.subject), required: lesson.length, handled: best.ev.lesson.handled, optionalFixed: best.ev.lesson.optionalFixed, optionalTotal: optional.length, cases: [...lesson, ...optional].slice(0, 20).map(e => ({ subject: e.subject, label: e.label, source: e.source, reason: e.reason, handled: best.ev.lesson.handled.includes(e.subject) })) },
     labeled: best.ev.labeled,
     budget: best.ev.budget,
     changed: best.ev.changed,
@@ -155,7 +155,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   await db.call('propose_skill', domain, JSON.stringify(best.program), active.key, provenance, JSON.stringify(proof));
   await db.call('record_evolution', domain, 'pass', `proposed ${domain}@${active.version + 1}: fixes ${best.ev.labeled.fixed.length}, takes over ${best.ev.lesson.optionalFixed}, breaks 0`, JSON.stringify({ candidatesTried: scored.length, candidatesPassed: passing.length, seconds: Number(secs) })).catch(() => undefined);
   writeFileSync(`${COMPANY_DIR}/eval/proposal-${domain}-${active.version + 1}.json`, JSON.stringify({ program: best.program, proof }, null, 2));
-  return `${domain}: proposed v${active.version + 1} in ${secs}s (${passing.length}/${scored.length} candidates passed; fixes ${best.ev.labeled.fixed.length}, breaks 0, new leads ${best.ev.newLeads.length})`;
+  return `${domain}: proposed v${active.version + 1} in ${secs}s (${passing.length}/${scored.length} candidates passed; handles ${best.ev.lesson.handled.length}/${lesson.length} lessons, fixes ${best.ev.labeled.fixed.length}, breaks 0, new leads ${best.ev.newLeads.length})`;
 }
 
 async function once(db: Db): Promise<void> {

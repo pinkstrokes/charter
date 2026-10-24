@@ -148,7 +148,7 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
 export interface Evaluation {
   problems: string[];
   labeled: { n: number; correctBefore: number; correctAfter: number; fixed: string[]; broken: string[] };
-  lesson: { subjects: string[]; fixed: boolean; optionalFixed: number; optionalTotal: number };
+  lesson: { subjects: string[]; fixed: boolean; handled: string[]; optionalFixed: number; optionalTotal: number };
   budget: { flagged: number; total: number; rate: number; limit: number } | null;
   changed: { n: number; total: number; rate: number; limit: number };
   newLeads: string[];
@@ -231,7 +231,11 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   const thin = [...takeovers.entries()].filter(([, t]) => t.n < MIN_SUPPORT || t.disagree > 0);
   const offenders = new Set<number>(thin.map(([rule]) => rule));
   for (const e of examples) if (broken.includes(e.subject)) offenders.add(runRule(candidate, e.features)?.rule ?? -1);
-  const lessonFixed = lesson.length ? lesson.every(e => agrees(domain, decide(candidate, e.features), e.label)) : optionalFixed > 0;
+  // People's answers carry slips: a candidate must handle at least one case they
+  // taught and break nothing they labeled; the lessons it leaves are listed in its
+  // proof and stay lessons for the next round.
+  const lessonsHandled = lesson.filter(e => agrees(domain, decide(candidate, e.features), e.label)).map(e => e.subject);
+  const lessonFixed = lesson.length ? lessonsHandled.length > 0 : optionalFixed > 0;
   const past = [...latestBySubject(h, domain).values()].filter(d => !hidden.has(d.subject));
   const labeledSubjects = new Set(examples.map(e => e.subject));
   let changedN = 0;
@@ -256,7 +260,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   const changed = { n: changedN, total: past.length, rate: changedN / total, limit: CHANGE_BUDGET };
   const why: string[] = [];
   if (problems.length) why.push(`invalid: ${problems.join('; ')}`);
-  if (!lessonFixed) why.push(lesson.length ? 'does not handle the case people just taught' : 'takes over none of the cases people said could be settled');
+  if (!lessonFixed) why.push(lesson.length ? 'handles none of the cases people just taught' : 'takes over none of the cases people said could be settled');
   if (broken.length) why.push(`gets ${broken.length} case(s) wrong that the current version gets right`);
   if (budget && budget.rate > budget.limit) why.push(`would send ${(budget.rate * 100).toFixed(1)}% of store-weeks to audit (limit ${budget.limit * 100}%)`);
   if (changed.rate > changed.limit) why.push(`changes ${(changed.rate * 100).toFixed(1)}% of past decisions (limit ${changed.limit * 100}%)`);
@@ -265,7 +269,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   return {
     problems,
     labeled: { n: examples.length, correctBefore: before, correctAfter: after, fixed, broken },
-    lesson: { subjects: lesson.map(e => e.subject), fixed: lessonFixed, optionalFixed, optionalTotal: optional.length },
+    lesson: { subjects: lesson.map(e => e.subject), fixed: lessonFixed, handled: lessonsHandled, optionalFixed, optionalTotal: optional.length },
     budget,
     changed,
     newLeads,
