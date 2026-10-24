@@ -4,7 +4,7 @@
 // invariants, and an independent re-verification of the activity hash chain.
 //   npx tsx tools/evolve/report.ts --db charter-a
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { ESCALATING as ESCALATE, parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
+import { parseTreatments, run, settlesAlone, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { chainHash } from '../../module/spacetimedb/src/core/hash';
 import { upper95 } from '../../module/spacetimedb/src/core/stats';
 import { Db, evolverToken, parseJson, type Row } from './lib';
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
     // Cash application is right when the money landed on the right invoices.
     const right = domain === 'allocation' && (e as { truth?: { invoices?: string[] } }).truth?.invoices ? landedRight(e as never) : agrees(domain, d.outcome, e.expected);
     if (right) cell.right++;
-    if (!ESCALATE[domain].includes(d.outcome) && (e.split === 'test' || e.split === 'live')) {
+    if (settlesAlone(domain, d.outcome, parseTreatments(d.treatments)) && (e.split === 'test' || e.split === 'live')) {
       const a = (auto[domain] ??= { n: 0, wrong: 0 });
       a.n++;
       if (!right) a.wrong++;
@@ -104,9 +104,10 @@ async function main(): Promise<void> {
         const c = (byFamily[e.family] ??= { n: 0, right: 0, alone: 0, wrong: 0 });
         c.n++;
         const out = run(program, parseJson<FeatureMap>(d.features, {})).outcome.decide;
-        const right = graded(domain, out, e.expected, e.truth?.invoices, parseTreatments(d.treatments));
+        const t = parseTreatments(d.treatments);
+        const right = graded(domain, out, e.expected, e.truth?.invoices, t);
         if (right) c.right++;
-        if (!ESCALATE[domain].includes(out)) {
+        if (settlesAlone(domain, out, t)) {
           c.alone++;
           if (!right) c.wrong++;
         }
@@ -185,7 +186,7 @@ async function main(): Promise<void> {
     const t = ((trend[m] ??= {})[d.domain] ??= blank());
     t.decisions++;
     const domain = d.domain as Domain;
-    if ((ESCALATE[domain] ?? []).includes(d.outcome)) continue;
+    if (!settlesAlone(domain, d.outcome, parseTreatments(d.treatments))) continue;
     t.alone++;
     const e = keyBySubject.get(d.subject);
     if (!e) continue;

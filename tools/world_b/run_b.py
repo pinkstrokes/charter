@@ -233,7 +233,7 @@ def answer(admin, dana, truth):
             right = got == sorted(t.get("invoices", [])) if t else True
             treat = json.loads(a["evidence"] or "{}").get("treatments") or {}
             want = " + ".join(sorted(t.get("invoices", []))) or "ask"
-            should = next((o for o in opts if treat.get(o) == want), "leave_unapplied_ask")
+            should = "leave_unapplied_ask" if want == "ask" else next((o for o in opts if treat.get(o) == want), "leave_unapplied_ask")
             dana.call("answer_ask", a["id"], "correct" if right else should, "the money landed on the invoices the customer paid" if right else f"landed on {', '.join(got) or 'nothing'}, the customer paid {', '.join(t.get('invoices', [])) or 'nothing open'}")
         elif k == "label_check":
             dana.call("answer_ask", a["id"], opts[1], "checked again against the remittance and the bank line: the verdict stands")

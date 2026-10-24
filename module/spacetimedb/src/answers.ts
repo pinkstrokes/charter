@@ -108,8 +108,11 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       return applyAllocations(tx, CASH, receiptId, allocations, plan, {}, fromDecision) ? `applied ${receiptId} as told` : `could not apply ${receiptId}`;
     }
     case 'write_off': {
-      if (answer !== 'write off') return 'the differences stay open';
       const items = (evidence.invoices ?? []) as { invoice: string; cents: number }[];
+      if (answer !== 'write off') {
+        for (const i of items) addFact(tx, `invoice:${i.invoice}`, 'kept_open', { cents: i.cents, by: who.id }, today, 0n, true);
+        return `the differences stay open and are collected like any balance`;
+      }
       const done = items.filter(i => writeOff(tx, who, i.invoice, i.cents, plan).ok).length;
       return `wrote off ${done} of ${items.length} difference${items.length === 1 ? '' : 's'}`;
     }

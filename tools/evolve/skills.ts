@@ -1,7 +1,7 @@
 // Skill evolution for one domain. People's answers are the only teacher; every
 // candidate is replayed over the features the seats actually saw, and must pass
 // the gate before a person is even asked to look at it.
-import { ASKS, complexity, DOMAINS, ESCALATING, outcomeFor, parseTreatments, run, sameTreatment, TOLERABLE, validate, type Expr, type FeatureMap, type SkillProgram, type Treatments } from '../../module/spacetimedb/src/core/dsl';
+import { ASKS, complexity, DOMAINS, ESCALATING, outcomeFor, parseTreatments, run, sameTreatment, settlesAlone, TOLERABLE, validate, type Expr, type FeatureMap, type SkillProgram, type Treatments } from '../../module/spacetimedb/src/core/dsl';
 import { createHash } from 'node:crypto';
 import { llmJson, parseJson, type Db, type Row } from './lib';
 import { allocationLabel, labelBreach, landing } from '../../module/spacetimedb/src/core/labels';
@@ -90,13 +90,12 @@ export const SAFETY_TEXT: Record<Domain, string> = {
 // version settled them alone and was wrong) and cases it may take over (the
 // current version asked a person who then said it could have been settled).
 export function splitLessons(domain: Domain, current: SkillProgram, examples: Example[]): { required: Example[]; optional: Example[] } {
-  const escalating = ESCALATING[domain] ?? [];
   const required: Example[] = [];
   const optional: Example[] = [];
   for (const e of examples) {
     const out = run(current, e.features).outcome.decide;
     if (agrees(domain, out, e.label, e.treatments)) continue;
-    if (escalating.includes(out) && !escalating.includes(e.label)) optional.push(e);
+    if (!settlesAlone(domain, out, e.treatments) && settlesAlone(domain, e.label, e.treatments)) optional.push(e);
     else required.push(e);
   }
   return { required, optional };
@@ -236,15 +235,14 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   let handedBack = 0;
   let handedBackWrong = 0;
   let takenOver = 0;
-  let newAlone = 0; // labeled cases it settles alone, and not the way the current version did
-  const escalating = ESCALATING[domain] ?? [];
+  let newAlone = 0; // where a new mistake could be: settled alone, not as the current version did, where it was right or asked
   for (const e of examples) {
     const cur = decide(current, e.features);
     const cand = decide(candidate, e.features);
     const b = agrees(domain, cur, e.label, e.treatments);
     const a = agrees(domain, cand, e.label, e.treatments);
-    const curAlone = !escalating.includes(cur);
-    const candAlone = !escalating.includes(cand);
+    const curAlone = settlesAlone(domain, cur, e.treatments);
+    const candAlone = settlesAlone(domain, cand, e.treatments);
     before += b ? 1 : 0;
     after += a ? 1 : 0;
     if (!b && a) fixed.push(e.subject);
@@ -256,17 +254,16 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     if (curAlone && !b && (a || !candAlone)) stopped++;
     if (curAlone && !candAlone) (handedBack++, (handedBackWrong += b ? 0 : 1));
     if (!curAlone && candAlone && a) takenOver++;
-    if (candAlone && !(curAlone && agrees(domain, cand, cur, e.treatments))) newAlone++;
+    if (candAlone && (b || !curAlone) && !(curAlone && agrees(domain, cand, cur, e.treatments))) newAlone++;
   }
   const tolerable = TOLERABLE[domain];
   const optionalFixed = optional.filter(e => agrees(domain, decide(candidate, e.features), e.label, e.treatments)).length;
   // Takeovers grouped by the candidate rule that settles them.
   const takeovers = new Map<number, { n: number; disagree: number }>();
   for (const e of examples) {
-    const cur = decide(current, e.features);
-    if (!escalatingOf(domain).includes(cur)) continue;
+    if (settlesAlone(domain, decide(current, e.features), e.treatments)) continue;
     const r = runRule(candidate, e.features);
-    if (!r || escalatingOf(domain).includes(r.decide)) continue;
+    if (!r || !settlesAlone(domain, r.decide, e.treatments)) continue;
     const t = takeovers.get(r.rule) ?? { n: 0, disagree: 0 };
     t.n++;
     if (!agrees(domain, r.decide, e.label, e.treatments)) t.disagree++;
@@ -375,10 +372,6 @@ export function repair(domain: Domain, current: SkillProgram, cand: SkillProgram
   return variants.filter(v => evaluate(domain, current, v, examples, lesson, h, hidden, optional, false).gate === 'pass');
 }
 
-function escalatingOf(domain: Domain): string[] {
-  return ESCALATING[domain] ?? [];
-}
-
 function runRule(p: SkillProgram, f: FeatureMap): { rule: number; decide: string } | null {
   try {
     const r = run(p, f);
@@ -414,8 +407,7 @@ export async function improve(model: string, domain: Domain, current: SkillProgr
     let program: SkillProgram;
     let ev: Evaluation;
     try {
-      program = cleanestFirst(domain, prune(domain, current, proposal.program, examples, h, hidden), examples);
-      ev = evaluate(domain, current, program, examples, lesson, h, hidden, optional);
+      ({ program, ev } = ordered(domain, current, prune(domain, current, proposal.program, examples, h, hidden), examples, lesson, h, hidden, optional));
     } catch {
       continue; // a candidate the evaluator cannot even read is simply not a candidate
     }
@@ -429,15 +421,25 @@ export async function improve(model: string, domain: Domain, current: SkillProgr
   }
   const passing = scored.filter(s => s.ev.gate === 'pass').sort(rank);
   for (const c of passing.slice(0, 3)) {
-    const program = cleanestFirst(domain, center(domain, current, c.program, examples, lesson, h, hidden, optional), examples);
-    if (JSON.stringify(program) === JSON.stringify(c.program)) continue;
-    const ev = evaluate(domain, current, program, examples, lesson, h, hidden, optional);
+    const moved = center(domain, current, c.program, examples, lesson, h, hidden, optional);
+    if (JSON.stringify(moved) === JSON.stringify(c.program)) continue;
+    const { program, ev } = ordered(domain, current, moved, examples, lesson, h, hidden, optional);
     if (ev.gate !== 'pass') continue;
     const centred = { program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale };
     scored.push(centred);
     passing.push(centred);
   }
   return { scored, passing: passing.sort(rank) };
+}
+
+// A candidate with its interchangeable rules ordered cleanest first, unless that
+// does worse at the gate: the order moves only which rule a case counts toward.
+function ordered(domain: Domain, current: SkillProgram, p: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[]): { program: SkillProgram; ev: Evaluation } {
+  const plain = { program: p, ev: evaluate(domain, current, p, examples, lesson, h, hidden, optional) };
+  const reordered = cleanestFirst(domain, p, examples);
+  if (reordered === p) return plain;
+  const ev = evaluate(domain, current, reordered, examples, lesson, h, hidden, optional);
+  return (ev.gate === 'pass' || plain.ev.gate !== 'pass') && ev.value >= plain.ev.value ? { program: reordered, ev } : plain;
 }
 
 // ---------- proposing ----------
@@ -568,17 +570,21 @@ export function cleanestFirst(domain: Domain, program: SkillProgram, examples: E
     const r = runRule({ ...program, rules: rules.slice(0, upto) }, e.features);
     return r === null || r.rule < 0;
   });
+  // Interchangeable: the same outcome, asked of the same person.
+  const same = (x: SkillProgram['rules'][number], y: SkillProgram['rules'][number]) => x.then.decide === y.then.decide && (x.then.askRole ?? '') === (y.then.askRole ?? '');
   for (let i = 0; i < rules.length; ) {
     let j = i;
-    while (j + 1 < rules.length && rules[j + 1].then.decide === rules[i].then.decide) j++;
+    while (j + 1 < rules.length && same(rules[j + 1], rules[i])) j++;
     if (j > i) {
       let left = reach(i);
       const group = rules.slice(i, j + 1);
       const ordered: typeof group = [];
-      // Error rate's 95% upper bound on the cases a rule would claim next; a rule that claims none goes last.
+      // The error rate on the cases a rule would claim next, pulled toward the tolerable rate
+      // by one tolerable-rate's worth of cases, so a small clean rule is not outranked by a
+      // large one just for its size; a rule that claims none goes last.
       const score = (r: (typeof group)[number]) => {
         const mine = left.filter(e => decides(r, e.features));
-        return mine.length ? upper95(mine.filter(e => !agrees(domain, r.then.decide, e.label, e.treatments)).length, mine.length) : 2;
+        return mine.length ? (mine.filter(e => !agrees(domain, r.then.decide, e.label, e.treatments)).length + 1) / (mine.length + 1 / TOLERABLE[domain]) : Infinity;
       };
       while (group.length) {
         const scores = group.map(score);

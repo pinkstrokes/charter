@@ -47,17 +47,27 @@ async function main(): Promise<void> {
   const examples = examplesFor(h, DOMAIN, hidden);
   const { required, optional } = splitLessons(DOMAIN, current, examples);
   // Whole programs rarely fit another company. A rule does: each rule the source
-  // learned that the target lacks is tried on top of the target's own program,
-  // which keeps every rule its people never faulted. A rule is adopted only if it
-  // handles something the target's people taught and breaks nothing they labeled.
+  // learned that the target lacks is tried inside the target's own program, which
+  // keeps every rule its people never faulted, at every place in it, since the
+  // first rule that matches decides. A rule is adopted only if it handles
+  // something the target's people taught and passes the target's gate.
   const sig = (r: SkillProgram['rules'][number]) => JSON.stringify([r.when, r.then?.decide]);
   const own = new Set(current.rules.map(sig));
   const imported = program.rules.filter(r => !own.has(sig(r)));
+  const judge = (p: SkillProgram) => evaluate(DOMAIN, current, p, examples, required, h, hidden, optional);
+  const better = (a: { ev: ReturnType<typeof judge> }, b: { ev: ReturnType<typeof judge> }) =>
+    Number(b.ev.gate === 'pass') - Number(a.ev.gate === 'pass') || b.ev.value - a.ev.value || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || a.ev.changed.n - b.ev.changed.n;
   const tried = [
-    { what: 'the whole program', program },
-    ...imported.map(r => ({ what: `rule "${r.then.note ?? r.then.decide}"`, program: { ...current, rules: [r, ...current.rules] } })),
-  ].map(t => ({ ...t, ev: evaluate(DOMAIN, current, t.program, examples, required, h, hidden, optional) }));
-  const passing = tried.filter(t => t.ev.gate === 'pass').sort((a, b) => b.ev.lesson.handled.length - a.ev.lesson.handled.length || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || a.ev.changed.n - b.ev.changed.n);
+    { what: 'the whole program', program, ev: judge(program) },
+    ...imported.map(r => {
+      const placed = Array.from({ length: current.rules.length + 1 }, (_, k) => {
+        const p = { ...current, rules: [...current.rules.slice(0, k), r, ...current.rules.slice(k)] };
+        return { program: p, ev: judge(p), at: k };
+      }).sort(better)[0];
+      return { what: `rule "${r.then.note ?? r.then.decide}" as rule ${placed.at + 1}`, program: placed.program, ev: placed.ev };
+    }),
+  ];
+  const passing = tried.filter(t => t.ev.gate === 'pass').sort(better);
   const best = passing[0] ?? tried[0];
   const ev = best.ev;
   const proof = {
@@ -83,7 +93,7 @@ async function main(): Promise<void> {
     return;
   }
   await dst.call('propose_skill', DOMAIN, JSON.stringify(best.program), active.key, `${best.what} transferred from ${crossing.source.company} (${chosen.key}); no records crossed`, JSON.stringify(proof));
-  console.log(`${DOMAIN}: proposed at ${proof.targetCompany}: ${best.what} from ${crossing.source.company}'s ${chosen.key}; handles ${ev.lesson.handled.length}/${required.length} taught cases, fixes ${ev.labeled.fixed.length}, breaks 0, changes ${ev.changed.n} past decisions`);
+  console.log(`${DOMAIN}: proposed at ${proof.targetCompany}: ${best.what} from ${crossing.source.company}'s ${chosen.key}; handles ${ev.lesson.handled.length}/${required.length} taught cases, fixes ${ev.labeled.fixed.length}, breaks ${ev.labeled.broken.length}, changes ${ev.changed.n} past decisions`);
 }
 
 main().catch(e => {

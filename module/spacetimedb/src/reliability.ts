@@ -4,7 +4,7 @@
 // rule starts on probation, a proven one gets reduced inspection, a recent error
 // tightens it, and a rule we are 95% sure is worse than the tolerable error rate
 // is suspended, so its cases go to a person until a new version replaces it.
-import { ESCALATING, parseTreatments, sameTreatment, TOLERABLE } from './core/dsl';
+import { parseTreatments, sameTreatment, settlesAlone, TOLERABLE } from './core/dsl';
 import { labelBreach } from './core/labels';
 import { lower95, upper95 } from './core/stats';
 
@@ -47,7 +47,7 @@ export const CLEAN_RECORD = 5;
 export function contestable(tx: Tx, domain: string, subject: string, verdict: string): { rule: string; checked: number; decided: string; features: string; treatments: string } | null {
   let d: NonNullable<ReturnType<Tx['db']['decision']['id']['find']>> | null = null;
   for (const x of tx.db.decision.subject.filter(subject)) if (x.domain === domain && !x.shadow && (!d || x.id > d.id)) d = x;
-  if (!d || d.label || (ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome) || sameTreatment(domain, d.outcome, verdict, parseTreatments(d.treatments))) return null;
+  if (!d || d.label || !settlesAlone(domain, d.outcome, parseTreatments(d.treatments)) || sameTreatment(domain, d.outcome, verdict, parseTreatments(d.treatments))) return null;
   const stat = tx.db.ruleStat.key.find(`${d.skillKey}#${d.ruleIndex}`);
   if (!stat || stat.errors > 0 || stat.checked < CLEAN_RECORD) return null;
   return { rule: stat.key, checked: stat.checked, decided: d.outcome, features: d.features, treatments: d.treatments };
@@ -66,7 +66,7 @@ export function recordCheck(tx: Tx, domain: string, subject: string, correct: st
   const treatments = parseTreatments(d.treatments);
   const wrong = sameTreatment(domain, d.outcome, correct, treatments) ? 0 : 1;
   const stat = statFor(tx, domain, d.skillKey, d.ruleIndex);
-  if ((ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome)) {
+  if (!settlesAlone(domain, d.outcome, treatments)) {
     // An escalation is never a risk; when a person finds it unnecessary it is a false alarm.
     if (d.label) return null;
     tx.db.decision.id.update({ ...d, label: correct, labelSource: `${source}:${by}` });

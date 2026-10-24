@@ -167,9 +167,18 @@ export function sameTreatment(domain: string, a: string, b: string, treatments?:
   return a === b;
 }
 
-// The outcome that would have done what a person did, or the domain's way of asking when none would.
+// The outcome that would have done what a person did, or the domain's way of asking when none would
+// (an outcome that cannot act on a case asks too, but asking is said by its own name).
 export function outcomeFor(treatments: Treatments, done: string, asks: string): string {
+  if (done === ASKS) return asks;
   return Object.keys(treatments).find(o => treatments[o] === done) ?? asks;
+}
+
+// Whether an outcome settles a case without a person: by what it would do when that
+// is known (paying "the unique set" when no set fits hands the receipt to a person).
+export function settlesAlone(domain: string, outcome: string, treatments?: Treatments): boolean {
+  if (treatments && outcome in treatments) return treatments[outcome] !== ASKS;
+  return !(ESCALATING[domain as DomainName] ?? []).includes(outcome);
 }
 
 export function parseTreatments(json: string | undefined): Treatments | undefined {

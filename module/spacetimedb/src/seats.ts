@@ -1,7 +1,7 @@
 // The seats. Each seat is code that gathers features, runs the team's active
 // skill for the decision, and asks the kernel to act. The LLM only reads email.
 import type { ContractTerms, EmailPayload, InvoiceKind } from './core/contracts';
-import { DOMAINS, ESCALATING, run, sameTreatment, type FeatureMap, type SkillProgram, type Treatments } from './core/dsl';
+import { DOMAINS, run, sameTreatment, settlesAlone, type FeatureMap, type SkillProgram, type Treatments } from './core/dsl';
 import { sha256Hex } from './core/hash';
 import { labelBreach, landing } from './core/labels';
 import { allocationsForSubset, applyByTerms, findSubsets, type OpenItem } from './core/matching';
@@ -78,7 +78,7 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
   // Earned autonomy: a suspended rule no longer settles cases alone, and a
   // share of every rule's autonomous decisions goes to a person as a spot check.
   const stat = statFor(tx, domain, skillKey, trace.ruleIndex);
-  const autonomous = !(ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(outcome.decide);
+  const autonomous = settlesAlone(domain, outcome.decide, treatments);
   let spotCheck = false;
   if (autonomous && stat.state === 'suspended' && ASK_OUTCOME[domain]) {
     outcome = { decide: ASK_OUTCOME[domain], askRole: domain === 'underreport' ? 'consultant' : 'controller', note: `rule ${stat.key} is suspended after ${stat.errors} wrong in ${stat.checked} checks, so a person decides` };
@@ -566,19 +566,21 @@ export function cashAppCycle(ctx: ProcCtx): string {
   return `reports ${done.weekly_report}, receipts ${done.apply_receipt + done.identify_payer}, debits ${debits}${differences ? `, small differences ${differences}` : ''}${setAside ? `, set aside ${setAside}` : ''}`;
 }
 
-// What a payment left open on an invoice it paid, when that is no more than the
-// agreement tolerates: bank charges and exchange differences. Not chased; a
-// person writes it off (C7).
-function isDifference(tx: Tx, inv: { id: string; entityCode: string; openCents: bigint }): boolean {
-  if (inv.openCents <= 0n || Number(inv.openCents) > (termsForEntity(tx, inv.entityCode)?.smallBalanceCents ?? 0)) return false;
-  for (const app of tx.db.application.invoiceId.filter(inv.id)) if (!app.reversed) return true;
+// What a payment that named an invoice left open on it, when that is no more than
+// the agreement tolerates and less than half the invoice: bank charges and
+// exchange differences, not part-payments. Not chased; a person writes it off
+// (C7), or keeps it open, and then it is an ordinary balance again.
+function isDifference(tx: Tx, inv: { id: string; entityCode: string; amountCents: bigint; openCents: bigint }): boolean {
+  if (inv.openCents <= 0n || inv.openCents * 2n >= inv.amountCents || Number(inv.openCents) > (termsForEntity(tx, inv.entityCode)?.smallBalanceCents ?? 0)) return false;
+  if (factsOf(tx, `invoice:${inv.id}`, 'kept_open').length) return false;
+  for (const app of tx.db.application.invoiceId.filter(inv.id)) if (!app.reversed && tx.db.receipt.id.find(app.receiptId)?.reference.includes(inv.id)) return true;
   return false;
 }
 
 // On Mondays the cash seat puts the week's small differences to the controller in one list.
 function listDifferences(tx: Tx): number {
   const today = simDate(tx);
-  if (new Date(`${today}T00:00:00Z`).getUTCDay() !== 1 || [...tx.db.ask.status.filter('open')].some(a => a.kind === 'write_off')) return 0;
+  if (new Date(`${today}T00:00:00Z`).getUTCDay() !== 1 || [...tx.db.ask.iter()].some(a => a.kind === 'write_off' && (a.status === 'open' || a.createdAt === today))) return 0;
   const items = [...tx.db.invoice.iter()].filter(i => isDifference(tx, i)).map(i => ({ invoice: i.id, entity: i.entityCode, cents: Number(i.openCents) }));
   if (!items.length) return 0;
   const total = items.reduce((s, i) => s + i.cents, 0);

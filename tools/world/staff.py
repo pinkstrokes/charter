@@ -388,7 +388,7 @@ class Staff:
         want = "ask" if rc.get("family") == "duplicate_payment" else " + ".join(sorted(rc.get("intended") or [])) or "ask"
         if want not in t.values():
             want = "ask"
-        return want, next(o for o in t if t[o] == want)
+        return want, "leave_unapplied_ask" if want == "ask" else next(o for o in t if t[o] == want)
 
     def expected_outcome(self, domain: str, subject: str, features: dict) -> str | None:
         """What the staff know to be right for a seat decision."""

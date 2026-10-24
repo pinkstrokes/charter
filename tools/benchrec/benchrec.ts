@@ -10,9 +10,10 @@
 // reconciliation team's recorded match as the answer; the same evolver
 // proposes, the same gate replays every candidate over every line matched so
 // far, and a version that passes takes over. A rule of the final version acts
-// alone on the locked eval split only if, over the whole train history, we are
-// 95% sure its error rate is under the 0.2% the benchmark tolerates; every other
-// line goes to a person. The eval split is scored once, against the solution file.
+// alone on the locked eval split only if, over the train months after that
+// version took over, we are 95% sure its error rate is under the 0.2% the
+// benchmark tolerates; every other line goes to a person. The eval split is
+// scored once, against the solution file.
 //   npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { ASKS, outcomeFor, run, TOLERABLE, type Expr, type FeatureMap, type SkillProgram, type Treatments } from '../../module/spacetimedb/src/core/dsl';
@@ -194,12 +195,13 @@ async function learn(bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatm
   return { program, versions, months };
 }
 
-// A rule acts alone on the eval split only if its record over the whole train
-// history says, at 95% confidence, that it is wrong less often than the benchmark tolerates.
-function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>) {
+// A rule acts alone on the eval split only if its record on the train months after
+// the final version took over, which no version was fitted to, says at 95%
+// confidence that it is wrong less often than the benchmark tolerates.
+function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, after: string) {
   const record = program.rules.map(() => ({ n: 0, wrong: 0 }));
   for (const b of bank) {
-    if (!b.truth.length) continue;
+    if (!b.truth.length || b.importDate.slice(0, 7) <= after) continue;
     const { f, t } = lines.get(b.id)!;
     const r = run(program, f);
     if (r.trace.ruleIndex < 0 || r.outcome.decide === 'ask') continue;
@@ -238,8 +240,10 @@ async function main(): Promise<void> {
   const evalSet = load('BenchRec_cash_v1.0_eval.csv');
   const evalLines = linesOf(evalSet.ledger, evalSet.bank);
   const solution = new Map(parseCsv(readFileSync(`${DIR}/BenchRec_cash_v1.0_solution.csv`, 'utf8')).map(r => [r.B_id, allocations(r.targetAllocation)]));
+  // Every desk earns its autonomy on the same months: those after the learned version took over.
+  const after = learned.versions[learned.versions.length - 1].from;
   const desk = (program: SkillProgram) => {
-    const record = autonomy(program, train.bank, trainLines);
+    const record = autonomy(program, train.bank, trainLines, after);
     const { result, submission } = score(program, record, evalSet.bank, evalLines, solution);
     return { rules: program.rules.map((r, i) => ({ rule: i, decide: r.then.decide, note: r.then.note ?? '', train: record[i] })), eval: result, submission };
   };
@@ -267,7 +271,8 @@ async function main(): Promise<void> {
   const result = {
     dataset: 'BenchRec cash v1.0 (Kaggle benchmarkteam, CC BY 4.0)',
     floor: 1 - TOLERABLE.bank_match,
-    method: 'day-0 skill of one rule; month by month over the train history the seat decides each line, the reconciliation team\'s recorded match is the lesson, the evolver proposes and the replay gate accepts; a final rule acts alone on eval only if its train upper 95% error bound is under 0.2%',
+    method: 'day-0 skill of one rule; month by month over the train history the seat decides each line, the reconciliation team\'s recorded match is the lesson, the evolver proposes and the replay gate accepts; a rule acts alone on eval only if its upper 95% error bound is under 0.2% on the train months after the final version took over (the same months for every desk)',
+    autonomyFrom: after,
     months: learned.months,
     versions: learned.versions.map(v => ({ ...v, program: undefined, rules: v.program.rules.map(r => ({ when: r.when, decide: r.then.decide, note: r.then.note ?? '' })) })),
     day0: { rules: day0.rules, eval: day0.eval },
