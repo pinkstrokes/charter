@@ -938,6 +938,8 @@ export function collectionsCycle(ctx: ProcCtx): string {
       }
     }
     for (const e of [...tx.db.entity.iter()]) {
+      // One decision per counterparty per business day, however often the seats run.
+      if ([...tx.db.decision.subject.filter(`entity:${e.code}:${today}`)].some(x => x.domain === 'pre_chase')) continue;
       const features = preChaseFeatures(tx, e.code, today);
       if (!features) continue;
       if (holdUntil(tx, e.code) > today) continue;
