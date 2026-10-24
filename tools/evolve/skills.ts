@@ -115,6 +115,10 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
       label = a.answer; // a person marked a decision wrong and said what it should have been
     } else if (a.kind === `spot_check:${domain}`) {
       label = a.answer === 'correct' ? String((ev as { decided?: string }).decided ?? '') : a.answer;
+    } else if (a.kind === 'label_check' && (ev as { domain?: string }).domain === domain) {
+      // The person looked again: a slip confirms the seat, otherwise the verdict stands.
+      const v = ev as { decided?: string; verdict?: string };
+      label = String((a.answer.startsWith('a slip') ? v.decided : v.verdict) ?? '');
     } else if (a.kind === 'allocation' && domain === 'allocation') {
       // The person picked the payer's own list when it was there: the seat could have applied it.
       label = allocationLabel(ev as never, a.answer);
@@ -142,7 +146,9 @@ export function examplesFor(h: History, domain: Domain, hidden: Set<string>): Ex
       bySubject.set(subject, { subject, features, label: (v.owedCents ?? 0) > 0 ? 'flag_audit' : 'accept', source: `field audit by ${v.by ?? 'consultant'}`, reason: v.note ?? prior?.reason ?? '', at: f.valid_from });
     }
   }
-  return [...bySubject.values()].filter(e => !hidden.has(e.subject));
+  // A verdict still waiting for the person to look again teaches nothing yet.
+  const pending = new Set(h.asks.filter(a => a.kind === 'label_check' && a.status === 'open').map(a => a.subject));
+  return [...bySubject.values()].filter(e => !hidden.has(e.subject) && !pending.has(e.subject));
 }
 
 export interface Evaluation {

@@ -64,7 +64,8 @@ class Staff:
                          "unapplied_cash": self._unapplied, "refund_release": self._refund, "collections": self._collections, "dispute": self._dispute,
                          "royalty_decrease": self._royalty_decrease, "reading_conflict": self._reading_conflict, "finding": self._finding,
                          "bill_exception": self._bill_exception, "payment_release": self._payment_release,
-                         "unknown_report": lambda d, a: ("Dana", "ignore", "no store matches; asked the sender to resend", None)}
+                         "unknown_report": lambda d, a: ("Dana", "ignore", "no store matches; asked the sender to resend", None),
+                         "label_check": self._label_check, "set_aside": lambda d, a: ("Dana", "noted", "logged for the morning review", None)}
 
     # ---------- the day ----------
 
@@ -356,6 +357,20 @@ class Staff:
             return who, expected, f"the seat decided '{decided}' but it should have been '{expected}'", None
         alt = next((o for o in options if o in ESCALATE), None) if domain == "underreport" else None
         return (who, alt, f"this week should have gone to audit, not '{decided}'", None) if alt else (who, "correct", f"routine:{domain}:{decided}", None)
+
+    def _label_check(self, day, a):
+        """kind 'label_check': the team asks the person to look again at a verdict against a rule with a clean record.
+        A misread is admitted on a second look; a belief the person holds (a planted human error) or a true catch stands."""
+        ev = json.loads(a["evidence"] or "{}")
+        domain, decided = ev.get("domain"), ev.get("decided")
+        options = json.loads(a["options"] or "[]")
+        who = store(a["subject"].split(":")[1])["consultant"] if domain == "underreport" else "Dana"
+        if spot_check_slip(domain, a["subject"]):
+            return who, options[0], "you look again: you had misread the case and the seat was right", None
+        expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
+        if expected is not None and same_treatment(domain, decided, expected) and not self.k["store_weeks"].get(":".join(a["subject"].split(":")[1:]), {}).get("human_error"):
+            return who, options[0], "you look again: the seat was right", None
+        return who, options[1], "you look again and stand by it", None
 
     def expected_outcome(self, domain: str, subject: str, features: dict) -> str | None:
         """What the staff know to be right for a seat decision."""

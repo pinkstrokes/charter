@@ -10,7 +10,7 @@ import type { Principal } from './core/policy';
 import { AR_ACCOUNT_BY_KIND, bumpControl, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from './kernel';
 import { applyAllocations, CASH, closeWork, money, openAsk, useCurrency, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
 import { addFact, aliasSubject, createInvoice, ingest, openWork } from './world';
-import { recordCheck } from './reliability';
+import { contestable, recordCheck } from './reliability';
 import { routeHeldEmail, type Extracted } from './seats';
 import { answerPayables, rejectBill } from './packs/payables';
 
@@ -47,16 +47,26 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
   if (a.kind.startsWith('spot_check:')) {
     const domain = a.kind.slice('spot_check:'.length);
     const correct = answer === 'correct' ? String(evidence.decided) : answer;
-    const declined = recordCheck(tx, domain, a.subject, correct, 'spot_check', who.id);
-    if (declined) return `spot check of ${a.subject}: "${evidence.decided}" stands — ${declined}`;
-    if (answer !== 'correct' && domain === 'underreport') {
-      const [, store, week] = a.subject.split(':');
-      const st = tx.db.store.code.find(store);
-      if (st) addFact(tx, `entity:${st.entityCode}`, 'audit', { store, week, status: 'open', by: who.id }, today, 0n, true);
+    const clean = contestable(tx, domain, a.subject, correct);
+    if (clean) {
+      openAsk(tx, {
+        kind: 'label_check',
+        subject: a.subject,
+        toRole: who.role,
+        question: `On ${a.subject} you said "${correct}". Rule ${clean.rule} decided "${clean.decided}", and all ${clean.checked} of its decisions checked so far were confirmed. Was that a slip, or does "${correct}" stand?`,
+        options: ['a slip: the decision was right', `"${correct}" stands`],
+        evidence: { domain, decided: clean.decided, verdict: correct, rule: clean.rule, spotCheck: Number(a.id), features: JSON.parse(clean.features) },
+        confidence: 0.5,
+      });
+      return `spot check of ${a.subject}: asked ${who.id} to confirm "${correct}" against a rule with a clean record`;
     }
-    return answer === 'correct' ? `spot check of ${a.subject} passed` : `spot check of ${a.subject}: should have been ${answer}`;
+    return checkVerdict(tx, who, domain, a.subject, String(evidence.decided), correct);
   }
   switch (a.kind) {
+    case 'label_check': {
+      const slip = answer === (JSON.parse(a.options) as string[])[0];
+      return checkVerdict(tx, who, String(evidence.domain), a.subject, String(evidence.decided), slip ? String(evidence.decided) : String(evidence.verdict));
+    }
     case 'audit': {
       const [, store, week] = a.subject.split(':');
       const s = tx.db.store.code.find(store);
@@ -211,6 +221,19 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
     default:
       return 'noted';
   }
+}
+
+// A spot check's verdict, counted: an under-reported week the person flags is opened for audit.
+function checkVerdict(tx: Tx, who: Principal, domain: string, subject: string, decided: string, verdict: string): string {
+  const declined = recordCheck(tx, domain, subject, verdict, 'spot_check', who.id);
+  if (declined) return `spot check of ${subject}: "${decided}" stands — ${declined}`;
+  if (verdict === decided) return `spot check of ${subject} passed`;
+  if (domain === 'underreport') {
+    const [, store, week] = subject.split(':');
+    const st = tx.db.store.code.find(store);
+    if (st) addFact(tx, `entity:${st.entityCode}`, 'audit', { store, week, status: 'open', by: who.id }, simDate(tx), 0n, true);
+  }
+  return `spot check of ${subject}: should have been ${verdict}`;
 }
 
 // Refunds draw down overpaid (unapplied) cash and go only to the account on file.

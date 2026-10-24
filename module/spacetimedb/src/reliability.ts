@@ -41,6 +41,18 @@ export function nextState(s: { domain: string; checked: number; errors: number; 
 }
 
 // Record that a person or an audit established the right outcome for a past decision.
+// A spot-check verdict against a rule whose every checked decision so far was
+// confirmed deserves a second look before it counts: people slip too.
+export const CLEAN_RECORD = 5;
+export function contestable(tx: Tx, domain: string, subject: string, verdict: string): { rule: string; checked: number; decided: string; features: string } | null {
+  let d: NonNullable<ReturnType<Tx['db']['decision']['id']['find']>> | null = null;
+  for (const x of tx.db.decision.subject.filter(subject)) if (x.domain === domain && !x.shadow && (!d || x.id > d.id)) d = x;
+  if (!d || d.label || (ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome) || sameTreatment(domain, d.outcome, verdict)) return null;
+  const stat = tx.db.ruleStat.key.find(`${d.skillKey}#${d.ruleIndex}`);
+  if (!stat || stat.errors > 0 || stat.checked < CLEAN_RECORD) return null;
+  return { rule: stat.key, checked: stat.checked, decided: d.outcome, features: d.features };
+}
+
 // Returns why a check was not counted, when the verdict itself breaks the agreement.
 export function recordCheck(tx: Tx, domain: string, subject: string, correct: string, source: keyof typeof STRENGTH, by: string): string | null {
   let d: NonNullable<ReturnType<Tx['db']['decision']['id']['find']>> | null = null;

@@ -186,6 +186,8 @@ def answer(admin, dana, truth):
             got = sorted(x["invoice_id"] for x in admin.sql(f"SELECT invoice_id, reversed FROM application WHERE receipt_id = '{rid}'") if not x["reversed"])
             right = got == sorted(t.get("invoices", [])) if t else True
             dana.call("answer_ask", a["id"], "correct" if right else "leave_unapplied_ask", "the money landed on the invoices the customer paid" if right else f"landed on {', '.join(got) or 'nothing'}, the customer paid {', '.join(t.get('invoices', [])) or 'nothing open'}")
+        elif k == "label_check":
+            dana.call("answer_ask", a["id"], opts[1], "checked again against the remittance and the bank line: the verdict stands")
         elif k.startswith("spot_check:"):
             dana.call("answer_ask", a["id"], "correct", "checked against the remittance and the bank line")
         elif k == "collections":
