@@ -163,8 +163,17 @@ export function closeWork(tx: Tx, id: bigint, state = 'done', checkpoint: unknow
   if (w) tx.db.workItem.id.update({ ...w, state, updatedAt: simDate(tx), checkpoint: JSON.stringify(checkpoint) });
 }
 
+// Questions people read are written in the company's own currency.
+let SYMBOL = '$';
+export function useCurrency(tx: Tx): void {
+  const c = tx.db.config.id.find(0)?.currency ?? 'USD';
+  SYMBOL = c === 'GBP' ? '£' : c === 'EUR' ? '€' : '$';
+}
+
 export function money(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
+  const sign = cents < 0 ? '-' : '';
+  const [whole, frac] = (Math.abs(cents) / 100).toFixed(2).split('.');
+  return `${sign}${SYMBOL}${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}.${frac}`;
 }
 
 function centsFrom(value: unknown): number {
@@ -211,6 +220,21 @@ interface Extracted {
 }
 
 // Sales reports usually arrive with a CSV the POS exported; read it directly.
+// Remittance advice exported by the payer's AP system: one invoice per row.
+function parseRemittanceCsv(p: EmailPayload): Extracted | null {
+  const csv = p.attachments.find(a => a.name.toLowerCase().endsWith('.csv'));
+  if (!csv) return null;
+  const rows = csv.text.trim().split(/\r?\n/).map(l => l.split(',').map(c => c.trim()));
+  const header = rows[0].map(h => h.toLowerCase());
+  const iInv = header.findIndex(h => h.includes('invoice'));
+  const iAmt = header.findIndex(h => h.includes('amount') || h.includes('paid'));
+  if (iInv < 0 || iAmt < 0 || header.some(h => h.includes('cash'))) return null;
+  const lines = rows.slice(1).filter(r => r[iInv]);
+  const total = lines.reduce((sum, r) => sum + Number((r[iAmt] ?? '0').replace(/[^0-9.\-]/g, '')), 0);
+  if (!lines.length || !Number.isFinite(total)) return null;
+  return { type: 'remittance', invoice_refs: lines.map(r => r[iInv]), amount: total.toFixed(2), reason: `remittance advice for ${lines.length} invoices` };
+}
+
 function parseReportCsv(p: EmailPayload): Extracted | null {
   const csv = p.attachments.find(a => a.name.toLowerCase().endsWith('.csv'));
   if (!csv) return null;
@@ -246,7 +270,7 @@ export function triage(ctx: ProcCtx, limit = 15): number {
     const p = JSON.parse(em.payload) as EmailPayload;
     const text = `From: ${p.fromName} <${p.from}>\nSubject: ${p.subject}\n\n${p.body}\n${p.attachments.map(a => `--- attachment ${a.name}\n${a.text}`).join('\n')}`;
     const heuristicInjection = INJECTION.test(text);
-    let x: Extracted | null = parseReportCsv(p);
+    let x: Extracted | null = parseReportCsv(p) ?? parseRemittanceCsv(p);
     if (!x) x = (llmJson(ctx, 'triage', 'extract', EXTRACT_SYSTEM, text) as Extracted | null) ?? { type: 'other', reason: 'model unavailable' };
     const injection = heuristicInjection || x.contains_instructions_to_ai === true;
     ctx.withTx(tx => routeEmail(tx, em.id, p, x!, injection));
@@ -276,6 +300,7 @@ function entityForEmail(tx: Tx, p: EmailPayload, x: Extracted): string {
 }
 
 function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, injection: boolean): void {
+  useCurrency(tx);
   const obs = tx.db.observation.id.find(obsId);
   if (!obs || obs.status !== 'new') return;
   tx.db.observation.id.update({ ...obs, status: 'routed' });
@@ -370,6 +395,7 @@ function requestRoutingChange(tx: Tx, who: Principal, entityCode: string, x: Ext
 
 export function cashAppCycle(ctx: ProcCtx): string {
   return ctx.withTx(tx => {
+    useCurrency(tx);
     let reports = 0;
     let receipts = 0;
     for (const w of [...tx.db.workItem.seat.filter('cash_app')]) {
@@ -651,6 +677,7 @@ function announcedPayment(tx: Tx, entityCode: string, today: string): number {
 
 export function collectionsCycle(ctx: ProcCtx): string {
   return ctx.withTx(tx => {
+    useCurrency(tx);
     const today = simDate(tx);
     let notices = 0;
     let fees = 0;
@@ -731,6 +758,7 @@ function assessLateFees(tx: Tx, entityCode: string, today: string, chasing: bool
 
 export function refundsCycle(ctx: ProcCtx): string {
   return ctx.withTx(tx => {
+    useCurrency(tx);
     if (tx.db.seatState.seat.find('refunds')?.status !== 'active') return 'not hired';
     let prepared = 0;
     for (const w of [...tx.db.workItem.seat.filter('refunds')]) {

@@ -7,10 +7,11 @@ import { applyByTerms, allocationsForSubset } from './core/matching';
 import { addDays, bpOf } from './core/money';
 import type { Principal } from './core/policy';
 import { AR_ACCOUNT_BY_KIND, bumpControl, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from './kernel';
-import { applyAllocations, CASH, closeWork, money, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
+import { applyAllocations, CASH, closeWork, money, useCurrency, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
 import { addFact, aliasSubject, createInvoice, ingest, openWork } from './world';
 
 export function answerAsk(tx: Tx, who: Principal, askId: bigint, answer: string, reason: string): string {
+  useCurrency(tx);
   const a = tx.db.ask.id.find(askId);
   if (!a) throw new Rejection(`no question #${askId}`);
   if (a.status !== 'open') throw new Rejection(`question #${askId} is already ${a.status}`);
