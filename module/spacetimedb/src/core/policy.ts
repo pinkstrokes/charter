@@ -81,6 +81,7 @@ export const FACT_LIBRARY = {
   routing_verified: 'the counterparty bank account was confirmed by a call to the number on file before the change',
   routing_changed_unverified: 'a bank-account change is pending and has not been confirmed out of band',
   payment_in_transit: 'money from this counterparty arrived or is announced by a trusted source and is not yet applied',
+  unapplied_covers_past_due: 'money from this counterparty that is waiting to be applied covers everything it has past due',
   open_dispute: 'the counterparty has an open dispute on this balance',
   recent_return: 'a debit from this counterparty was returned in the last 14 days',
   within_grace: 'the invoice is still inside the contractual grace period',
@@ -156,6 +157,9 @@ export const CONSTITUTION: PolicyRule[] = [
   { id: 'C13', version: 1, constitutional: true, tpl: { t: 'sod', action: 'release_payment' }, text: 'Whoever prepares a payment cannot release it.' },
   { id: 'C14', version: 1, constitutional: true, tpl: { t: 'two_person_above', action: 'release_payment', amountCents: 2_500_000 }, text: 'Vendor payments over $25,000 need two approvals.' },
   { id: 'C15', version: 1, constitutional: true, tpl: { t: 'forbid_when', action: 'initiate_debit', fact: 'bankruptcy_flag' }, text: 'No debit is taken from a counterparty in bankruptcy (the automatic stay).' },
+  { id: 'C16', version: 1, constitutional: true, tpl: { t: 'forbid_when', action: 'send_notice', fact: 'unapplied_covers_past_due' }, text: 'No past-due notice while the counterparty\'s own money, waiting to be applied, covers everything it has past due.' },
+  { id: 'C17', version: 1, constitutional: true, tpl: { t: 'forbid_when', action: 'assess_fee', fact: 'unapplied_covers_past_due' }, text: 'No late fee while the counterparty\'s own money, waiting to be applied, covers everything it has past due.' },
+  { id: 'C18', version: 1, constitutional: true, tpl: { t: 'forbid_when', action: 'assess_fee', fact: 'bankruptcy_flag' }, text: 'No fee is charged to a counterparty in bankruptcy (the automatic stay).' },
 ];
 
 export const ROLE_MATRIX: PolicyRule[] = [
