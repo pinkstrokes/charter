@@ -1,5 +1,5 @@
 import { Check, FileJson, RefreshCw, X } from 'lucide-react';
-import { charterApi } from '../stdb/api';
+import { charterApi, isPublic } from '../stdb/api';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { TrendSection, type TrendMonth, type VersionMark } from '../components/Trend';
 import { BenchRecSection, isBenchRec } from '../components/BenchRec';
@@ -49,7 +49,10 @@ export function Proof() {
     <div className="page-inner">
       <div className="page-head">
         <h1 className="page-title">Proof</h1>
-        <p className="page-sub">What is real, what is simulated, and how we know: numbers written by the run and the evolution engine, shown as they are.</p>
+        <p className="page-sub">
+          What is real, what is simulated, and how we know: numbers written by the run and the evolution engine, shown as they are.
+          {isPublic && ' This page watches the same code replayed on maincloud, which orders some same-day work differently from the local runs in the README, so a few numbers differ.'}
+        </p>
         <div className="row" style={{ marginLeft: 'auto' }}>
           {data && data.available.length > 1 && (
             <select className="select" style={{ width: 'auto', minHeight: 30 }} value={dir || data.current} onChange={e => setDir(e.target.value)} aria-label="Data folder">

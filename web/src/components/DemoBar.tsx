@@ -31,7 +31,8 @@ export function DemoBar() {
       .then((b: { steps: Step[] }) => setSteps(b.steps ?? []))
       .catch(() => setSteps([]));
   }, [info.demo]);
-  if (!info.demo || !steps.length) return null;
+  // ?bar=0 hides it (the video is recorded on the demo server without the presenter's bar).
+  if (!info.demo || !steps.length || new URLSearchParams(window.location.search).get('bar') === '0') return null;
   const here = `#/${nav.screen}${nav.sub ? `/${nav.sub}` : ''}${nav.why !== null ? `?why=${nav.why.toString()}` : ''}`;
   const current = steps.findIndex(s => s.db === info.db && (s.hash === here || here.startsWith(`${s.hash}/`)));
   const open = (s: Step) => {
