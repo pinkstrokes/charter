@@ -1,6 +1,6 @@
 # Finance packs
 
-Charter's core — the kernel, skills and their evolution, earned autonomy, internal audit, the close, packets — knows nothing about receivables or payables. A finance function plugs in as a pack that declares seven things. Two packs run in the database (receivables, payables) and a bank-reconciliation skill is measured on a real bank's data (BenchRec: 83.9% of lines matched alone at 99.90% precision); the rest of this page shows how other desks map onto the same primitives.
+Charter's core — the kernel, skills and their evolution, earned autonomy, internal audit, the close, packets — knows nothing about receivables or payables. A finance function plugs in as a pack that declares seven things. Two packs run in the database (receivables, payables) and a bank-reconciliation desk learns from a real bank's reconciliation history (BenchRec: 81.5% of lines matched alone at 99.95% precision, from one day-0 rule); the rest of this page shows how other desks map onto the same primitives.
 
 ## What a pack declares
 
@@ -20,7 +20,7 @@ Everything else comes for free: policies bind the new desk the moment it exists,
 |---|---|---|---|
 | Receivables (`seats.ts`) | mailroom, cash application, collections, refunds | underreport, allocation, pre_chase, routing_change | refunds released by someone else; two people above $5,000; only to verified accounts |
 | Payables (`packs/payables.ts`) | payables clerk, payments | bill_match | payments released by someone else; two people above $25,000; only to verified accounts |
-| Bank reconciliation (`tools/benchrec/benchrec.ts`, measured offline) | reconciliation clerk | bank_match: exact candidates on the value date, contested lines, booking gap, allocation sums, near dates → match / ask | none moves; a rule acts alone only when 95% sure of under 0.2% error |
+| Bank reconciliation (`tools/benchrec/benchrec.ts`, learned and measured offline) | reconciliation clerk | bank_match: exact candidates on the value date, contested lines, booking gap, allocation sums, near dates → match / ask | none moves; a rule acts alone only when 95% sure of under 0.2% error |
 
 ## How other desks map
 

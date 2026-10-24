@@ -4,30 +4,57 @@
     "rules": [
       {
         "when": {
-          "op": "cmp",
-          "c": "lt",
-          "a": {
-            "op": "feat",
-            "name": "reported_card"
-          },
-          "b": {
-            "op": "arith",
-            "f": "mul",
-            "args": [
-              {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
                 "op": "feat",
-                "name": "card_settled"
+                "name": "supply_implied_gross"
               },
-              {
-                "op": "num",
-                "v": 0.98
+              "b": {
+                "op": "arith",
+                "f": "mul",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "reported_gross"
+                  },
+                  {
+                    "op": "num",
+                    "v": 1.1
+                  }
+                ]
               }
-            ]
-          }
+            },
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "arith",
+                "f": "sub",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "own_cash_share_history"
+                  },
+                  {
+                    "op": "feat",
+                    "name": "cash_share"
+                  }
+                ]
+              },
+              "b": {
+                "op": "num",
+                "v": 0.15
+              }
+            }
+          ]
         },
         "then": {
           "decide": "flag_audit",
-          "note": "reported card sales below what the processor settled"
+          "note": "Supply-implied gross exceeds reported by over 10% and cash share dropped sharply from this store's own history"
         }
       },
       {
@@ -51,17 +78,90 @@
                   },
                   {
                     "op": "num",
-                    "v": 1.209
+                    "v": 1.03
                   }
                 ]
               }
             },
             {
               "op": "cmp",
-              "c": "lt",
+              "c": "gt",
+              "a": {
+                "op": "arith",
+                "f": "sub",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "cash_share"
+                  },
+                  {
+                    "op": "feat",
+                    "name": "own_cash_share_history"
+                  }
+                ]
+              },
+              "b": {
+                "op": "num",
+                "v": 0.1
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "ge",
               "a": {
                 "op": "feat",
-                "name": "cash_share"
+                "name": "weeks_of_history"
+              },
+              "b": {
+                "op": "num",
+                "v": 4
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "Supplies imply higher gross, cash share spiked versus own history, with sufficient data to confirm the pattern"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "lt",
+          "a": {
+            "op": "feat",
+            "name": "reported_card"
+          },
+          "b": {
+            "op": "arith",
+            "f": "mul",
+            "args": [
+              {
+                "op": "feat",
+                "name": "card_settled"
+              },
+              {
+                "op": "num",
+                "v": 0.98
+              }
+            ]
+          }
+        },
+        "then": {
+          "decide": "flag_audit",
+          "note": "Reported card sales significantly below processor-settled amount"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "supply_implied_gross"
               },
               "b": {
                 "op": "arith",
@@ -69,20 +169,72 @@
                 "args": [
                   {
                     "op": "feat",
-                    "name": "peer_cash_share"
+                    "name": "reported_gross"
                   },
                   {
                     "op": "num",
-                    "v": 0.505
+                    "v": 1.18
                   }
                 ]
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "arith",
+                "f": "sub",
+                "args": [
+                  {
+                    "op": "feat",
+                    "name": "cash_share"
+                  },
+                  {
+                    "op": "feat",
+                    "name": "peer_cash_share"
+                  }
+                ]
+              },
+              "b": {
+                "op": "num",
+                "v": 0.06
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "weeks_of_history"
+              },
+              "b": {
+                "op": "num",
+                "v": 4
               }
             }
           ]
         },
         "then": {
-          "decide": "flag_audit",
-          "note": "supply-implied gross far exceeds reported gross while cash share is abnormally low, suggesting unreported cash sales"
+          "decide": "ask_consultant",
+          "note": "Supplies imply higher gross and cash share elevated versus peers; needs consultant review given sufficient history"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "report_revised"
+          },
+          "b": {
+            "op": "bool",
+            "v": true
+          }
+        },
+        "then": {
+          "decide": "ask_consultant",
+          "note": "Revised reports require consultant review to verify corrections"
         }
       }
     ],
@@ -96,11 +248,16 @@
     "parent": "underreport@1",
     "lesson": {
       "subjects": [
-        "store:S22:2026-02-16"
+        "store:S22:2026-02-16",
+        "store:S14:2026-03-02",
+        "store:S03:2026-03-02",
+        "store:S22:2026-03-09"
       ],
-      "required": 1,
+      "required": 4,
       "handled": [
-        "store:S22:2026-02-16"
+        "store:S22:2026-02-16",
+        "store:S14:2026-03-02",
+        "store:S03:2026-03-02"
       ],
       "optionalFixed": 0,
       "optionalTotal": 0,
@@ -108,71 +265,101 @@
         {
           "subject": "store:S22:2026-02-16",
           "label": "flag_audit",
-          "source": "ask #124 answered by consultant:Priya",
-          "reason": "The decision to accept S22 was incorrect because the data indicated a need for flag_audit, so I am marking this spot check as failed.",
+          "source": "field audit by consultant:Priya",
+          "reason": "Pearl Lane #22 Koreatown reported $8,790.76 versus audited sales of $11,656.12, indicating a $2,865.36 revenue underreporting discrepancy requiring immediate correction.",
           "handled": true
+        },
+        {
+          "subject": "store:S14:2026-03-02",
+          "label": "flag_audit",
+          "source": "field audit by consultant:Lee",
+          "reason": "The owner underreported sales by $2,820.75, as the POS Z-reports and bank deposits confirm actual revenue of $11,376.84 versus their reported $8,556.09.",
+          "handled": true
+        },
+        {
+          "subject": "store:S03:2026-03-02",
+          "label": "flag_audit",
+          "source": "ask #168 answered by consultant:Lee",
+          "reason": "I realized I misread the case, so I’m flagging this for audit to ensure we catch any underreporting at store S03.",
+          "handled": true
+        },
+        {
+          "subject": "store:S22:2026-03-09",
+          "label": "flag_audit",
+          "source": "ask #196 answered by consultant:Priya",
+          "reason": "I misread the case, so my flag_audit recommendation was wrong and should be disregarded.",
+          "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 26,
-      "correctBefore": 25,
-      "correctAfter": 26,
+      "n": 44,
+      "correctBefore": 40,
+      "correctAfter": 42,
       "fixed": [
-        "store:S22:2026-02-16"
+        "store:S22:2026-02-16",
+        "store:S14:2026-03-02",
+        "store:S03:2026-03-02"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [
+        "store:S09:2026-01-26"
+      ],
+      "newAlone": 0
     },
     "budget": {
-      "flagged": 2,
-      "total": 105,
-      "rate": 0.01904761904761905,
+      "flagged": 8,
+      "total": 148,
+      "rate": 0.05405405405405406,
       "limit": 0.06
     },
     "changed": {
-      "n": 1,
-      "total": 105,
-      "rate": 0.009523809523809525,
+      "n": 4,
+      "total": 148,
+      "rate": 0.02702702702702703,
       "limit": 0.1
     },
     "newLeads": [
-      "store:S03:2026-01-19"
+      "store:S03:2026-01-19",
+      "store:S34:2026-02-09",
+      "store:S03:2026-02-23",
+      "store:S14:2026-03-09"
     ],
     "safetyViolations": 0,
-    "complexity": 19,
-    "robustness": 0.5865384615384616,
+    "complexity": 53,
+    "robustness": 0.5965909090909091,
     "alternatives": [
       {
-        "origin": "qwen3.8-max style 1, unsupported rules removed by replay, thresholds centred by replay",
-        "robustness": 0.5833333333333334,
-        "newLeads": 2,
-        "complexity": 28
+        "origin": "qwen3.8-max style 1, constants tuned by replay, thresholds centred by replay",
+        "robustness": 0.5965909090909091,
+        "newLeads": 4,
+        "complexity": 53
       },
       {
-        "origin": "qwen3.8-max style 0",
-        "robustness": 0.5785256410256411,
-        "newLeads": 1,
-        "complexity": 19
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.5946969696969697,
+        "newLeads": 4,
+        "complexity": 53
       },
       {
-        "origin": "qwen3.8-max style 2",
-        "robustness": 0.5785256410256411,
-        "newLeads": 1,
-        "complexity": 19
+        "origin": "qwen3.8-max style 1, constants tuned by replay, thresholds centred by replay",
+        "robustness": 0.5946969696969697,
+        "newLeads": 4,
+        "complexity": 53
       }
     ],
-    "origin": "qwen3.8-max style 2, thresholds centred by replay",
-    "rationale": "Added a rule to flag cases where supply-implied gross is more than 30% above reported gross and the store's cash share is less than half the peer median, which catches S22:2026-02-16 where massive underreporting was hidden by matching card figures. This pattern correctly distinguishes genuine low-cash stores like S36 (whose own history matches) from stores suppressing cash revenue.",
+    "origin": "qwen3.8-max style 1, constants tuned by replay",
+    "rationale": "The updated skill requires two independent signals before flagging: a supply-implied gross discrepancy combined with either a cash-share anomaly versus the store's own history or versus peers, while preserving the original card-settlement check. Stores with insufficient history default to accept to avoid false alarms on new franchisees whose baselines are not yet established.",
     "candidatesTried": 7,
-    "candidatesPassed": 6,
-    "seconds": 0.1,
+    "candidatesPassed": 4,
+    "seconds": 2.3,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
         "clean": {
-          "n": 34,
-          "current": 34,
-          "candidate": 34
+          "n": 42,
+          "current": 42,
+          "candidate": 39
         },
         "underreported_cash": {
           "n": 3,
@@ -180,9 +367,9 @@
           "candidate": 2
         },
         "clean_low_cash": {
-          "n": 4,
-          "current": 4,
-          "candidate": 4
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "prompt_injection": {
           "n": 1,
@@ -192,39 +379,44 @@
       },
       "train": {
         "clean": {
-          "n": 55,
-          "current": 55,
-          "candidate": 55
-        },
-        "clean_low_cash": {
-          "n": 7,
-          "current": 7,
-          "candidate": 7
-        },
-        "revised_report": {
-          "n": 1,
-          "current": 1,
-          "candidate": 1
-        }
-      },
-      "test": {
-        "clean": {
-          "n": 29,
-          "current": 29,
-          "candidate": 29
+          "n": 84,
+          "current": 84,
+          "candidate": 84
         },
         "underreported_cash": {
-          "n": 3,
+          "n": 2,
           "current": 0,
           "candidate": 2
         },
         "clean_low_cash": {
-          "n": 3,
-          "current": 3,
+          "n": 10,
+          "current": 10,
+          "candidate": 10
+        },
+        "revised_report": {
+          "n": 1,
+          "current": 1,
+          "candidate": 0
+        }
+      },
+      "test": {
+        "clean": {
+          "n": 43,
+          "current": 43,
+          "candidate": 40
+        },
+        "underreported_cash": {
+          "n": 4,
+          "current": 0,
           "candidate": 3
+        },
+        "clean_low_cash": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         }
       }
     },
-    "evaluatedAt": "2026-10-24T16:49:55.429Z"
+    "evaluatedAt": "2026-10-24T18:58:26.080Z"
   }
 }

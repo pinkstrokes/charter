@@ -27,7 +27,7 @@
   {
    "id": "HUMAN_ONLY",
    "name": "only people endorsed bank changes, activated knowledge or closed books",
-   "population": 5,
+   "population": 60,
    "exceptions": 0,
    "examples": []
   },
@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 5265,
+   "population": 5014,
    "exceptions": 0,
    "examples": []
   },
@@ -81,8 +81,17 @@
    "bookCents": 24535038,
    "tolerableCents": 1226752,
    "intervalCents": 408917,
-   "sampleSize": 51,
+   "sampleSize": 50,
    "items": [
+    {
+     "id": "545227",
+     "kind": "invoice:trade",
+     "book": 247462,
+     "audited": 247462,
+     "notes": [
+      "traced to trade_invoice:545227, hash verified"
+     ]
+    },
     {
      "id": "545320",
      "kind": "invoice:trade",
@@ -93,183 +102,12 @@
      ]
     },
     {
-     "id": "545288",
+     "id": "545341",
      "kind": "invoice:trade",
-     "book": 139006,
-     "audited": 139006,
+     "book": 164250,
+     "audited": 164250,
      "notes": [
-      "traced to trade_invoice:545288, hash verified"
-     ]
-    },
-    {
-     "id": "545226",
-     "kind": "invoice:trade",
-     "book": 194340,
-     "audited": 194340,
-     "notes": [
-      "traced to trade_invoice:545226, hash verified"
-     ]
-    },
-    {
-     "id": "546731",
-     "kind": "invoice:trade",
-     "book": 96156,
-     "audited": 96156,
-     "notes": [
-      "traced to trade_invoice:546731, hash verified"
-     ]
-    },
-    {
-     "id": "546543",
-     "kind": "invoice:trade",
-     "book": 17486,
-     "audited": 17486,
-     "notes": [
-      "traced to trade_invoice:546543, hash verified"
-     ]
-    },
-    {
-     "id": "546530",
-     "kind": "invoice:trade",
-     "book": 440028,
-     "audited": 440028,
-     "notes": [
-      "traced to trade_invoice:546530, hash verified"
-     ]
-    },
-    {
-     "id": "546526",
-     "kind": "invoice:trade",
-     "book": 28500,
-     "audited": 28500,
-     "notes": [
-      "traced to trade_invoice:546526, hash verified"
-     ]
-    },
-    {
-     "id": "546479",
-     "kind": "invoice:trade",
-     "book": 47940,
-     "audited": 47940,
-     "notes": [
-      "traced to trade_invoice:546479, hash verified"
-     ]
-    },
-    {
-     "id": "546438",
-     "kind": "invoice:trade",
-     "book": 384088,
-     "audited": 384088,
-     "notes": [
-      "traced to trade_invoice:546438, hash verified"
-     ]
-    },
-    {
-     "id": "546384",
-     "kind": "invoice:trade",
-     "book": 82607,
-     "audited": 82607,
-     "notes": [
-      "traced to trade_invoice:546384, hash verified"
-     ]
-    },
-    {
-     "id": "546328",
-     "kind": "invoice:trade",
-     "book": 168717,
-     "audited": 168717,
-     "notes": [
-      "traced to trade_invoice:546328, hash verified"
-     ]
-    },
-    {
-     "id": "546251",
-     "kind": "invoice:trade",
-     "book": 57610,
-     "audited": 57610,
-     "notes": [
-      "traced to trade_invoice:546251, hash verified"
-     ]
-    },
-    {
-     "id": "546212",
-     "kind": "invoice:trade",
-     "book": 350050,
-     "audited": 350050,
-     "notes": [
-      "traced to trade_invoice:546212, hash verified"
-     ]
-    },
-    {
-     "id": "546160",
-     "kind": "invoice:trade",
-     "book": 327724,
-     "audited": 327724,
-     "notes": [
-      "traced to trade_invoice:546160, hash verified"
-     ]
-    },
-    {
-     "id": "546112",
-     "kind": "invoice:trade",
-     "book": 33000,
-     "audited": 33000,
-     "notes": [
-      "traced to trade_invoice:546112, hash verified"
-     ]
-    },
-    {
-     "id": "545999",
-     "kind": "invoice:trade",
-     "book": 119595,
-     "audited": 119595,
-     "notes": [
-      "traced to trade_invoice:545999, hash verified"
-     ]
-    },
-    {
-     "id": "545865",
-     "kind": "invoice:trade",
-     "book": 259740,
-     "audited": 259740,
-     "notes": [
-      "traced to trade_invoice:545865, hash verified"
-     ]
-    },
-    {
-     "id": "545821",
-     "kind": "invoice:trade",
-     "book": 59102,
-     "audited": 59102,
-     "notes": [
-      "traced to trade_invoice:545821, hash verified"
-     ]
-    },
-    {
-     "id": "545693",
-     "kind": "invoice:trade",
-     "book": 79686,
-     "audited": 79686,
-     "notes": [
-      "traced to trade_invoice:545693, hash verified"
-     ]
-    },
-    {
-     "id": "545653",
-     "kind": "invoice:trade",
-     "book": 93554,
-     "audited": 93554,
-     "notes": [
-      "traced to trade_invoice:545653, hash verified"
-     ]
-    },
-    {
-     "id": "545582",
-     "kind": "invoice:trade",
-     "book": 354734,
-     "audited": 354734,
-     "notes": [
-      "traced to trade_invoice:545582, hash verified"
+      "traced to trade_invoice:545341, hash verified"
      ]
     },
     {
@@ -282,210 +120,165 @@
      ]
     },
     {
-     "id": "545466",
+     "id": "545582",
      "kind": "invoice:trade",
-     "book": 139600,
-     "audited": 139600,
+     "book": 354734,
+     "audited": 354734,
      "notes": [
-      "traced to trade_invoice:545466, hash verified"
+      "traced to trade_invoice:545582, hash verified"
      ]
     },
     {
-     "id": "548169",
+     "id": "545657",
      "kind": "invoice:trade",
-     "book": 210646,
-     "audited": 210646,
+     "book": 87731,
+     "audited": 87731,
      "notes": [
-      "traced to trade_invoice:548169, hash verified"
+      "traced to trade_invoice:545657, hash verified"
      ]
     },
     {
-     "id": "548011",
+     "id": "545721",
      "kind": "invoice:trade",
-     "book": 1571956,
-     "audited": 1571956,
+     "book": 60845,
+     "audited": 60845,
      "notes": [
-      "traced to trade_invoice:548011, hash verified"
+      "traced to trade_invoice:545721, hash verified"
      ]
     },
     {
-     "id": "548010",
+     "id": "545842",
      "kind": "invoice:trade",
-     "book": 252794,
-     "audited": 252794,
+     "book": 55700,
+     "audited": 55700,
      "notes": [
-      "traced to trade_invoice:548010, hash verified"
+      "traced to trade_invoice:545842, hash verified"
      ]
     },
     {
-     "id": "547947",
+     "id": "545904",
      "kind": "invoice:trade",
-     "book": 218850,
-     "audited": 218850,
+     "book": 12665,
+     "audited": 12665,
      "notes": [
-      "traced to trade_invoice:547947, hash verified"
+      "traced to trade_invoice:545904, hash verified"
      ]
     },
     {
-     "id": "547832",
+     "id": "546067",
      "kind": "invoice:trade",
-     "book": 396206,
-     "audited": 396206,
+     "book": 209970,
+     "audited": 209970,
      "notes": [
-      "traced to trade_invoice:547832, hash verified"
+      "traced to trade_invoice:546067, hash verified"
      ]
     },
     {
-     "id": "547821",
+     "id": "546118",
      "kind": "invoice:trade",
-     "book": 96000,
-     "audited": 96000,
+     "book": 84645,
+     "audited": 84645,
      "notes": [
-      "traced to trade_invoice:547821, hash verified"
+      "traced to trade_invoice:546118, hash verified"
      ]
     },
     {
-     "id": "547812",
+     "id": "546166",
      "kind": "invoice:trade",
-     "book": 551332,
-     "audited": 551332,
+     "book": 27040,
+     "audited": 27040,
      "notes": [
-      "traced to trade_invoice:547812, hash verified"
+      "traced to trade_invoice:546166, hash verified"
      ]
     },
     {
-     "id": "547796",
+     "id": "546212",
      "kind": "invoice:trade",
-     "book": 140786,
-     "audited": 140786,
+     "book": 350050,
+     "audited": 350050,
      "notes": [
-      "traced to trade_invoice:547796, hash verified"
+      "traced to trade_invoice:546212, hash verified"
      ]
     },
     {
-     "id": "547708",
+     "id": "546263",
      "kind": "invoice:trade",
-     "book": 1134320,
-     "audited": 1134320,
+     "book": 46160,
+     "audited": 46160,
      "notes": [
-      "traced to trade_invoice:547708, hash verified"
+      "traced to trade_invoice:546263, hash verified"
      ]
     },
     {
-     "id": "547706",
+     "id": "546329",
      "kind": "invoice:trade",
-     "book": 227880,
-     "audited": 227880,
+     "book": 168717,
+     "audited": 168717,
      "notes": [
-      "traced to trade_invoice:547706, hash verified"
+      "traced to trade_invoice:546329, hash verified"
      ]
     },
     {
-     "id": "547580",
+     "id": "546397",
      "kind": "invoice:trade",
-     "book": 71395,
-     "audited": 71395,
+     "book": 15375,
+     "audited": 15375,
      "notes": [
-      "traced to trade_invoice:547580, hash verified"
+      "traced to trade_invoice:546397, hash verified"
      ]
     },
     {
-     "id": "547516",
+     "id": "546438",
      "kind": "invoice:trade",
-     "book": 38580,
-     "audited": 38580,
+     "book": 384088,
+     "audited": 384088,
      "notes": [
-      "traced to trade_invoice:547516, hash verified"
+      "traced to trade_invoice:546438, hash verified"
      ]
     },
     {
-     "id": "547378",
+     "id": "546509",
      "kind": "invoice:trade",
-     "book": 90510,
-     "audited": 90510,
+     "book": 52260,
+     "audited": 52260,
      "notes": [
-      "traced to trade_invoice:547378, hash verified"
+      "traced to trade_invoice:546509, hash verified"
      ]
     },
     {
-     "id": "547334",
+     "id": "546528",
      "kind": "invoice:trade",
-     "book": 34670,
-     "audited": 34670,
+     "book": 242095,
+     "audited": 242095,
      "notes": [
-      "traced to trade_invoice:547334, hash verified"
+      "traced to trade_invoice:546528, hash verified"
      ]
     },
     {
-     "id": "547201",
+     "id": "546530",
      "kind": "invoice:trade",
-     "book": 48912,
-     "audited": 48912,
+     "book": 440028,
+     "audited": 440028,
      "notes": [
-      "traced to trade_invoice:547201, hash verified"
+      "traced to trade_invoice:546530, hash verified"
      ]
     },
     {
-     "id": "547066",
+     "id": "546555",
      "kind": "invoice:trade",
-     "book": 56263,
-     "audited": 56263,
+     "book": 69685,
+     "audited": 69685,
      "notes": [
-      "traced to trade_invoice:547066, hash verified"
+      "traced to trade_invoice:546555, hash verified"
      ]
     },
     {
-     "id": "547047",
+     "id": "546733",
      "kind": "invoice:trade",
-     "book": 98208,
-     "audited": 98208,
+     "book": 70560,
+     "audited": 70560,
      "notes": [
-      "traced to trade_invoice:547047, hash verified"
-     ]
-    },
-    {
-     "id": "547023",
-     "kind": "invoice:trade",
-     "book": 83310,
-     "audited": 83310,
-     "notes": [
-      "traced to trade_invoice:547023, hash verified"
-     ]
-    },
-    {
-     "id": "546992",
-     "kind": "invoice:trade",
-     "book": 466644,
-     "audited": 466644,
-     "notes": [
-      "traced to trade_invoice:546992, hash verified"
-     ]
-    },
-    {
-     "id": "546899",
-     "kind": "invoice:trade",
-     "book": 94620,
-     "audited": 94620,
-     "notes": [
-      "traced to trade_invoice:546899, hash verified"
-     ]
-    },
-    {
-     "id": "546789",
-     "kind": "invoice:trade",
-     "book": 1006500,
-     "audited": 1006500,
-     "notes": [
-      "traced to trade_invoice:546789, hash verified"
-     ]
-    },
-    {
-     "id": "546785",
-     "kind": "invoice:trade",
-     "book": 30252,
-     "audited": 30252,
-     "notes": [
-      "traced to trade_invoice:546785, hash verified"
+      "traced to trade_invoice:546733, hash verified"
      ]
     },
     {
@@ -498,48 +291,246 @@
      ]
     },
     {
-     "id": "548497",
+     "id": "546789",
      "kind": "invoice:trade",
-     "book": 162241,
-     "audited": 162241,
+     "book": 1006500,
+     "audited": 1006500,
      "notes": [
-      "traced to trade_invoice:548497, hash verified"
+      "traced to trade_invoice:546789, hash verified"
      ]
     },
     {
-     "id": "548493",
+     "id": "546920",
      "kind": "invoice:trade",
-     "book": 84038,
-     "audited": 84038,
+     "book": 84532,
+     "audited": 84532,
      "notes": [
-      "traced to trade_invoice:548493, hash verified"
+      "traced to trade_invoice:546920, hash verified"
      ]
     },
     {
-     "id": "548406",
+     "id": "546992",
      "kind": "invoice:trade",
-     "book": 87256,
-     "audited": 87256,
+     "book": 466644,
+     "audited": 466644,
      "notes": [
-      "traced to trade_invoice:548406, hash verified"
+      "traced to trade_invoice:546992, hash verified"
      ]
     },
     {
-     "id": "548318",
+     "id": "547032",
      "kind": "invoice:trade",
-     "book": 45305,
-     "audited": 45305,
+     "book": 66262,
+     "audited": 66262,
      "notes": [
-      "traced to trade_invoice:548318, hash verified"
+      "traced to trade_invoice:547032, hash verified"
      ]
     },
     {
-     "id": "548190",
+     "id": "547063",
      "kind": "invoice:trade",
-     "book": 25818,
-     "audited": 25818,
+     "book": 244979,
+     "audited": 244979,
      "notes": [
-      "traced to trade_invoice:548190, hash verified"
+      "traced to trade_invoice:547063, hash verified"
+     ]
+    },
+    {
+     "id": "547100",
+     "kind": "invoice:trade",
+     "book": 53678,
+     "audited": 53678,
+     "notes": [
+      "traced to trade_invoice:547100, hash verified"
+     ]
+    },
+    {
+     "id": "547209",
+     "kind": "invoice:trade",
+     "book": 234005,
+     "audited": 234005,
+     "notes": [
+      "traced to trade_invoice:547209, hash verified"
+     ]
+    },
+    {
+     "id": "547362",
+     "kind": "invoice:trade",
+     "book": 322188,
+     "audited": 322188,
+     "notes": [
+      "traced to trade_invoice:547362, hash verified"
+     ]
+    },
+    {
+     "id": "547419",
+     "kind": "invoice:trade",
+     "book": 164958,
+     "audited": 164958,
+     "notes": [
+      "traced to trade_invoice:547419, hash verified"
+     ]
+    },
+    {
+     "id": "547518",
+     "kind": "invoice:trade",
+     "book": 132000,
+     "audited": 132000,
+     "notes": [
+      "traced to trade_invoice:547518, hash verified"
+     ]
+    },
+    {
+     "id": "547669",
+     "kind": "invoice:trade",
+     "book": 16346,
+     "audited": 16346,
+     "notes": [
+      "traced to trade_invoice:547669, hash verified"
+     ]
+    },
+    {
+     "id": "547706",
+     "kind": "invoice:trade",
+     "book": 227880,
+     "audited": 227880,
+     "notes": [
+      "traced to trade_invoice:547706, hash verified"
+     ]
+    },
+    {
+     "id": "547708",
+     "kind": "invoice:trade",
+     "book": 1134320,
+     "audited": 1134320,
+     "notes": [
+      "traced to trade_invoice:547708, hash verified"
+     ]
+    },
+    {
+     "id": "547726",
+     "kind": "invoice:trade",
+     "book": 46584,
+     "audited": 46584,
+     "notes": [
+      "traced to trade_invoice:547726, hash verified"
+     ]
+    },
+    {
+     "id": "547799",
+     "kind": "invoice:trade",
+     "book": 70866,
+     "audited": 70866,
+     "notes": [
+      "traced to trade_invoice:547799, hash verified"
+     ]
+    },
+    {
+     "id": "547812",
+     "kind": "invoice:trade",
+     "book": 551332,
+     "audited": 551332,
+     "notes": [
+      "traced to trade_invoice:547812, hash verified"
+     ]
+    },
+    {
+     "id": "547832",
+     "kind": "invoice:trade",
+     "book": 396206,
+     "audited": 396206,
+     "notes": [
+      "traced to trade_invoice:547832, hash verified"
+     ]
+    },
+    {
+     "id": "547878",
+     "kind": "invoice:trade",
+     "book": 13130,
+     "audited": 13130,
+     "notes": [
+      "traced to trade_invoice:547878, hash verified"
+     ]
+    },
+    {
+     "id": "547972",
+     "kind": "invoice:trade",
+     "book": 81750,
+     "audited": 81750,
+     "notes": [
+      "traced to trade_invoice:547972, hash verified"
+     ]
+    },
+    {
+     "id": "548011",
+     "kind": "invoice:trade",
+     "book": 1571956,
+     "audited": 1571956,
+     "notes": [
+      "traced to trade_invoice:548011, hash verified"
+     ]
+    },
+    {
+     "id": "548157",
+     "kind": "invoice:trade",
+     "book": 151800,
+     "audited": 151800,
+     "notes": [
+      "traced to trade_invoice:548157, hash verified"
+     ]
+    },
+    {
+     "id": "548171",
+     "kind": "invoice:trade",
+     "book": 96301,
+     "audited": 96301,
+     "notes": [
+      "traced to trade_invoice:548171, hash verified"
+     ]
+    },
+    {
+     "id": "548293",
+     "kind": "invoice:trade",
+     "book": 101260,
+     "audited": 101260,
+     "notes": [
+      "traced to trade_invoice:548293, hash verified"
+     ]
+    },
+    {
+     "id": "548367",
+     "kind": "invoice:trade",
+     "book": 133778,
+     "audited": 133778,
+     "notes": [
+      "traced to trade_invoice:548367, hash verified"
+     ]
+    },
+    {
+     "id": "548450",
+     "kind": "invoice:trade",
+     "book": 51629,
+     "audited": 51629,
+     "notes": [
+      "traced to trade_invoice:548450, hash verified"
+     ]
+    },
+    {
+     "id": "548496",
+     "kind": "invoice:trade",
+     "book": 324313,
+     "audited": 324313,
+     "notes": [
+      "traced to trade_invoice:548496, hash verified"
+     ]
+    },
+    {
+     "id": "548534",
+     "kind": "invoice:trade",
+     "book": 26962,
+     "audited": 26962,
+     "notes": [
+      "traced to trade_invoice:548534, hash verified"
      ]
     }
    ],

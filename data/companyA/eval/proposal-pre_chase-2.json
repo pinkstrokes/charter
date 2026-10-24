@@ -35,7 +35,7 @@
         },
         "then": {
           "decide": "hold",
-          "note": "payment announced and in transit, hold collection per agreement"
+          "note": "trusted payment announced and in transit"
         }
       },
       {
@@ -71,7 +71,7 @@
         {
           "subject": "entity:F08:2026-03-04",
           "label": "hold",
-          "source": "ask #152 answered by controller:Dana",
+          "source": "ask #143 answered by controller:Dana",
           "reason": "The ledger confirms check #4410 is in transit, so per the agreement’s notice provision, we hold collection for seven days.",
           "handled": true
         }
@@ -84,7 +84,9 @@
       "fixed": [
         "entity:F08:2026-03-04"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [],
+      "newAlone": 0
     },
     "budget": null,
     "changed": {
@@ -112,10 +114,10 @@
       }
     ],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule to hold collection when an announced payment is greater than zero, reflecting the controller's guidance that payments confirmed in transit should pause chasing. This fixes the F08 case while preserving the safety rule for grace periods and all other labeled cases.",
+    "rationale": "Added a rule to hold collection when an announced payment is greater than zero, reflecting the controller's guidance that trusted in-transit payments warrant a hold. This single addition fixes the F08 mistake while preserving the safety rule and all previously labeled cases.",
     "candidatesTried": 3,
     "candidatesPassed": 3,
-    "seconds": 0,
+    "seconds": 0.3,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -155,6 +157,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T16:50:41.911Z"
+    "evaluatedAt": "2026-10-24T18:57:23.140Z"
   }
 }

@@ -60,7 +60,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "one near-match subset and payment reference names a single open invoice"
+          "note": "single inexact match but reference names one open invoice"
         }
       },
       {
@@ -87,14 +87,14 @@
           "args": [
             {
               "op": "cmp",
-              "c": "gt",
+              "c": "ge",
               "a": {
                 "op": "feat",
                 "name": "solution_count"
               },
               "b": {
                 "op": "num",
-                "v": 1
+                "v": 2
               }
             },
             {
@@ -104,8 +104,8 @@
           ]
         },
         "then": {
-          "decide": "apply_unique",
-          "note": "payer reference exactly matches one open invoice, resolving ambiguity among subsets"
+          "decide": "apply_to_reference",
+          "note": "multiple subsets fit but payment reference matches one open invoice exactly"
         }
       },
       {
@@ -130,7 +130,7 @@
     "otherwise": {
       "decide": "leave_unapplied_ask",
       "askRole": "controller",
-      "note": "several invoice sets explain this amount without payer guidance"
+      "note": "several invoice sets explain this amount without payer confirmation"
     }
   },
   "proof": {
@@ -151,49 +151,49 @@
         {
           "subject": "receipt:BACS-536784",
           "label": "apply_to_reference",
-          "source": "ask #6282 answered by controller:Dana",
+          "source": "ask #28 answered by controller:Dana",
           "reason": "BACS-536792 names 536792 for its amount",
           "handled": true
         },
         {
           "subject": "receipt:BACS-536688",
           "label": "apply_by_terms",
-          "source": "ask #6256 answered by controller:Dana",
+          "source": "ask #2 answered by controller:Dana",
           "reason": "apply to the oldest",
           "handled": false
         },
         {
           "subject": "receipt:BACS-536753",
           "label": "apply_unique",
-          "source": "ask #6258 answered by controller:Dana",
+          "source": "ask #4 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-536791",
           "label": "apply_unique",
-          "source": "ask #6264 answered by controller:Dana",
+          "source": "ask #10 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-536601",
           "label": "apply_unique",
-          "source": "ask #6267 answered by controller:Dana",
+          "source": "ask #13 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-536610",
           "label": "apply_by_terms",
-          "source": "ask #6268 answered by controller:Dana",
+          "source": "ask #14 answered by controller:Dana",
           "reason": "apply to the oldest",
           "handled": false
         },
         {
           "subject": "receipt:BACS-536750",
           "label": "apply_by_terms",
-          "source": "ask #6269 answered by controller:Dana",
+          "source": "ask #15 answered by controller:Dana",
           "reason": "apply to the oldest",
           "handled": false
         }
@@ -209,7 +209,9 @@
         "receipt:BACS-536601",
         "receipt:BACS-536784"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [],
+      "newAlone": 3
     },
     "budget": null,
     "changed": {
@@ -225,33 +227,33 @@
     "alternatives": [
       {
         "origin": "qwen3.8-max style 0",
-        "robustness": 0.8,
+        "robustness": 0.6,
         "newLeads": 0,
-        "complexity": 31
+        "complexity": 21
       }
     ],
     "origin": "qwen3.8-max style 1",
-    "rationale": "The new skill fixes the BACS-536784 mistake by requiring two independent signals (unique near-match subset plus reference naming an open invoice) before applying to a reference, and safely resolves ambiguous multi-subset cases when the payment reference exactly matches one open invoice. It preserves the safety rule by never auto-applying cash across multiple subsets unless the payer explicitly confirmed which invoices via remittance or exact reference match.",
+    "rationale": "Added a rule so that when only one subset fits inexactly but the payment reference names an open invoice, we apply to that reference instead of blindly using the approximate subset. For multiple matching subsets, we now require explicit payer confirmation (reference_matches_open or remittance_consistent) before applying, and otherwise escalate to the controller.",
     "candidatesTried": 3,
     "candidatesPassed": 2,
-    "seconds": 11.4,
+    "seconds": 0.2,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
         "payment_prompt": {
           "n": 13,
-          "current": 10,
-          "candidate": 11
+          "current": 11,
+          "candidate": 12
         },
         "payment_parent": {
           "n": 3,
-          "current": 3,
-          "candidate": 2
+          "current": 2,
+          "candidate": 3
         },
         "payment_two_invoices": {
           "n": 2,
-          "current": 0,
-          "candidate": 0
+          "current": 2,
+          "candidate": 2
         }
       },
       "test": {
@@ -274,11 +276,11 @@
         },
         "payment_two_invoices": {
           "n": 1,
-          "current": 0,
-          "candidate": 0
+          "current": 1,
+          "candidate": 1
         }
       }
     },
-    "evaluatedAt": "2026-10-24T16:47:16.578Z"
+    "evaluatedAt": "2026-10-24T18:29:16.427Z"
   }
 }

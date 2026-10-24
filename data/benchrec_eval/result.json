@@ -1,99 +1,524 @@
 {
  "dataset": "BenchRec cash v1.0 (Kaggle benchmarkteam, CC BY 4.0)",
  "floor": 0.998,
- "rules": [
+ "method": "day-0 skill of one rule; month by month over the train history the seat decides each line, the reconciliation team's recorded match is the lesson, the evolver proposes and the replay gate accepts; each rule earns autonomy on the train months after the final version took over (the same months for every desk): suspended, and its lines sent to a person, when 95% sure its error rate is over 0.2%",
+ "autonomyFrom": "2022-10",
+ "months": [
   {
-   "rule": 0,
-   "note": "one ledger allocation on the value date has exactly this amount, booked within two weeks",
-   "train": {
-    "n": 44125,
-    "wrong": 52,
-    "upper95": 0.00148
-   },
-   "actsAlone": true,
-   "eval": {
-    "n": 18754,
-    "wrong": 17
-   }
+   "month": "2015-03",
+   "lines": 3,
+   "alone": 0,
+   "wrong": 0,
+   "version": 1
   },
   {
-   "rule": 1,
-   "note": "one ledger allocation on the value date has exactly this amount",
-   "train": {
-    "n": 55,
-    "wrong": 14,
-    "upper95": 0.36898
-   },
-   "actsAlone": false,
-   "eval": {
-    "n": 0,
-    "wrong": 0
-   }
+   "month": "2021-10",
+   "lines": 1,
+   "alone": 0,
+   "wrong": 0,
+   "version": 1
   },
   {
-   "rule": 2,
-   "note": "every ledger line with this amount on the value date carries the same allocation",
-   "train": {
-    "n": 12821,
-    "wrong": 15,
-    "upper95": 0.0018
-   },
-   "actsAlone": true,
-   "eval": {
-    "n": 8145,
-    "wrong": 11
-   }
+   "month": "2021-11",
+   "lines": 1,
+   "alone": 1,
+   "wrong": 1,
+   "version": 1
   },
   {
-   "rule": 3,
-   "note": "another bank line claims the same ledger line",
-   "train": {
-    "n": 135,
-    "wrong": 15,
-    "upper95": 0.16593
-   },
-   "actsAlone": false,
-   "eval": {
-    "n": 0,
-    "wrong": 0
-   }
+   "month": "2021-12",
+   "lines": 14,
+   "alone": 1,
+   "wrong": 1,
+   "version": 1
   },
   {
-   "rule": 4,
-   "note": "one allocation's ledger lines on the value date add up to this amount",
-   "train": {
-    "n": 2,
-    "wrong": 0,
-    "upper95": 0.77639
-   },
-   "actsAlone": false,
-   "eval": {
-    "n": 0,
-    "wrong": 0
-   }
+   "month": "2022-01",
+   "lines": 26,
+   "alone": 4,
+   "wrong": 3,
+   "version": 1
   },
   {
-   "rule": 5,
-   "note": "one ledger allocation within 3 days has exactly this amount",
-   "train": {
-    "n": 353,
-    "wrong": 31,
-    "upper95": 0.11668
-   },
-   "actsAlone": false,
-   "eval": {
-    "n": 0,
-    "wrong": 0
-   }
+   "month": "2022-02",
+   "lines": 29,
+   "alone": 0,
+   "wrong": 0,
+   "version": 2
+  },
+  {
+   "month": "2022-03",
+   "lines": 29,
+   "alone": 0,
+   "wrong": 0,
+   "version": 2
+  },
+  {
+   "month": "2022-04",
+   "lines": 36,
+   "alone": 0,
+   "wrong": 0,
+   "version": 2
+  },
+  {
+   "month": "2022-05",
+   "lines": 38,
+   "alone": 1,
+   "wrong": 1,
+   "version": 2
+  },
+  {
+   "month": "2022-06",
+   "lines": 73,
+   "alone": 2,
+   "wrong": 1,
+   "version": 2
+  },
+  {
+   "month": "2022-07",
+   "lines": 62,
+   "alone": 1,
+   "wrong": 0,
+   "version": 2
+  },
+  {
+   "month": "2022-08",
+   "lines": 68,
+   "alone": 4,
+   "wrong": 4,
+   "version": 2
+  },
+  {
+   "month": "2022-09",
+   "lines": 8216,
+   "alone": 6907,
+   "wrong": 10,
+   "version": 2
+  },
+  {
+   "month": "2022-10",
+   "lines": 12504,
+   "alone": 10371,
+   "wrong": 1,
+   "version": 3
+  },
+  {
+   "month": "2022-11",
+   "lines": 9046,
+   "alone": 7435,
+   "wrong": 1,
+   "version": 4
+  },
+  {
+   "month": "2022-12",
+   "lines": 11029,
+   "alone": 9241,
+   "wrong": 2,
+   "version": 4
+  },
+  {
+   "month": "2023-01",
+   "lines": 12894,
+   "alone": 10616,
+   "wrong": 0,
+   "version": 4
+  },
+  {
+   "month": "2023-02",
+   "lines": 11728,
+   "alone": 9604,
+   "wrong": 17,
+   "version": 4
+  },
+  {
+   "month": "2023-03",
+   "lines": 1943,
+   "alone": 1326,
+   "wrong": 0,
+   "version": 4
   }
  ],
- "eval": {
-  "bankLines": 32048,
-  "matched": 26899,
-  "correct": 26871,
-  "precision": 0.9989590691103758,
-  "matchRate": 0.8393347478781827,
-  "clearsFloor": true
+ "versions": [
+  {
+   "version": 1,
+   "from": "2015-03",
+   "origin": "day 0",
+   "lessonsHandled": 0,
+   "lessons": 0,
+   "tookOver": 0,
+   "candidates": 0,
+   "passed": 0,
+   "rules": [
+    {
+     "when": {
+      "op": "cmp",
+      "c": "eq",
+      "a": {
+       "op": "feat",
+       "name": "exact_allocations"
+      },
+      "b": {
+       "op": "num",
+       "v": 1
+      }
+     },
+     "decide": "match_exact",
+     "note": "one ledger allocation on the value date has exactly this amount"
+    }
+   ]
+  },
+  {
+   "version": 2,
+   "from": "2022-01",
+   "origin": "qwen3.8-max style 0, unsupported rules removed by replay",
+   "lessonsHandled": 3,
+   "lessons": 5,
+   "tookOver": 0,
+   "candidates": 6,
+   "passed": 3,
+   "rules": [
+    {
+     "when": {
+      "op": "and",
+      "args": [
+       {
+        "op": "cmp",
+        "c": "eq",
+        "a": {
+         "op": "feat",
+         "name": "exact_allocations"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       },
+       {
+        "op": "cmp",
+        "c": "le",
+        "a": {
+         "op": "feat",
+         "name": "import_gap_days"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       }
+      ]
+     },
+     "decide": "match_exact",
+     "note": "one ledger allocation on the value date has exactly this amount and arrived within 1 day"
+    }
+   ]
+  },
+  {
+   "version": 3,
+   "from": "2022-09",
+   "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+   "lessonsHandled": 4,
+   "lessons": 18,
+   "tookOver": 0,
+   "candidates": 7,
+   "passed": 4,
+   "rules": [
+    {
+     "when": {
+      "op": "and",
+      "args": [
+       {
+        "op": "cmp",
+        "c": "eq",
+        "a": {
+         "op": "feat",
+         "name": "exact_allocations"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       },
+       {
+        "op": "cmp",
+        "c": "le",
+        "a": {
+         "op": "feat",
+         "name": "import_gap_days"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       },
+       {
+        "op": "or",
+        "args": [
+         {
+          "op": "not",
+          "a": {
+           "op": "feat",
+           "name": "contested"
+          }
+         },
+         {
+          "op": "cmp",
+          "c": "gt",
+          "a": {
+           "op": "feat",
+           "name": "exact_lines"
+          },
+          "b": {
+           "op": "num",
+           "v": 1
+          }
+         }
+        ]
+       }
+      ]
+     },
+     "decide": "match_exact",
+     "note": "Exactly one allocation on the value date with a second confirming signal: either uncontested or multiple ledger lines confirm the match"
+    }
+   ]
+  },
+  {
+   "version": 4,
+   "from": "2022-10",
+   "origin": "qwen3.8-max style 2, unsupported rules removed by replay",
+   "lessonsHandled": 13,
+   "lessons": 15,
+   "tookOver": 12,
+   "candidates": 5,
+   "passed": 2,
+   "rules": [
+    {
+     "when": {
+      "op": "and",
+      "args": [
+       {
+        "op": "cmp",
+        "c": "eq",
+        "a": {
+         "op": "feat",
+         "name": "exact_allocations"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       },
+       {
+        "op": "not",
+        "a": {
+         "op": "feat",
+         "name": "contested"
+        }
+       },
+       {
+        "op": "cmp",
+        "c": "le",
+        "a": {
+         "op": "feat",
+         "name": "import_gap_days"
+        },
+        "b": {
+         "op": "num",
+         "v": 0
+        }
+       }
+      ]
+     },
+     "decide": "match_exact",
+     "note": "Exactly one uncontested allocation arriving on the same day is a safe exact match"
+    },
+    {
+     "when": {
+      "op": "and",
+      "args": [
+       {
+        "op": "cmp",
+        "c": "eq",
+        "a": {
+         "op": "feat",
+         "name": "exact_allocations"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       },
+       {
+        "op": "cmp",
+        "c": "gt",
+        "a": {
+         "op": "feat",
+         "name": "exact_lines"
+        },
+        "b": {
+         "op": "num",
+         "v": 1
+        }
+       }
+      ]
+     },
+     "decide": "match_exact",
+     "note": "Exactly one allocation and multiple ledger lines on the value date confirm the match"
+    }
+   ]
+  }
+ ],
+ "day0": {
+  "rules": [
+   {
+    "rule": 0,
+    "decide": "match_exact",
+    "note": "one ledger allocation on the value date has exactly this amount",
+    "train": {
+     "n": 39462,
+     "wrong": 47,
+     "upper95": 0.00152,
+     "lower95": 0.00092,
+     "state": "reduced",
+     "actsAlone": true
+    }
+   }
+  ],
+  "eval": {
+   "bankLines": 32048,
+   "matched": 27037,
+   "correct": 26989,
+   "precision": 0.9982246551022672,
+   "matchRate": 0.8436407888167748,
+   "clearsFloor": true
+  }
+ },
+ "learned": {
+  "rules": [
+   {
+    "rule": 0,
+    "decide": "match_exact",
+    "note": "Exactly one uncontested allocation arriving on the same day is a safe exact match",
+    "train": {
+     "n": 28650,
+     "wrong": 4,
+     "upper95": 0.00032,
+     "lower95": 0.00005,
+     "state": "reduced",
+     "actsAlone": true
+    }
+   },
+   {
+    "rule": 1,
+    "decide": "match_exact",
+    "note": "Exactly one allocation and multiple ledger lines on the value date confirm the match",
+    "train": {
+     "n": 9572,
+     "wrong": 16,
+     "upper95": 0.00254,
+     "lower95": 0.00105,
+     "state": "inspected",
+     "actsAlone": true
+    }
+   }
+  ],
+  "eval": {
+   "bankLines": 32048,
+   "matched": 26119,
+   "correct": 26107,
+   "precision": 0.9995405643401355,
+   "matchRate": 0.8149962556165752,
+   "clearsFloor": true
+  }
+ },
+ "handwritten": {
+  "rules": [
+   {
+    "rule": 0,
+    "decide": "match_exact",
+    "note": "",
+    "train": {
+     "n": 29772,
+     "wrong": 18,
+     "upper95": 0.0009,
+     "lower95": 0.00039,
+     "state": "reduced",
+     "actsAlone": true
+    }
+   },
+   {
+    "rule": 1,
+    "decide": "match_exact",
+    "note": "",
+    "train": {
+     "n": 27,
+     "wrong": 6,
+     "upper95": 0.3921,
+     "lower95": 0.10148,
+     "state": "suspended",
+     "actsAlone": false
+    }
+   },
+   {
+    "rule": 2,
+    "decide": "match_exact",
+    "note": "",
+    "train": {
+     "n": 9562,
+     "wrong": 15,
+     "upper95": 0.00241,
+     "lower95": 0.00097,
+     "state": "inspected",
+     "actsAlone": true
+    }
+   },
+   {
+    "rule": 3,
+    "decide": "match_exact",
+    "note": "",
+    "train": {
+     "n": 101,
+     "wrong": 8,
+     "upper95": 0.13838,
+     "lower95": 0.04002,
+     "state": "suspended",
+     "actsAlone": false
+    }
+   },
+   {
+    "rule": 4,
+    "decide": "match_group",
+    "note": "",
+    "train": {
+     "n": 1,
+     "wrong": 0,
+     "upper95": 0.95,
+     "lower95": 0,
+     "state": "inspected",
+     "actsAlone": true
+    }
+   },
+   {
+    "rule": 5,
+    "decide": "match_near",
+    "note": "",
+    "train": {
+     "n": 275,
+     "wrong": 21,
+     "upper95": 0.1081,
+     "lower95": 0.05174,
+     "state": "suspended",
+     "actsAlone": false
+    }
+   }
+  ],
+  "eval": {
+   "bankLines": 32048,
+   "matched": 26902,
+   "correct": 26871,
+   "precision": 0.9988476693182663,
+   "matchRate": 0.8394283574638043,
+   "clearsFloor": true
+  }
  },
  "baseline": {
   "name": "MatcherByChatGPT_submission.csv (shipped with the dataset)",

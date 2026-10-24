@@ -4,24 +4,6 @@
     "rules": [
       {
         "when": {
-          "op": "cmp",
-          "c": "eq",
-          "a": {
-            "op": "feat",
-            "name": "callback_status"
-          },
-          "b": {
-            "op": "enum",
-            "v": "denied"
-          }
-        },
-        "then": {
-          "decide": "reject",
-          "note": "the counterparty denied making this request"
-        }
-      },
-      {
-        "when": {
           "op": "and",
           "args": [
             {
@@ -48,7 +30,25 @@
         },
         "then": {
           "decide": "reject",
-          "note": "sender does not match the contact on file and shows spoofing or pressure signals; reject outright to prevent fraud"
+          "note": "sender does not match master record and shows spoofing or pressure signals"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "callback_status"
+          },
+          "b": {
+            "op": "enum",
+            "v": "denied"
+          }
+        },
+        "then": {
+          "decide": "reject",
+          "note": "the counterparty denied making this request"
         }
       },
       {
@@ -61,7 +61,7 @@
         },
         "then": {
           "decide": "hold_and_verify",
-          "note": "request came through an untrusted channel; verify by phone before any change"
+          "note": "request came via untrusted channel; verify out-of-band before any change"
         }
       }
     ],
@@ -100,7 +100,9 @@
       "fixed": [
         "routing:F05:email:mdcc1dee7c9"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [],
+      "newAlone": 0
     },
     "budget": null,
     "changed": {
@@ -128,7 +130,7 @@
       }
     ],
     "origin": "qwen3.8-max style 1",
-    "rationale": "Added a strict reject rule requiring two independent signals (sender mismatch plus urgency or lookalike) to catch impersonation attacks like F05, and layered additional hold_and_verify checks so no unverified bank change ever reaches controller approval. This ensures both historical self-comparison and peer-pattern signals are evaluated before escalating.",
+    "rationale": "Added a rule requiring two independent signals (sender mismatch plus urgency or lookalike) to reject outright, which correctly handles case F05. Untrusted sources and sender mismatches now route to hold_and_verify rather than ask_controller, ensuring the safety rule that unverified bank changes are never sent to approval is never broken.",
     "candidatesTried": 3,
     "candidatesPassed": 3,
     "seconds": 0,
@@ -142,6 +144,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T16:48:48.582Z"
+    "evaluatedAt": "2026-10-24T18:30:49.969Z"
   }
 }

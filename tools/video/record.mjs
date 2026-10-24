@@ -3,7 +3,8 @@
 // narration. A drawn cursor shows where each click lands.
 //   node tools/video/record.mjs <scenes.json with seconds filled in> <out dir>
 // A scene: {url?, ready?, seconds, steps: [...]}; a step is one of
-//   {wait: ms} {click: "visible text", within?: "text of its table row"} {type: "field label", text} {scroll: "#main" | ".drawer", by: px} {scrollTo: "heading text"}
+//   {wait: ms} {click: "exact text of a control", within?: "text of its table row"} {as: "person"} (switch who acts)
+//   {type: "field label", text} {scroll: "#main" | ".drawer", by: px} {scrollTo: "heading text"}
 //   {waitText: "text", timeout: ms} {call: {db, as, fn, args}} (a reducer, as an identity in data/company*/identities.json)
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import puppeteer from 'puppeteer-core';
@@ -15,28 +16,43 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const W = 1920;
 const H = 930;
 
+// A drawn cursor that breathes slightly: the screencast only gets frames when
+// the page repaints, so a still page would otherwise record nothing.
 const CURSOR = `
   if (!document.getElementById('fake-cursor')) {
+    const st = document.createElement('style');
+    st.textContent = '@keyframes fake-cursor-breathe { from { opacity: 0.86 } to { opacity: 1 } }';
+    document.head.appendChild(st);
     const c = document.createElement('div');
     c.id = 'fake-cursor';
-    Object.assign(c.style, { position: 'fixed', left: '960px', top: '500px', width: '22px', height: '22px', margin: '-11px 0 0 -11px', borderRadius: '50%',
-      background: 'rgba(235,104,52,0.35)', border: '2px solid rgba(235,104,52,0.95)', zIndex: 99999, pointerEvents: 'none', transition: 'left 450ms ease, top 450ms ease, transform 120ms' });
+    Object.assign(c.style, { position: 'fixed', left: '1500px', top: '640px', width: '22px', height: '22px', margin: '-11px 0 0 -11px', borderRadius: '50%',
+      background: 'rgba(235,104,52,0.35)', border: '2px solid rgba(235,104,52,0.95)', zIndex: 99999, pointerEvents: 'none', transition: 'left 450ms ease, top 450ms ease, transform 120ms',
+      animation: 'fake-cursor-breathe 0.9s ease-in-out infinite alternate' });
     document.body.appendChild(c);
   }`;
 
-// A visible control by its text; with `within`, only inside the table row that mentions it.
+// A visible control whose text is exactly this; with `within`, only inside the table row that mentions it.
+// Never a near match: on a page full of actions, the wrong button can change the books.
 async function find(page, text, within) {
   return page.evaluateHandle(
     (t, w) => {
       const scope = w ? [...document.querySelectorAll('tr')].find(r => r.textContent?.includes(w)) : document;
       if (!scope) return null;
-      const all = [...scope.querySelectorAll('button, a, [role="button"], [role="tab"], .persona')].filter(e => e.offsetParent !== null);
-      return all.find(e => e.textContent?.trim() === t) ?? all.find(e => e.textContent?.includes(t)) ?? null;
+      return [...scope.querySelectorAll('button, a, [role="button"], [role="tab"]')].find(e => e.offsetParent !== null && e.textContent?.trim() === t) ?? null;
     },
     text,
     within ?? ''
   );
 }
+
+// The element that actually scrolls around `el`: the app scrolls inside its main panel and its drawer.
+const SCROLLER = `(el) => {
+  for (let e = el; e; e = e.parentElement) {
+    const o = getComputedStyle(e).overflowY;
+    if ((o === 'auto' || o === 'scroll') && e.scrollHeight > e.clientHeight + 1) return e;
+  }
+  return document.getElementById('main') ?? document.scrollingElement;
+}`;
 
 async function pointAt(page, el) {
   const box = await el.boundingBox();
@@ -77,10 +93,11 @@ async function step(page, s) {
     return page.waitForFunction(t => document.body.innerText.includes(t), { timeout: s.timeout ?? 30_000, polling: 250 }, s.waitText).catch(() => console.log(`  "${s.waitText}" never appeared`));
   if (s.scroll) {
     await page.evaluate(
-      (sel, by) =>
+      (sel, by, scrollerSrc) =>
         new Promise(done => {
-          let el = document.querySelector(sel);
-          if (el && el.scrollHeight <= el.clientHeight + 1) el = document.scrollingElement; // the page itself scrolls
+          const scrollerOf = eval(scrollerSrc);
+          const found = document.querySelector(sel);
+          const el = found && found.scrollHeight > found.clientHeight + 1 ? found : scrollerOf(found ?? document.getElementById('main'));
           if (!el) return done();
           const from = el.scrollTop;
           const t0 = performance.now();
@@ -93,19 +110,19 @@ async function step(page, s) {
           requestAnimationFrame(tick);
         }),
       s.scroll,
-      s.by
+      s.by,
+      SCROLLER
     );
     return sleep(300);
   }
   if (s.scrollTo) {
     // Bring a heading or row into view, smoothly, clear of the sticky header.
     await page.evaluate(
-      t =>
+      (t, scrollerSrc) =>
         new Promise(done => {
           const target = [...document.querySelectorAll('h1, h2, h3, h4, td, [class*="title"]')].find(e => e.textContent?.trim().startsWith(t));
           if (!target) return done();
-          const box = target.closest('.drawer') ?? document.scrollingElement;
-          const scroller = box.classList?.contains('drawer') ? box : document.scrollingElement;
+          const scroller = eval(scrollerSrc)(target.parentElement);
           const from = scroller.scrollTop;
           const by = target.getBoundingClientRect().top - 120;
           const t0 = performance.now();
@@ -117,9 +134,21 @@ async function step(page, s) {
           };
           requestAnimationFrame(tick);
         }),
-      s.scrollTo
+      s.scrollTo,
+      SCROLLER
     );
     return sleep(300);
+  }
+  if (s.as) {
+    // Switch who acts, by the person's name in the bar at the top.
+    const el = (
+      await page.evaluateHandle(name => [...document.querySelectorAll('.persona')].find(b => b.querySelector('.persona-name')?.textContent?.trim() === name) ?? null, s.as)
+    ).asElement();
+    if (!el) return console.log(`  nobody called "${s.as}" to act as`);
+    await pointAt(page, el);
+    await press(page);
+    await el.click();
+    return sleep(500);
   }
   if (s.click) {
     const el = (await find(page, s.click, s.within)).asElement();
@@ -162,6 +191,7 @@ for (const [i, sc] of scenes.entries()) {
   if (sc.url) await page.goto(sc.url, { waitUntil: 'networkidle2', timeout: 60_000 }).catch(() => undefined);
   if (sc.ready) await step(page, { waitText: sc.ready, timeout: 45_000 });
   for (const s of sc.before ?? []) await step(page, s);
+  await page.evaluate(CURSOR);
   await sleep(600);
   const recorder = await page.screencast({ path: `${outDir}/scene-${i}.webm` });
   const t0 = Date.now();

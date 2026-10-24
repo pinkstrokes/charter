@@ -9,15 +9,15 @@
 // arrives; a line it asked about or matched wrongly is a lesson, with the
 // reconciliation team's recorded match as the answer; the same evolver
 // proposes, the same gate replays every candidate over every line matched so
-// far, and a version that passes takes over. A rule of the final version acts
-// alone on the locked eval split only if, over the train months after that
-// version took over, we are 95% sure its error rate is under the 0.2% the
-// benchmark tolerates; every other line goes to a person. The eval split is
-// scored once, against the solution file.
+// far, and a version that passes takes over. Each rule of the final version then
+// earns its autonomy as every rule in Charter does, on the train months after
+// that version took over: it acts alone unless its record there proves, at 95%,
+// that it is wrong more often than the 0.2% the benchmark tolerates, and then
+// its lines go to a person. The eval split is scored once, against the solution file.
 //   npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { ASKS, outcomeFor, run, TOLERABLE, type Expr, type FeatureMap, type SkillProgram, type Treatments } from '../../module/spacetimedb/src/core/dsl';
-import { upper95 } from '../../module/spacetimedb/src/core/stats';
+import { lower95, upper95 } from '../../module/spacetimedb/src/core/stats';
 import { examplesFor, improve, splitLessons, type History } from '../evolve/skills';
 
 const args = new Map<string, string>();
@@ -195,9 +195,11 @@ async function learn(bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatm
   return { program, versions, months };
 }
 
-// A rule acts alone on the eval split only if its record on the train months after
-// the final version took over, which no version was fitted to, says at 95%
-// confidence that it is wrong less often than the benchmark tolerates.
+// Each rule's record on the train months after the final version took over, which
+// no version was fitted to, and the state earned autonomy gives it there (as in
+// reliability.ts): suspended when 95% sure it is worse than tolerable, reduced
+// inspection when 95% sure it is better, otherwise inspected; only a suspended
+// rule's lines go to a person.
 function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, after: string) {
   const record = program.rules.map(() => ({ n: 0, wrong: 0 }));
   for (const b of bank) {
@@ -208,7 +210,11 @@ function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: F
     record[r.trace.ruleIndex].n++;
     if (!b.truth.includes(t[r.outcome.decide])) record[r.trace.ruleIndex].wrong++;
   }
-  return record.map(s => ({ ...s, upper95: Number(upper95(s.wrong, s.n).toFixed(5)), actsAlone: s.n > 0 && upper95(s.wrong, s.n) <= TOLERABLE.bank_match }));
+  const tolerable = TOLERABLE.bank_match;
+  return record.map(s => {
+    const state = s.n >= 5 && lower95(s.wrong, s.n) > tolerable ? 'suspended' : s.n >= 40 && upper95(s.wrong, s.n) <= tolerable ? 'reduced' : 'inspected';
+    return { ...s, upper95: Number(upper95(s.wrong, s.n).toFixed(5)), lower95: Number(lower95(s.wrong, s.n).toFixed(5)), state, actsAlone: state !== 'suspended' };
+  });
 }
 
 function score(program: SkillProgram, record: ReturnType<typeof autonomy>, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, solution: Map<string, string[]>) {
@@ -271,7 +277,7 @@ async function main(): Promise<void> {
   const result = {
     dataset: 'BenchRec cash v1.0 (Kaggle benchmarkteam, CC BY 4.0)',
     floor: 1 - TOLERABLE.bank_match,
-    method: 'day-0 skill of one rule; month by month over the train history the seat decides each line, the reconciliation team\'s recorded match is the lesson, the evolver proposes and the replay gate accepts; a rule acts alone on eval only if its upper 95% error bound is under 0.2% on the train months after the final version took over (the same months for every desk)',
+    method: 'day-0 skill of one rule; month by month over the train history the seat decides each line, the reconciliation team\'s recorded match is the lesson, the evolver proposes and the replay gate accepts; each rule earns autonomy on the train months after the final version took over (the same months for every desk): suspended, and its lines sent to a person, when 95% sure its error rate is over 0.2%',
     autonomyFrom: after,
     months: learned.months,
     versions: learned.versions.map(v => ({ ...v, program: undefined, rules: v.program.rules.map(r => ({ when: r.when, decide: r.then.decide, note: r.then.note ?? '' })) })),

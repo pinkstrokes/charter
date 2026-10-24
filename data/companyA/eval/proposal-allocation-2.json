@@ -15,62 +15,50 @@
               },
               "b": {
                 "op": "num",
-                "v": 0
-              }
-            },
-            {
-              "op": "feat",
-              "name": "reference_paid"
-            }
-          ]
-        },
-        "then": {
-          "decide": "leave_unapplied_ask",
-          "note": "no subset matches and the referenced invoice is already paid"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "eq",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
                 "v": 1
               }
             },
             {
               "op": "feat",
               "name": "exact_match"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
+              }
+            },
+            {
+              "op": "or",
+              "args": [
+                {
+                  "op": "feat",
+                  "name": "remittance_consistent"
+                },
+                {
+                  "op": "feat",
+                  "name": "reference_matches_open"
+                },
+                {
+                  "op": "cmp",
+                  "c": "le",
+                  "a": {
+                    "op": "feat",
+                    "name": "open_items"
+                  },
+                  "b": {
+                    "op": "num",
+                    "v": 2
+                  }
+                }
+              ]
             }
           ]
         },
         "then": {
-          "decide": "apply_unique"
-        }
-      },
-      {
-        "when": {
-          "op": "cmp",
-          "c": "eq",
-          "a": {
-            "op": "feat",
-            "name": "solution_count"
-          },
-          "b": {
-            "op": "num",
-            "v": 1
-          }
-        },
-        "then": {
           "decide": "apply_unique",
-          "note": "one subset explains the amount within tolerance"
+          "note": "Unique exact subset confirmed by a second independent signal (reference, remittance, or simple peer history)"
         }
       },
       {
@@ -88,14 +76,12 @@
         },
         "then": {
           "decide": "apply_by_terms",
-          "note": "no subset matches; apply by contract order"
+          "note": "No subset matches the amount; apply by contract order"
         }
       }
     ],
     "otherwise": {
-      "decide": "leave_unapplied_ask",
-      "askRole": "controller",
-      "note": "several invoice sets explain this amount"
+      "decide": "leave_unapplied_ask"
     }
   },
   "proof": {
@@ -105,14 +91,18 @@
     "lesson": {
       "subjects": [
         "receipt:WIRE-260105-4137",
-        "receipt:WIRE-260424-5099"
+        "receipt:WIRE-260424-5099",
+        "receipt:WIRE-260512-5321",
+        "receipt:WIRE-260602-5543"
       ],
-      "required": 2,
+      "required": 4,
       "handled": [
-        "receipt:WIRE-260424-5099"
+        "receipt:WIRE-260424-5099",
+        "receipt:WIRE-260512-5321",
+        "receipt:WIRE-260602-5543"
       ],
       "optionalFixed": 0,
-      "optionalTotal": 0,
+      "optionalTotal": 1,
       "cases": [
         {
           "subject": "receipt:WIRE-260105-4137",
@@ -124,62 +114,113 @@
         {
           "subject": "receipt:WIRE-260424-5099",
           "label": "leave_unapplied_ask",
-          "source": "ask #311 answered by controller:Dana",
-          "reason": "The ledger shows no matching terms for receipt WIRE-260424-5099, so the seat wrongly applied it instead of leaving it unapplied for inquiry.",
+          "source": "ask #356 answered by controller:Dana",
+          "reason": "Per the ledger, this wire duplicates a debit already collected, so it must remain unapplied pending refund.",
           "handled": true
+        },
+        {
+          "subject": "receipt:WIRE-260512-5321",
+          "label": "leave_unapplied_ask",
+          "source": "ask #388 answered by controller:Dana",
+          "reason": "The ledger shows conflicting beneficiary details, so the seat violated the agreement by auto-applying instead of holding for manual review.",
+          "handled": true
+        },
+        {
+          "subject": "receipt:WIRE-260602-5543",
+          "label": "leave_unapplied_ask",
+          "source": "ask #471 answered by controller:Dana",
+          "reason": "I misread the case and thought 'leave_unapplied_ask'.",
+          "handled": true
+        },
+        {
+          "subject": "receipt:WIRE-260505-5247",
+          "label": "apply_by_terms",
+          "source": "ask #367 answered by controller:Dana",
+          "reason": "The ledger shows PATEL BREWS INC remitted $3,578.13 under the contract-order option, so apply oldest first per standard allocation rules.",
+          "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 13,
-      "correctBefore": 11,
-      "correctAfter": 12,
+      "n": 20,
+      "correctBefore": 15,
+      "correctAfter": 17,
       "fixed": [
-        "receipt:WIRE-260424-5099"
+        "receipt:WIRE-260424-5099",
+        "receipt:WIRE-260512-5321",
+        "receipt:WIRE-260602-5543"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [
+        "receipt:WIRE-260526-5469"
+      ],
+      "newAlone": 0
     },
     "budget": null,
     "changed": {
-      "n": 0,
-      "total": 32,
-      "rate": 0,
+      "n": 4,
+      "total": 42,
+      "rate": 0.09523809523809523,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 21,
-    "robustness": 0.9230769230769231,
-    "alternatives": [],
-    "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule before the solution_count=0 fallback to leave unapplied when no subset matches and the payment reference points to an already-paid invoice, fixing WIRE-260424-5099. The controller's note on WIRE-260105-4137 confirms their ask was itself a misread, so the existing apply_unique logic for that case remains correct.",
-    "candidatesTried": 3,
-    "candidatesPassed": 1,
-    "seconds": 0,
+    "complexity": 19,
+    "robustness": 0.85,
+    "alternatives": [
+      {
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay, thresholds centred by replay",
+        "robustness": 0.85,
+        "newLeads": 0,
+        "complexity": 19
+      },
+      {
+        "origin": "qwen3.8-max style 0",
+        "robustness": 0.85,
+        "newLeads": 0,
+        "complexity": 21
+      },
+      {
+        "origin": "qwen3.8-max style 0, thresholds centred by replay",
+        "robustness": 0.85,
+        "newLeads": 0,
+        "complexity": 21
+      }
+    ],
+    "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+    "rationale": "The updated skill requires two independent signals before auto-applying: an exact unique subset plus confirmation from a matching reference, consistent remittance, or a simple account history (open_items <= 2), which correctly holds ambiguous cases like WIRE-260105-4137 and WIRE-260512-5321 for review. It also explicitly blocks application when the payment reference points to an already-paid invoice and safely routes multi-solution cases with consistent remittance to apply_by_terms.",
+    "candidatesTried": 9,
+    "candidatesPassed": 7,
+    "seconds": 11,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
         "clean": {
-          "n": 11,
-          "current": 11,
-          "candidate": 11
+          "n": 13,
+          "current": 13,
+          "candidate": 13
         },
         "bundled_payment": {
-          "n": 2,
-          "current": 2,
-          "candidate": 2
+          "n": 4,
+          "current": 3,
+          "candidate": 3
         },
         "payer_alias": {
-          "n": 2,
-          "current": 2,
-          "candidate": 2
+          "n": 3,
+          "current": 3,
+          "candidate": 1
         },
         "payment_in_transit": {
           "n": 1,
           "current": 1,
-          "candidate": 1
+          "candidate": 0
         },
         "prompt_injection": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "card_underreport": {
           "n": 1,
           "current": 1,
           "candidate": 1
@@ -187,21 +228,31 @@
       },
       "val": {
         "clean": {
-          "n": 4,
-          "current": 4,
-          "candidate": 4
+          "n": 6,
+          "current": 6,
+          "candidate": 6
         },
         "payer_alias": {
-          "n": 2,
-          "current": 2,
-          "candidate": 2
+          "n": 3,
+          "current": 3,
+          "candidate": 1
         },
         "payment_in_transit": {
           "n": 1,
           "current": 1,
-          "candidate": 1
+          "candidate": 0
         },
         "duplicate_payment": {
+          "n": 1,
+          "current": 0,
+          "candidate": 0
+        },
+        "bundled_payment": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "short_payment": {
           "n": 1,
           "current": 0,
           "candidate": 1
@@ -209,14 +260,14 @@
       },
       "test": {
         "short_payment": {
-          "n": 1,
-          "current": 0,
-          "candidate": 0
+          "n": 2,
+          "current": 1,
+          "candidate": 1
         },
         "clean": {
-          "n": 2,
-          "current": 2,
-          "candidate": 2
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "bundled_payment": {
           "n": 1,
@@ -225,6 +276,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T16:54:58.338Z"
+    "evaluatedAt": "2026-10-24T19:08:10.431Z"
   }
 }

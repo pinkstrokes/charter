@@ -31,48 +31,63 @@ Two other moments the judges can trigger themselves:
 
 | | Real | Simulated | How we know |
 |---|---|---|---|
-| Company B, a UK giftware wholesaler | 1,645 invoices and 380 credit notes from UCI Online Retail II (CC BY 4.0), with their own defects | customer payments and remittance advice; the controller answers from the simulated truth | answer key written before the run; locked test split the evolver never sees |
-| BenchRec, a Tier-1 institution's cash account | 32,048 bank lines to reconcile against the ledger, with the benchmark's own solution (CC BY 4.0) | — | the benchmark's scoring: precision must clear 99.8% before match rate counts |
+| Company B, a UK giftware wholesaler | 1,645 invoices and 380 credit notes from UCI Online Retail II (CC BY 4.0), with their own defects | customer payments and remittance advice, with the long tail of cash application: payments from abroad short by bank charges or off by the exchange rate, money sent "on account" without a reference, one payment for two invoices, duplicates | answer key written before the run; locked test split the evolver never sees |
+| BenchRec, a Tier-1 institution's cash account | 68,975 reconciled bank lines to learn from and 32,048 to reconcile, with the benchmark's own solution (CC BY 4.0) | — | the benchmark's scoring: precision must clear 99.8% before match rate counts |
 | Company A, Pearl Lane Tea Co., a franchisor | franchise terms modelled on practice | six months: 20 stores, sales reports, card settlements, supply orders, debits, vendors, bills, emails, people who make mistakes; planted errors with an answer key | answer key, locked test split, a live split for June |
 | Attacks | — | 36 emails written by deepseek-v4-pro, another model family | same emails against tool-using LLM agents |
+| People | — | a script decides what each controller and consultant answers from the simulated truth, including pre-registered wrong answers (about 5%); a model writes the one-line reason in their voice | the answer key knows which answers were slips; in the live demo the judges play the people |
 
 ## Results
 
-**Real bank reconciliation (BenchRec, eval split scored once).** A day-0 skill of six rules; on the train split two earned autonomy (95% upper bounds on error 0.15% and 0.18%), four did not and hand their lines to people.
+**Real bank reconciliation (BenchRec, eval split scored once).** The bank desk starts with one rule — match a line when exactly one ledger allocation has that amount on that day — and learns the rest from the institution's own reconciliation history, month by month, through the same evolver and replay gate as every desk. It found that a line whose ledger entry was booked on a different day is wrong about one time in 25, and stopped matching those alone. Each rule then earns its autonomy the way every rule in Charter does, on the train months after the last version took over, which no version was fitted to: it is suspended, and its lines go to a person, once its record there proves at 95% that it is wrong more often than 0.2%. All four desks are scored once on the locked eval split.
 
-| | Matched alone | Precision | Clears the 99.8% floor |
-|---|---|---|---|
-| Charter | 83.9% (26,899 of 32,048) | 99.90% (28 wrong) | yes |
-| Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 99.45% | no |
+| | Matched alone | Wrong | Precision | Clears the 99.8% floor |
+|---|---|---|---|---|
+| Charter, learned (4 versions) | 81.5% (26,119 of 32,048) | 12 | 99.95% | yes |
+| Charter, day 0 (one rule) | 84.4% | 48 | 99.82% | yes, by 0.02 points |
+| Six rules written by hand (three suspended) | 83.9% | 31 | 99.89% | yes |
+| Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 114 | 99.45% | no |
 
-**Real invoices (company B).** On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **310 of 310** payments — 199 prompt, 32 through a parent company, 34 late, 40 monthly statements paid against remittance advice, and 5 duplicates held instead of spread over other invoices (19 payments the simulation schedules after 30 June, when the run ends, are not judged) — and the team was wrong on **0 of the 299** it settled without a person (95% upper bound 1.0%). Month by month:
+By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher: on average it is precise enough, while letting through a pattern that is wrong one time in 25. Charter's standard is stricter by design: every rule earns its autonomy on its own record.
+
+**Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **312 of 317** payments, and the team was wrong on **4 of the 300** it settled without a person (95% upper bound 3.0%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
+
+| Version | What it learned | Live from | Settled alone | Wrong when alone | Right |
+|---|---|---|---|---|---|
+| Day one | — | 1 Dec 2010 | 300 | 18 | 282 of 313 |
+| v2 | several sets fit and the reference names one for exactly its amount → that one | 2 Jan | 305 | 17 | 288 |
+| v3 | no set fits, but the reference names one open invoice → that invoice, even short | 16 Jan | 305 | 8 | 297 |
+| v4 | no set fits and the reference names an invoice already paid → a duplicate: ask | 3 Apr | 301 | 4 | 301 |
+| v5 | several sets fit and the remittance agrees with one → that one | 8 May | 306 | 4 | 306 |
 
 | Month | Settled without a person | Questions to people | Right when settled alone |
 |---|---|---|---|
-| Dec 2010 | 68% | 6 | 92% (12/13) |
-| Jan 2011 | 97% | 13 | 98.5% (199/202) |
-| Feb 2011 | 100% | 4 | 98.8% (159/161) |
-| Mar 2011 | 99% | 4 | 99.5% (182/183) |
-| Apr 2011 | 97% | 10 | 100% (201/201) |
-| May 2011 | 97% | 9 | 100% (200/200) |
-| Jun 2011 | 100% | 0 | 100% (244/244) |
+| Dec 2010 | 72% | 5 | 92% (12/13) |
+| Jan 2011 | 94% | 31 | 95.7% (178/186) |
+| Feb 2011 | 99% | 5 | 99.4% (156/157) |
+| Mar 2011 | 99% | 4 | 98.9% (187/189) |
+| Apr 2011 | 98% | 10 | 98.5% (203/206) |
+| May 2011 | 97% | 10 | 99.5% (200/201) |
+| Jun 2011 | 99% | 4 | 99.6% (244/245) |
 
-Four new versions of the cash-application skill went live, each after a replay over every past decision; between the first and the last, the skill's own decisions on the test split went from 0 to 5 of 5 duplicates held and from 33 to 40 of 40 statements applied line by line. Twice in January a later payment showed an earlier application was a guess, and the team undid it.
+Eleven times, nine of them in January, a later payment exposed an earlier application as a guess and the team undid it. The pennies bank charges leave are not chased: every Monday the cash seat lists them and the controller writes them off (112 invoices, £1,188.21 over seven months).
 
-![Company B month by month: settled alone 68% to 100%, questions to people 6 to 0](docs/img/b6_proof.png)
+![Company B month by month: settled alone 72% to 99%, questions to people while it learned in January, then four to ten a month](docs/img/b6_proof.png)
 
-**A franchisor's six months (company A).** Twenty stores, six vendors, and people who make mistakes on purpose (34 of 507 answers were wrong). On the locked test split, from the day-0 skills to the versions people approved:
+![The cash-application skill's lineage: the controller's answer, the proposal, the replay gate, and the decisions it changed](docs/img/b7_lineage.png)
+
+**A franchisor's six months (company A).** Twenty stores, six vendors, and people who make mistakes on purpose. On the locked test split, from the day-0 skills to the versions people approved:
 
 | Desk | What changed | Day 0 → now | Learned from |
 |---|---|---|---|
-| Under-reported sales | weeks flagged for audit | 0/4 → 3/4, with 88/88 clean, 14/14 legitimately low-cash and 5/5 bulk-buying weeks still accepted | one consultant's spot-check answer in February; the new version then caught store 14 twice in March and store 31 in June, weeks the old one would have accepted |
+| Under-reported sales | weeks flagged for audit | 0/4 → 3/4, with 14/14 legitimately low-cash and 5/5 bulk-buying weeks still accepted and 87 of 88 clean weeks (one goes to a consultant) | two field audits and a consultant's answer in March |
 | Collections | payments announced as a check in the mail, not chased | 0/3 → 3/3 | the controller's answer on one franchisee's check in March |
 | Payables | duplicate bills rejected by the clerk's own skill | 0/2 → 2/2 | the controller's answer on a third duplicate in April, after the internal auditor had caught the first two |
 | All desks | no money moves while a bank change is unverified | P-1, P-2, P-3 | one debit returned in April |
 
-Audits recovered $1,449.57 of $1,864.04 in hidden royalties; $89,242 of duplicate bills was stopped and none paid. The internal auditor qualified February and March (two duplicate liabilities of $34,800 and $10,750, and a royalty billed $59.03 too high) and gave clean opinions for January, April and May; all five months are closed into certificates anchored in git. Seven times a person's spot-check verdict contradicted a rule with a clean record; asked to look again, people called four of them slips and stood by three. Settled without a person on the test and live splits: under-reporting 4 wrong of 112 (95% upper bound 8%), collections 3 of 30, payables 2 of 23, cash 1 of 9.
+Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicate bills was stopped and none paid. The internal auditor qualified February and March (two duplicate liabilities of $34,800 and $10,750, and a royalty billed $59.03 too high) and gave clean opinions for January, April and May; all five months are closed into certificates anchored in git. Seven times a person's spot-check verdict contradicted a rule with a clean record; asked to look again, people called four of them slips and stood by three, and a later run of slips no longer teaches a desk to ask more. Settled without a person on the test and live splits: under-reporting 6 wrong of 111 (95% upper bound 10%), collections 3 of 30, payables 2 of 23, cash 1 of 9. What it still misses: store 31's milder under-reporting in June (0 of 3 live weeks: its cash share ran 11–13 points under its own history, while every week people taught it ran 20 or more under), and short payments, which A's franchisees pay without an invoice number in the reference (none of 3 applied where meant).
 
-**Skills travel; the target decides.** Company B's cash-application skill — 310/310 on its own books — was offered to company A as a program. Replayed over A's history it would have got 3 of A's labeled cases wrong and dropped rules A's people never faulted (A's franchise agreement applies unnamed money in contract order), so A's gate refused it before a person saw it.
+**Skills travel; the target decides.** Company B's cash-application skill was offered to company A as a program, whole and rule by rule at every place in A's own program. A's gate replayed every variant over A's history and refused them all before a person saw them: B's whole program would get 4 of A's labeled cases wrong, and none of its rules handles a case A's people taught. A's franchisees do not write invoice numbers in their payment references, so B's best lesson, "a payment naming one open invoice goes there even when short", never fires at A.
 
 **Attacks.** 36 attack emails: Charter gave the attacker nothing (0/36), with the people played as an attacker would hope — a careless controller tries to release every refund and endorse every bank change. Tool-using agents on the same emails: qwen3.8-max 13/36, kimi-k3 8/36, glm-5.3 4/36 with plain prompts; 0, 2 and 1 with careful prompts.
 
@@ -83,9 +98,10 @@ Audits recovered $1,449.57 of $1,864.04 in hidden royalties; $89,242 of duplicat
 1. **Later evidence overturns earlier guesses.** When a payment names an invoice the team paid by inference, it asks, undoes its own application, re-applies both, and the rule that guessed loses autonomy.
 2. **It checks people's verdicts too.** A verdict that would break the counterparty's agreement is declined with the reason, never counted against the seat and never learned. A spot-check verdict that contradicts a rule with a clean record is put back to the person — a slip, or does it stand? — before it counts or teaches, so a 5% human error rate does not erode rules that were right.
 3. **Policies are learned from losses and bind every desk.** An exhaustive search replays every past money movement with the facts the kernel saw at the time; a rule is offered only if it stops a loss no rule in force stops and holds back little that was legitimate, and it extends to every other way money leaves.
-4. **A lesson is a pull request with a replay proof.** A person's one-line correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision: it must fix the lesson, break nothing people labeled, take over work only on three agreeing precedents, stay inside a change budget and never break a safety rule. New rules no known case supports are dropped, failing candidates are repaired by removing the rules behind the failure, and new thresholds are centred between the nearest known cases so they generalise.
+4. **A lesson is a pull request with a replay proof.** A person's one-line correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision: it must handle what people taught, never break a safety rule, stay inside a change budget, and pass three statistical tests that use the same arithmetic as earned autonomy — a new mistake on a labeled case fails it unless the record proves such mistakes rarer than the domain tolerates (impossible on a few dozen cases, possible on 69,000 bank lines); taking work from people needs three agreeing precedents; handing work back to people needs the evidence that would suspend a rule, so a few slips cannot teach it to ask. Candidates are ranked by value: one mistake stopped is worth 1/tolerable questions, because at that error rate acting alone and asking cost the same. New rules no known case supports are dropped, failing candidates are repaired, and new thresholds are searched over the values the cases actually take and centred between the nearest known cases.
 5. **Sources disagree; the team weighs them.** Who paid is voted by the account on file, the invoice the payer named and the payer's name; masked account numbers collide, so one source loses to two and a tie goes to a person with every reading. Two model families read every email that could move money; a disagreement waits for a person.
-6. **Skills travel, data does not — and the target decides.** A skill learned at one company is offered to another as a program; the target replays it over its own history, and a skill that would break the target's labeled cases or drop rules its people never faulted is refused there.
+6. **Skills travel, data does not — and the target decides.** A skill learned at one company is offered to another as a program; the target replays it, whole and rule by rule at every place in its own program, over its own history, and adopts only what handles something its own people taught and passes its own gate.
+7. **The same action under another name is the same decision.** Every decision records what each outcome would have done with that case — for cash, which invoices each would pay. Checks, the gate and the grading compare where the money goes, not what the outcome is called. Without it, "apply to the invoice the payer named" and "apply oldest first" looked like contradictory answers for a customer with one open invoice, and no candidate could learn bank charges.
 
 ![One consultant's answer becomes a new version, replayed over every past decision, that catches weeks the old one accepted](docs/img/a5_skill.png)
 

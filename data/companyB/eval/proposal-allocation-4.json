@@ -15,6 +15,33 @@
               },
               "b": {
                 "op": "num",
+                "v": 0
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_paid"
+            }
+          ]
+        },
+        "then": {
+          "decide": "leave_unapplied_ask",
+          "note": "no subset matches and the referenced invoice is already paid; likely a duplicate payment"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
                 "v": 1
               }
             },
@@ -26,7 +53,7 @@
         },
         "then": {
           "decide": "apply_unique",
-          "note": "exactly one subset sums to the receipt"
+          "note": "one subset sums exactly to the receipt"
         }
       },
       {
@@ -34,24 +61,17 @@
           "op": "and",
           "args": [
             {
-              "op": "feat",
-              "name": "reference_matches_open"
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
             },
-            {
-              "op": "feat",
-              "name": "exact_match"
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_unique",
-          "note": "payment reference matches one open invoice exactly, confirming which of several subsets is correct"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
             {
               "op": "feat",
               "name": "reference_names_open"
@@ -62,30 +82,116 @@
                 "op": "feat",
                 "name": "reference_paid"
               }
-            },
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "single inexact match but reference names one open invoice"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 1
+          }
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "one subset explains the amount within tolerance"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
             {
               "op": "cmp",
-              "c": "ge",
+              "c": "eq",
               "a": {
                 "op": "feat",
-                "name": "reference_gap_cents"
+                "name": "solution_count"
               },
               "b": {
                 "op": "num",
                 "v": 0
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
               }
             }
           ]
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "reference names a single open invoice with no overpayment; applying there even though no subset matches exactly"
+          "note": "no subset matches but payer named one open invoice; difference is likely bank charges"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 2
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "multiple subsets fit but payment reference matches one open invoice exactly"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "no subset matches; apply by contract order"
         }
       }
     ],
     "otherwise": {
       "decide": "leave_unapplied_ask",
-      "note": "unclear allocation; ask controller"
+      "askRole": "controller",
+      "note": "several invoice sets explain this amount without payer confirmation"
     }
   },
   "proof": {
@@ -94,93 +200,135 @@
     "parent": "allocation@3",
     "lesson": {
       "subjects": [
+        "receipt:BACS-536792-DUP",
+        "receipt:BACS-539108",
         "receipt:BACS-544282-DUP"
       ],
-      "required": 1,
+      "required": 3,
       "handled": [
+        "receipt:BACS-536792-DUP",
+        "receipt:BACS-539108",
         "receipt:BACS-544282-DUP"
       ],
       "optionalFixed": 0,
-      "optionalTotal": 1,
+      "optionalTotal": 3,
       "cases": [
         {
-          "subject": "receipt:BACS-544282-DUP",
+          "subject": "receipt:BACS-536792-DUP",
           "label": "leave_unapplied_ask",
-          "source": "ask #5978 answered by controller:Dana",
+          "source": "ask #96 answered by controller:Dana",
           "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
           "handled": true
         },
         {
+          "subject": "receipt:BACS-539108",
+          "label": "leave_unapplied_ask",
+          "source": "ask #169 answered by controller:Dana",
+          "reason": "landed on 539331, the customer paid 539108",
+          "handled": true
+        },
+        {
+          "subject": "receipt:BACS-544282-DUP",
+          "label": "leave_unapplied_ask",
+          "source": "ask #341 answered by controller:Dana",
+          "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
+          "handled": true
+        },
+        {
+          "subject": "receipt:BACS-536610",
+          "label": "apply_by_terms",
+          "source": "ask #67 answered by controller:Dana",
+          "reason": "apply to the oldest",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536629",
+          "label": "apply_by_terms",
+          "source": "ask #69 answered by controller:Dana",
+          "reason": "apply to the oldest",
+          "handled": false
+        },
+        {
           "subject": "receipt:STMT-B-17389-2011-02",
           "label": "apply_unique",
-          "source": "ask #5943 answered by controller:Dana",
+          "source": "ask #307 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 79,
-      "correctBefore": 77,
-      "correctAfter": 78,
+      "n": 96,
+      "correctBefore": 90,
+      "correctAfter": 93,
       "fixed": [
+        "receipt:BACS-536792-DUP",
+        "receipt:BACS-539108",
         "receipt:BACS-544282-DUP"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [],
+      "newAlone": 0
     },
     "budget": null,
     "changed": {
       "n": 0,
-      "total": 407,
+      "total": 426,
       "rate": 0,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 19,
-    "robustness": 0.9873417721518988,
-    "alternatives": [
-      {
-        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
-        "robustness": 0.9873417721518988,
-        "newLeads": 0,
-        "complexity": 25
-      },
-      {
-        "origin": "qwen3.8-max style 1, constants tuned by replay",
-        "robustness": 0.9873417721518988,
-        "newLeads": 0,
-        "complexity": 32
-      },
-      {
-        "origin": "qwen3.8-max style 1, constants tuned by replay",
-        "robustness": 0.9873417721518988,
-        "newLeads": 0,
-        "complexity": 32
-      }
-    ],
-    "origin": "qwen3.8-max style 0, unsupported rules removed by replay",
-    "rationale": "Added a guard to the apply_by_terms rule so it skips cases where the payment reference points to an already-paid invoice (which should fall through to leave_unapplied_ask), and added a new rule to apply_unique when a consistent remittance confirms the exact match among multiple solutions.",
-    "candidatesTried": 10,
-    "candidatesPassed": 7,
-    "seconds": 16.6,
+    "complexity": 43,
+    "robustness": 0.96875,
+    "alternatives": [],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a new first rule to catch cases where no subset matches and the payment reference points to an already-paid invoice, routing them to leave_unapplied_ask as likely duplicates. This fixes the three mistaken receipts while preserving all other existing behavior.",
+    "candidatesTried": 3,
+    "candidatesPassed": 1,
+    "seconds": 18.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
         "payment_prompt": {
-          "n": 191,
-          "current": 172,
-          "candidate": 172
+          "n": 152,
+          "current": 152,
+          "candidate": 152
         },
         "payment_parent": {
-          "n": 20,
-          "current": 18,
-          "candidate": 18
+          "n": 21,
+          "current": 21,
+          "candidate": 21
         },
         "payment_late": {
-          "n": 30,
-          "current": 29,
-          "candidate": 29
+          "n": 32,
+          "current": 32,
+          "candidate": 32
+        },
+        "payment_two_invoices": {
+          "n": 8,
+          "current": 7,
+          "candidate": 7
+        },
+        "payment_bank_charge": {
+          "n": 19,
+          "current": 19,
+          "candidate": 19
+        },
+        "payment_on_account": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
+        },
+        "payment_fx_difference": {
+          "n": 10,
+          "current": 10,
+          "candidate": 10
+        },
+        "payment_on_account_balance": {
+          "n": 6,
+          "current": 5,
+          "candidate": 6
         },
         "payment_duplicate": {
           "n": 2,
@@ -195,24 +343,49 @@
       },
       "val": {
         "payment_prompt": {
-          "n": 88,
-          "current": 82,
-          "candidate": 82
+          "n": 80,
+          "current": 80,
+          "candidate": 80
         },
         "payment_parent": {
-          "n": 15,
-          "current": 15,
-          "candidate": 15
+          "n": 17,
+          "current": 17,
+          "candidate": 17
         },
-        "payment_duplicate": {
+        "payment_two_invoices": {
           "n": 1,
           "current": 1,
           "candidate": 1
         },
+        "payment_duplicate": {
+          "n": 1,
+          "current": 0,
+          "candidate": 1
+        },
         "payment_late": {
-          "n": 13,
-          "current": 13,
-          "candidate": 13
+          "n": 11,
+          "current": 11,
+          "candidate": 11
+        },
+        "payment_bank_charge": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
+        },
+        "payment_on_account_balance": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_on_account": {
+          "n": 3,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_fx_difference": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
         },
         "payment_statement_with_remittance": {
           "n": 11,
@@ -222,23 +395,48 @@
       },
       "test": {
         "payment_prompt": {
-          "n": 94,
-          "current": 87,
-          "candidate": 87
+          "n": 78,
+          "current": 76,
+          "candidate": 76
         },
         "payment_parent": {
-          "n": 18,
-          "current": 18,
-          "candidate": 18
+          "n": 17,
+          "current": 17,
+          "candidate": 17
         },
         "payment_late": {
-          "n": 12,
-          "current": 12,
-          "candidate": 12
+          "n": 14,
+          "current": 14,
+          "candidate": 14
+        },
+        "payment_on_account_balance": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_bank_charge": {
+          "n": 9,
+          "current": 9,
+          "candidate": 9
+        },
+        "payment_two_invoices": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_fx_difference": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "payment_duplicate": {
-          "n": 3,
+          "n": 2,
           "current": 0,
+          "candidate": 2
+        },
+        "payment_on_account": {
+          "n": 4,
+          "current": 3,
           "candidate": 3
         },
         "payment_statement_with_remittance": {
@@ -248,6 +446,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T11:57:05.929Z"
+    "evaluatedAt": "2026-10-24T18:56:41.737Z"
   }
 }

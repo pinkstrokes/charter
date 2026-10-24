@@ -15,6 +15,33 @@
               },
               "b": {
                 "op": "num",
+                "v": 0
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_paid"
+            }
+          ]
+        },
+        "then": {
+          "decide": "leave_unapplied_ask",
+          "note": "no subset matches and the referenced invoice is already paid; likely a duplicate payment"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
                 "v": 1
               }
             },
@@ -26,7 +53,7 @@
         },
         "then": {
           "decide": "apply_unique",
-          "note": "exactly one subset sums to the receipt"
+          "note": "one subset sums exactly to the receipt"
         }
       },
       {
@@ -34,43 +61,17 @@
           "op": "and",
           "args": [
             {
-              "op": "feat",
-              "name": "reference_matches_open"
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
             },
-            {
-              "op": "feat",
-              "name": "exact_match"
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_unique",
-          "note": "payment reference matches one open invoice exactly, confirming which of several subsets is correct"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "feat",
-              "name": "remittance_present"
-            },
-            {
-              "op": "feat",
-              "name": "remittance_consistent"
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_unique",
-          "note": "the customer's remittance lists these invoices"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
             {
               "op": "feat",
               "name": "reference_names_open"
@@ -81,30 +82,143 @@
                 "op": "feat",
                 "name": "reference_paid"
               }
-            },
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "single inexact match but reference names one open invoice"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 1
+          }
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "one subset explains the amount within tolerance"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
             {
               "op": "cmp",
-              "c": "ge",
+              "c": "eq",
               "a": {
                 "op": "feat",
-                "name": "reference_gap_cents"
+                "name": "solution_count"
               },
               "b": {
                 "op": "num",
                 "v": 0
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
               }
             }
           ]
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "reference names a single open invoice with no overpayment; applying there even though no subset matches exactly"
+          "note": "no subset matches but payer named one open invoice; difference is likely bank charges"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 2
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "multiple subsets fit but payment reference matches one open invoice exactly"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "ge",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 2
+              }
+            },
+            {
+              "op": "feat",
+              "name": "remittance_consistent"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "multiple subsets fit but the customer's remittance lists these invoices"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "no subset matches; apply by contract order"
         }
       }
     ],
     "otherwise": {
       "decide": "leave_unapplied_ask",
-      "note": "unclear allocation; ask controller"
+      "askRole": "controller",
+      "note": "several invoice sets explain this amount without payer confirmation"
     }
   },
   "proof": {
@@ -113,105 +227,126 @@
     "parent": "allocation@4",
     "lesson": {
       "subjects": [
+        "receipt:BACS-536610",
+        "receipt:BACS-536629",
         "receipt:STMT-B-17389-2011-02",
-        "receipt:STMT-B-12921-2011-03",
-        "receipt:STMT-B-13089-2011-04",
-        "receipt:STMT-B-17841-2011-04"
+        "receipt:STMT-B-17841-2011-04",
+        "receipt:STMT-B-13089-2011-04"
       ],
       "required": 0,
       "handled": [],
-      "optionalFixed": 4,
-      "optionalTotal": 4,
+      "optionalFixed": 3,
+      "optionalTotal": 5,
       "cases": [
+        {
+          "subject": "receipt:BACS-536610",
+          "label": "apply_by_terms",
+          "source": "ask #67 answered by controller:Dana",
+          "reason": "apply to the oldest",
+          "handled": false
+        },
+        {
+          "subject": "receipt:BACS-536629",
+          "label": "apply_by_terms",
+          "source": "ask #69 answered by controller:Dana",
+          "reason": "apply to the oldest",
+          "handled": false
+        },
         {
           "subject": "receipt:STMT-B-17389-2011-02",
           "label": "apply_unique",
-          "source": "ask #5943 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-B-12921-2011-03",
-          "label": "apply_unique",
-          "source": "ask #6025 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-B-13089-2011-04",
-          "label": "apply_unique",
-          "source": "ask #6112 answered by controller:Dana",
+          "source": "ask #307 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:STMT-B-17841-2011-04",
           "label": "apply_unique",
-          "source": "ask #6113 answered by controller:Dana",
+          "source": "ask #499 answered by controller:Dana",
+          "reason": "the customer's remittance lists these invoices",
+          "handled": false
+        },
+        {
+          "subject": "receipt:STMT-B-13089-2011-04",
+          "label": "apply_unique",
+          "source": "ask #500 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 115,
-      "correctBefore": 111,
-      "correctAfter": 115,
+      "n": 136,
+      "correctBefore": 131,
+      "correctAfter": 134,
       "fixed": [
         "receipt:STMT-B-17389-2011-02",
-        "receipt:STMT-B-12921-2011-03",
-        "receipt:STMT-B-13089-2011-04",
-        "receipt:STMT-B-17841-2011-04"
+        "receipt:STMT-B-17841-2011-04",
+        "receipt:STMT-B-13089-2011-04"
       ],
-      "broken": []
+      "broken": [],
+      "asksAgain": [],
+      "newAlone": 3
     },
     "budget": null,
     "changed": {
       "n": 0,
-      "total": 635,
+      "total": 630,
       "rate": 0,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 23,
-    "robustness": 1,
-    "alternatives": [
-      {
-        "origin": "qwen3.8-max style 1",
-        "robustness": 1,
-        "newLeads": 0,
-        "complexity": 23
-      },
-      {
-        "origin": "qwen3.8-max style 2",
-        "robustness": 1,
-        "newLeads": 0,
-        "complexity": 23
-      }
-    ],
+    "complexity": 49,
+    "robustness": 0.9852941176470589,
+    "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule that applies uniquely when the payer provided a remittance and it is consistent with a valid subset, safely resolving ambiguity per the safety rule. This handles all new lessons without disturbing existing behavior.",
+    "rationale": "Added a rule for solution_count >= 2 with remittance_consistent true to decide apply_unique, since the payer confirmed which invoices are being paid. This safely handles the new lesson cases while respecting the safety rule that requires payer confirmation when multiple subsets fit.",
     "candidatesTried": 3,
-    "candidatesPassed": 3,
-    "seconds": 8.2,
+    "candidatesPassed": 1,
+    "seconds": 17.6,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
         "payment_prompt": {
-          "n": 281,
-          "current": 258,
-          "candidate": 258
+          "n": 208,
+          "current": 208,
+          "candidate": 208
         },
         "payment_parent": {
-          "n": 36,
-          "current": 34,
-          "candidate": 34
+          "n": 35,
+          "current": 35,
+          "candidate": 35
         },
         "payment_late": {
-          "n": 56,
-          "current": 55,
-          "candidate": 55
+          "n": 52,
+          "current": 52,
+          "candidate": 52
+        },
+        "payment_two_invoices": {
+          "n": 11,
+          "current": 10,
+          "candidate": 10
+        },
+        "payment_bank_charge": {
+          "n": 32,
+          "current": 32,
+          "candidate": 32
+        },
+        "payment_on_account": {
+          "n": 10,
+          "current": 9,
+          "candidate": 9
+        },
+        "payment_fx_difference": {
+          "n": 15,
+          "current": 15,
+          "candidate": 15
+        },
+        "payment_on_account_balance": {
+          "n": 9,
+          "current": 9,
+          "candidate": 9
         },
         "payment_duplicate": {
           "n": 3,
@@ -226,14 +361,19 @@
       },
       "val": {
         "payment_prompt": {
-          "n": 134,
-          "current": 127,
-          "candidate": 127
+          "n": 109,
+          "current": 109,
+          "candidate": 109
         },
         "payment_parent": {
           "n": 22,
           "current": 22,
           "candidate": 22
+        },
+        "payment_two_invoices": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
         },
         "payment_duplicate": {
           "n": 2,
@@ -241,44 +381,89 @@
           "candidate": 2
         },
         "payment_late": {
-          "n": 20,
-          "current": 20,
-          "candidate": 20
+          "n": 18,
+          "current": 18,
+          "candidate": 18
+        },
+        "payment_bank_charge": {
+          "n": 9,
+          "current": 9,
+          "candidate": 9
+        },
+        "payment_on_account_balance": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "payment_on_account": {
+          "n": 4,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_fx_difference": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "payment_statement_with_remittance": {
           "n": 24,
-          "current": 23,
+          "current": 24,
           "candidate": 24
         }
       },
       "test": {
         "payment_prompt": {
-          "n": 132,
-          "current": 123,
-          "candidate": 123
+          "n": 98,
+          "current": 96,
+          "candidate": 96
         },
         "payment_parent": {
-          "n": 22,
-          "current": 22,
-          "candidate": 22
+          "n": 21,
+          "current": 21,
+          "candidate": 21
         },
         "payment_late": {
           "n": 23,
           "current": 23,
           "candidate": 23
         },
-        "payment_duplicate": {
+        "payment_on_account_balance": {
+          "n": 6,
+          "current": 6,
+          "candidate": 6
+        },
+        "payment_bank_charge": {
+          "n": 16,
+          "current": 16,
+          "candidate": 16
+        },
+        "payment_two_invoices": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_fx_difference": {
           "n": 5,
           "current": 5,
           "candidate": 5
         },
+        "payment_duplicate": {
+          "n": 4,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_on_account": {
+          "n": 6,
+          "current": 4,
+          "candidate": 4
+        },
         "payment_statement_with_remittance": {
           "n": 26,
-          "current": 20,
+          "current": 21,
           "candidate": 26
         }
       }
     },
-    "evaluatedAt": "2026-10-24T12:00:39.477Z"
+    "evaluatedAt": "2026-10-24T18:59:31.780Z"
   }
 }

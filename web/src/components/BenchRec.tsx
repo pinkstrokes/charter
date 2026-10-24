@@ -10,13 +10,14 @@ import { num } from '../lib/format';
 import { exprText, outcomeText, type Expr } from '../lib/rules';
 
 interface Desk {
-  rules: { rule: number; decide: string; note: string; train: { n: number; wrong: number; upper95: number; actsAlone: boolean } }[];
+  rules: { rule: number; decide: string; note: string; train: { n: number; wrong: number; upper95: number; lower95?: number; state?: string; actsAlone: boolean } }[];
   eval: { bankLines: number; matched: number; correct: number; precision: number | null; matchRate: number; clearsFloor?: boolean };
 }
 
 export interface BenchRecResult {
   dataset?: string;
   floor: number;
+  autonomyFrom?: string; // rules earn autonomy on the train months after this one
   months: { month: string; lines: number; alone: number; wrong: number; version: number }[];
   versions: { version: number; from: string; origin: string; lessonsHandled: number; lessons: number; tookOver: number; candidates: number; passed: number; rules: { when: Expr; decide: string; note: string }[] }[];
   day0: Desk;
@@ -176,7 +177,7 @@ export function BenchRecSection({ r }: { r: BenchRecResult }) {
       <div className="sheet-pad" style={{ paddingTop: 12, paddingBottom: 8 }}>
         <h3 className="sub-title">The learned skill (v{last.version})</h3>
         <p className="benchrec-context">
-          A rule acts alone on the eval split only if, over the whole train history, we are 95% sure it is wrong less often than the {errPct(1 - r.floor).replace(/0+%$/, '%')} the benchmark tolerates. Everything else goes to a person.
+          Each rule earns its autonomy as every rule in Charter does, on the train months after this version took over{r.autonomyFrom ? ` (after ${r.autonomyFrom})` : ''}, which no version was fitted to: it acts alone unless its record there proves, at 95%, that it is wrong more often than the {errPct(1 - r.floor).replace(/0+%$/, '%')} the benchmark tolerates; then it is suspended and its lines go to a person. The other desks are measured on the same months.
         </p>
       </div>
       <table className="table benchrec-rules">
@@ -186,14 +187,14 @@ export function BenchRecSection({ r }: { r: BenchRecResult }) {
             <th rowSpan={2}>When it fires</th>
             <th rowSpan={2}>Decides</th>
             <th colSpan={3} className="group">
-              Train history
+              Train months after it took over
             </th>
             <th rowSpan={2}>Acts alone</th>
           </tr>
           <tr>
             <th className="n">Cases</th>
             <th className="n">Wrong</th>
-            <th className="n">Error, 95% upper bound</th>
+            <th className="n">Error rate, 95% range</th>
           </tr>
         </thead>
         <tbody>
@@ -204,9 +205,18 @@ export function BenchRecSection({ r }: { r: BenchRecResult }) {
               <td>{outcomeText(x.decide)}</td>
               <td className="n">{num(x.train.n)}</td>
               <td className="n">{num(x.train.wrong)}</td>
-              <td className="n">{errPct(x.train.upper95)}</td>
+              <td className="n">
+                {x.train.lower95 !== undefined ? `${errPct(x.train.lower95)}–` : ''}
+                {errPct(x.train.upper95)}
+              </td>
               <td>
-                <Tick yes={x.train.actsAlone} no={x.decide === 'ask' ? 'asks a person' : 'no, asks a person'} />
+                {x.train.actsAlone ? (
+                  <span className="tick" style={{ fontWeight: 600 }}>
+                    <Check size={13} style={{ verticalAlign: -2 }} aria-hidden /> {x.train.state === 'reduced' ? `yes, proven under ${+((1 - r.floor) * 100).toFixed(2)}%` : 'yes, under inspection'}
+                  </span>
+                ) : (
+                  <span className="muted">suspended: a person decides</span>
+                )}
               </td>
             </tr>
           ))}

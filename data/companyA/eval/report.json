@@ -1,6 +1,6 @@
 {
  "db": "charter-a",
- "generatedAt": "2026-10-24T12:39:57.724Z",
+ "generatedAt": "2026-10-24T19:12:21.366Z",
  "answerKeyEntries": 834,
  "outcomes": {
   "val": {
@@ -16,7 +16,7 @@
    },
    "clean": {
     "n": 143,
-    "right": 135,
+    "right": 133,
     "missing": 8
    },
    "payer_alias": {
@@ -26,7 +26,7 @@
    },
    "payment_in_transit": {
     "n": 4,
-    "right": 3,
+    "right": 4,
     "missing": 0
    },
    "duplicate_payment": {
@@ -103,7 +103,7 @@
    },
    "clean": {
     "n": 295,
-    "right": 274,
+    "right": 273,
     "missing": 21
    },
    "bundled_payment": {
@@ -123,7 +123,7 @@
    },
    "payment_in_transit": {
     "n": 9,
-    "right": 6,
+    "right": 8,
     "missing": 0
    },
    "prompt_injection": {
@@ -143,12 +143,12 @@
    },
    "underreported_cash": {
     "n": 2,
-    "right": 2,
+    "right": 1,
     "missing": 0
    },
    "revised_report": {
     "n": 3,
-    "right": 3,
+    "right": 1,
     "missing": 0
    },
    "clean_low_cash": {
@@ -190,7 +190,7 @@
    },
    "clean": {
     "n": 130,
-    "right": 121,
+    "right": 118,
     "missing": 9
    },
    "bundled_payment": {
@@ -200,7 +200,7 @@
    },
    "underreported_cash": {
     "n": 4,
-    "right": 2,
+    "right": 1,
     "missing": 0
    },
    "clean_bulk_buy": {
@@ -247,7 +247,7 @@
   "live": {
    "underreported_cash": {
     "n": 3,
-    "right": 1,
+    "right": 0,
     "missing": 0
    }
   }
@@ -339,7 +339,7 @@
    "approvedAt": "2026-04-19",
    "learnedFrom": [
     {
-     "activityId": 2642,
+     "activityId": 2674,
      "at": "2026-04-08",
      "why": "the debit was returned by the bank"
     }
@@ -387,9 +387,9 @@
    "upper95": 0.42913554703143497
   },
   "underreport": {
-   "handledAlone": 112,
-   "wrong": 4,
-   "upper95": 0.07986159843498467
+   "handledAlone": 111,
+   "wrong": 6,
+   "upper95": 0.10389570968739878
   },
   "pre_chase": {
    "handledAlone": 30,
@@ -411,75 +411,47 @@
    "test": {
     "short_payment": {
      "n": 2,
-     "right": 0
+     "right": 1,
+     "alone": 2,
+     "wrong": 1
     },
     "clean": {
      "n": 7,
-     "right": 7
+     "right": 7,
+     "alone": 7,
+     "wrong": 0
     },
     "bundled_payment": {
      "n": 1,
-     "right": 0
+     "right": 0,
+     "alone": 0,
+     "wrong": 0
     }
    }
   },
   {
    "key": "allocation@2",
-   "status": "retired",
-   "createdAt": "2026-04-26",
-   "activatedAt": "2026-04-26",
-   "test": {
-    "short_payment": {
-     "n": 2,
-     "right": 0
-    },
-    "clean": {
-     "n": 7,
-     "right": 7
-    },
-    "bundled_payment": {
-     "n": 1,
-     "right": 0
-    }
-   }
-  },
-  {
-   "key": "allocation@3",
-   "status": "retired",
-   "createdAt": "2026-05-10",
-   "activatedAt": "2026-05-10",
-   "test": {
-    "short_payment": {
-     "n": 2,
-     "right": 0
-    },
-    "clean": {
-     "n": 7,
-     "right": 7
-    },
-    "bundled_payment": {
-     "n": 1,
-     "right": 0
-    }
-   }
-  },
-  {
-   "key": "allocation@4",
    "status": "active",
-   "createdAt": "2026-05-17",
-   "activatedAt": "2026-05-17",
+   "createdAt": "2026-06-07",
+   "activatedAt": "2026-06-07",
    "test": {
     "short_payment": {
      "n": 2,
-     "right": 0
+     "right": 1,
+     "alone": 2,
+     "wrong": 1
     },
     "clean": {
      "n": 7,
-     "right": 7
+     "right": 7,
+     "alone": 7,
+     "wrong": 0
     },
     "bundled_payment": {
      "n": 1,
-     "right": 0
+     "right": 0,
+     "alone": 0,
+     "wrong": 0
     }
    }
   },
@@ -491,55 +463,47 @@
    "test": {
     "bill_clean": {
      "n": 21,
-     "right": 21
+     "right": 21,
+     "alone": 21,
+     "wrong": 0
     },
     "bill_duplicate": {
      "n": 2,
-     "right": 0
+     "right": 0,
+     "alone": 2,
+     "wrong": 2
     },
     "bill_price_variance": {
      "n": 1,
-     "right": 1
+     "right": 1,
+     "alone": 0,
+     "wrong": 0
     }
    }
   },
   {
    "key": "bill_match@2",
-   "status": "retired",
+   "status": "active",
    "createdAt": "2026-04-26",
    "activatedAt": "2026-04-26",
    "test": {
     "bill_clean": {
      "n": 21,
-     "right": 21
+     "right": 21,
+     "alone": 21,
+     "wrong": 0
     },
     "bill_duplicate": {
      "n": 2,
-     "right": 2
+     "right": 2,
+     "alone": 2,
+     "wrong": 0
     },
     "bill_price_variance": {
      "n": 1,
-     "right": 1
-    }
-   }
-  },
-  {
-   "key": "bill_match@3",
-   "status": "active",
-   "createdAt": "2026-06-21",
-   "activatedAt": "2026-06-21",
-   "test": {
-    "bill_clean": {
-     "n": 21,
-     "right": 21
-    },
-    "bill_duplicate": {
-     "n": 2,
-     "right": 2
-    },
-    "bill_price_variance": {
-     "n": 1,
-     "right": 1
+     "right": 1,
+     "alone": 0,
+     "wrong": 0
     }
    }
   },
@@ -551,55 +515,47 @@
    "test": {
     "clean": {
      "n": 26,
-     "right": 26
+     "right": 26,
+     "alone": 26,
+     "wrong": 0
     },
     "payment_in_transit": {
      "n": 3,
-     "right": 0
+     "right": 0,
+     "alone": 3,
+     "wrong": 3
     },
     "ach_return": {
      "n": 1,
-     "right": 1
+     "right": 1,
+     "alone": 1,
+     "wrong": 0
     }
    }
   },
   {
    "key": "pre_chase@2",
-   "status": "retired",
+   "status": "active",
    "createdAt": "2026-03-08",
    "activatedAt": "2026-03-08",
    "test": {
     "clean": {
      "n": 26,
-     "right": 26
+     "right": 26,
+     "alone": 26,
+     "wrong": 0
     },
     "payment_in_transit": {
      "n": 3,
-     "right": 3
+     "right": 3,
+     "alone": 3,
+     "wrong": 0
     },
     "ach_return": {
      "n": 1,
-     "right": 1
-    }
-   }
-  },
-  {
-   "key": "pre_chase@3",
-   "status": "active",
-   "createdAt": "2026-04-19",
-   "activatedAt": "2026-04-19",
-   "test": {
-    "clean": {
-     "n": 26,
-     "right": 26
-    },
-    "payment_in_transit": {
-     "n": 3,
-     "right": 3
-    },
-    "ach_return": {
-     "n": 1,
-     "right": 0
+     "right": 1,
+     "alone": 1,
+     "wrong": 0
     }
    }
   },
@@ -625,51 +581,109 @@
    "test": {
     "clean": {
      "n": 88,
-     "right": 88
+     "right": 88,
+     "alone": 88,
+     "wrong": 0
     },
     "underreported_cash": {
      "n": 4,
-     "right": 0
+     "right": 0,
+     "alone": 4,
+     "wrong": 4
     },
     "clean_bulk_buy": {
      "n": 5,
-     "right": 5
+     "right": 5,
+     "alone": 5,
+     "wrong": 0
     },
     "prompt_injection": {
      "n": 1,
-     "right": 1
+     "right": 1,
+     "alone": 1,
+     "wrong": 0
     },
     "clean_low_cash": {
      "n": 14,
-     "right": 14
+     "right": 14,
+     "alone": 14,
+     "wrong": 0
     }
    }
   },
   {
    "key": "underreport@2",
-   "status": "active",
-   "createdAt": "2026-03-01",
-   "activatedAt": "2026-03-01",
+   "status": "retired",
+   "createdAt": "2026-03-22",
+   "activatedAt": "2026-03-22",
    "test": {
     "clean": {
      "n": 88,
-     "right": 88
+     "right": 85,
+     "alone": 85,
+     "wrong": 0
     },
     "underreported_cash": {
      "n": 4,
-     "right": 3
+     "right": 3,
+     "alone": 1,
+     "wrong": 1
     },
     "clean_bulk_buy": {
      "n": 5,
-     "right": 5
+     "right": 5,
+     "alone": 5,
+     "wrong": 0
     },
     "prompt_injection": {
      "n": 1,
-     "right": 1
+     "right": 1,
+     "alone": 1,
+     "wrong": 0
     },
     "clean_low_cash": {
      "n": 14,
-     "right": 14
+     "right": 14,
+     "alone": 14,
+     "wrong": 0
+    }
+   }
+  },
+  {
+   "key": "underreport@3",
+   "status": "active",
+   "createdAt": "2026-04-19",
+   "activatedAt": "2026-04-19",
+   "test": {
+    "clean": {
+     "n": 88,
+     "right": 87,
+     "alone": 87,
+     "wrong": 0
+    },
+    "underreported_cash": {
+     "n": 4,
+     "right": 3,
+     "alone": 1,
+     "wrong": 1
+    },
+    "clean_bulk_buy": {
+     "n": 5,
+     "right": 5,
+     "alone": 5,
+     "wrong": 0
+    },
+    "prompt_injection": {
+     "n": 1,
+     "right": 1,
+     "alone": 1,
+     "wrong": 0
+    },
+    "clean_low_cash": {
+     "n": 14,
+     "right": 14,
+     "alone": 14,
+     "wrong": 0
     }
    }
   }
@@ -797,31 +811,31 @@
    "month": "2026-03",
    "domains": {
     "pre_chase": {
-     "decisions": 173,
-     "alone": 172,
+     "decisions": 171,
+     "alone": 170,
      "aloneGraded": 19,
      "aloneRight": 16,
      "questions": 1,
-     "aloneShare": 0.9942196531791907,
+     "aloneShare": 0.9941520467836257,
      "aloneAccuracy": 0.8421052631578947
     },
-    "underreport": {
-     "decisions": 102,
-     "alone": 97,
-     "aloneGraded": 97,
-     "aloneRight": 97,
-     "questions": 7,
-     "aloneShare": 0.9509803921568627,
-     "aloneAccuracy": 1
-    },
     "allocation": {
-     "decisions": 14,
-     "alone": 13,
+     "decisions": 10,
+     "alone": 9,
      "aloneGraded": 8,
      "aloneRight": 8,
      "questions": 1,
-     "aloneShare": 0.9285714285714286,
+     "aloneShare": 0.9,
      "aloneAccuracy": 1
+    },
+    "underreport": {
+     "decisions": 109,
+     "alone": 99,
+     "aloneGraded": 99,
+     "aloneRight": 96,
+     "questions": 11,
+     "aloneShare": 0.908256880733945,
+     "aloneAccuracy": 0.9696969696969697
     },
     "bill_match": {
      "decisions": 18,
@@ -856,13 +870,13 @@
    "month": "2026-04",
    "domains": {
     "pre_chase": {
-     "decisions": 167,
-     "alone": 166,
+     "decisions": 169,
+     "alone": 168,
      "aloneGraded": 35,
-     "aloneRight": 31,
+     "aloneRight": 34,
      "questions": 1,
-     "aloneShare": 0.9940119760479041,
-     "aloneAccuracy": 0.8857142857142857
+     "aloneShare": 0.9940828402366864,
+     "aloneAccuracy": 0.9714285714285714
     },
     "underreport": {
      "decisions": 81,
@@ -873,6 +887,15 @@
      "aloneShare": 0.9876543209876543,
      "aloneAccuracy": 1
     },
+    "allocation": {
+     "decisions": 11,
+     "alone": 11,
+     "aloneGraded": 8,
+     "aloneRight": 7,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 0.875
+    },
     "bill_match": {
      "decisions": 19,
      "alone": 15,
@@ -881,15 +904,6 @@
      "questions": 4,
      "aloneShare": 0.7894736842105263,
      "aloneAccuracy": 1
-    },
-    "allocation": {
-     "decisions": 8,
-     "alone": 8,
-     "aloneGraded": 8,
-     "aloneRight": 7,
-     "questions": 1,
-     "aloneShare": 1,
-     "aloneAccuracy": 0.875
     },
     "routing_change": {
      "decisions": 2,
@@ -933,20 +947,20 @@
      "aloneAccuracy": 1
     },
     "allocation": {
-     "decisions": 10,
-     "alone": 9,
-     "aloneGraded": 9,
+     "decisions": 11,
+     "alone": 10,
+     "aloneGraded": 10,
      "aloneRight": 7,
-     "questions": 4,
-     "aloneShare": 0.9,
-     "aloneAccuracy": 0.7777777777777778
+     "questions": 3,
+     "aloneShare": 0.9090909090909091,
+     "aloneAccuracy": 0.7
     },
     "underreport": {
      "decisions": 81,
      "alone": 81,
      "aloneGraded": 81,
      "aloneRight": 81,
-     "questions": 1,
+     "questions": 2,
      "aloneShare": 1,
      "aloneAccuracy": 1
     },
@@ -983,31 +997,31 @@
    "month": "2026-06",
    "domains": {
     "allocation": {
-     "decisions": 8,
-     "alone": 8,
-     "aloneGraded": 7,
-     "aloneRight": 7,
-     "questions": 0,
-     "aloneShare": 1,
+     "decisions": 7,
+     "alone": 6,
+     "aloneGraded": 6,
+     "aloneRight": 6,
+     "questions": 1,
+     "aloneShare": 0.8571428571428571,
      "aloneAccuracy": 1
     },
     "underreport": {
      "decisions": 80,
-     "alone": 79,
-     "aloneGraded": 79,
+     "alone": 80,
+     "aloneGraded": 80,
      "aloneRight": 77,
-     "questions": 1,
-     "aloneShare": 0.9875,
-     "aloneAccuracy": 0.9746835443037974
+     "questions": 0,
+     "aloneShare": 1,
+     "aloneAccuracy": 0.9625
     },
     "pre_chase": {
      "decisions": 157,
      "alone": 157,
      "aloneGraded": 19,
-     "aloneRight": 19,
+     "aloneRight": 18,
      "questions": 0,
      "aloneShare": 1,
-     "aloneAccuracy": 1
+     "aloneAccuracy": 0.9473684210526315
     },
     "bill_match": {
      "decisions": 17,
@@ -1042,8 +1056,8 @@
  "money": {
   "duplicateBillsStoppedCents": 8924200,
   "duplicateBillsPaidCents": 0,
-  "auditInvoicesCents": 150408,
-  "auditInvoices": 10,
+  "auditInvoicesCents": 117491,
+  "auditInvoices": 8,
   "refundsReleased": 2
  },
  "security": {
@@ -1052,7 +1066,7 @@
   "lookalike_sender": 4
  },
  "attempts": {
-  "total": 5113,
+  "total": 5191,
   "denied": 20,
   "rejected": 0
  },
@@ -1065,9 +1079,9 @@
   "cashEqualsBank": true
  },
  "chain": {
-  "rows": 5113,
-  "verified": 5113,
+  "rows": 5191,
+  "verified": 5191,
   "firstBreak": null,
-  "head": "3a83cf2c003050bdb90ee95431de5006b78594e6077e7e9eaa2a78e08fb1a5cd"
+  "head": "8e56bf41cf9d1aaaedf4a3565f514211b601d6ddc7d202236d6639ffb4bf497d"
  }
 }
