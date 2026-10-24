@@ -2,8 +2,8 @@
  "period": "2026-01",
  "closedAt": "2026-02-02",
  "closedBy": "controller:Dana",
- "certificateHash": "8369050b876757874f68e6db562f1296c9891fc6abca752fa10e56a3d9c4992f",
- "chainHead": "37e1988cdbbe91d2e0f54f595cd170d46052c0ff2eb8843531e7e6b4ce2954a6",
+ "certificateHash": "c84a8127b08ba9e712e66560d351c1df8d4d8ad9e1494a04d88049a7013cb688",
+ "chainHead": "bae22e03b454e99b18c7df76bb4f5b7ad9e51e0846bd700bbbcfc83d4ddb9db4",
  "lastActivityId": 655,
  "auditorOpinion": "clean"
 }
