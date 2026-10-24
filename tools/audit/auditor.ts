@@ -225,10 +225,12 @@ async function main(): Promise<void> {
     const items: Item[] = [];
     for (const r of picked) items.push(await reperform(r));
     const top = items.filter(i => i.book >= interval);
+    // Items at or above the interval are all tested; only the rest carries sampling risk.
+    const lowerBook = rows.reduce((s, r) => s + (amount(r) < interval ? amount(r) : 0), 0);
     const lower = items.filter(i => i.book < interval && i.book > 0).map(i => (i.book - i.audited) / i.book).filter(t => t > 0).sort((a, b) => b - a);
     const topError = top.reduce((s, i) => s + Math.max(0, i.book - i.audited), 0);
     const projected = lower.reduce((s, t) => s + t * interval, 0) + topError;
-    const upper = POISSON95[0] * interval + lower.reduce((s, t, k) => s + t * interval * (POISSON95[Math.min(k + 1, POISSON95.length - 1)] - POISSON95[Math.min(k, POISSON95.length - 2)]), 0) + topError;
+    const upper = (lowerBook > 0 ? Math.min(POISSON95[0] * interval, lowerBook) : 0) + lower.reduce((s, t, k) => s + t * interval * (POISSON95[Math.min(k + 1, POISSON95.length - 1)] - POISSON95[Math.min(k, POISSON95.length - 2)]), 0) + topError;
     return { name, population: rows.length, bookCents: book, tolerableCents: tolerable, intervalCents: Math.round(interval), sampleSize: items.length, items, projectedCents: Math.round(projected), upperLimitCents: Math.round(upper) };
   }
 

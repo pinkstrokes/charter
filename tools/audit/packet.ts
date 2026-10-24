@@ -45,6 +45,20 @@ async function build(): Promise<void> {
       if (k === 'obs') usedObs.add(Number(v));
       if (k === 'fact') usedFacts.add(Number(v));
     }
+  // Source documents of the subject itself, not only those an activity cited.
+  if (kind === 'bill' || kind === 'payment') {
+    const [billRows, payRows] = await Promise.all([db.sql('SELECT id, po_no, source_obs FROM bill'), db.sql('SELECT id, bill_ids FROM payment')]);
+    const ids = kind === 'bill' ? [id] : (JSON.parse(payRows.find(r => r.id === id)?.bill_ids ?? '[]') as string[]);
+    for (const b of billRows.filter(r => ids.includes(r.id))) {
+      usedObs.add(Number(b.source_obs));
+      for (const f of facts) if (f.subject === `po:${b.po_no}`) (usedFacts.add(Number(f.id)), usedObs.add(Number(f.source_obs)));
+    }
+  }
+  if (kind === 'invoice') {
+    const inv = (await db.sql('SELECT id, source FROM invoice')).find(r => r.id === id);
+    const m = String(inv?.source ?? '').match(/obs:(\d+)/);
+    if (m) usedObs.add(Number(m[1]));
+  }
   const decisionSubject = kind === 'decision' ? decisions.find(d => String(d.id) === id)?.subject : `${kind}:${id}`;
   const decs = decisions.filter(d => d.subject === decisionSubject || String(d.id) === id);
   for (const f of facts) if (usedFacts.has(Number(f.id))) usedObs.add(Number(f.source_obs));

@@ -670,8 +670,8 @@ class Plan:
             e = entity(ent)
             sender = sender or e["email"]
             sender_name = sender_name or e["owner"]
-            subject = "Change of bank account" if legit else ["URGENT - updated banking details", "New ACH account - please update today", "Banking change - confidential",
-                                                              "Refund + new account details"][stable_int(cid) % 4]
+            subject = {"RC1": "Change of bank account", "RC2": "New bank account for Lakeside Tea", "FR1": "URGENT - new bank details for #14",
+                       "FR2": "New ACH account - please update today", "FR3": "Banking change - confidential", "FR4": "Refund + new account details"}[cid]
             refkey = self.email(cid, day, sender, sender_name, subject, facts, [last4], f"Hello,\n\n{facts}\n\n{sender_name}",
                                 family="routing_change_legit" if legit else "routing_change_fraud", voice=None if legit else f"{sender_name} (an impostor writing from {sender})",
                                 truth={"type": "refund_request" if cid == "FR4" else "routing_change", "new_account_last4": last4, "amount": "4800.00" if cid == "FR4" else ""})
