@@ -8,7 +8,7 @@ import { go, setSub, useNav } from '../app/nav';
 import { Score } from './Score';
 import { ACTION_LABEL, day, plural, ROLE_LABEL, SEAT_DESK, SEAT_LABEL, SEATS } from '../lib/format';
 import { activePolicies, roleView, template, templateAction } from '../lib/policies';
-import { DOMAIN_SEAT } from '../lib/rules';
+import { askSeatOf, DOMAIN_SEAT } from '../lib/rules';
 import { useAction } from '../stdb/actions';
 import { useRows } from '../stdb/store';
 
@@ -41,9 +41,10 @@ const ASK_SEAT: Record<string, string> = {
   reading_conflict: 'cash_app',
 };
 
-function askSeat(kind: string): string | undefined {
+function askSeat(kind: string, evidence: string): string | undefined {
   const [base, domain] = kind.split(':');
   if (base === 'spot_check' && domain) return domain === 'pre_chase' ? 'collections' : domain === 'bill_match' ? 'ap_clerk' : 'cash_app';
+  if (base === 'label_check') return askSeatOf(kind, evidence);
   return ASK_SEAT[base];
 }
 
@@ -91,7 +92,7 @@ export function Floor() {
     for (const a of asks) {
       if (a.kind.startsWith('correction:')) continue;
       // raised_by names the asker; older rows fall back to the kind.
-      const by = a.raisedBy && a.raisedBy.startsWith('seat:') ? a.raisedBy.slice(5) : askSeat(a.kind);
+      const by = a.raisedBy && a.raisedBy.startsWith('seat:') ? a.raisedBy.slice(5) : askSeat(a.kind, a.evidence);
       if (by) get(`seat:${by}`).asked++;
     }
     return t;

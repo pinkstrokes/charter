@@ -408,7 +408,7 @@ function Refunds() {
       <div className="sheet-pad" style={{ paddingBottom: 8 }}>
         <div className="section-head">
           <h2 className="section-title">Refunds</h2>
-          <span className="aside">prepared by the refunds seat, released by someone else (C2); over $5,000 needs two people (C8)</span>
+          <span className="aside">prepared by the refunds seat, released by someone else (C2); over {money(500_000, { whole: true })} needs two people (C8)</span>
         </div>
       </div>
       {sorted.length === 0 ? (

@@ -8,7 +8,8 @@
 //   GET  /__charter/proof?db=NAME       run_report.json and eval/*.json from data/companyA (charter-a),
 //                                       data/companyB (charter-b), web/.data/NAME (a development database
 //                                       whose report scripts/seed_story.py wrote there) or data/dev;
-//                                       ?dir=companyB (any folder under data/) or ?dir=local overrides
+//                                       ?dir=companyB (any folder under data/) or ?dir=local overrides;
+//                                       plus data/benchrec_eval/result.json, whatever the folder
 //
 // Persona tokens come from an identities file written by the world builder
 // (data/companyA/identities.json for charter-a, or $CHARTER_IDENTITIES), or, for
@@ -218,7 +219,21 @@ export function createCharterCore(opts: CoreOptions) {
     return out;
   }
 
-  function proofFiles(dir: string, db = ''): { dir: string; current: string; available: { id: string; label: string }[]; files: { name: string; json?: unknown; error?: string; modified?: string }[] } {
+  // The bank-reconciliation benchmark (tools/benchrec) is not tied to a company: one file, served with every proof response.
+  function benchrec(): { json?: unknown; error?: string; modified?: string } | null {
+    const f = path.join(opts.repoRoot, 'data', 'benchrec_eval', 'result.json');
+    if (!fs.existsSync(f)) return null;
+    try {
+      return { json: JSON.parse(fs.readFileSync(f, 'utf8')), modified: fs.statSync(f).mtime.toISOString() };
+    } catch (e) {
+      return { error: e instanceof Error ? e.message : String(e) };
+    }
+  }
+
+  function proofFiles(
+    dir: string,
+    db = ''
+  ): { dir: string; current: string; available: { id: string; label: string }[]; files: { name: string; json?: unknown; error?: string; modified?: string }[]; benchrec: { json?: unknown; error?: string; modified?: string } | null } {
     const files: { name: string; json?: unknown; error?: string; modified?: string }[] = [];
     const candidates: string[] = [];
     const report = path.join(dir, 'run_report.json');
@@ -239,7 +254,7 @@ export function createCharterCore(opts: CoreOptions) {
       }
     }
     const current = path.resolve(dir) === path.resolve(localDir(db)) ? 'local' : path.basename(dir);
-    return { dir: path.relative(opts.repoRoot, dir), current, available: availableDirs(db), files };
+    return { dir: path.relative(opts.repoRoot, dir), current, available: availableDirs(db), files, benchrec: benchrec() };
   }
 
   return { httpBase, defaultDb, personas, externalFile, companyDir, proofFiles };

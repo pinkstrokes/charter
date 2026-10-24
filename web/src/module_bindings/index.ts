@@ -57,6 +57,7 @@ import ResetCompanyReducer from "./reset_company_reducer";
 import SendEmailReducer from "./send_email_reducer";
 import SetCheckerModelReducer from "./set_checker_model_reducer";
 import SetConfigReducer from "./set_config_reducer";
+import SetEntityStatusReducer from "./set_entity_status_reducer";
 import SetSecretReducer from "./set_secret_reducer";
 import SetSimDateReducer from "./set_sim_date_reducer";
 import SetSkillStatusReducer from "./set_skill_status_reducer";
@@ -569,6 +570,7 @@ const reducersSchema = __reducers(
   __reducerSchema("send_email", SendEmailReducer),
   __reducerSchema("set_checker_model", SetCheckerModelReducer),
   __reducerSchema("set_config", SetConfigReducer),
+  __reducerSchema("set_entity_status", SetEntityStatusReducer),
   __reducerSchema("set_secret", SetSecretReducer),
   __reducerSchema("set_sim_date", SetSimDateReducer),
   __reducerSchema("set_skill_status", SetSkillStatusReducer),

@@ -3,6 +3,7 @@
 // React re-renders only the screens whose tables changed.
 import { useSyncExternalStore } from 'react';
 import type * as T from '../module_bindings/types';
+import { setDefaultCurrency } from '../lib/format';
 
 export interface Rows {
   config: T.Config[];
@@ -134,6 +135,11 @@ export class Store {
     for (const t of this.dirty) {
       const src = this.source[t];
       next[t] = src ? Array.from(src.iter()) : [];
+    }
+    // Amounts follow the company's currency; when it changes, every table gets a new
+    // snapshot so every screen re-renders its figures with the new symbol.
+    if (this.dirty.has('config') && setDefaultCurrency((next.config[0] as T.Config | undefined)?.currency)) {
+      for (const t of TABLES) if (!this.dirty.has(t)) next[t] = [...next[t]];
     }
     this.dirty.clear();
     this.rows = next as unknown as Rows;

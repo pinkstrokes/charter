@@ -2800,3 +2800,115 @@ th.n {
   font-size: var(--fs-meta);
   color: var(--ink-3);
 }
+
+.evidence-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* BenchRec (Proof): a public bank-reconciliation benchmark. Charter in the accent, the shipped matcher in gray. */
+.benchrec-headline {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.benchrec-headline b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.cell-figure {
+  display: grid;
+  gap: 4px;
+  max-width: 240px;
+}
+
+.cell-figure b {
+  font-weight: 600;
+}
+
+/* share of bank lines: a bar from zero, square at the baseline, rounded at the data end */
+.share-track {
+  display: block;
+  height: 8px;
+  border-radius: 0 4px 4px 0;
+  background: var(--sheet-2);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.share-track i {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: var(--ink-3);
+}
+
+.share-track i.accent {
+  background: var(--viz-alone);
+}
+
+/* precision: a dot on a 99-100% track, the floor as an upright mark */
+.precision-track {
+  position: relative;
+  display: block;
+  height: 14px;
+}
+
+.precision-track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6.5px;
+  height: 1px;
+  background: var(--rule-strong);
+}
+
+.precision-track .floor {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 14px;
+  background: var(--ink-2);
+}
+
+.precision-track i {
+  position: absolute;
+  top: 2.5px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  box-shadow: 0 0 0 2px var(--sheet);
+}
+
+.precision-track i.accent {
+  background: var(--viz-alone);
+}
+
+.benchrec-scale {
+  margin: 6px 16px 0;
+  font-size: var(--fs-meta);
+}
+
+.benchrec-context {
+  margin: 10px 0 0;
+  max-width: 860px;
+  color: var(--ink-2);
+}
+
+.benchrec-rules th.group {
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+}
+
+.benchrec-rest td {
+  color: var(--ink-2);
+  border-top: 1px solid var(--rule-strong);
+}

@@ -8,10 +8,21 @@ import { parseLoose } from './json';
 export { DOMAINS, ESCALATING, run, sameTreatment };
 
 // The domain an ask is about: by kind, or by the suffix of spot_check:/correction: kinds.
-export function askDomain(kind: string): string | undefined {
+export function askDomain(kind: string, evidence?: string | Record<string, unknown>): string | undefined {
   const [base, suffix] = kind.split(':');
   if (suffix && (base === 'spot_check' || base === 'correction')) return suffix;
+  // A second look at a verdict names its domain in the evidence.
+  if (base === 'label_check' && evidence !== undefined) {
+    const ev = typeof evidence === 'string' ? parseLoose<Record<string, unknown>>(evidence, {}) : evidence;
+    return typeof ev.domain === 'string' ? ev.domain : undefined;
+  }
   return ASK_DOMAIN[base];
+}
+
+// The seat a question is about, for kinds that do not name the seat that raised them.
+export function askSeatOf(kind: string, evidence?: string | Record<string, unknown>): string | undefined {
+  const domain = askDomain(kind, evidence);
+  return domain ? DOMAIN_SEAT[domain] : undefined;
 }
 
 // A rule of a skill program in words; -1 is the fallback, -2 the precedent tier.
@@ -192,6 +203,8 @@ export function exprText(e: Expr, ctx: { money?: boolean; share?: boolean } = {}
 export function outcomeText(decide: string): string {
   // Invoice numbers and other references (R-S01-2026-01-05) keep their hyphens.
   if (/\w-\w*\d/.test(decide)) return decide;
+  // An option that quotes a verdict ("chase" stands) reads “Chase” stands.
+  if (decide.includes('"')) return decide.replace(/_/g, ' ').replace(/"([^"]*)"/g, (_m, x: string) => `“${x.charAt(0).toUpperCase()}${x.slice(1)}”`);
   return sentence(decide.replace(/_/g, ' '));
 }
 

@@ -1,6 +1,7 @@
 import { Check, FileJson, RefreshCw, X } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { TrendSection, type TrendMonth, type VersionMark } from '../components/Trend';
+import { BenchRecSection, isBenchRec } from '../components/BenchRec';
 import { parseObj } from '../lib/json';
 import { useRows } from '../stdb/store';
 import { Empty, KV } from '../components/ui';
@@ -23,7 +24,7 @@ const isScalar = (v: unknown) => v === null || ['string', 'number', 'boolean'].i
 export function Proof() {
   const info = useCharter();
   const [dir, setDir] = useState('');
-  const [data, setData] = useState<{ dir: string; current: string; available: { id: string; label: string }[]; files: ProofFile[] } | null>(null);
+  const [data, setData] = useState<{ dir: string; current: string; available: { id: string; label: string }[]; files: ProofFile[]; benchrec?: ProofFile | null } | null>(null);
   const [err, setErr] = useState('');
   const load = useCallback(async () => {
     try {
@@ -41,6 +42,7 @@ export function Proof() {
   }, [info.db, load]);
   const isReport = (f: ProofFile) => /(^|\/)(run_)?report\.json$/.test(f.name) && isObj(f.json) && ('outcomes' in (f.json as Obj) || 'chain' in (f.json as Obj));
   const report = data?.files.find(isReport);
+  const bench = data?.benchrec?.json && isBenchRec(data.benchrec.json) ? <BenchRecSection r={data.benchrec.json} /> : null;
   const others = data?.files.filter(f => f !== report) ?? [];
   return (
     <div className="page-inner">
@@ -68,7 +70,7 @@ export function Proof() {
           <Empty title={`Nothing in ${data.dir} yet`}>When the six-month run finishes it writes run_report.json and eval/*.json there; this page reads them as they appear.</Empty>
         </div>
       )}
-      {report && <Report f={report} db={info.db} />}
+      {report ? <Report f={report} db={info.db} extra={bench} /> : bench}
       <div className="stack" style={{ marginTop: report ? 16 : 0 }}>
         {others.map(f => (
           <section key={f.name} className="sheet sheet-pad">
@@ -148,7 +150,7 @@ function useVersionMarks(r: Obj, db: string): { marks: VersionMark[]; from: 'act
   }, [r, db, activity]);
 }
 
-function Report({ f, db }: { f: ProofFile; db: string }) {
+function Report({ f, db, extra }: { f: ProofFile; db: string; extra?: ReactNode }) {
   const r = f.json as Obj;
   const trend = Array.isArray(r.trend) && r.trend.length ? (r.trend as TrendMonth[]) : null;
   const versions = useVersionMarks(r, db);
@@ -173,6 +175,7 @@ function Report({ f, db }: { f: ProofFile; db: string }) {
       )}
       {trend && <TrendSection trend={trend} marks={versions.marks} marksFrom={versions.from} />}
       {moneyKept && <MoneyKept m={moneyKept} />}
+      {extra}
       <div className="sheet sheet-pad">
         <div className="section-head">
           <h2 className="section-title">Run report</h2>

@@ -111,7 +111,7 @@ function PaymentRuns({ payments, vendorName, vendors, stoppedBy }: { payments: P
       <div className="sheet-pad" style={{ paddingBottom: 6 }}>
         <div className="section-head">
           <h2 className="section-title">Payment runs</h2>
-          <span className="aside">prepared by the payments seat on Fridays; released by someone else (C13); two people above $25,000 (C14)</span>
+          <span className="aside">prepared by the payments seat on Fridays; released by someone else (C13); two people above {money(2_500_000, { whole: true })} (C14)</span>
         </div>
       </div>
       {sorted.length === 0 ? (

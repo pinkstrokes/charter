@@ -1,7 +1,7 @@
 // One line per activity row, in the words of the business, built from the
 // row's own params. Nothing here is computed from other tables.
 import type { Activity } from '../module_bindings/types';
-import { money, prettyText, SEAT_LABEL } from './format';
+import { actor, answerWords, money, prettyText, SEAT_LABEL } from './format';
 import { parseArr, parseObj } from './json';
 
 const str = (v: unknown) => (v === undefined || v === null ? '' : String(v));
@@ -20,7 +20,8 @@ export function summarize(a: Activity): string {
         return `${str(p.receiptId)}: ${money(total)} to ${allocs.map(x => x.id).join(', ')}`;
       }
       if (p.debitId) return `debit ${str(p.debitId)} settled against ${(p.invoices as string[] | undefined)?.length ?? 0} invoices`;
-      return `${str(p.txnId)} ${cents(p.amount)} ${str(p.type).replace(/_/g, ' ')}`;
+      const payer = p.payer && typeof p.payer === 'object' ? (p.payer as { code?: string }).code : undefined;
+      return `${str(p.txnId)} ${cents(p.amount)} ${str(p.type).replace(/_/g, ' ')}${payer ? ` from ${payer}` : p.payer ? ', payer not decided' : ''}`;
     }
     case 'reverse_application':
       if (p.receipt) return `${str(p.receipt)} back to unapplied cash: ${str(p.reason)}`;
@@ -35,7 +36,7 @@ export function summarize(a: Activity): string {
       if (p.correction !== undefined) return `decision #${str(p.correction)} should be ${str(p.should).replace(/_/g, ' ')}, not ${str(p.was).replace(/_/g, ' ')}`;
       if (p.concern) return `concern on ${str(p.concern).replace(/^store:/, '').replace(':', ', week of ')}`;
       if (p.audit) return `audit ${str(p.audit)} closed: ${p.owed && Number(p.owed) > 0 ? `${cents(p.owed)} under-billed` : 'report was right'}`;
-      return `#${str(p.ask)} ${str(p.kind).replace(/_/g, ' ')}: “${str(p.answer)}”`;
+      return `#${str(p.ask)} ${str(p.kind).replace(/_/g, ' ')}: “${answerWords(str(p.answer))}”`;
     case 'issue_refund':
       return `${cents(p.amount)} to ${str(p.entity)} at ${str(p.account)}`;
     case 'request_refund':
@@ -83,7 +84,9 @@ export function summarize(a: Activity): string {
     case 'inspection_level':
       return `${str(p.rule)}: ${str(p.from)} to ${str(p.to)}, ${str(p.errors)} wrong in ${str(p.checked)} checks`;
     case 'verdict_declined':
-      return `${str(p.subject)}: "${str(p.decided).replace(/_/g, ' ')}" stands against ${str(p.by)}'s "${str(p.verdict).replace(/_/g, ' ')}" — ${parseArr<string>(a.reasons)[0] ?? ''}`;
+      return `${prettyText(str(p.subject))}: "${str(p.decided).replace(/_/g, ' ')}" stands against ${p.by ? actor(str(p.by)).label : 'a person'}'s "${str(p.verdict).replace(/_/g, ' ')}" — ${parseArr<string>(a.reasons)[0] ?? ''}`;
+    case 'set_aside':
+      return `${str(p.kind).replace(/_/g, ' ')} for ${prettyText(str(p.subject))} set aside for a person: ${parseArr<string>(a.reasons)[0] ?? 'it failed'}`;
     case 'close_period':
       return `${str(p.period)}`;
     case 'file_finding':

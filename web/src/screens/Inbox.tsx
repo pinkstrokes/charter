@@ -3,9 +3,10 @@ import { useMemo, useState } from 'react';
 import type { Ask, Entity, Store } from '../module_bindings/types';
 import { Empty, FeatureTable, Result, SeverityChip, StatusChip } from '../components/ui';
 import { toast } from '../components/Toast';
+import { MisappliedText } from '../components/CashFacts';
 import { openAsksFor, useMe } from '../app/data';
 import { go } from '../app/nav';
-import { actor, askLabel, day, daysBetween, money, prettyText, ROLE_LABEL } from '../lib/format';
+import { actor, answerWords, askLabel, currencySymbol, day, daysBetween, money, prettyText, ROLE_LABEL } from '../lib/format';
 import { parseArr, parseLoose, parseObj } from '../lib/json';
 import { subjectLabel } from '../lib/lineage';
 import { askDomain, domainOf, outcomeText, parseProgram, ruleText } from '../lib/rules';
@@ -74,7 +75,7 @@ export function Inbox() {
                   <div key={a.id.toString()} className="answer-item">
                     <div className="quote-block">{a.reason}</div>
                     <div className="quote-by">
-                      {a.answeredBy.split(':')[1] ?? a.answeredBy} {a.kind.startsWith('correction:') ? 'corrected it to' : 'answered'} “{a.answer.replace(/_/g, ' ')}”, {subjectLabel(a.subject)}
+                      {a.answeredBy.split(':')[1] ?? a.answeredBy} {a.kind.startsWith('correction:') ? 'corrected it to' : 'answered'} “{answerWords(a.answer)}”, {subjectLabel(a.subject)}
                       {subjectLabel(a.subject).includes(day(a.answeredAt)) ? '' : `, ${day(a.answeredAt)}`}
                     </div>
                   </div>
@@ -96,7 +97,7 @@ function AskCard({ a, entities, stores }: { a: Ask; entities: Entity[]; stores: 
   const options = parseArr<string>(a.options);
   const evidence = parseObj(a.evidence);
   const features = (evidence.features ?? null) as Record<string, unknown> | null;
-  const domain = askDomain(a.kind) ?? (features ? domainOf(features) : undefined);
+  const domain = askDomain(a.kind, evidence) ?? (features ? domainOf(features) : undefined);
   const used = new Set(Object.keys((evidence.used ?? {}) as Record<string, unknown>));
   const facts = (evidence.facts ?? null) as Record<string, boolean> | null;
   const solutions = Array.isArray(evidence.solutions) ? (evidence.solutions as string[][]) : null;
@@ -146,6 +147,9 @@ function AskCard({ a, entities, stores }: { a: Ask; entities: Entity[]; stores: 
           )}
         </div>
       ) : null}
+      {a.kind === 'misapplied' && <MisappliedText evidence={evidence} />}
+      {a.kind === 'label_check' && <LabelCheckNote evidence={evidence} />}
+      {a.kind === 'set_aside' && typeof evidence.work === 'number' && <SetAsideNote work={evidence.work} />}
       {a.kind === 'reading_conflict' && <ReadingConflict evidence={evidence} />}
       {a.kind === 'finding' && <FindingInfo subject={a.subject} />}
       {a.kind !== 'reading_conflict' && (
@@ -197,28 +201,33 @@ function AskCard({ a, entities, stores }: { a: Ask; entities: Entity[]; stores: 
                 Overpaid cash on this account: {money(evidence.overpaid)}
               </div>
             )}
-            <div className="precedent">
-              <div className="label">Last time</div>
-              {precedent ? (
-                <div style={{ fontSize: 13 }}>
-                  <span className="quote">{precedent.reason ? `“${precedent.reason}”` : `“${precedent.answer}”`}</span>
-                  <div className="quote-by">
-                    answered “{precedent.answer}” on question #{precedent.id}, {day(precedent.on)}
-                  </div>
+            {/* set-aside work is not a judgement call: no precedent, no confidence */}
+            {a.kind !== 'set_aside' && (
+              <>
+                <div className="precedent">
+                  <div className="label">Last time</div>
+                  {precedent ? (
+                    <div style={{ fontSize: 13 }}>
+                      <span className="quote">{precedent.reason ? `“${precedent.reason}”` : `“${precedent.answer}”`}</span>
+                      <div className="quote-by">
+                        answered “{precedent.answer}” on question #{precedent.id}, {day(precedent.on)}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="faint" style={{ fontSize: 13 }}>
+                      no close precedent; this is new to the team
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="faint" style={{ fontSize: 13 }}>
-                  no close precedent; this is new to the team
+                <div className="confidence" title="How sure the seat was before asking">
+                  seat's confidence
+                  <span className="meter">
+                    <i style={{ width: `${Math.round(a.confidence * 100)}%` }} />
+                  </span>
+                  <span className="num">{Math.round(a.confidence * 100)}%</span>
                 </div>
-              )}
-            </div>
-            <div className="confidence" title="How sure the seat was before asking">
-              seat's confidence
-              <span className="meter">
-                <i style={{ width: `${Math.round(a.confidence * 100)}%` }} />
-              </span>
-              <span className="num">{Math.round(a.confidence * 100)}%</span>
-            </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -304,6 +313,38 @@ function AllocationOptions({ subject, options, evidence, pending, onAnswer }: { 
           </button>
         );
       })}
+    </div>
+  );
+}
+
+// A second look before a verdict counts against a rule with a clean record.
+function LabelCheckNote({ evidence }: { evidence: Record<string, unknown> }) {
+  const stats = useRows('ruleStat');
+  const rule = String(evidence.rule ?? '');
+  const stat = stats.find(x => x.key === rule);
+  return (
+    <div className="row" style={{ gap: 8, fontSize: 13 }}>
+      <span>
+        The seat decided <b style={{ fontWeight: 600 }}>{outcomeText(String(evidence.decided ?? ''))}</b>; your verdict was <b style={{ fontWeight: 600 }}>{outcomeText(String(evidence.verdict ?? ''))}</b>
+        {typeof evidence.spotCheck === 'number' ? ` (spot check #${evidence.spotCheck})` : ''}.
+      </span>
+      {stat && (
+        <span className="muted">
+          {prettyText(rule)} is <StatusChip status={stat.state} /> {stat.checked} checked, {stat.errors} wrong. A slip is not counted against it; a verdict that stands is.
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Work the desk set aside: the item and what it was doing when it failed.
+function SetAsideNote({ work }: { work: number }) {
+  const items = useRows('workItem');
+  const w = items.find(x => x.id === BigInt(work));
+  if (!w) return null;
+  return (
+    <div className="muted" style={{ fontSize: 13 }}>
+      Work item #{work}: {w.kind.replace(/_/g, ' ')} for {subjectLabel(w.subject)}, {w.state.replace(/_/g, ' ')}. It ran in its own transaction, so nothing it started was kept.
     </div>
   );
 }
@@ -521,7 +562,7 @@ function OpenAudits() {
               </div>
               <label className="field" style={{ width: 150 }}>
                 <span>Audited gross sales</span>
-                <input className="input num" inputMode="decimal" placeholder="$15,200" value={gross[k] ?? ''} onChange={e => setGross(g => ({ ...g, [k]: e.target.value }))} />
+                <input className="input num" inputMode="decimal" placeholder={`${currencySymbol()}15,200`} value={gross[k] ?? ''} onChange={e => setGross(g => ({ ...g, [k]: e.target.value }))} />
               </label>
               <button className="btn small" type="submit" disabled={act.pending} title={`Record the finding as ${me.name}`}>
                 <Search size={13} /> Record finding

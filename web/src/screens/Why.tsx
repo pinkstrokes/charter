@@ -3,9 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Activity, Decision, Skill } from '../module_bindings/types';
 import { ActorTag, FeatureTable, KV, Money, OutcomeChip, PolicyChip, Result, StatusChip } from '../components/ui';
 import { runVerify, useChainState } from '../components/Chain';
+import { MisappliedText } from '../components/CashFacts';
 import { useActivityById, useActivityDesc, useMe, usePolicyLookup } from '../app/data';
 import { closeWhy, go, openWhy } from '../app/nav';
-import { actor, askLabel, commandLabel, day, money, num, prettyText, ROLE_LABEL } from '../lib/format';
+import { actor, answerWords, askLabel, commandLabel, day, money, num, prettyText, ROLE_LABEL } from '../lib/format';
 import { parseArr, parseLoose, parseObj, present } from '../lib/json';
 import { actionsOf, decisionFor, planPolicies, subjectLabel } from '../lib/lineage';
 import { factText, template } from '../lib/policies';
@@ -92,6 +93,22 @@ function WhyBody({ a }: { a: Activity }) {
   // A correction names the decision it corrects; a concern names the store-week it is about.
   const corrected = typeof params.correction === 'number' ? decisions.find(x => x.id === BigInt(params.correction as number)) : undefined;
   const concernOn = typeof params.concern === 'string' ? decisions.filter(x => x.subject === params.concern && !x.shadow).pop() : undefined;
+  // Rows that name their question only through the evidence: a person's reversal answers a
+  // "wrong invoice?" question about that receipt; set-aside work raises a question about itself.
+  const asks = useRows('ask');
+  const related = useMemo(() => {
+    if (a.command === 'reverse_application' && typeof params.receipt === 'string') {
+      const q = asks.filter(x => x.kind === 'misapplied' && parseObj(x.evidence).earlier === params.receipt && x.status === 'answered' && x.answeredAt <= a.at).pop();
+      return q ? { id: q.id, title: 'Done on this answer' } : undefined;
+    }
+    if (a.command === 'set_aside' && typeof params.work === 'number') {
+      const q = asks.find(x => x.kind === 'set_aside' && parseObj(x.evidence).work === params.work);
+      return q ? { id: q.id, title: 'The question it raised' } : undefined;
+    }
+    return undefined;
+  }, [a, asks, params.receipt, params.work]);
+  // Rows whose own box says everything their params hold.
+  const ownBox = a.kind === 'ask' || a.command === 'verdict_declined' || a.command === 'set_aside' || a.command === 'reverse_application';
 
   return (
     <>
@@ -115,8 +132,13 @@ function WhyBody({ a }: { a: Activity }) {
         </div>
       )}
 
-      {a.kind === 'reliability' && <ReliabilityBox params={params} />}
+      {a.command === 'inspection_level' && <ReliabilityBox params={params} />}
+      {a.command === 'verdict_declined' && <VerdictDeclinedBox params={params} reason={reasons[0] ?? ''} />}
+      {a.command === 'set_aside' && <SetAsideBox params={params} error={reasons[0] ?? ''} />}
+      {a.command === 'reverse_application' && <ReversalBox a={a} params={params} />}
+      {a.command === 'apply_receipt' && params.payer !== undefined && <PayerBox payer={params.payer} />}
       {askId !== undefined && <AskBox id={askId} a={a} skills={skills} decisions={decisions} title={planAsk && a.kind !== 'ask' && a.command !== 'answer_ask' ? 'Carried out on this answer' : undefined} />}
+      {askId === undefined && related && <AskBox id={related.id} a={a} skills={skills} decisions={decisions} title={related.title} />}
 
       <section className="why-section">
         <h3>Who</h3>
@@ -127,13 +149,20 @@ function WhyBody({ a }: { a: Activity }) {
         </div>
       </section>
 
-      <section className="why-section">
-        <h3>What it asked for</h3>
-        <Params params={params} command={a.command} />
-      </section>
+      {!ownBox && (
+        <section className="why-section">
+          <h3>What it asked for</h3>
+          <Params params={params} command={a.command} />
+        </section>
+      )}
 
       {(decision ?? corrected ?? concernOn) && (
-        <DecisionBox d={(decision ?? corrected ?? concernOn)!} skills={skills} a={a} title={decision ? 'Why the seat decided this' : corrected ? 'The decision being corrected' : 'The decision the concern is about'} />
+        <DecisionBox
+          d={(decision ?? corrected ?? concernOn)!}
+          skills={skills}
+          a={a}
+          title={a.command === 'verdict_declined' ? 'The decision the verdict was about' : decision ? 'Why the seat decided this' : corrected ? 'The decision being corrected' : 'The decision the concern is about'}
+        />
       )}
 
       {policyIds.length > 0 && (
@@ -236,9 +265,10 @@ function AskBox({ id, a, skills, decisions, title = 'The question' }: { id: bigi
   if (!q) return null;
   const ev = parseObj(q.evidence);
   const features = ev.features && typeof ev.features === 'object' ? (ev.features as Record<string, unknown>) : null;
-  const domain = askDomain(q.kind) ?? (features ? domainOf(features) : undefined);
+  const domain = askDomain(q.kind, ev) ?? (features ? domainOf(features) : undefined);
   // The module names the decision behind a question in its evidence; older rows fall back to a match.
-  const exact = typeof ev.decision === 'number' ? decisions.find(x => x.id === BigInt(ev.decision as number)) : undefined;
+  const named = typeof ev.decision === 'number' ? ev.decision : typeof ev.earlierDecision === 'number' ? ev.earlierDecision : undefined;
+  const exact = named !== undefined ? decisions.find(x => x.id === BigInt(named)) : undefined;
   const d =
     exact ??
     (domain ? decisions.filter(x => x.domain === domain && !x.shadow && (x.subject === q.subject || x.subject.startsWith(`${q.subject}:`)) && x.at === q.createdAt).pop() : undefined);
@@ -264,16 +294,189 @@ function AskBox({ id, a, skills, decisions, title = 'The question' }: { id: bigi
             <div className="quote-block">
               {q.reason || `“${q.answer}”`}
               <div className="quote-by">
-                {q.answeredBy.split(':')[1] ?? q.answeredBy} answered “{q.answer.replace(/_/g, ' ')}” on {day(q.answeredAt)}
+                {q.answeredBy.split(':')[1] ?? q.answeredBy} answered “{answerWords(q.answer)}” on {day(q.answeredAt)}
               </div>
             </div>
           )}
           {q.status === 'expired' && <div className="muted">Expired unanswered on {day(q.deadline)}.</div>}
-          {!d && features && <FeatureTable features={features} domain={domain} />}
+          {!d && features && q.kind !== 'misapplied' && <FeatureTable features={features} domain={domain} />}
         </div>
       </section>
-      {d && <DecisionBox d={d} skills={skills} a={a} title="The decision that raised it" />}
+      {q.kind === 'misapplied' && <MisappliedFacts evidence={ev} />}
+      {d && <DecisionBox d={d} skills={skills} a={a} title={q.kind === 'misapplied' ? 'The earlier decision it questions' : 'The decision that raised it'} />}
     </>
+  );
+}
+
+// Where a verdict came from, in words (module reliability.ts STRENGTH keys).
+const VERDICT_SOURCE: Record<string, string> = {
+  answer: 'answering a question',
+  spot_check: 'in a spot check',
+  correction: 'marking the decision wrong',
+  field_audit: 'after a field audit',
+  internal_audit: 'in an internal audit',
+};
+
+// A person's verdict that would break the agreement: kept on the record, not counted, not learned.
+function VerdictDeclinedBox({ params, reason }: { params: Record<string, unknown>; reason: string }) {
+  const by = String(params.by ?? '');
+  const who = by ? actor(by).label : 'A person';
+  const source = VERDICT_SOURCE[String(params.source ?? '')] ?? '';
+  return (
+    <section className="why-section">
+      <h3>A verdict the team did not take</h3>
+      <div style={{ display: 'grid', gap: 8 }}>
+        <div>
+          {who}
+          {source ? `, ${source},` : ''} said the seat should have decided <b style={{ fontWeight: 600 }}>{outcomeText(String(params.verdict ?? ''))}</b> on {subjectLabel(String(params.subject ?? ''))}. The seat had decided{' '}
+          <b style={{ fontWeight: 600 }}>{outcomeText(String(params.decided ?? ''))}</b>.
+        </div>
+        {reason && (
+          <div>
+            Declined: {reason.charAt(0).toUpperCase() + reason.slice(1)}.
+          </div>
+        )}
+        <div className="muted" style={{ fontSize: 13 }}>
+          The decision stands. The verdict is kept on the record but not counted against the seat, and the evolution engine does not learn from it.
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Work the desk could not finish; it fails on its own and goes to a person.
+function SetAsideBox({ params, error }: { params: Record<string, unknown>; error: string }) {
+  const kind = String(params.kind ?? 'work').replace(/_/g, ' ');
+  return (
+    <section className="why-section">
+      <h3>Set aside for a person</h3>
+      <div style={{ display: 'grid', gap: 6 }}>
+        <div>
+          The {kind} for {subjectLabel(String(params.subject ?? ''))} could not be handled{error ? ':' : '.'}
+          {error && <span className="mono" style={{ fontSize: 12.5 }}> {error}</span>}
+        </div>
+        <div className="muted" style={{ fontSize: 13 }}>
+          Each item runs in its own transaction, so nothing it started was kept and the rest of the run went on. Work item #{String(params.work ?? '')} is marked failed.
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ACH return codes a franchisor sees most (NACHA).
+const RETURN_CODE: Record<string, string> = {
+  R01: 'insufficient funds',
+  R02: 'account closed',
+  R03: 'no account, or the account could not be found',
+  R04: 'invalid account number',
+  R07: 'authorization revoked',
+  R08: 'payment stopped',
+  R09: 'uncollected funds',
+  R10: 'the customer says it was not authorized',
+  R16: 'account frozen',
+  R20: 'not a transaction account',
+  R29: 'the company says it was not authorized',
+};
+
+// Cash taken back off invoices: a debit the bank returned, or a person putting a receipt back to unapplied.
+function ReversalBox({ a, params }: { a: Activity; params: Record<string, unknown> }) {
+  const applications = useRows('application');
+  if (typeof params.returnTxn === 'string') {
+    const code = String(params.code ?? '');
+    return (
+      <section className="why-section">
+        <h3>What was undone</h3>
+        <div>
+          The bank returned debit <b style={{ fontWeight: 600 }}>{String(params.original ?? '')}</b> as {params.returnTxn}
+          {code ? `, code ${code}${RETURN_CODE[code] ? `: ${RETURN_CODE[code]}` : ''}` : ''}. The invoices it had paid are open again.
+        </div>
+      </section>
+    );
+  }
+  const ids = Array.isArray(params.applications) ? (params.applications as (number | string)[]).map(x => String(x)) : [];
+  const rows = ids.map(id => ({ id, app: applications.find(x => x.id.toString() === id) }));
+  const total = rows.reduce((sum, r) => sum + (r.app ? Number(r.app.amountCents) : 0), 0);
+  const known = rows.every(r => r.app);
+  return (
+    <section className="why-section">
+      <h3>What was undone</h3>
+      <div style={{ display: 'grid', gap: 8 }}>
+        <div>
+          {actor(a.principal, a.role).label} put {known ? <Money cents={total} /> : 'the cash'} of receipt <b style={{ fontWeight: 600 }}>{String(params.receipt ?? '')}</b> back to unapplied cash
+          {typeof params.reason === 'string' && params.reason ? `, because ${params.reason}` : ''}.
+        </div>
+        {rows.length > 0 && (
+          <table className="table compact">
+            <thead>
+              <tr>
+                <th>Taken off invoice</th>
+                <th className="n">Amount</th>
+                <th>Applied by</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r => (
+                <tr key={r.id}>
+                  <td>{r.app ? r.app.invoiceId : `application #${r.id}`}</td>
+                  <td className="n">{r.app ? <Money cents={r.app.amountCents} /> : ''}</td>
+                  <td>
+                    {r.app && r.app.activityId > 0n ? (
+                      <button className="btn small quiet" onClick={() => openWhy(r.app!.activityId)}>
+                        #{r.app.activityId.toString()}
+                      </button>
+                    ) : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// How the bank feed decided who paid: the sources it weighed, and anyone else it could have been.
+function PayerBox({ payer }: { payer: unknown }) {
+  const entities = useRows('entity');
+  const p = (payer && typeof payer === 'object' ? payer : {}) as { code?: string; evidence?: string[]; candidates?: string[] };
+  const name = (code: string) => entities.find(e => e.code === code)?.name;
+  const others = (p.candidates ?? []).filter(c => c !== p.code);
+  return (
+    <section className="why-section">
+      <h3>Who paid</h3>
+      <div style={{ display: 'grid', gap: 6 }}>
+        <div>
+          {p.code ? (
+            <>
+              <b style={{ fontWeight: 600 }}>{p.code}</b>
+              {name(p.code) ? `, ${name(p.code)}` : ''}
+            </>
+          ) : (
+            'Not decided from the bank line; a person says who it is.'
+          )}
+        </div>
+        {(p.evidence ?? []).length > 0 && (
+          <ul className="evidence-list">
+            {(p.evidence ?? []).map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        )}
+        {others.length > 0 && <div className="muted" style={{ fontSize: 13 }}>Also possible: {others.map(c => (name(c) ? `${c} (${name(c)})` : c)).join(', ')}</div>}
+      </div>
+    </section>
+  );
+}
+
+// The two payments behind a "cash applied to the wrong invoice?" question.
+function MisappliedFacts({ evidence }: { evidence: Record<string, unknown> }) {
+  if (!evidence.invoice) return null;
+  return (
+    <section className="why-section">
+      <h3>The earlier payment</h3>
+      <MisappliedText evidence={evidence} />
+    </section>
   );
 }
 
@@ -283,6 +486,8 @@ function Params({ params, command }: { params: Record<string, unknown>; command:
   const features = p.features && typeof p.features === 'object' ? (p.features as Record<string, unknown>) : null;
   delete p.allocations;
   delete p.features;
+  delete p.payer; // shown as "Who paid"
+  if (command === 'answer_ask' && typeof p.reason === 'string') delete p.reason; // quoted with the question
   const inherits = command === 'hire_seat' ? (p.inherits as { skills?: string[]; policies?: string[] } | undefined) : undefined;
   if (inherits) delete p.inherits;
   return (
@@ -447,7 +652,8 @@ export function DecisionBox({ d, skills, a, title = 'Why the seat decided this' 
 // What the module recorded as caused by this decision (used: decision:<id>).
 function CausedActions({ d }: { d: Decision }) {
   const activity = useRows('activity');
-  const caused = useMemo(() => actionsOf(d, activity), [d, activity]);
+  // Inspection changes and declined verdicts name the decision too, but are not its consequences.
+  const caused = useMemo(() => actionsOf(d, activity).filter(x => x.kind !== 'reliability'), [d, activity]);
   if (!caused.length) return null;
   return (
     <div style={{ marginTop: 8, fontSize: 13 }}>
@@ -528,7 +734,7 @@ function CorrectDecision({ d, a }: { d: Decision; a?: Activity }) {
         <div key={c.id.toString()} className="quote-block" style={{ marginBottom: 8 }}>
           {c.reason}
           <div className="quote-by">
-            {c.answeredBy.split(':')[1] ?? c.answeredBy} said it should have been “{c.answer.replace(/_/g, ' ')}” ({day(c.answeredAt)})
+            {c.answeredBy.split(':')[1] ?? c.answeredBy} said it should have been “{answerWords(c.answer)}” ({day(c.answeredAt)})
           </div>
         </div>
       ))}
@@ -704,6 +910,8 @@ function Ref({ r }: { r: string }) {
   const routing = useRows('routingRequest');
   const debits = useRows('debitInstruction');
   const decisions = useRows('decision');
+  const work = useRows('workItem');
+  const entities = useRows('entity');
   const policyOf = usePolicyLookup();
   useEffect(() => {
     if (kind === 'obs' && /^\d+$/.test(id)) charter.ensure('observation', BigInt(id));
@@ -820,7 +1028,16 @@ function Ref({ r }: { r: string }) {
           decision #{id} by {d.skillKey}: {outcomeText(d.outcome)} on {subjectLabel(d.subject)}
         </span>
       );
-  } else if (kind === 'entity') body = <span>counterparty {id}</span>;
+  } else if (kind === 'work') {
+    const w = work.find(x => x.id.toString() === id);
+    body = w ? (
+      <span>
+        work item #{id}: {w.kind.replace(/_/g, ' ')} for {subjectLabel(w.subject)}, {w.state.replace(/_/g, ' ')}
+      </span>
+    ) : (
+      <span>work item #{id}</span>
+    );
+  } else if (kind === 'entity') body = <span>counterparty {id}{entities.find(e => e.code === id) ? `, ${entities.find(e => e.code === id)!.name}` : ''}</span>;
   else if (kind === 'contract') body = <span>contract terms {id}</span>;
   else if (kind === 'audit') body = <span>field audit {id.replace(':', ', week of ')}</span>;
   else if (kind === 'bank') body = <span>bank transaction {id}</span>;

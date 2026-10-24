@@ -3,6 +3,19 @@
 
 const SYMBOL: Record<string, string> = { USD: '$', GBP: '£', EUR: '€' };
 
+// The connected company's currency (config.currency). The store sets it when the
+// config row arrives, before any screen renders an amount; until then, dollars.
+let defaultCurrency = 'USD';
+export function setDefaultCurrency(code: string | null | undefined): boolean {
+  const next = code && /^[A-Z]{3}$/.test(code) ? code : 'USD';
+  if (next === defaultCurrency) return false;
+  defaultCurrency = next;
+  return true;
+}
+export function currencySymbol(code = defaultCurrency): string {
+  return SYMBOL[code] ?? `${code} `;
+}
+
 export function toBig(v: bigint | number | string | null | undefined): bigint {
   if (typeof v === 'bigint') return v;
   if (typeof v === 'number') return Number.isFinite(v) ? BigInt(Math.round(v)) : 0n;
@@ -17,7 +30,7 @@ export function money(cents: bigint | number | string | null | undefined, opts: 
   const abs = neg ? -c : c;
   const dollars = abs / 100n;
   const rest = abs % 100n;
-  const symbol = SYMBOL[opts.currency ?? 'USD'] ?? '';
+  const symbol = currencySymbol(opts.currency ?? defaultCurrency);
   const body = `${symbol}${groupDigits(dollars.toString())}${opts.whole ? '' : `.${rest.toString().padStart(2, '0')}`}`;
   if (neg) return opts.parens === false ? `−${body}` : `(${body})`;
   return opts.sign && c > 0n ? `+${body}` : body;
@@ -155,6 +168,11 @@ export const ACTION_VERB: Record<string, string> = {
   release_payment: 'release payments',
 };
 
+// A person's answer as words to set inside “quotes”: snake_case spaced, inner quotes turned single.
+export function answerWords(answer: string): string {
+  return answer.replace(/_/g, ' ').replace(/"([^"]*)"/g, '‘$1’');
+}
+
 // Ask kinds may carry a domain after a colon (spot_check:underreport, correction:pre_chase).
 export function askLabel(kind: string): string {
   const [base, domain] = kind.split(':');
@@ -169,6 +187,7 @@ export const ASK_LABEL: Record<string, string> = {
   identify_payer: 'Identify a payer',
   unapplied_cash: 'Unapplied cash',
   misapplied: 'Cash applied to the wrong invoice?',
+  label_check: 'Was that verdict a slip?',
   set_aside: 'Work set aside',
   collections: 'Collections',
   dispute: 'Dispute',
@@ -185,7 +204,7 @@ export const ASK_LABEL: Record<string, string> = {
 
 export function commandLabel(kind: string, command: string): string {
   if (kind === 'ask') return `Asked: ${askLabel(command).toLowerCase()}`;
-  if (kind === 'reliability') return 'Inspection level';
+  if (kind === 'reliability') return ACTION_LABEL[command] ?? 'Inspection level';
   if (kind === 'evolution') return 'Evolution attempt';
   return ACTION_LABEL[command] ?? sentence(command);
 }
@@ -243,10 +262,11 @@ export function plural(n: number | bigint, one: string, many = `${one}s`): strin
 export function prettyText(text: string): string {
   return text
     .replace(/\bstore:S0*(\d+):(\d{4}-\d{2}-\d{2})\b/g, (_m, n: string, iso: string) => `store ${n}, week of ${day(iso)}`)
-    .replace(/\bentity:([A-Z]\d+):(\d{4}-\d{2}-\d{2})\b/g, (_m, e: string, iso: string) => `${e} on ${day(iso)}`)
+    .replace(/\bentity:([A-Z][A-Z0-9-]*\d):(\d{4}-\d{2}-\d{2})\b/g, (_m, e: string, iso: string) => `${e} on ${day(iso)}`)
+    .replace(/\bentity:([A-Z][A-Z0-9-]*\d)\b(?!:)/g, '$1')
     // rule references from the module: underreport@2#0 is its first rule, #-1 its otherwise branch
     .replace(/\b([a-z_]+@\d+)#(-?\d+)\b/g, (_m, k: string, i: string) => (i === '-1' ? `${k}, its otherwise branch` : `${k} rule ${Number(i) + 1}`))
-    .replace(/\$(\d{4,})(\.\d{2})?/g, (_m, d: string, c = '') => `$${groupDigits(d)}${c}`)
+    .replace(/([$£€])(\d{4,})(\.\d{2})?/g, (_m, sym: string, d: string, c = '') => `${sym}${groupDigits(d)}${c}`)
     // dates inside invoice numbers (R-S01-2026-01-05) stay as they are
     .replace(/(?<![\w-])(\d{4}-\d{2}-\d{2})\b/g, (_m, iso: string) => day(iso))
     .replace(/([.!?]) ([a-z])/g, (_m, p: string, ch: string) => `${p} ${ch.toUpperCase()}`);

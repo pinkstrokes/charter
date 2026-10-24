@@ -8,7 +8,7 @@ import { openWhy } from '../app/nav';
 import { actor, askLabel, commandLabel, day, SEAT_LABEL, SEATS } from '../lib/format';
 import { parseObj } from '../lib/json';
 import { summarize } from '../lib/summary';
-import { DOMAIN_SEAT } from '../lib/rules';
+import { askSeatOf, DOMAIN_SEAT } from '../lib/rules';
 import { useRows } from '../stdb/store';
 
 interface Lane {
@@ -31,10 +31,11 @@ function isoOf(n: number): string {
   return new Date(n * 86_400_000).toISOString().slice(0, 10);
 }
 
-function askSeat(kind: string): string {
+function askSeat(kind: string, evidence: string): string {
   const [base, domain] = kind.split(':');
   if (base === 'reading_conflict') return 'mail';
   if (base === 'spot_check' || base === 'correction') return `seat:${DOMAIN_SEAT[domain] ?? 'cash_app'}`;
+  if (base === 'label_check') return `seat:${askSeatOf(kind, evidence) ?? 'cash_app'}`;
   const map: Record<string, string> = { audit: 'cash_app', callback: 'cash_app', allocation: 'cash_app', identify_payer: 'cash_app', unapplied_cash: 'cash_app', misapplied: 'cash_app', set_aside: 'cash_app', royalty_decrease: 'cash_app', unknown_report: 'cash_app', collections: 'collections', dispute: 'collections', refund_release: 'refunds', bill_exception: 'ap_clerk', payment_release: 'payments', finding: 'auditor' };
   const seat = map[base];
   return seat === 'auditor' ? 'auditor' : `seat:${seat ?? 'cash_app'}`;
@@ -127,7 +128,7 @@ export function Score() {
     for (const q of asks) {
       if (q.kind.startsWith('correction:')) continue;
       // Who asked is on the record now (raised_by); older rows fall back to the kind.
-      const from = (q.raisedBy && q.raisedBy !== 'kernel' ? laneOf(q.raisedBy) : undefined) ?? index.get(askSeat(q.kind));
+      const from = (q.raisedBy && q.raisedBy !== 'kernel' ? laneOf(q.raisedBy) : undefined) ?? index.get(askSeat(q.kind, q.evidence));
       if (from === undefined || !/^\d{4}/.test(q.createdAt)) continue;
       const to = q.answeredBy ? index.get(q.answeredBy) : undefined;
       links.push({ from, to, d1: dayNum(q.createdAt), d2: q.answeredAt ? dayNum(q.answeredAt) : undefined, q, act: askActivity.get(q.id.toString()) });

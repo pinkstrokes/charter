@@ -6,7 +6,7 @@ import { summarize } from '../lib/summary';
 import { ActorTag, Empty, OutcomeChip, PolicyChip, Result, StatusChip } from '../components/ui';
 import { useMe } from '../app/data';
 import { openWhy, setSub, useNav } from '../app/nav';
-import { ACTION_LABEL, ACTION_VERB, day, ROLE_LABEL, SEAT_LABEL } from '../lib/format';
+import { ACTION_LABEL, ACTION_VERB, answerWords, day, ROLE_LABEL, SEAT_LABEL } from '../lib/format';
 import { parseObj } from '../lib/json';
 import { buildLineage, proofSummary, replay, subjectLabel, type Lineage, type Replay } from '../lib/lineage';
 import { idOrder, policyKind, siblings, stoppedByPolicy, template, templateAction, templateText } from '../lib/policies';
@@ -191,7 +191,7 @@ function LineageView({ l }: { l: Lineage }) {
                 <b style={{ fontWeight: 600, color: 'var(--ink)' }}>{who}</b>, {ROLE_LABEL[role]?.toLowerCase() ?? role}
                 <span className="faint">
                   {' '}
-                  corrected {subjectLabel(taught.subject)} to “{taught.answer.replace(/_/g, ' ')}”, {day(taught.answeredAt, true)}
+                  corrected {subjectLabel(taught.subject)} to “{answerWords(taught.answer)}”, {day(taught.answeredAt, true)}
                 </span>
               </span>
             </div>
@@ -208,7 +208,7 @@ function LineageView({ l }: { l: Lineage }) {
             <span className="pearl" aria-hidden />
             <div className="step-date">{day(taught.answeredAt)}</div>
             <div className="step-title">
-              {who} corrected it to “{taught.answer.replace(/_/g, ' ')}”
+              {who} corrected it to “{answerWords(taught.answer)}”
             </div>
             <div className="step-detail">counts against the rule that decided, and a near-identical case now goes to a person</div>
           </div>
