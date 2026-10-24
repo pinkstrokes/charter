@@ -58,7 +58,7 @@ async function main(): Promise<void> {
   const keyPath = `${DIR}/answer_key.json`;
   const keyRaw = existsSync(keyPath) ? JSON.parse(readFileSync(keyPath, 'utf8')) : [];
   const key = (Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { caseId: string; family: string; split: string; subject: string; expected: string }[];
-  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications] = await Promise.all([
+  const [decisions, skills, activity, gl, controls, invoices, security, refunds, applications, policies] = await Promise.all([
     db.sql('SELECT id, domain, subject, features, skill_key, outcome, shadow FROM decision'),
     db.sql('SELECT key, domain, version, status, program, created_at FROM skill'),
     db.sql('SELECT id, at, principal, role, kind, command, params, used, plan, outcome, reasons, claims, context, prev_hash, hash FROM activity'),
@@ -68,6 +68,7 @@ async function main(): Promise<void> {
     db.sql('SELECT kind, subject FROM security_event'),
     db.sql('SELECT entity_code, amount_cents, bank_account, status FROM refund'),
     db.sql('SELECT receipt_id, invoice_id, reversed FROM application'),
+    db.sql('SELECT key, policy_id, status, text, template, source_skill, approved_by, approved_at, proof FROM policy'),
   ]);
   const latest = new Map<string, Row>();
   for (const d of decisions.sort((a, b) => a.id - b.id)) if (!d.shadow) latest.set(d.subject, d);
@@ -159,12 +160,25 @@ async function main(): Promise<void> {
     prev = a.hash;
   }
 
+  // Learned policies: where they came from and every attempt they have stopped since.
+  const learned = policies
+    .filter(p => String(p.policy_id).startsWith('P-'))
+    .map(p => {
+      const blocked = acts.filter(a => a.outcome === 'denied' && (JSON.parse(a.reasons) as string[]).some(r => r.startsWith(`${p.policy_id}:`)));
+      const proof = parseJson<{ wouldHaveStopped?: unknown[]; extendsFrom?: string | null }>(p.proof, {});
+      return {
+        key: p.key, status: p.status, text: p.text, template: JSON.parse(p.template), source: p.source_skill, approvedBy: p.approved_by, approvedAt: p.approved_at,
+        learnedFrom: proof.wouldHaveStopped ?? [], extendsFrom: proof.extendsFrom ?? null,
+        blocked: blocked.map(a => ({ activity: a.id, at: a.at, by: a.principal, action: a.command })),
+      };
+    });
   const report = {
     db: DB,
     generatedAt: new Date().toISOString(),
     answerKeyEntries: key.length,
     outcomes,
     cashLanded: landed,
+    learnedPolicies: learned,
     knowingWhenToAsk,
     generations,
     money: {
