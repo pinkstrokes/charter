@@ -3056,3 +3056,13 @@ label.pick:hover {
 .rule-origin .chip {
   vertical-align: 1px;
 }
+
+/* BenchRec: one mark per full month of the eval split. */
+.month-marks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-meta);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

@@ -301,7 +301,10 @@ export function createCharterCore(opts: CoreOptions) {
     const f = path.join(opts.repoRoot, 'data', 'benchrec_eval', 'result.json');
     if (!fs.existsSync(f)) return null;
     try {
-      return { json: JSON.parse(fs.readFileSync(f, 'utf8')), modified: fs.statSync(f).mtime.toISOString() };
+      // The same desks month by month (tools/benchrec/monthly.ts), when it has been run.
+      const m = path.join(path.dirname(f), 'monthly.json');
+      const monthly = fs.existsSync(m) ? JSON.parse(fs.readFileSync(m, 'utf8')) : undefined;
+      return { json: { ...JSON.parse(fs.readFileSync(f, 'utf8')), monthly }, modified: fs.statSync(f).mtime.toISOString() };
     } catch (e) {
       return { error: e instanceof Error ? e.message : String(e) };
     }

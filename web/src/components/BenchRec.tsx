@@ -24,7 +24,16 @@ export interface BenchRecResult {
   learned: Desk;
   handwritten: Desk;
   baseline?: { name: string; matched: number; correct: number; precision: number; matchRate: number } | null;
+  // The same desks month by month and resampled by day (tools/benchrec/monthly.ts).
+  monthly?: {
+    months: ({ month: string; lines: number } & Record<MonthlyKey, { matched: number; wrong: number; precision: number | null; clearsFloor: boolean | null }>)[];
+    bootstrap?: { resamples: number; precision: Record<MonthlyKey, { belowFloorShare: number }> };
+  };
 }
+
+type MonthlyKey = 'learned' | 'day0' | 'handwritten' | 'baseline';
+const MONTHLY: Record<string, MonthlyKey> = { learned: 'learned', day0: 'day0', hand: 'handwritten', baseline: 'baseline' };
+const MONTH = (m: string) => new Date(`${m}-15T12:00:00Z`).toLocaleString('en', { month: 'short', timeZone: 'UTC' });
 
 const TRACK_LO = 0.99;
 const pct1 = (x: number) => `${(x * 100).toFixed(1)}%`;
@@ -57,6 +66,8 @@ export function BenchRecSection({ r }: { r: BenchRecResult }) {
     ...(r.baseline ? [{ key: 'baseline', name: 'Matcher shipped with the dataset', sub: r.baseline.name.replace(/\s*\(shipped with the dataset\)\s*$/, ''), e: { matched: r.baseline.matched, correct: r.baseline.correct, precision: r.baseline.precision }, accent: false }] : []),
   ].map(x => ({ ...x, share: lines ? x.e.matched / lines : 0, precision: x.e.precision ?? 0, clears: (x.e.precision ?? 0) >= r.floor && x.e.matched > 0, low: x.e.matched ? 1 - upper95(x.e.matched - x.e.correct, x.e.matched) : 0 }));
   const charter = rows[0];
+  // Months of the eval split with enough lines to say something (the rest are stragglers).
+  const full = (r.monthly?.months ?? []).filter(m => m.lines >= 5000);
   const toPerson = lines - r.learned.eval.matched;
   const started = new Map(r.versions.map(v => [v.from, v]));
   return (
@@ -79,6 +90,7 @@ export function BenchRecSection({ r }: { r: BenchRecResult }) {
             <th>Bank lines matched</th>
             <th>Precision of what it matched</th>
             <th>Clears the {pct1(r.floor)} floor</th>
+            {full.length > 0 && <th>Each full month</th>}
           </tr>
         </thead>
         <tbody>
@@ -121,6 +133,25 @@ export function BenchRecSection({ r }: { r: BenchRecResult }) {
               <td>
                 <Tick yes={x.clears} />
               </td>
+              {full.length > 0 && (
+                <td>
+                  <div className="month-marks">
+                    {full.map(m => {
+                      const g = m[MONTHLY[x.key]];
+                      return g && g.precision !== null ? (
+                        <span key={m.month} className={g.clearsFloor ? 'tick' : 'red'} title={`${num(g.matched)} matched, ${g.wrong} wrong`}>
+                          {g.clearsFloor ? '✓' : '✗'} {MONTH(m.month)} {pct2(g.precision)}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                  {r.monthly?.bootstrap && (
+                    <div className="faint" style={{ fontSize: 12 }}>
+                      under the floor in {pct1(r.monthly.bootstrap.precision[MONTHLY[x.key]].belowFloorShare)} of {num(r.monthly.bootstrap.resamples)} day resamples
+                    </div>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
