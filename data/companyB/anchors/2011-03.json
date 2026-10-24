@@ -2,8 +2,8 @@
  "period": "2011-03",
  "closedAt": "2011-04-01",
  "closedBy": "controller:Dana",
- "certificateHash": "19d101a0a3825fc609bddbe3ccee6f86feac9167a5daca5cf83adb5ec659679d",
- "chainHead": "5788e1c57ee4e74c78092c8bd6efd67f7e519247e4652e6d28a3ce90c000956a",
- "lastActivityId": 8532,
+ "certificateHash": "4f202b9737d0d9f534f278a3f04723a003658d99f51a8795bc847c87d0d06dfa",
+ "chainHead": "aacedf659eb65dd1462cbaeac514ee8b8ca5c797a7ef8a3ff3434b376d4fff99",
+ "lastActivityId": 8882,
  "auditorOpinion": "clean"
 }
