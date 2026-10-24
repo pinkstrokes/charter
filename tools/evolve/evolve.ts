@@ -160,7 +160,9 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
 
 async function once(db: Db): Promise<void> {
   const key = answerKey();
-  const hidden = new Set(key.filter(e => e.split === 'test' || e.split === 'live').map(e => e.subject));
+  // Measuring hides the locked test and live splits from the evolver; in live
+  // operation (--watch, the demo) every answer a person gives teaches.
+  const hidden = args.has('watch') ? new Set<string>() : new Set(key.filter(e => e.split === 'test' || e.split === 'live').map(e => e.subject));
   const h = await loadHistory(db);
   for (const domain of DOMAINS_TO_EVOLVE) {
     try {
