@@ -1,44 +1,54 @@
 [
  {
   "name": "b1_question",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/inbox?why=4413",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-b#/inbox?why=552",
   "waitFor": "wrong invoice",
   "settle": 3000
  },
  {
   "name": "b7_lineage",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/knowledge/allocation",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-b#/knowledge/allocation",
   "waitFor": "Replay gate",
   "settle": 3000
  },
  {
   "name": "b6_proof",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/proof",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-b#/proof",
   "waitFor": "Month by month",
   "settle": 4000
  },
  {
+  "name": "b8_world",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-b#/world/payment",
+  "waitFor": "Something arrives",
+  "click": [
+   "Two invoices from abroad, less charges",
+   "Send to the bank feed"
+  ],
+  "settle": 4000
+ },
+ {
   "name": "a2_refused",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/payables?why=5259",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-a#/payables?why=5236",
   "waitFor": "P-3",
   "settle": 4000
  },
  {
   "name": "a5_skill",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/knowledge/underreport",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-a#/knowledge/underreport",
   "waitFor": "Replay gate",
   "settle": 4000
  },
  {
   "name": "p1_benchrec",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/proof",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-a#/proof",
   "waitFor": "Real bank reconciliation",
   "scrollTo": "Real bank reconciliation",
   "settle": 4000
  },
  {
   "name": "c1_sister",
-  "url": "http://127.0.0.1:5190/?db=charter-c#/knowledge/allocation",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-c#/knowledge/allocation",
   "waitFor": "learned elsewhere",
   "scrollTo": "Versions",
   "settle": 3000

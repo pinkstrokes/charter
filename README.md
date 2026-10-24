@@ -12,12 +12,16 @@ Charter does not file the £30 as a duplicate. It works out that 536792 was paid
 
 ![The team finds that an earlier application of its own was a guess and asks the controller](docs/img/b1_question.png)
 
-Two other moments the judges can trigger themselves:
+Three moments the judges can trigger themselves:
 
 - **It pushes back.** Tell it, on a spot check, that it should have chased a franchisee on day 5 of a 10-day grace period. It keeps its decision, says the agreement forbids that, does not count your verdict against the rule, and does not learn from it.
-- **It cannot be talked into moving money.** Email new bank details for Formosa Leaf the day before its $92,400 payment run. Two models read it, the change is held, the controller is asked to call the number already on file, and on Friday the release is refused — for the controller too — by a policy nobody wrote: the team learned it in April from a debit that bounced during an unverified bank change, and extended it from debits to refunds and vendor payments.
+- **It cannot be talked into moving money.** Email new bank details from Formosa Leaf's own address hours before its $92,400 payment run. Two models read it, the change is held, the controller is asked to call the number already on file, and the release is refused — for both controllers — by a policy nobody wrote: the team learned it in April from a debit that bounced during an unverified bank change, and extended it from debits to refunds and vendor payments.
+
+- **Give it your own payment.** On the World screen, make up a payment — any payer, any invoices, any reference, from any account — and it arrives through the bank feed like everything else. A transfer from abroad paying two invoices, £12 short for the banks' charges, is applied alone to exactly the two invoices the customer named, by a rule the team learned from the controller's answers in January; the £12 waits for Monday's write-off list. A bill made up the same way goes to the payables clerk.
 
 ![Friday's release is refused for both controllers by a policy learned in April](docs/img/a2_refused.png)
+
+![A payment made up on the spot: two invoices from abroad, £12 short, applied to exactly the invoices the customer named by a rule learned in January](docs/img/b8_world.png)
 
 ## Would you hire it?
 
@@ -152,6 +156,9 @@ npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
 npx tsx tools/evolve/gate_check.ts                 # the gate's regression checks, offline
 cd tools && python3 smoke.py && python3 smoke_ap.py
 cd web && npm install && npm run dev
+tools/demo/demo.sh clone && tools/demo/demo.sh build   # the live demo's own server (main server stopped first), prepared and snapshotted
+tools/demo/demo.sh up                              # demo server :3100, the UI with its step bar on :5191
+tools/demo/demo.sh reset                           # back to the snapshot between judges, about a second
 ```
 
 Model calls use Alibaba Model Studio (OpenAI-compatible); put `MODELSTUDIO_API_KEY` in `~/.config/charter/modelstudio.env`. The evolver's model calls are cached in `data/evolve_llm_cache.json`, so evolution replays offline.
