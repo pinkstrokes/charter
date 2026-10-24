@@ -15,18 +15,20 @@
 // that it is wrong more often than the 0.2% the benchmark tolerates, and then
 // its lines go to a person. The eval split is scored once, against the solution file.
 //   npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+// tools/benchrec/monthly.ts reuses the scoring below month by month, without learning.
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { ASKS, outcomeFor, run, TOLERABLE, type Expr, type FeatureMap, type SkillProgram, type Treatments } from '../../module/spacetimedb/src/core/dsl';
 import { lower95, upper95 } from '../../module/spacetimedb/src/core/stats';
 import { examplesFor, improve, splitLessons, type History } from '../evolve/skills';
 
 const args = new Map<string, string>();
 for (let i = 2; i < process.argv.length; i++) if (process.argv[i].startsWith('--')) args.set(process.argv[i].slice(2), process.argv[i + 1] ?? 'true');
-const DIR = args.get('data') ?? 'data/benchrec';
+export const DIR = args.get('data') ?? 'data/benchrec';
 const MODEL = args.get('model') ?? 'qwen3.8-max';
 const NEAR_DAYS = 3;
 
-function parseCsv(text: string): Record<string, string>[] {
+export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
   let row: string[] = [];
   let field = '';
@@ -47,14 +49,14 @@ function parseCsv(text: string): Record<string, string>[] {
   return body.map(r => Object.fromEntries(head.map((h, j) => [h, r[j] ?? ''])));
 }
 
-interface Ledger {
+export interface Ledger {
   id: string;
   cents: number;
   valueDate: string;
   importDate: string;
   allocation: string;
 }
-interface Bank {
+export interface Bank {
   id: string;
   cents: number;
   valueDate: string;
@@ -65,9 +67,9 @@ interface Bank {
 const cents = (s: string) => Math.round(parseFloat(s || '0') * 100);
 const days = (a: string, b: string) => Math.round((Date.parse(a) - Date.parse(b)) / 86_400_000);
 const shift = (d: string, n: number) => new Date(Date.parse(d) + n * 86_400_000).toISOString().slice(0, 10);
-const allocations = (label: string) => (label.startsWith('[') ? label.slice(1, -1).split(/,(?=USD_)/) : label ? [label] : []).map(x => x.trim());
+export const allocations = (label: string) => (label.startsWith('[') ? label.slice(1, -1).split(/,(?=USD_)/) : label ? [label] : []).map(x => x.trim());
 
-function load(file: string): { ledger: Ledger[]; bank: Bank[] } {
+export function load(file: string): { ledger: Ledger[]; bank: Bank[] } {
   const rows = parseCsv(readFileSync(`${DIR}/${file}`, 'utf8'));
   const ledger: Ledger[] = [];
   const bank: Bank[] = [];
@@ -79,7 +81,7 @@ function load(file: string): { ledger: Ledger[]; bank: Bank[] } {
 }
 
 // What the seat sees for one bank line, and the allocation each outcome would give it.
-function linesOf(ledger: Ledger[], bank: Bank[]): Map<string, { f: FeatureMap; t: Treatments }> {
+export function linesOf(ledger: Ledger[], bank: Bank[]): Map<string, { f: FeatureMap; t: Treatments }> {
   const byDayAmount = new Map<string, Ledger[]>();
   const byDayAllocation = new Map<string, Map<string, number>>();
   for (const a of ledger) {
@@ -120,14 +122,14 @@ const and = (...args: Expr[]): Expr => ({ op: 'and', args });
 const not = (a: Expr): Expr => ({ op: 'not', a });
 
 // Day 0: the match every reconciliation clerk makes first.
-const DAY0: SkillProgram = {
+export const DAY0: SkillProgram = {
   domain: 'bank_match',
   rules: [{ when: cmp('eq', feat('exact_allocations'), num(1)), then: { decide: 'match_exact', note: 'one ledger allocation on the value date has exactly this amount' } }],
   otherwise: { decide: 'ask', note: 'a person matches it' },
 };
 
 // Written by hand before the desk learned its own, and kept only as a yardstick.
-const HANDWRITTEN: SkillProgram = {
+export const HANDWRITTEN: SkillProgram = {
   domain: 'bank_match',
   rules: [
     { when: and(cmp('eq', feat('exact_allocations'), num(1)), not(feat('contested')), cmp('le', feat('import_gap_days'), num(14))), then: { decide: 'match_exact' } },
@@ -200,7 +202,7 @@ async function learn(bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatm
 // reliability.ts): suspended when 95% sure it is worse than tolerable, reduced
 // inspection when 95% sure it is better, otherwise inspected; only a suspended
 // rule's lines go to a person.
-function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, after: string) {
+export function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, after: string) {
   const record = program.rules.map(() => ({ n: 0, wrong: 0 }));
   for (const b of bank) {
     if (!b.truth.length || b.importDate.slice(0, 7) <= after) continue;
@@ -217,7 +219,7 @@ function autonomy(program: SkillProgram, bank: Bank[], lines: Map<string, { f: F
   });
 }
 
-function score(program: SkillProgram, record: ReturnType<typeof autonomy>, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, solution: Map<string, string[]>) {
+export function score(program: SkillProgram, record: ReturnType<typeof autonomy>, bank: Bank[], lines: Map<string, { f: FeatureMap; t: Treatments }>, solution: Map<string, string[]>) {
   let matched = 0;
   let correct = 0;
   const submission: string[] = ['B_id,targetAllocation'];
@@ -233,6 +235,26 @@ function score(program: SkillProgram, record: ReturnType<typeof autonomy>, bank:
   }
   const total = solution.size;
   return { result: { bankLines: total, matched, correct, precision: matched ? correct / matched : null, matchRate: matched / total, clearsFloor: matched > 0 && correct / matched > 1 - TOLERABLE.bank_match }, submission };
+}
+
+// A matcher's submission rows (B_id, targetAllocation), scored on the solution's lines: a line it
+// gave allocations to is matched, and correct when every one of them is the solution's.
+export function scoreBaseline(rows: Record<string, string>[], solution: Map<string, string[]>) {
+  const baseline = { matched: 0, correct: 0 };
+  for (const r of rows) {
+    const truth = solution.get(r.B_id);
+    if (!truth) continue;
+    let picked: string[] = [];
+    try {
+      picked = (JSON.parse(r.targetAllocation || '[]') as string[]).map(x => x.trim());
+    } catch {
+      picked = allocations(r.targetAllocation);
+    }
+    if (!picked.length) continue;
+    baseline.matched++;
+    if (picked.every(p => truth.includes(p))) baseline.correct++;
+  }
+  return baseline;
 }
 
 async function main(): Promise<void> {
@@ -257,23 +279,7 @@ async function main(): Promise<void> {
   const final = desk(learned.program);
   const handwritten = desk(HANDWRITTEN);
   // 3. The matcher shipped with the dataset, scored the same way.
-  let baseline: { matched: number; correct: number } | null = null;
-  if (existsSync(`${DIR}/MatcherByChatGPT_submission.csv`)) {
-    baseline = { matched: 0, correct: 0 };
-    for (const r of parseCsv(readFileSync(`${DIR}/MatcherByChatGPT_submission.csv`, 'utf8'))) {
-      const truth = solution.get(r.B_id);
-      if (!truth) continue;
-      let picked: string[] = [];
-      try {
-        picked = (JSON.parse(r.targetAllocation || '[]') as string[]).map(x => x.trim());
-      } catch {
-        picked = allocations(r.targetAllocation);
-      }
-      if (!picked.length) continue;
-      baseline.matched++;
-      if (picked.every(p => truth.includes(p))) baseline.correct++;
-    }
-  }
+  const baseline = existsSync(`${DIR}/MatcherByChatGPT_submission.csv`) ? scoreBaseline(parseCsv(readFileSync(`${DIR}/MatcherByChatGPT_submission.csv`, 'utf8')), solution) : null;
   const result = {
     dataset: 'BenchRec cash v1.0 (Kaggle benchmarkteam, CC BY 4.0)',
     floor: 1 - TOLERABLE.bank_match,
@@ -292,7 +298,9 @@ async function main(): Promise<void> {
   console.log(JSON.stringify({ day0: day0.eval, learned: final.eval, handwritten: handwritten.eval, baseline: result.baseline, versions: learned.versions.length }, null, 1));
 }
 
-main().catch(e => {
-  console.error(e);
-  process.exit(1);
-});
+// Learn and score only when run as a script, not when monthly.ts imports the scoring.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url)))
+  main().catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
