@@ -1,10 +1,11 @@
 // How the team's knowledge changes. The evolver may only propose; a person moves
 // a skill through shadow -> canary -> active and ratifies policies. A promoted
 // policy may only add restrictions; the constitution can never be retired.
-import { validate, type SkillProgram } from './core/dsl';
+import { run, validate, type FeatureMap, type SkillProgram } from './core/dsl';
 import { CONSTITUTION, isTightening, ROLE_MATRIX, type PolicyTemplate, type Principal } from './core/policy';
 import { SEED_SKILLS } from './core/seed_skills';
 import { appendActivity, exec, Rejection, simDate, type ExecResult, type Tx } from './kernel';
+import { openAsk } from './seats';
 
 export const SKILL_STATUSES = ['proposed', 'shadow', 'canary', 'active', 'retired', 'rejected'] as const;
 
@@ -58,8 +59,43 @@ export function setSkillStatus(tx: Tx, who: Principal, key: string, status: stri
       }
     }
     tx.db.skill.key.update({ ...s, status, scope: status === 'canary' ? JSON.stringify({ fraction }) : s.scope });
-    return `${key}: ${s.status} -> ${status}`;
+    const reopened = status === 'active' ? replayHistory(tx, key, JSON.parse(s.program) as SkillProgram) : 0;
+    return `${key}: ${s.status} -> ${status}${reopened ? `; replay over past weeks opened ${reopened} audit questions` : ''}`;
   });
+}
+
+// When a new version goes live, it re-reads every past report it would have
+// judged differently. Weeks it now flags become audit questions for a person.
+function replayHistory(tx: Tx, key: string, program: SkillProgram): number {
+  if (program.domain !== 'underreport') return 0;
+  const latest = new Map<string, { features: string; outcome: string; seat: string }>();
+  for (const d of [...tx.db.decision.domain.filter('underreport')].sort((a, b) => (a.id < b.id ? -1 : 1))) if (!d.shadow) latest.set(d.subject, { features: d.features, outcome: d.outcome, seat: d.seat });
+  const audited = new Set<string>();
+  for (const f of tx.db.fact.iter()) if (f.attr === 'audit') {
+    const v = JSON.parse(f.value) as { store: string; week: string };
+    audited.add(`store:${v.store}:${v.week}`);
+  }
+  let opened = 0;
+  for (const [subject, d] of latest) {
+    if (d.outcome !== 'accept' || audited.has(subject)) continue;
+    const features = JSON.parse(d.features) as FeatureMap;
+    const r = run(program, features);
+    if (r.outcome.decide === 'accept') continue;
+    const [, store, week] = subject.split(':');
+    const name = tx.db.store.code.find(store)?.name ?? store;
+    tx.db.decision.insert({ id: 0n, at: simDate(tx), seat: d.seat, domain: 'underreport', subject, features: d.features, skillKey: key, outcome: r.outcome.decide, ruleIndex: r.trace.ruleIndex, note: `replay: ${r.outcome.note ?? ''}`, shadow: false });
+    openAsk(tx, {
+      kind: 'audit',
+      subject,
+      toRole: 'consultant',
+      question: `The team's new skill ${key} re-read past reports and flags ${name}, week of ${week}: ${r.outcome.note || 'the sources disagree'}. Request a sales audit?`,
+      options: ['request audit', 'explained — accept report'],
+      evidence: { features, skill: key, replay: true },
+      confidence: 0.5,
+    });
+    opened++;
+  }
+  return opened;
 }
 
 export function proposePolicy(tx: Tx, who: Principal, tpl: PolicyTemplate, text: string, sourceSkill: string, proof: string): ExecResult {
