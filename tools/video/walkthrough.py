@@ -15,6 +15,7 @@ VOICE = os.environ.get("VOICE", "Samantha")
 FONT = "/System/Library/Fonts/Supplemental/Arial.ttf"
 W, H = 1920, 1080
 PAGE_H = 930  # the browser viewport; the caption bar fills the rest of the frame
+SLACK = 3.0  # seconds a scene may run past its narration before its recording is played faster
 
 
 def run(cmd):
@@ -68,10 +69,14 @@ def main(spec_path, out_path):
     timed = os.path.join(work, "scenes.json")
     json.dump(scenes, open(timed, "w"))
     subprocess.run(["node", os.path.join(os.path.dirname(os.path.abspath(__file__)), "record.mjs"), timed, work], check=True)
-    # A scene can run longer than its narration (waiting for the seats); keep all of it.
+    # A scene can run longer than its narration (waiting for the seats, a slow
+    # page); it keeps all of it, played faster when it would end more than SLACK
+    # seconds after the narration.
     recorded = json.load(open(os.path.join(work, "recorded.json")))
     for i, sc in enumerate(scenes):
-        sc["seconds"] = max(sc["seconds"], round(recorded.get(str(i), 0), 2))
+        took = round(recorded.get(str(i), 0), 2)
+        sc["speed"] = max(1.0, took / (sc["seconds"] + SLACK))
+        sc["seconds"] = max(sc["seconds"], min(took, sc["seconds"] + SLACK))
     parts = []
     for i, sc in enumerate(scenes):
         seg = os.path.join(work, f"s{i}.mp4")
@@ -86,11 +91,12 @@ def main(spec_path, out_path):
             caption_bar(caption).save(bar)
             video = os.path.join(work, f"scene-{i}.webm")
             run(["ffmpeg", "-y", "-i", video, "-i", bar, "-i", sc["audio"],
-                 "-filter_complex", f"[0:v]scale={W}:{PAGE_H},pad={W}:{H}:0:0:black,fps=30[v];[v][1:v]overlay=0:{PAGE_H}[out]",
+                 "-filter_complex", f"[0:v]setpts=PTS/{sc['speed']:.3f},scale={W}:{PAGE_H},pad={W}:{H}:0:0:black,fps=30[v];[v][1:v]overlay=0:{PAGE_H}[out]",
                  "-map", "[out]", "-map", "2:a", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
                  "-t", f"{sc['seconds']:.2f}", "-af", "apad", seg])
         parts.append(seg)
-        print(f"scene {i + 1}/{len(scenes)}: {sc['seconds']:.1f}s")
+        faster = sc.get("speed", 1.0)
+        print(f"scene {i + 1}/{len(scenes)}: {sc['seconds']:.1f}s" + (f" (recording played {faster:.1f}x)" if faster > 1 else ""))
     listing = os.path.join(work, "parts.txt")
     open(listing, "w").write("".join(f"file '{p}'\n" for p in parts))
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)

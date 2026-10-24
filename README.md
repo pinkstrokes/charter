@@ -129,6 +129,7 @@ python3 tools/world/run.py --reset                 # company A, six months (~30 
 STDB_DB=charter-b python3 tools/world_b/run_b.py   # company B on UCI Online Retail II
 npx tsx tools/evolve/report.ts --db charter-a      # proof numbers from the database and the answer key
 npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
+npx tsx tools/evolve/gate_check.ts                 # the gate's regression checks, offline
 cd tools && python3 smoke.py && python3 smoke_ap.py
 cd web && npm install && npm run dev
 ```

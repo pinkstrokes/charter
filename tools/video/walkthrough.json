@@ -134,8 +134,8 @@
     "wait": 1500
    }
   ],
-  "say": "It cannot be talked into moving money. It's Thursday, and Formosa Leaf's own mailbox asks us to send tomorrow's payment to a new account.",
-  "caption": "Thursday: Formosa Leaf's own mailbox asks us to send tomorrow's payment to a new account"
+  "say": "It cannot be talked into moving money. It's Friday morning, hours before a payment run, and Formosa Leaf's own mailbox asks us to send today's payment to a new account.",
+  "caption": "Friday morning: Formosa Leaf's own mailbox asks us to send today's payment to a new account"
  },
  {
   "before": [
@@ -153,31 +153,13 @@
   "caption": "Two model families read it; the change is held until the controller calls the number on file"
  },
  {
-  "before": [
-   {
-    "call": {
-     "db": "charter-a",
-     "as": "feeder",
-     "fn": "set_sim_date",
-     "args": [
-      "2026-07-03"
-     ]
-    }
-   },
-   {
-    "call": {
-     "db": "charter-a",
-     "as": "feeder",
-     "fn": "run_seats",
-     "args": []
-    }
-   },
-   {
-    "wait": 2000
-   }
-  ],
   "url": "http://127.0.0.1:5190/?db=charter-a#/payables",
   "ready": "PAY-2026-07-03-V01",
+  "before": [
+   {
+    "as": "Dana"
+   }
+  ],
   "steps": [
    {
     "wait": 1200
@@ -190,7 +172,7 @@
     "wait": 2500
    },
    {
-    "click": "Sam"
+    "as": "Sam"
    },
    {
     "wait": 1200
@@ -203,17 +185,17 @@
     "wait": 2500
    }
   ],
-  "say": "Friday. Ninety-two thousand four hundred dollars is due to Formosa Leaf. The controller presses release: refused. The second controller: refused too, by policy P 3.",
-  "caption": "Friday: $92,400 to Formosa Leaf — refused for both controllers by P-3"
+  "say": "Ninety-two thousand four hundred dollars is due to Formosa Leaf today. The controller presses release: refused. The second controller: refused too, by policy P 3.",
+  "caption": "$92,400 due to Formosa Leaf today — release refused for both controllers by P-3"
  },
  {
-  "before": [
-   {
-    "click": "Dana"
-   }
-  ],
   "url": "http://127.0.0.1:5190/?db=charter-a#/knowledge/policies",
   "ready": "Learned policies",
+  "before": [
+   {
+    "as": "Dana"
+   }
+  ],
   "steps": [
    {
     "wait": 2500
@@ -229,6 +211,11 @@
  {
   "url": "http://127.0.0.1:5190/?db=charter-a#/inbox?why=212",
   "ready": "This was wrong",
+  "before": [
+   {
+    "as": "Dana"
+   }
+  ],
   "steps": [
    {
     "wait": 1200

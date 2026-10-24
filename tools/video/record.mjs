@@ -122,7 +122,10 @@ async function step(page, s) {
     return sleep(300);
   }
   if (s.scrollTo) {
-    // Bring a heading or row into view, smoothly, clear of the sticky header.
+    // Bring a heading or row into view, smoothly, clear of the sticky header, once it has rendered.
+    await page
+      .waitForFunction(t => [...document.querySelectorAll('h1, h2, h3, h4, td, [class*="title"]')].some(e => e.textContent?.trim().startsWith(t)), { timeout: 15_000, polling: 250 }, s.scrollTo)
+      .catch(() => console.log(`  "${s.scrollTo}" never appeared`));
     await page.evaluate(
       (t, scrollerSrc) =>
         new Promise(done => {

@@ -326,7 +326,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   if (changed.rate > changed.limit) why.push(`changes ${(changed.rate * 100).toFixed(1)}% of past decisions (limit ${changed.limit * 100}%)`);
   if (safety.length) why.push(`${safety.length} safety violation(s)`);
   for (const d of dropped) why.push(`changes or drops ${d} of the current version though no labeled case shows it was wrong`);
-  for (const [rule, t] of thin) why.push(`rule ${rule} would take over work people did on the strength of ${t.n} labeled case(s)${t.disagree ? `, ${t.disagree} of which disagree` : ''} (needs ${MIN_SUPPORT}, and disagreements provably under ${tolerable * 100}%)`);
+  for (const [rule, t] of thin) why.push(`${rule < 0 ? 'the default' : `rule ${rule}`} would take over work people did on the strength of ${t.n} labeled case(s)${t.disagree ? `, ${t.disagree} of which disagree` : ''} (needs ${MIN_SUPPORT}, and disagreements provably under ${tolerable * 100}%)`);
   return {
     problems,
     labeled: { n: examples.length, correctBefore: before, correctAfter: after, fixed, broken, asksAgain, newAlone },
