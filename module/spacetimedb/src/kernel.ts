@@ -5,6 +5,7 @@
 import type { InferSchema, ReducerCtx } from 'spacetimedb/server';
 import type spacetimedb from './schema';
 import { evaluate, type Action, type PolicyRule, type PolicyTemplate, type Principal } from './core/policy';
+import type { ContractTerms } from './core/contracts';
 import { canonical, chainHash } from './core/hash';
 
 export type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
@@ -281,13 +282,47 @@ export function checkInvariants(tx: Tx): string[] {
   return out;
 }
 
+// ---------- ledger questions the seats and the fact library share ----------
+
+export function termsForEntity(tx: Tx, entityCode: string): ContractTerms | null {
+  for (const s of tx.db.store.entityCode.filter(entityCode)) {
+    const cv = tx.db.contractVersion.version.find(s.contractVersion);
+    if (cv) return JSON.parse(cv.termsJson) as ContractTerms;
+  }
+  const fallback = tx.db.contractVersion.version.find('TRADE-30');
+  return fallback ? (JSON.parse(fallback.termsJson) as ContractTerms) : null;
+}
+
+export function factsOf(tx: Tx, subject: string, attr: string): { id: bigint; value: any; trusted: boolean; validFrom: string; knownAt: string; sourceObs: bigint }[] {
+  return [...tx.db.fact.subject.filter(subject)].filter(f => f.attr === attr).sort((a, b) => (a.id < b.id ? -1 : 1)).map(f => ({ id: f.id, value: JSON.parse(f.value), trusted: f.trusted, validFrom: f.validFrom, knownAt: f.knownAt, sourceObs: f.sourceObs }));
+}
+
+// What a payment that named an invoice left open on it, when that is no more than
+// the agreement tolerates and less than half the invoice: bank charges and
+// exchange differences, not part-payments. Not chased; a person writes it off
+// (C7), or keeps it open, and then it is an ordinary balance again.
+export function isDifference(tx: Tx, inv: { id: string; entityCode: string; amountCents: bigint; openCents: bigint }): boolean {
+  if (inv.openCents <= 0n || inv.openCents * 2n >= inv.amountCents || Number(inv.openCents) > (termsForEntity(tx, inv.entityCode)?.smallBalanceCents ?? 0)) return false;
+  if (factsOf(tx, `invoice:${inv.id}`, 'kept_open').length) return false;
+  for (const app of tx.db.application.invoiceId.filter(inv.id)) if (!app.reversed && tx.db.receipt.id.find(app.receiptId)?.reference.includes(inv.id)) return true;
+  return false;
+}
+
+// What collections may chase: open invoices past due, neither in a scheduled debit
+// nor a small difference.
+export function pastDueInvoices(tx: Tx, entityCode: string, today: string) {
+  const inDebit = new Set([...tx.db.debitInstruction.entityCode.filter(entityCode)].filter(d => d.status === 'scheduled').flatMap(d => JSON.parse(d.invoiceIds) as string[]));
+  return [...tx.db.invoice.entityCode.filter(entityCode)].filter(i => i.openCents > 0n && i.dueAt < today && !inDebit.has(i.id) && !isDifference(tx, i));
+}
+
 // ---------- fact library ----------
 
 export function factsFor(tx: Tx, entityCode: string): Record<string, boolean> {
   const today = simDate(tx);
   const e = tx.db.entity.code.find(entityCode);
   const pendingRouting = [...tx.db.routingRequest.entityCode.filter(entityCode)].some(r => r.status === 'held');
-  const unapplied = [...tx.db.receipt.entityCode.filter(entityCode)].some(r => r.unappliedCents > 0n);
+  const unapplied = [...tx.db.receipt.entityCode.filter(entityCode)].reduce((s, r) => s + r.unappliedCents, 0n);
+  const pastDue = pastDueInvoices(tx, entityCode, today).reduce((s, i) => s + i.openCents, 0n);
   const disputed = [...tx.db.invoice.entityCode.filter(entityCode)].some(i => i.status === 'disputed');
   const returned = [...tx.db.debitInstruction.entityCode.filter(entityCode)].some(
     d => d.status === 'returned' && daysApart(d.scheduledFor, today) <= 14
@@ -301,7 +336,8 @@ export function factsFor(tx: Tx, entityCode: string): Record<string, boolean> {
   return {
     routing_verified: !!e && e.bankAccountTrusted && !pendingRouting,
     routing_changed_unverified: pendingRouting,
-    payment_in_transit: unapplied,
+    payment_in_transit: unapplied > 0n,
+    unapplied_covers_past_due: pastDue > 0n && unapplied >= pastDue,
     open_dispute: disputed,
     recent_return: returned,
     bankruptcy_flag: e?.status === 'bankrupt',

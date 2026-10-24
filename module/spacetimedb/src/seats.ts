@@ -8,7 +8,7 @@ import { allocationsForSubset, applyByTerms, findSubsets, type OpenItem } from '
 import { nameTokens } from './core/names';
 import { addDays, bpOf, daysBetween } from './core/money';
 import type { Principal } from './core/policy';
-import { appendActivity, exec, factsFor, Rejection, simDate, type Tx } from './kernel';
+import { appendActivity, exec, factsFor, factsOf, isDifference, pastDueInvoices, Rejection, simDate, termsForEntity, type Tx } from './kernel';
 import { llmJson, type ProcCtx } from './llm';
 import { addFact, applyToInvoice, createInvoice, openWork } from './world';
 import { statFor } from './reliability';
@@ -110,24 +110,11 @@ export function decide(tx: Tx, seat: string, domain: string, subject: string, fe
   return { id: row.id, key: s.key, decide: outcome.decide, note: outcome.note ?? '', askRole: outcome.askRole ?? 'controller', used: trace.used };
 }
 
-export function termsForEntity(tx: Tx, entityCode: string): ContractTerms | null {
-  for (const s of tx.db.store.entityCode.filter(entityCode)) {
-    const cv = tx.db.contractVersion.version.find(s.contractVersion);
-    if (cv) return JSON.parse(cv.termsJson) as ContractTerms;
-  }
-  const fallback = tx.db.contractVersion.version.find('TRADE-30');
-  return fallback ? (JSON.parse(fallback.termsJson) as ContractTerms) : null;
-}
-
 export function termsForStore(tx: Tx, storeCode: string): ContractTerms | null {
   const s = tx.db.store.code.find(storeCode);
   if (!s) return null;
   const cv = tx.db.contractVersion.version.find(s.contractVersion);
   return cv ? (JSON.parse(cv.termsJson) as ContractTerms) : null;
-}
-
-function factsOf(tx: Tx, subject: string, attr: string): { id: bigint; value: any; trusted: boolean; validFrom: string; knownAt: string; sourceObs: bigint }[] {
-  return [...tx.db.fact.subject.filter(subject)].filter(f => f.attr === attr).sort((a, b) => (a.id < b.id ? -1 : 1)).map(f => ({ id: f.id, value: JSON.parse(f.value), trusted: f.trusted, validFrom: f.validFrom, knownAt: f.knownAt, sourceObs: f.sourceObs }));
 }
 
 export function openAsk(
@@ -566,17 +553,6 @@ export function cashAppCycle(ctx: ProcCtx): string {
   return `reports ${done.weekly_report}, receipts ${done.apply_receipt + done.identify_payer}, debits ${debits}${differences ? `, small differences ${differences}` : ''}${setAside ? `, set aside ${setAside}` : ''}`;
 }
 
-// What a payment that named an invoice left open on it, when that is no more than
-// the agreement tolerates and less than half the invoice: bank charges and
-// exchange differences, not part-payments. Not chased; a person writes it off
-// (C7), or keeps it open, and then it is an ordinary balance again.
-function isDifference(tx: Tx, inv: { id: string; entityCode: string; amountCents: bigint; openCents: bigint }): boolean {
-  if (inv.openCents <= 0n || inv.openCents * 2n >= inv.amountCents || Number(inv.openCents) > (termsForEntity(tx, inv.entityCode)?.smallBalanceCents ?? 0)) return false;
-  if (factsOf(tx, `invoice:${inv.id}`, 'kept_open').length) return false;
-  for (const app of tx.db.application.invoiceId.filter(inv.id)) if (!app.reversed && tx.db.receipt.id.find(app.receiptId)?.reference.includes(inv.id)) return true;
-  return false;
-}
-
 // On Mondays the cash seat puts the week's small differences to the controller in one list.
 function listDifferences(tx: Tx): number {
   const today = simDate(tx);
@@ -923,8 +899,7 @@ function scheduleDebits(tx: Tx): number {
 
 export function preChaseFeatures(tx: Tx, entityCode: string, today: string): FeatureMap | null {
   const terms = termsForEntity(tx, entityCode);
-  const inDebit = new Set([...tx.db.debitInstruction.entityCode.filter(entityCode)].filter(d => d.status === 'scheduled').flatMap(d => JSON.parse(d.invoiceIds) as string[]));
-  const open = [...tx.db.invoice.entityCode.filter(entityCode)].filter(i => i.openCents > 0n && i.dueAt < today && !inDebit.has(i.id) && !isDifference(tx, i));
+  const open = pastDueInvoices(tx, entityCode, today);
   if (open.length === 0) return null;
   const oldest = open.map(i => i.dueAt).sort()[0];
   const facts = factsFor(tx, entityCode);
@@ -984,15 +959,18 @@ export function collectionsCycle(ctx: ProcCtx): string {
       if (!features) continue;
       if (holdUntil(tx, e.code) > today) continue;
       const d = decide(tx, COLL.id, 'pre_chase', `entity:${e.code}:${today}`, features);
+      let noticed = false;
       if (d.decide === 'chase') {
         if (Number(features.notices_last_30d) >= 1 && daysBetween(lastNotice(tx, e.code), today) < 7) continue;
-        if (sendNotice(tx, e.code, features, [d.key], [`decision:${d.id}`])) notices++;
+        noticed = sendNotice(tx, e.code, features, [d.key], [`decision:${d.id}`]);
+        if (noticed) notices++;
       } else if (d.decide === 'ask_consultant' || d.decide === 'escalate_controller') {
         openAsk(tx, { kind: 'collections', subject: `entity:${e.code}`, toRole: d.askRole, question: `${e.name} is ${features.days_past_due} days past due on ${money(Number(features.open_amount))}. ${d.note} How should we proceed?`, options: ['chase', 'hold 7 days', 'escalate'], evidence: { features, skill: d.key, decision: Number(d.id) }, confidence: 0.4, by: COLL.id });
       } else {
         appendActivity(tx, { principal: COLL.id, role: COLL.role, kind: 'decision', command: 'hold_collection', params: { entity: e.code, features }, used: [`decision:${d.id}`], plan: [d.key], outcome: d.decide, reasons: [d.note] });
       }
-      fees += assessLateFees(tx, e.code, today, d.decide === 'chase');
+      // Late fees go out with a notice the kernel let through, never after one it refused.
+      fees += assessLateFees(tx, e.code, today, noticed);
     }
     return `notices ${notices}, fees ${fees}`;
   });

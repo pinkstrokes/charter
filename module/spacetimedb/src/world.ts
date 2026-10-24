@@ -5,7 +5,7 @@ import { TRUSTED_SOURCES, type BankTxnPayload, type CallbackPayload, type Credit
 import { sha256Hex } from './core/hash';
 import { nameTokens } from './core/names';
 import type { Action, Principal } from './core/policy';
-import { AR_ACCOUNT_BY_KIND, appendActivity, bumpControl, exec, post, Rejection, simDate, type Tx } from './kernel';
+import { AR_ACCOUNT_BY_KIND, appendActivity, bumpControl, exec, factsFor, post, Rejection, simDate, type Tx } from './kernel';
 
 const SYSTEM: Principal = { kind: 'system', id: 'erp', role: 'world' };
 const AUTO_SETTLE: Principal = { kind: 'system', id: 'auto-settlement', role: 'cash_app' };
@@ -95,7 +95,9 @@ export function createInvoice(
   action: Action = 'post_invoice'
 ): { ok: boolean; reasons: string[]; activityId: bigint } {
   if (tx.db.invoice.id.find(inv.id)) return { ok: true, reasons: ['already exists'], activityId: 0n };
-  const res = exec(tx, { principal, action, params: inv, used, plan, amountCents: inv.amountCents }, activityId => {
+  // A fee is a collection action: the kernel weighs it against the counterparty's facts, as it does a notice.
+  const facts = action === 'assess_fee' ? factsFor(tx, inv.entityCode) : undefined;
+  const res = exec(tx, { principal, action, params: inv, used, plan, amountCents: inv.amountCents, facts }, activityId => {
     if (inv.amountCents <= 0) throw new Rejection(`invoice ${inv.id} amount must be positive`);
     tx.db.invoice.insert({ ...inv, amountCents: BigInt(inv.amountCents), openCents: BigInt(inv.amountCents), status: 'open' });
     post(tx, `JE-${inv.id}`, [
