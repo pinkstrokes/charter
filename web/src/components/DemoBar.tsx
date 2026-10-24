@@ -23,12 +23,16 @@ export function DemoBar() {
   const info = useCharter();
   const nav = useNav();
   const [steps, setSteps] = useState<Step[]>([]);
+  const [persona, setPersona] = useState('');
   const [busy, setBusy] = useState('');
   useEffect(() => {
     if (!info.demo) return;
     fetch('/__charter/demo/steps')
       .then(r => r.json())
-      .then((b: { steps: Step[] }) => setSteps(b.steps ?? []))
+      .then((b: { steps: Step[]; persona?: string }) => {
+        setSteps(b.steps ?? []);
+        setPersona(b.persona ?? '');
+      })
       .catch(() => setSteps([]));
   }, [info.demo]);
   // ?bar=0 hides it (the video is recorded on the demo server without the presenter's bar).
@@ -46,6 +50,16 @@ export function DemoBar() {
       const r = await fetch('/__charter/demo/reset', { method: 'POST' });
       const b = (await r.json()) as { ok: boolean; output: string };
       if (!b.ok) throw new Error(b.output);
+      // Every table starts as the same controller, whoever the last one switched to.
+      if (persona) {
+        for (const db of new Set(steps.map(s => s.db))) {
+          try {
+            localStorage.setItem(`charter.persona.${db}`, persona);
+          } catch {
+            /* storage unavailable: each company opens on its first persona */
+          }
+        }
+      }
       window.location.assign(urlFor(steps[0]));
     } catch (e) {
       setBusy('');
