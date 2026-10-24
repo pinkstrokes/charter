@@ -1,0 +1,9 @@
+{
+ "period": "2010-12",
+ "closedAt": "2011-01-01",
+ "closedBy": "controller:Dana",
+ "certificateHash": "067feefe79ba7cc0cef156eda09b62dc343509132f0d1c756d211e53e7851335",
+ "chainHead": "bb35b215bfffa907a38401f202abbb096a6d306d1afd85a21c4ada7c3f7abf2a",
+ "lastActivityId": 71005,
+ "auditorOpinion": "clean"
+}
