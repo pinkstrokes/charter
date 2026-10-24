@@ -1,8 +1,8 @@
 // Skills travel, data does not. A skill version learned at one company is
 // offered to another as a program and a few aggregate numbers; no record of
-// the source company crosses. The target replays the program over its own
-// history and its own people's answers, through the same gate as any
-// proposal, and its own controller decides.
+// the source company crosses. The target replays it — whole, and rule by rule
+// on top of its own program — over its own history and its own people's
+// answers, through the same gate as any proposal, and its own controller decides.
 //   npx tsx tools/evolve/transfer.ts --from charter-a --to charter-b --domain allocation
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -46,14 +46,28 @@ async function main(): Promise<void> {
   const hidden = new Set(((Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { split: string; subject: string }[]).filter(e => e.split === 'test' || e.split === 'live').map(e => e.subject));
   const examples = examplesFor(h, DOMAIN, hidden);
   const { required, optional } = splitLessons(DOMAIN, current, examples);
-  const ev = evaluate(DOMAIN, current, program, examples, required, h, hidden, optional);
+  // Whole programs rarely fit another company. A rule does: each rule the source
+  // learned that the target lacks is tried on top of the target's own program,
+  // which keeps every rule its people never faulted. A rule is adopted only if it
+  // handles something the target's people taught and breaks nothing they labeled.
+  const sig = (r: SkillProgram['rules'][number]) => JSON.stringify([r.when, r.then?.decide]);
+  const own = new Set(current.rules.map(sig));
+  const imported = program.rules.filter(r => !own.has(sig(r)));
+  const tried = [
+    { what: 'the whole program', program },
+    ...imported.map(r => ({ what: `rule "${r.then.note ?? r.then.decide}"`, program: { ...current, rules: [r, ...current.rules] } })),
+  ].map(t => ({ ...t, ev: evaluate(DOMAIN, current, t.program, examples, required, h, hidden, optional) }));
+  const passing = tried.filter(t => t.ev.gate === 'pass').sort((a, b) => b.ev.lesson.handled.length - a.ev.lesson.handled.length || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || a.ev.changed.n - b.ev.changed.n);
+  const best = passing[0] ?? tried[0];
+  const ev = best.ev;
   const proof = {
     gate: ev.gate,
     transfer: true,
-    crossed: { programHash: crossing.programHash, source: crossing.source, records: 0 },
+    crossed: { programHash: crossing.programHash, source: crossing.source, records: 0, adopted: best.what },
     targetCompany: dstCfg[0]?.company_name ?? TO,
+    tried: tried.map(t => ({ what: t.what, gate: t.ev.gate, why: t.ev.why })),
     labeled: ev.labeled,
-    lesson: { subjects: [...required, ...optional].map(e => e.subject).slice(0, 50), required: required.length, optionalFixed: ev.lesson.optionalFixed, optionalTotal: optional.length },
+    lesson: { subjects: [...required, ...optional].map(e => e.subject).slice(0, 50), required: required.length, handled: ev.lesson.handled, optionalFixed: ev.lesson.optionalFixed, optionalTotal: optional.length },
     changed: ev.changed,
     safetyViolations: ev.safety.length,
     robustness: ev.robustness,
@@ -63,12 +77,13 @@ async function main(): Promise<void> {
   };
   mkdirSync('data/transfers', { recursive: true });
   writeFileSync(`data/transfers/${FROM}-to-${TO}-${DOMAIN}.json`, JSON.stringify({ crossing, proof }, null, 2));
+  for (const t of tried) console.log(`  ${t.what}: ${t.ev.gate}${t.ev.gate === 'pass' ? '' : ` (${t.ev.why.join('; ')})`}`);
   if (ev.gate !== 'pass') {
-    console.log(`${DOMAIN}: ${crossing.source.skill} from ${crossing.source.company} does not pass at ${proof.targetCompany}: ${ev.why.join('; ')}`);
+    console.log(`${DOMAIN}: nothing from ${crossing.source.company}'s ${chosen.key} passes at ${proof.targetCompany}`);
     return;
   }
-  await dst.call('propose_skill', DOMAIN, JSON.stringify(program), active.key, `transferred from ${crossing.source.company} (${chosen.key}); program ${crossing.programHash.slice(0, 12)}, no records crossed`, JSON.stringify(proof));
-  console.log(`${DOMAIN}: proposed at ${proof.targetCompany} from ${crossing.source.company}'s ${chosen.key}: fixes ${ev.labeled.fixed.length}, takes over ${ev.lesson.optionalFixed}/${optional.length}, breaks ${ev.labeled.broken.length}, changes ${ev.changed.n} past decisions`);
+  await dst.call('propose_skill', DOMAIN, JSON.stringify(best.program), active.key, `${best.what} transferred from ${crossing.source.company} (${chosen.key}); no records crossed`, JSON.stringify(proof));
+  console.log(`${DOMAIN}: proposed at ${proof.targetCompany}: ${best.what} from ${crossing.source.company}'s ${chosen.key}; handles ${ev.lesson.handled.length}/${required.length} taught cases, fixes ${ev.labeled.fixed.length}, breaks 0, changes ${ev.changed.n} past decisions`);
 }
 
 main().catch(e => {
