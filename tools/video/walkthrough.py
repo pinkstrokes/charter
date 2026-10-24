@@ -41,6 +41,10 @@ def main(spec_path, out_path):
     timed = os.path.join(work, "scenes.json")
     json.dump(scenes, open(timed, "w"))
     subprocess.run(["node", os.path.join(os.path.dirname(os.path.abspath(__file__)), "record.mjs"), timed, work], check=True)
+    # A scene can run longer than its narration (waiting for the seats); keep all of it.
+    recorded = json.load(open(os.path.join(work, "recorded.json")))
+    for i, sc in enumerate(scenes):
+        sc["seconds"] = max(sc["seconds"], round(recorded.get(str(i), 0), 2))
     parts = []
     for i, sc in enumerate(scenes):
         seg = os.path.join(work, f"s{i}.mp4")

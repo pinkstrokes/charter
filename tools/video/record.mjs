@@ -3,9 +3,9 @@
 // narration. A drawn cursor shows where each click lands.
 //   node tools/video/record.mjs <scenes.json with seconds filled in> <out dir>
 // A scene: {url?, ready?, seconds, steps: [...]}; a step is one of
-//   {wait: ms} {click: "visible text"} {type: "field label", text} {scroll: "#main" | ".drawer", by: px} {scrollTo: "heading text"}
+//   {wait: ms} {click: "visible text", within?: "text of its table row"} {type: "field label", text} {scroll: "#main" | ".drawer", by: px} {scrollTo: "heading text"}
 //   {waitText: "text", timeout: ms} {call: {db, as, fn, args}} (a reducer, as an identity in data/company*/identities.json)
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import puppeteer from 'puppeteer-core';
 
 const [, , specPath, outDir] = process.argv;
@@ -24,11 +24,18 @@ const CURSOR = `
     document.body.appendChild(c);
   }`;
 
-async function find(page, text) {
-  return page.evaluateHandle(t => {
-    const all = [...document.querySelectorAll('button, a, [role="button"], [role="tab"], .persona')].filter(e => e.offsetParent !== null);
-    return all.find(e => e.textContent?.trim() === t) ?? all.find(e => e.textContent?.includes(t)) ?? null;
-  }, text);
+// A visible control by its text; with `within`, only inside the table row that mentions it.
+async function find(page, text, within) {
+  return page.evaluateHandle(
+    (t, w) => {
+      const scope = w ? [...document.querySelectorAll('tr')].find(r => r.textContent?.includes(w)) : document;
+      if (!scope) return null;
+      const all = [...scope.querySelectorAll('button, a, [role="button"], [role="tab"], .persona')].filter(e => e.offsetParent !== null);
+      return all.find(e => e.textContent?.trim() === t) ?? all.find(e => e.textContent?.includes(t)) ?? null;
+    },
+    text,
+    within ?? ''
+  );
 }
 
 async function pointAt(page, el) {
@@ -115,7 +122,7 @@ async function step(page, s) {
     return sleep(300);
   }
   if (s.click) {
-    const el = (await find(page, s.click)).asElement();
+    const el = (await find(page, s.click, s.within)).asElement();
     if (!el) return console.log(`  nothing to click for "${s.click}"`);
     await pointAt(page, el);
     await press(page);
@@ -149,6 +156,7 @@ const browser = await puppeteer.launch({
   defaultViewport: { width: W, height: H, deviceScaleFactor: 1 },
 });
 const page = await browser.newPage();
+const recorded = {};
 for (const [i, sc] of scenes.entries()) {
   if (sc.title) continue;
   if (sc.url) await page.goto(sc.url, { waitUntil: 'networkidle2', timeout: 60_000 }).catch(() => undefined);
@@ -161,6 +169,8 @@ for (const [i, sc] of scenes.entries()) {
   const left = sc.seconds * 1000 - (Date.now() - t0);
   if (left > 0) await sleep(left);
   await recorder.stop();
-  console.log(`scene ${i}: ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+  recorded[i] = (Date.now() - t0) / 1000;
+  console.log(`scene ${i}: ${recorded[i].toFixed(1)}s`);
 }
 await browser.close();
+writeFileSync(`${outDir}/recorded.json`, JSON.stringify(recorded));
