@@ -137,12 +137,14 @@ export const ACTION_LABEL: Record<string, string> = {
   email_received: 'Email received',
   hold_collection: 'Hold collection',
   decline_refund: 'Decline refund',
+  set_entity_status: 'Record counterparty status',
 };
 
 export const ACTION_VERB: Record<string, string> = {
   post_invoice: 'post invoices',
   apply_receipt: 'apply receipts',
   reverse_application: 'reverse applications',
+  set_entity_status: 'record a counterparty in bankruptcy or closed',
   assess_fee: 'assess fees',
   waive_fee: 'waive fees',
   send_notice: 'send notices',
