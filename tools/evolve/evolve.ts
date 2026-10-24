@@ -9,7 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
-import { agrees, evaluate, examplesFor, latestBySubject, loadHistory, propose, prune, repair, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
+import { agrees, center, evaluate, examplesFor, latestBySubject, loadHistory, propose, prune, repair, splitLessons, tune, type Domain, type Evaluation, type Example, type History } from './skills';
 import { searchPolicies } from './policies';
 
 const args = new Map<string, string>();
@@ -103,8 +103,16 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
       for (const v of repair(domain, current, p.program, ev, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, unsupported rules removed by replay`, rationale: p.rationale });
     }
   }
-  const passing = scored.filter(s => s.ev.gate === 'pass');
-  passing.sort((a, b) => b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity);
+  const rank = (a: Scored, b: Scored) => b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity;
+  const passing = scored.filter(s => s.ev.gate === 'pass').sort(rank);
+  // The leading candidates get their new thresholds centred between the known cases.
+  for (const c of passing.slice(0, 3)) {
+    const program = center(domain, current, c.program, examples, lesson, h, hidden, optional);
+    if (JSON.stringify(program) === JSON.stringify(c.program)) continue;
+    const ev = evaluate(domain, current, program, examples, lesson, h, hidden, optional);
+    if (ev.gate === 'pass') passing.push({ program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale });
+  }
+  passing.sort(rank);
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
   log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), optional: optional.length, candidates: scored.length, passing: passing.length, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
   if (!passing.length) {

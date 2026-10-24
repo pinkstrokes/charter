@@ -385,6 +385,63 @@ export async function propose(model: string, domain: Domain, current: SkillProgr
   return out;
 }
 
+// Thresholds the model wrote sit wherever it guessed, often hugging the cases it
+// was shown. Each constant of a new rule moves to the middle of the widest range
+// of values that gets the most labeled cases right, leaves every unlabeled past
+// decision as it was and passes the gate: as far from the nearest known case on
+// either side as the evidence allows. Rules carried over keep their constants.
+export function center(domain: Domain, current: SkillProgram, cand: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[] = []): SkillProgram {
+  const sig = (r: SkillProgram['rules'][number]) => JSON.stringify([r.when, r.then?.decide]);
+  const inherited = new Set(current.rules.map(sig));
+  const prog = JSON.parse(JSON.stringify(cand)) as SkillProgram;
+  const nums: { set: (v: number) => void; v: number }[] = [];
+  const walk = (e: Expr) => {
+    if (e.op === 'num') nums.push({ v: e.v, set: v => (e.v = v) });
+    else if (e.op === 'cmp') (walk(e.a), walk(e.b));
+    else if (e.op === 'and' || e.op === 'or' || e.op === 'arith') e.args.forEach(walk);
+    else if (e.op === 'not') walk(e.a);
+  };
+  prog.rules.forEach(r => inherited.has(sig(r)) || walk(r.when));
+  const decide = (f: FeatureMap) => {
+    try {
+      return run(prog, f).outcome.decide;
+    } catch {
+      return 'error';
+    }
+  };
+  const labeled = new Set(examples.map(e => e.subject));
+  const unlabeled = [...latestBySubject(h, domain).values()].filter(d => !hidden.has(d.subject) && !labeled.has(d.subject)).map(d => parseJson<FeatureMap>(d.features, {}));
+  const before = unlabeled.map(decide);
+  const right = () => examples.filter(e => agrees(domain, decide(e.features), e.label)).length;
+  const round = (v: number) => (Math.abs(v) >= 1000 ? Math.round(v / 100) * 100 : Math.round(v * 1000) / 1000);
+  for (const n of nums.slice(0, 8)) {
+    const v0 = n.v;
+    if (v0 === 0) continue;
+    const grid = [...new Set(Array.from({ length: 121 }, (_, k) => round(v0 * (0.4 + k * 0.01))))].sort((a, b) => a - b);
+    n.set(v0);
+    const floor = right();
+    const ok = grid.map(v => {
+      n.set(v);
+      if (!unlabeled.every((f, i) => decide(f) === before[i])) return -1;
+      const r = right();
+      return r >= floor && evaluate(domain, current, prog, examples, lesson, h, hidden, optional).gate === 'pass' ? r : -1;
+    });
+    const best = Math.max(...ok);
+    let run0 = -1;
+    let bestRun: [number, number] = [-1, -1];
+    for (let i = 0; i <= grid.length; i++) {
+      if (i < grid.length && ok[i] === best && best >= 0) {
+        if (run0 < 0) run0 = i;
+      } else if (run0 >= 0) {
+        if (i - run0 > bestRun[1] - bestRun[0]) bestRun = [run0, i];
+        run0 = -1;
+      }
+    }
+    n.set(bestRun[0] < 0 ? v0 : round((grid[bestRun[0]] + grid[bestRun[1] - 1]) / 2));
+  }
+  return prog;
+}
+
 // The model proposes structure; the evaluator tunes its constants by replay.
 export function tune(domain: Domain, current: SkillProgram, cand: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[] = []): SkillProgram[] {
   const nums: { set: (v: number) => void; v: number }[] = [];
