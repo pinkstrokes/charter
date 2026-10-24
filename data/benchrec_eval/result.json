@@ -1,0 +1,105 @@
+{
+ "dataset": "BenchRec cash v1.0 (Kaggle benchmarkteam, CC BY 4.0)",
+ "floor": 0.998,
+ "rules": [
+  {
+   "rule": 0,
+   "note": "one ledger allocation on the value date has exactly this amount, booked within two weeks",
+   "train": {
+    "n": 44125,
+    "wrong": 52,
+    "upper95": 0.00148
+   },
+   "actsAlone": true,
+   "eval": {
+    "n": 18754,
+    "wrong": 17
+   }
+  },
+  {
+   "rule": 1,
+   "note": "one ledger allocation on the value date has exactly this amount",
+   "train": {
+    "n": 55,
+    "wrong": 14,
+    "upper95": 0.36898
+   },
+   "actsAlone": false,
+   "eval": {
+    "n": 0,
+    "wrong": 0
+   }
+  },
+  {
+   "rule": 2,
+   "note": "every ledger line with this amount on the value date carries the same allocation",
+   "train": {
+    "n": 12821,
+    "wrong": 15,
+    "upper95": 0.0018
+   },
+   "actsAlone": true,
+   "eval": {
+    "n": 8145,
+    "wrong": 11
+   }
+  },
+  {
+   "rule": 3,
+   "note": "another bank line claims the same ledger line",
+   "train": {
+    "n": 135,
+    "wrong": 15,
+    "upper95": 0.16593
+   },
+   "actsAlone": false,
+   "eval": {
+    "n": 0,
+    "wrong": 0
+   }
+  },
+  {
+   "rule": 4,
+   "note": "one allocation's ledger lines on the value date add up to this amount",
+   "train": {
+    "n": 2,
+    "wrong": 0,
+    "upper95": 0.77639
+   },
+   "actsAlone": false,
+   "eval": {
+    "n": 0,
+    "wrong": 0
+   }
+  },
+  {
+   "rule": 5,
+   "note": "one ledger allocation within 3 days has exactly this amount",
+   "train": {
+    "n": 353,
+    "wrong": 31,
+    "upper95": 0.11668
+   },
+   "actsAlone": false,
+   "eval": {
+    "n": 0,
+    "wrong": 0
+   }
+  }
+ ],
+ "eval": {
+  "bankLines": 32048,
+  "matched": 26899,
+  "correct": 26871,
+  "precision": 0.9989590691103758,
+  "matchRate": 0.8393347478781827,
+  "clearsFloor": true
+ },
+ "baseline": {
+  "name": "MatcherByChatGPT_submission.csv (shipped with the dataset)",
+  "matched": 20800,
+  "correct": 20686,
+  "precision": 0.9945192307692308,
+  "matchRate": 0.6490264603095357
+ }
+}

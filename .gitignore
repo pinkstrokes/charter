@@ -13,3 +13,9 @@ data/companyB/identities.json
 docs/video/*.mp4
 tools/video/node_modules/
 tools/video/shots/
+
+# research notes and samples gathered during the hackathon; BenchRec CSVs are downloaded, not committed
+docs/research/
+data/research_samples/
+data/benchrec/
+data/benchrec_eval/submission.csv
