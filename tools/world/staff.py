@@ -2,37 +2,40 @@
 
 After the seats run each day they read the questions addressed to them, the open
 asks (besides the bank's debit list, the only thing the world reads from the
-database), and answer within the ask's deadline from what they know to be true.
-They also do what only people do: Lee raises the March concern about #14, the
-consultants perform the audits people requested, Dana endorses bank changes a
-callback confirmed, hires the refunds seat, and corrects a few decisions she can
-see were wrong once an owner complains. A few answers are wrong on purpose; the
-answer key registered them before the run.
+database; a person also opens the email or the decision a question is about),
+and answer within the ask's deadline from what they know to be true. They also
+do what only people do: Lee raises the March concern about #14, the consultants
+perform the audits people requested, Dana endorses bank changes a callback
+confirmed, hires the refunds seat, and corrects a few decisions she can see were
+wrong once an owner complains. A few answers are wrong on purpose; the answer
+key registered them before the run.
 
 Every answer carries one sentence of reason in the person's voice (qwen3.8-flash,
-cached in texts.json; --fast uses templates).
+cached in texts.json; --fast uses templates). Routine "the seat was right"
+spot checks draw on a small cached phrase bank per person instead of a call each.
 """
 from __future__ import annotations
 
 import json
 import re
 
-from cast import STAFF, entity, store, stores_of, terms_for_store
-from common import add_days, bp_of, business_day_on_or_after, is_business_day, money, next_business_day, stable_int, weekday
+from cast import ENTITIES, STAFF, entity, store, stores_of, terms_for_store
+from common import add_days, bp_of, business_day_on_or_after, is_business_day, money, next_business_day, stable_int
 from scenarios import audit_payment_txn
 from texts import Texts
 
-ENTITY_BY_NAME = {}
-for _code in [f"F{i:02d}" for i in range(1, 15)]:
-    ENTITY_BY_NAME[entity(_code)["name"]] = _code
-
+ENTITY_BY_NAME = {e[1]: e[0] for e in ENTITIES}
+ESCALATE = {"flag_audit", "ask_consultant"}
 REASON_SYSTEM = ("You are {voice}. Your finance team's software asked you a question and you have decided the answer. "
                  "Write ONE plain sentence (at most 30 words) giving your reason, in your own voice. No preamble, no quotes, do not restate the question.")
-ESCALATE = {"flag_audit", "ask_consultant"}
 
 
 def consultant_for_entity(code: str) -> str:
     return store(stores_of(code)[0])["consultant"]
+
+
+def same_treatment(domain: str, a: str, b: str) -> bool:
+    return (a in ESCALATE) == (b in ESCALATE) if domain == "underreport" else a == b
 
 
 class Staff:
@@ -44,7 +47,10 @@ class Staff:
                              ("answers", []), ("reactive_receipts", {}), ("skipped", [])]:
             self.s.setdefault(key, default)
         self.receipts = {**self.k["receipts"], **self.s["reactive_receipts"]}
-        self.dispute_done = {d["case"] for d in self.k["disputes"] if d["case"] in self.s["done"]}
+        self.handlers = {"audit": self._audit, "callback": self._callback, "allocation": self._allocation, "identify_payer": self._identify,
+                         "unapplied_cash": self._unapplied, "refund_release": self._refund, "collections": self._collections, "dispute": self._dispute,
+                         "royalty_decrease": self._royalty_decrease, "reading_conflict": self._reading_conflict, "finding": self._finding,
+                         "unknown_report": lambda d, a: ("Dana", "ignore", "no store matches; asked the sender to resend", None)}
 
     # ---------- the day ----------
 
@@ -52,10 +58,11 @@ class Staff:
         counts = {"answered": 0, "audits": 0, "events": []}
         for ev in [e for e in self.k["events"] if e["date"] == day]:
             self._event(day, ev, counts)
-        for a in sorted(self.c["Dana"].sql("SELECT id, created_at, kind, subject, to_role, question, options, evidence, deadline FROM ask WHERE status = 'open'"),
-                        key=lambda a: a["id"]):
+        asks = self.c["Dana"].sql("SELECT id, created_at, kind, subject, to_role, question, options, evidence, deadline FROM ask WHERE status = 'open'")
+        for a in sorted(asks, key=lambda a: a["id"]):
             if self._answer(day, a):
                 counts["answered"] += 1
+        counts["open"] = len(asks) - counts["answered"]
         counts["audits"] = self._close_due_audits(day)
         self._call_desk(day)
         self._endorse(day)
@@ -64,31 +71,23 @@ class Staff:
         return counts
 
     def due_payments(self, day: str) -> list[dict]:
-        """Owners' payments of audit invoices that fall due today (ingested by the runner with the day's mail)."""
+        """Owners' payments of audit invoices that fall due today (the runner ingests them with the day's mail)."""
         return [p for p in self.s["payments"] if p["date"] == day]
 
     # ---------- answering ----------
 
     def _answer(self, day: str, a: dict) -> bool:
         kind = a["kind"]
-        handler = {"audit": self._audit, "callback": self._callback, "allocation": self._allocation, "identify_payer": self._identify,
-                   "unapplied_cash": self._unapplied, "refund_release": self._refund, "collections": self._collections, "dispute": self._dispute,
-                   "royalty_decrease": self._royalty_decrease, "unknown_report": lambda d, a: ("Dana", "ignore", "no store matches; asked the sender to resend", None)}
-        if kind.startswith("spot_check:"):
-            decided = self._spot_check(day, a)
-        elif kind in handler:
-            decided = handler[kind](day, a)
-        else:
+        handler = self._spot_check if kind.startswith("spot_check:") else self.handlers.get(kind)
+        if handler is None:
             self._skip(a, f"no persona handles '{kind}'")
             return False
+        decided = handler(day, a)
         if decided is None:
             return False
         who, answer, context, when = decided
-        if when:
-            when = min(when, a["deadline"])
-        if when and day < when:
-            return False
-        if not when and day < self._default_day(a):
+        due = min(when, a["deadline"]) if when else self._default_day(a)
+        if day < due:
             return False
         options = json.loads(a["options"] or "[]")
         if kind != "identify_payer" and answer not in options:
@@ -96,20 +95,18 @@ class Staff:
             return False
         reason = self._reason(who, a, answer, context)
         st, text = self.c[who].call("answer_ask", a["id"], answer, reason, check=False)
-        ok = st == 200
-        self.s["answers"].append({"day": day, "ask": a["id"], "kind": kind, "subject": a["subject"], "answer": answer, "by": who, "ok": ok,
+        self.s["answers"].append({"day": day, "ask": a["id"], "kind": kind, "subject": a["subject"], "answer": answer, "by": who, "ok": st == 200,
                                   "human_error": self._is_error(a, answer)})
-        if not ok:
+        if st != 200:
             self.log(f"  ! {who} answer_ask #{a['id']} {kind} -> {text[:160]}")
             return False
-        self.log(f"  {who} answered #{a['id']} {kind} {a['subject']}: {answer}")
+        self.log(f"  {who} answered #{a['id']} {kind} {a['subject']}: {answer} ({reason})")
         self._after_answer(day, a, answer)
         return True
 
     def _default_day(self, a: dict) -> str:
         """0-2 business days after the question, never past its deadline."""
-        lag = stable_int("lag", a["kind"], a["subject"]) % 3
-        d = add_days(a["created_at"], lag)
+        d = add_days(a["created_at"], stable_int("lag", a["kind"], a["subject"]) % 3)
         while d > a["created_at"] and not is_business_day(d):
             d = add_days(d, -1)
         if not is_business_day(d):
@@ -118,33 +115,33 @@ class Staff:
 
     def _is_error(self, a: dict, answer: str) -> bool:
         he = self.k["human_errors"]
-        return he.get(a["subject"]) == answer or he.get(f"collections:{a['subject'].split(':', 1)[-1]}:{a['created_at']}") == answer
+        planted = he.get(a["subject"]) or he.get(f"collections:{a['subject'].split(':', 1)[-1]}:{a['created_at']}")
+        return planted is not None and (planted == answer or (planted == "request audit" and answer in ESCALATE))
 
-    # ---------- one handler per kind of question: (who, answer, what they know, planned day) ----------
+    # ---------- one handler per kind of question: (who, answer, what they know, planned day or None) ----------
 
     def _audit(self, day, a):
         _, code, week = a["subject"].split(":")
         sw = self.k["store_weeks"].get(f"{code}:{week}", {})
         who = store(code)["consultant"]
         if sw.get("human_error"):
-            return who, sw["human_error"], "you suspected something but had no evidence beyond the numbers", None
-        if sw.get("underreported"):
-            return who, "request audit", self._audit_context(a, sw, True), None
-        return who, "explained — accept report", self._audit_context(a, sw, False), None
+            return who, "request audit", "the cash share looked low to you and you did not check the store's history first", None
+        answer = "request audit" if sw.get("underreported") else "explained — accept report"
+        return who, answer, self._audit_context(a, sw), None
 
-    def _audit_context(self, a, sw, under: bool) -> str:
+    def _audit_context(self, a, sw) -> str:
         f = json.loads(a["evidence"] or "{}").get("features", {})
         code = a["subject"].split(":")[1]
         bits = []
         if f:
             bits.append(f"reported {money(int(f.get('reported_gross', 0)))}, supplies imply {money(int(f.get('supply_implied_gross', 0)))}, "
                         f"cash share {float(f.get('cash_share', 0)):.0%} vs its usual {float(f.get('own_cash_share_history', 0)):.0%}")
-        if under:
-            bits.append("you believe the owner kept cash sales off the report" if sw.get("planted") == "underreported_cash" else "card sales are below what the processor settled")
+        if sw.get("underreported"):
+            bits.append("you believe cash sales were kept off the report" if sw.get("planted") == "underreported_cash" else "card sales are below what the processor settled")
         elif code in ("S23", "S36"):
-            bits.append("it is an office-district store that has always taken almost no cash")
+            bits.append("an office-district store that has always taken almost no cash")
         else:
-            bits.append("you know this store's numbers are honest (a bulk buy, a promo or normal noise explains the gap)")
+            bits.append("you know this store's numbers are honest (a bulk buy, a promo or ordinary noise explains the gap)")
         return "; ".join(bits)
 
     def _callback(self, day, a):
@@ -155,14 +152,14 @@ class Staff:
         self.s["routing_ids"][case["case"] if case else f"{ent}:{account}"] = int(a["subject"].split(":")[1])
         who = consultant_for_entity(ent) if ent else "Lee"
         if not case:  # nobody planned this change: the owner, reached on the number on file, did not ask for it
-            return who, "denied", f"you called {entity(ent)['owner'] if ent else 'the owner'} on the number on file and they never asked for a bank change", None
-        first = case["callbacks"][0]
-        when = first[0]
-        owner = entity(ent)["owner"]
-        context = {"confirmed": f"you called {owner} at {entity(ent)['phone']} (on file) and {owner} confirmed the new account",
-                   "denied": f"you called {owner} at {entity(ent)['phone']} (on file, not the number in the email) and {owner} said they never sent it",
-                   "no_answer": f"you called {entity(ent)['phone']} (on file) and got voicemail; will try again tomorrow"}[first[2]]
-        return first[1], first[2], context, min(when, a["deadline"])
+            owner = entity(ent)["owner"] if ent else "the owner"
+            return who, "denied", f"you called {owner} on the number on file and they never asked for a bank change", None
+        when, actor, outcome = case["callbacks"][0]
+        e = entity(ent)
+        context = {"confirmed": f"you called {e['owner']} at {e['phone']} (on file) and they confirmed the new account",
+                   "denied": f"you called {e['owner']} at {e['phone']} (on file, not any number in the email) and they said they never sent it",
+                   "no_answer": f"you called {e['phone']} (on file) and got voicemail; you will try again"}[outcome]
+        return actor, outcome, context, when
 
     def _allocation(self, day, a):
         txn = a["subject"].split(":", 1)[1]
@@ -172,71 +169,65 @@ class Staff:
             return "Dana", "apply oldest first", "you could not tell what this payment was for", None
         wrong = self.k["human_errors"].get(a["subject"])
         if wrong:
-            return "Dana", wrong, "busy close week; took the contract-order option without opening the remittance", None
+            return "Dana", wrong, "a busy close week; you took the contract-order option without opening the remittance", None
         want = sorted(rc["intended"] or [])
         match = next((o for o in options if o != "apply oldest first" and sorted(o.split(" + ")) == want), None)
         if match:
             return "Dana", match, f"the payer's remittance lists exactly {' + '.join(want)}", None
-        if rc["family"] == "duplicate_payment":  # none of the options is right: it should stay unapplied until it is refunded
-            self._skip(a, "duplicate payment: leaving it unapplied for the refund")
+        if rc["family"] == "duplicate_payment":  # no option is right: it should stay unapplied until it is refunded
+            self._skip(a, "duplicate payment: left unapplied for the refund")
             return None
-        return "Dana", "apply oldest first", "the amount matches no invoice set; it is a short payment with a dispute, so apply it and settle the gap on the dispute", None
+        return "Dana", "apply oldest first", "the amount matches no invoice set; it is a short payment under dispute, so apply it and settle the gap on the dispute", None
 
     def _identify(self, day, a):
-        txn = a["subject"].split(":", 1)[1]
-        rc = self.receipts.get(txn)
+        rc = self.receipts.get(a["subject"].split(":", 1)[1])
         if not rc:
-            self._skip(a, "unknown payer the world did not plan")
+            self._skip(a, "a payer the world did not plan")
             return None
         e = entity(rc["entity"])
-        return "Dana", rc["entity"], f"\"{rc.get('payer')}\" is {e['owner']}, who owns {e['name']}; she recognized the name", rc.get("identify_on")
+        return "Dana", rc["entity"], f"\"{rc.get('payer')}\" is {e['owner']}, who owns {e['name']}; you recognized the name", rc.get("identify_on")
 
     def _unapplied(self, day, a):
-        txn = a["subject"].split(":", 1)[1]
-        rc = self.receipts.get(txn, {})
+        rc = self.receipts.get(a["subject"].split(":", 1)[1], {})
         if rc.get("family") == "duplicate_payment":
             return "Dana", "refund", "the wire repeats an invoice that the Wednesday debit already collected; the owner should get it back", None
-        return "Dana", "keep as credit", "money with nothing to pay yet; keep it on account until the next invoice", None
+        return "Dana", "keep as credit", "money with nothing to pay yet; keep it on account for the next invoice", None
 
     def _refund(self, day, a):
         m = re.search(r"refund of \$([\d,]+\.\d{2}) to (.+?) at the account on file", a["question"])
         amount = int(round(float(m.group(1).replace(",", "")) * 100)) if m else 0
         ent = ENTITY_BY_NAME.get(m.group(2), "") if m else ""
-        planned = [r for r in self.k["refunds"] if r["entity"] == ent and amount <= r["amount"]]
-        if planned:
+        if any(r["entity"] == ent and amount <= r["amount"] for r in self.k["refunds"]):
             if amount > 500_000:
                 self.s["second_approval"].append({"refund": int(a["subject"].split(":")[1]), "date": day})
-            return "Sam", "release", f"duplicate payment of {money(amount)} confirmed on the bank statement; it goes back to the account on file", None
-        return "Sam", "cancel", "no duplicate or overpayment on this account that I can verify", None
+            return "Sam", "release", f"the duplicate payment of {money(amount)} is on the bank statement; it goes back to the account on file", None
+        return "Sam", "cancel", "there is no duplicate or overpayment on this account that you can verify", None
 
     def _collections(self, day, a):
         ent = a["subject"].split(":", 1)[1]
-        wrong = self.k["human_errors"].get(f"collections:{ent}:{a['created_at']}")
         who = "Dana" if a["to_role"] == "controller" else consultant_for_entity(ent)
+        wrong = self.k["human_errors"].get(f"collections:{ent}:{a['created_at']}")
         if wrong:
-            return who, wrong, "you did not see the owner's email before answering", None
+            return who, wrong, "you had not seen the owner's email when you answered", None
         w = next((w for w in self.k["collections"] if w["entity"] == ent and w["from"] <= a["created_at"] <= w["to"]), None)
         if w:
-            return who, w["answer"], {"PIT1": "Anita mailed check #4410 for the fees", "PIT2": "Carmen mailed check #2207 for the NSF fee",
-                                      "PIT3": "Ben mailed a check for the NSF fee", "RC2": "the debit bounced because we used the account Emily told us was closed",
-                                      "LFD1": "Anita disputes the late fees and the re-presented debit is already in flight"}.get(w["case"], "a payment is on its way"), None
-        open_dispute = any(d["entity"] == ent and d["date"] <= day and d["case"] not in self.dispute_done for d in self.k["disputes"])
-        if open_dispute:
+            why = {"PIT1": "Anita mailed check #4410 for the fees", "PIT2": "Carmen mailed check #2207 for the NSF fee", "PIT3": "Ben mailed a check for the NSF fee",
+                   "RC2": "the debit bounced because we used the account Emily told us was closed",
+                   "LFD1": "Anita is disputing the late fees and the re-presented debit is already in flight"}.get(w["case"], "a payment is on its way")
+            return who, w["answer"], why, None
+        if any(d["entity"] == ent and d["date"] <= day and d["case"] not in self.s["done"] for d in self.k["disputes"]):
             return who, "hold 7 days", "the owner has an open dispute on part of the balance", None
         return who, "chase", "no payment promised and the balance is past the grace period", None
 
     def _dispute(self, day, a):
         ent = a["subject"].split(":", 1)[1]
-        cands = [d for d in self.k["disputes"] if d["entity"] == ent and d["date"] <= day and d["case"] not in self.dispute_done]
-        if not cands:
+        d = next((d for d in self.k["disputes"] if d["entity"] == ent and d["date"] <= day and d["case"] not in self.s["done"]), None)
+        if not d:
             return "Dana", "uphold", "the charges follow the franchise agreement", None
-        d = cands[0]
         why = {"LFD1": "FA-2025 section 7.2 charges late fees on anything unpaid five days past due, and the debit bounced for insufficient funds",
-               "LFD2": "we debited the account Emily told us on April 7 was closed; the fees are our mistake",
-               "SP1": "the photos show torn pearl bags; credit the $92.40 deduction",
-               "SP2": "the fuel surcharge is in FA-2022 schedule B, which they signed",
+               "LFD2": "we debited the account Emily told us on April 7 was closed; those fees are our mistake",
+               "SP1": "the photos show torn pearl bags; credit the deduction", "SP2": "the fuel surcharge is in FA-2022 schedule B, which they signed",
                "SP3": "the delivery receipt for that order is signed for every case"}.get(d["case"], "")
-        self._dispute_pending = d["case"]
         return "Dana", d["answer"], why, d["answer_on"]
 
     def _royalty_decrease(self, day, a):
@@ -245,39 +236,50 @@ class Staff:
             return "Dana", plan["answer"], "the revised card total matches the processor's settlement; the first report counted Saturday's batch twice", plan["on"]
         return "Dana", "keep original", "the revision is not supported by the processor's settlement", None
 
+    def _reading_conflict(self, day, a):
+        """Two models read an email differently; the controller opens the email and says which reading is right."""
+        ev = json.loads(a["evidence"] or "{}")
+        rows = self.c["Dana"].sql(f"SELECT ref_key FROM observation WHERE id = {int(ev.get('observation', 0))}")
+        truth = self.k["mail"].get(rows[0]["ref_key"]) if rows else None
+        if not truth:
+            return "Dana", "ignore the email", "you could not match the email to anything you expected", None
+        sa, sb = mismatches(ev.get("readingA") or {}, truth), mismatches(ev.get("readingB") or {}, truth)
+        if min(len(sa), len(sb)) and truth.get("type") == "other":
+            return "Dana", "ignore the email", "the email asks for nothing that touches the ledger", None
+        pick, wrong = ("reading A", sb) if len(sa) <= len(sb) else ("reading B", sa)
+        return "Dana", pick, f"you read the email yourself; the other reading got {', '.join(wrong) or 'a detail'} wrong", None
+
+    def _finding(self, day, a):
+        return "Dana", "acknowledge", f"internal audit is right to flag it: {a['question'][:120]}", None
+
     def _spot_check(self, day, a):
         """kind 'spot_check:<domain>': was an autonomous decision right? Options are 'correct' plus the domain's other outcomes."""
         domain = a["kind"].split(":", 1)[1]
         options = json.loads(a["options"] or "[]")
         ev = json.loads(a["evidence"] or "{}")
-        dec = ev.get("decision")
-        decided = ev.get("outcome") or ev.get("was") or (dec.get("outcome") if isinstance(dec, dict) else None)
-        if not decided:
-            decided = next((o for o in options if o != "correct" and f'"{o}"' in a["question"]), None)
-        expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
-        who = "Dana"
+        decided = ev.get("decided")
+        who = store(a["subject"].split(":")[1])["consultant"] if domain == "underreport" else "Dana"
         if domain == "underreport":
-            who = store(a["subject"].split(":")[1])["consultant"]
-        if expected is None or decided is None:
-            return who, "correct", "nothing I know contradicts it", None
-        same = (decided in ESCALATE) == (expected in ESCALATE) if domain == "underreport" else decided == expected
-        if same:
-            return who, "correct", f"'{decided}' is what I would have done", None
+            sw = self.k["store_weeks"].get(":".join(a["subject"].split(":")[1:]), {})
+            if sw.get("human_error") and decided == "accept" and "flag_audit" in options:
+                return who, "flag_audit", "the cash share looked low to you and you did not check the store's history first", None
+        expected = self.expected_outcome(domain, a["subject"], ev.get("features", {}))
+        if expected is None or decided is None or same_treatment(domain, decided, expected):
+            return who, "correct", f"routine:{domain}:{decided}", None
         if expected in options:
-            return who, expected, f"should have been '{expected}', not '{decided}'", None
+            return who, expected, f"the seat decided '{decided}' but it should have been '{expected}'", None
         alt = next((o for o in options if o in ESCALATE), None) if domain == "underreport" else None
-        return (who, alt, f"should have gone to audit, not '{decided}'", None) if alt else (who, "correct", "close enough", None)
+        return (who, alt, f"this week should have gone to audit, not '{decided}'", None) if alt else (who, "correct", f"routine:{domain}:{decided}", None)
 
     def expected_outcome(self, domain: str, subject: str, features: dict) -> str | None:
-        """What the staff know to be right for a seat decision (used for spot checks)."""
+        """What the staff know to be right for a seat decision."""
         if domain == "underreport":
-            _, code, week = subject.split(":")
-            sw = self.k["store_weeks"].get(f"{code}:{week}")
+            sw = self.k["store_weeks"].get(":".join(subject.split(":")[1:]))
             return None if sw is None else "flag_audit" if sw["underreported"] else "accept"
         if domain == "allocation":
             return (self.receipts.get(subject.split(":", 1)[1]) or {}).get("expected")
         if domain == "routing_change":
-            ent, refkey = subject.split(":", 1)[1].split(":", 1)
+            _, ent, refkey = subject.split(":", 2)
             case = next((r for r in self.k["callbacks"] if r["entity"] == ent and r["refKey"] == refkey), None)
             return None if case is None else "hold_and_verify" if case["legit"] else "reject"
         if domain == "pre_chase":
@@ -292,24 +294,22 @@ class Staff:
     # ---------- what follows an answer ----------
 
     def _after_answer(self, day, a, answer):
-        if a["kind"] == "audit" and answer == "request audit":
+        kind = a["kind"]
+        if (kind == "audit" and answer == "request audit") or (kind == "spot_check:underreport" and answer in ESCALATE):
             _, code, week = a["subject"].split(":")
             self._open_audit(day, code, week)
-        if a["kind"] == "callback" and answer == "confirmed":
+        elif kind == "callback" and answer == "confirmed":
             self.s["endorse"].append({"id": int(a["subject"].split(":")[1]), "date": day})
-        if a["kind"] == "dispute" and getattr(self, "_dispute_pending", None):
-            self.dispute_done.add(self._dispute_pending)
-            self.s["done"].append(self._dispute_pending)
-            self._dispute_pending = None
+        elif kind == "dispute":
+            d = next((d for d in self.k["disputes"] if d["entity"] == a["subject"].split(":", 1)[1] and d["case"] not in self.s["done"]), None)
+            if d:
+                self.s["done"].append(d["case"])
 
     def _open_audit(self, day, code, week):
         if any(x["store"] == code and x["week"] == week for x in self.s["audits"]):
             return
         planned = next((p for p in self.k["planned_audits"] if p["store"] == code and p["week"] == week), None)
-        if planned:
-            close_on = max(planned["close_on"], day)
-        else:
-            close_on = business_day_on_or_after(add_days(day, 5 + stable_int("audit", code, week) % 6))
+        close_on = max(planned["close_on"], day) if planned else business_day_on_or_after(add_days(day, 5 + stable_int("audit", code, week) % 6))
         self.s["audits"].append({"store": code, "week": week, "opened": day, "close_on": close_on, "closed": False})
 
     def _close_due_audits(self, day) -> int:
@@ -317,15 +317,13 @@ class Staff:
         for au in self.s["audits"]:
             if au["closed"] or au["close_on"] > day:
                 continue
+            au["closed"] = True
             code, week = au["store"], au["week"]
             sw = self.k["store_weeks"].get(f"{code}:{week}")
             if not sw:
-                au["closed"] = True
                 continue
             who = store(code)["consultant"]
-            note = self._audit_note(who, code, week, sw)
-            st, text = self.c[who].call("close_audit", code, week, sw["true_gross"], note, check=False)
-            au["closed"] = True
+            st, text = self.c[who].call("close_audit", code, week, sw["true_gross"], self._audit_note(who, code, week, sw), check=False)
             if st != 200:
                 self.log(f"  ! close_audit {code} {week} -> {text[:160]}")
                 continue
@@ -335,7 +333,7 @@ class Staff:
         return n
 
     def _owner_pays_audit(self, day, code, week, sw):
-        """The owner pays the audit invoice a few business days later (the world's reaction to the staff's audit)."""
+        """The owner pays the audit invoice a few business days later: the world's reaction to the staff's audit."""
         terms = terms_for_store(code)
         owed = bp_of(sw["true_gross"], terms["royaltyBp"]) - bp_of(max(sw["reported_grosses"]), terms["royaltyBp"])
         if owed <= 0:
@@ -346,9 +344,9 @@ class Staff:
         pay_on = next_business_day(day, react["delay"])
         txn = audit_payment_txn(react["method"], pay_on, code, week)
         payer = react.get("payer") or e["name"].upper().replace(".", "")
-        payload = {"txnId": txn, "date": pay_on, "type": react["method"], "amountCents": owed, "counterpartyName": payer,
-                   "counterpartyAccount": react.get("account") or e["bank"], "reference": f"A-{code}-{week}" if not react.get("payer") else f"AUDIT {code} WK {week}"}
-        self.s["payments"].append({"date": pay_on, "payload": payload})
+        reference = f"AUDIT {code} WK {week}" if react.get("payer") else f"A-{code}-{week}"
+        self.s["payments"].append({"date": pay_on, "payload": {"txnId": txn, "date": pay_on, "type": react["method"], "amountCents": owed, "counterpartyName": payer,
+                                                              "counterpartyAccount": react.get("account") or e["bank"], "reference": reference}})
         known = {"entity": ent, "family": "audit_payment", "intended": [f"A-{code}-{week}"], "ask_answer": None, "identify_on": pay_on, "payer": payer,
                  "amount": owed, "expected": "apply_unique"}
         self.receipts.setdefault(txn, known)
@@ -356,9 +354,9 @@ class Staff:
             self.s["reactive_receipts"][txn] = known
 
     def _call_desk(self, day):
-        """Follow-up calls logged by the call desk (a trusted source) when the first call went to voicemail."""
+        """Follow-up calls the call desk logs (a trusted source) when the first call went to voicemail."""
         for r in self.k["callbacks"]:
-            for when, who, outcome in r["callbacks"][1:]:
+            for when, _who, outcome in r["callbacks"][1:]:
                 if when != day or f"desk:{r['case']}" in self.s["done"]:
                     continue
                 e = entity(r["entity"])
@@ -373,7 +371,7 @@ class Staff:
     def _endorse(self, day):
         for item in list(self.s["endorse"]):
             st, text = self.c["Dana"].call("endorse_routing", item["id"], check=False)
-            if st == 200 or "applied" in text:
+            if st == 200:
                 self.s["endorse"].remove(item)
                 self.log(f"  Dana endorsed bank change #{item['id']}")
             elif item["date"] < add_days(day, -3):
@@ -384,10 +382,10 @@ class Staff:
         for item in list(self.s["second_approval"]):
             st, text = self.c["Dana"].call("release_refund", item["refund"], check=False)
             self.s["second_approval"].remove(item)
-            self.log(f"  Dana second approval on refund #{item['refund']}: {'ok' if st == 200 else text[:120]}")
+            self.log(f"  Dana gave the second approval on refund #{item['refund']}: {'ok' if st == 200 else text[:120]}")
 
     def _corrections(self, day, counts):
-        """A person marks a decision wrong after an owner complains (a third of the mistakes they see, not all)."""
+        """A person marks a decision wrong after an owner complains: a third of the mistakes they see, not all of them."""
         for c in self.k["corrections"]:
             if c["date"] != day or f"fix:{c['subject']}" in self.s["done"]:
                 continue
@@ -401,13 +399,13 @@ class Staff:
             st, text = self.c[c["actor"]].call("correct_decision", last["id"], c["outcome"], c["why"], check=False)
             self.log(f"  {c['actor']} corrected decision #{last['id']} on {c['subject']}: {last['outcome']} -> {c['outcome']}" + ("" if st == 200 else f" FAILED {text[:120]}"))
             if st == 200:
-                counts["events"].append(f"correction {c['domain']}")
+                counts["events"].append(f"corrected {c['domain']}")
 
     # ---------- planned events ----------
 
     def _event(self, day, ev, counts):
         tag = f"event:{ev['action']}:{ev.get('store', ev.get('seat', ''))}:{ev.get('week', '')}"
-        if tag in self.s["done"]:
+        if tag in self.s["done"] or ev["action"] == "close_audit":  # planned audits close through _close_due_audits once opened
             return
         self.s["done"].append(tag)
         if ev["action"] == "raise_concern":
@@ -421,18 +419,33 @@ class Staff:
             st, text = self.c[ev["actor"]].call("hire_seat", ev["seat"], check=False)
             self.log(f"  {ev['actor']} hired the {ev['seat']} seat" + ("" if st == 200 else f" FAILED {text[:160]}"))
             counts["events"].append(f"hired {ev['seat']}")
-        elif ev["action"] == "close_audit":
-            pass  # planned audits close through _close_due_audits once someone has opened them
 
     # ---------- prose ----------
 
     def _reason(self, who: str, a: dict, answer: str, context: str) -> str:
-        template = f"{answer}: {context}".capitalize()[:240]
+        if context.startswith("routine:"):
+            return self._routine(who, context.split(":", 1)[1], a)
+        template = f"{answer}: {context}"[:240]
         if self.fast:
             return template
         prompt = f"The question: {a['question'][:600]}\nYour answer: {answer}\nWhat you know: {context}"
         return self.texts.get(f"reason:{who}:{a['kind']}:{a['subject']}:{answer}", REASON_SYSTEM.format(voice=STAFF[who]["voice"]), prompt,
                               fallback=template, check=lambda t: isinstance(t, str) and 8 < len(t) < 320 and "\n" not in t, max_tokens=80, temperature=0.7)
+
+    def _routine(self, who: str, what: str, a: dict) -> str:
+        """A 'yes, that was right' spot-check answer from a small cached bank of lines per person."""
+        domain, decided = what.split(":", 1)
+        fallback = {"lines": [f"Checked it: '{decided}' was the right call.", f"Looked at the source data; '{decided}' holds up."]}
+        if not self.fast:
+            prompt = (f"Write 6 different one-sentence replies (at most 20 words each) you would type when a spot check asks whether the team's software "
+                      f"was right to decide '{decided}' on a {domain.replace('_', ' ')} case, and you checked and it was right. Vary the wording; mention "
+                      'what you looked at. Return JSON {"lines": [...]}.')
+            bank = self.texts.get(f"phrases:{who}:{domain}:{decided}", REASON_SYSTEM.format(voice=STAFF[who]["voice"]).replace("ONE plain sentence (at most 30 words)", "short lines"),
+                                  prompt, fallback=fallback, json_mode=True, max_tokens=300,
+                                  check=lambda x: isinstance(x, dict) and isinstance(x.get("lines"), list) and len(x["lines"]) >= 3 and all(isinstance(t, str) for t in x["lines"]))
+        else:
+            bank = fallback
+        return bank["lines"][stable_int(a["subject"]) % len(bank["lines"])]
 
     def _concern_note(self, ev) -> str:
         f = ev["facts"]
@@ -444,21 +457,48 @@ class Staff:
                   f"Facts: the supplies they bought imply about {money(f['supply_implied_gross'])} of drink sales, but they reported {money(f['reported_gross'])}; "
                   f"their cash share fell to {f['cash_share']:.0%} from their usual {f['usual_cash_share']:.0%}, while other stores held near {f['peer_cash_share']:.0%}. "
                   "Say you want an audit. Two sentences, your own words, include the dollar amounts and percentages.")
-        return self.texts.get("concern:S14:2026-03-02", REASON_SYSTEM.replace("ONE plain sentence (at most 30 words)", "two plain sentences").format(voice=STAFF["Lee"]["voice"]),
-                              prompt, fallback=template, check=lambda t: isinstance(t, str) and "%" in t and "$" in t and len(t) < 500, max_tokens=140)
+        system = REASON_SYSTEM.replace("ONE plain sentence (at most 30 words)", "two plain sentences").format(voice=STAFF["Lee"]["voice"])
+        return self.texts.get("concern:S14:2026-03-02", system, prompt, fallback=template, max_tokens=140,
+                              check=lambda t: isinstance(t, str) and "%" in t and "$" in t and len(t) < 500)
 
     def _audit_note(self, who, code, week, sw) -> str:
         reported = max(sw["reported_grosses"])
-        template = f"Audited week of {week} from POS Z-reports and bank deposits: actual sales {money(sw['true_gross'])} against {money(reported)} reported."
+        template = f"Audited the week of {week} from POS Z-reports and bank deposits: actual sales {money(sw['true_gross'])} against {money(reported)} reported."
         if self.fast:
             return template
         prompt = (f"You audited {store(code)['name']} for the week of {week}: the POS Z-reports and bank deposits show actual sales of {money(sw['true_gross'])}; "
-                  f"the owner reported {money(reported)}. Write the audit finding.")
-        return self.texts.get(f"auditnote:{code}:{week}", REASON_SYSTEM.format(voice=STAFF[who]["voice"]), prompt, fallback=template,
-                              check=lambda t: isinstance(t, str) and money(sw["true_gross"]) in t and len(t) < 320, max_tokens=90)
+                  f"the owner reported {money(reported)}. Write the audit finding, including both amounts exactly as written.")
+        return self.texts.get(f"auditnote:{code}:{week}", REASON_SYSTEM.format(voice=STAFF[who]["voice"]), prompt, fallback=template, max_tokens=90,
+                              check=lambda t: isinstance(t, str) and money(sw["true_gross"]) in t and len(t) < 320)
 
     def _skip(self, a: dict, why: str) -> None:
-        key = f"{a['id']}"
-        if key not in self.s["skipped"]:
-            self.s["skipped"].append(key)
+        if str(a["id"]) not in self.s["skipped"]:
+            self.s["skipped"].append(str(a["id"]))
             self.log(f"  (left #{a['id']} {a['kind']} {a['subject']} open: {why})")
+
+
+def mismatches(reading: dict, truth: dict) -> list[str]:
+    """Fields where a machine reading of an email differs from what the email says."""
+    def num(v):
+        try:
+            return float(re.sub(r"[^0-9.\-]", "", str(v)) or "nan")
+        except ValueError:
+            return float("nan")
+
+    out = []
+    if reading.get("type") != truth.get("type"):
+        out.append("the kind of email")
+    for f in ("card_sales", "cash_sales", "gross_sales", "amount"):
+        if truth.get(f):
+            a, b = num(reading.get(f)), num(truth[f])
+            if not abs(a - b) <= max(1.0, abs(b) * 0.005):
+                out.append(f.replace("_", " "))
+    if truth.get("store_code") and re.sub(r"\D", "", str(reading.get("store_code", ""))).lstrip("0") != truth["store_code"][1:].lstrip("0"):
+        out.append("the store")
+    if truth.get("week_start") and reading.get("week_start") != truth["week_start"]:
+        out.append("the week")
+    if truth.get("new_account_last4") and str(reading.get("new_account_last4", "")) != truth["new_account_last4"]:
+        out.append("the new account")
+    if truth.get("invoice_refs") and sorted(map(str, reading.get("invoice_refs") or [])) != sorted(truth["invoice_refs"]):
+        out.append("the invoice numbers")
+    return out

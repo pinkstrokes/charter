@@ -16,7 +16,7 @@ import argparse
 from collections import Counter
 
 from cast import COMPANY, CONTRACTS, ENTITIES, STAFF, company_file, entity
-from common import DATA, END, START, WEEKS, add_days, all_days, set_seed, write_json
+from common import DATA, END, START, WEEKS, add_days, all_days, dollars, set_seed, write_json
 from economy import make_supply_invoices, settlement_payload, simulate_sales
 from mail import planted_email, report_email
 from scenarios import AUDIT_REACTIONS, PLANNED_AUDITS, S14_CONCERN, SAME_ORDER, Plan
@@ -82,7 +82,17 @@ def staff_knowledge(plan: Plan, sales: dict) -> dict:
         "audit_reactions": AUDIT_REACTIONS,
         "planned_audits": PLANNED_AUDITS,
         "store_weeks": store_weeks,
+        "mail": mail_truth(plan),
     }
+
+
+def mail_truth(plan: Plan) -> dict:
+    """What each email really says, so a person can tell which of two machine readings is right."""
+    out = {f"email:{spec['id']}": spec.get("truth", {}) for spec in plan.emails}
+    for rep in plan.reports:
+        out[f"email:{rep['id']}"] = {"type": "sales_report", "store_code": rep["store"], "week_start": rep["week"], "card_sales": dollars(rep["card"]),
+                                     "cash_sales": dollars(rep["cash"]), "gross_sales": dollars(rep["card"] + rep["cash"])}
+    return out
 
 
 META = {

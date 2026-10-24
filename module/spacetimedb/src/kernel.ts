@@ -19,6 +19,8 @@ export const ACCOUNTS: Record<string, string> = {
   '1110': 'Accounts receivable — supplies',
   '1120': 'Accounts receivable — fees and interest',
   '1190': 'Allowance for doubtful accounts',
+  '1300': 'Inventory',
+  '2000': 'Accounts payable',
   '2100': 'Unapplied cash',
   '2200': 'Customer credits',
   '4000': 'Royalty / sales revenue',
@@ -44,6 +46,7 @@ export interface Claim {
   lhs: number;
   rhs: number[];
   invoices?: string[];
+  bills?: string[];
   tolerance: number; // |lhs - (sum(rhs) + open(invoices))| <= tolerance
 }
 
@@ -142,6 +145,7 @@ function checkClaims(tx: Tx, claims: Claim[] | undefined): string[] {
   for (const c of claims ?? []) {
     let total = c.rhs.reduce((s, x) => s + x, 0);
     for (const id of c.invoices ?? []) total += Number(tx.db.invoice.id.find(id)?.openCents ?? 0n);
+    for (const id of c.bills ?? []) total += Number(tx.db.bill.id.find(id)?.openCents ?? 0n);
     if (Math.abs(c.lhs - total) > c.tolerance) failures.push(`claim "${c.label}" failed: ${c.lhs} vs ${total}`);
   }
   return failures;
@@ -272,6 +276,7 @@ export function checkInvariants(tx: Tx): string[] {
   if (gl(tx, '1120') !== control(tx, 'ar_fee') + control(tx, 'ar_interest')) out.push(`AR control 1120 != open fee invoices`);
   if (-gl(tx, '2100') !== control(tx, 'unapplied')) out.push(`unapplied cash ${-gl(tx, '2100')} != receipts not yet applied ${control(tx, 'unapplied')}`);
   if (gl(tx, '1000') !== control(tx, 'bank')) out.push(`cash ${gl(tx, '1000')} != bank statement ${control(tx, 'bank')}`);
+  if (-gl(tx, '2000') !== control(tx, 'ap_open')) out.push(`AP control 2000 ${-gl(tx, '2000')} != approved unpaid bills ${control(tx, 'ap_open')}`);
   return out;
 }
 

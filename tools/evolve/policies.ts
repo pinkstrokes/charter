@@ -8,7 +8,7 @@ import { parseJson, type Db, type Row } from './lib';
 
 // What going wrong costs, and what a held-back good action costs (it waits a week).
 const COST = { returnedDebit: 3500 + 10_000, delayedDebitPerDollarWeek: 0.0015, refundToWrongParty: 1 };
-const MONEY_OUT: Action[] = ['initiate_debit', 'issue_refund'];
+const MONEY_OUT: Action[] = ['initiate_debit', 'issue_refund', 'release_payment'];
 
 interface Request {
   activityId: number;
@@ -66,7 +66,7 @@ function would(tpl: PolicyTemplate, r: Request): boolean {
 }
 
 function text(tpl: PolicyTemplate): string {
-  const verb = tpl.t === 'role_can' ? '' : tpl.action === 'initiate_debit' ? 'No debit is initiated' : tpl.action === 'issue_refund' ? 'No refund is released' : `No ${String((tpl as { action: string }).action).replace(/_/g, ' ')}`;
+  const verb = tpl.t === 'role_can' ? '' : tpl.action === 'initiate_debit' ? 'No debit is initiated' : tpl.action === 'issue_refund' ? 'No refund is released' : tpl.action === 'release_payment' ? 'No vendor payment is released' : `No ${String((tpl as { action: string }).action).replace(/_/g, ' ')}`;
   if (tpl.t === 'forbid_when') return `${verb} while ${FACT_LIBRARY[tpl.fact as keyof typeof FACT_LIBRARY]}.`;
   if (tpl.t === 'require_fact') return `${verb} unless ${FACT_LIBRARY[tpl.fact as keyof typeof FACT_LIBRARY]}.`;
   return '';
@@ -95,10 +95,12 @@ export function search(reqs: Request[], active: PolicyTemplate[]): PolicyCandida
   // never have held back a good request of that kind.
   for (const c of [...out]) {
     if (c.tpl.t !== 'forbid_when' || c.tpl.action !== 'initiate_debit') continue;
-    const sibling = { t: 'forbid_when', action: 'issue_refund', fact: c.tpl.fact } as PolicyTemplate;
-    if (has(sibling) || out.some(o => JSON.stringify(o.tpl) === JSON.stringify(sibling))) continue;
-    const good = reqs.filter(r => r.action === 'issue_refund' && would(sibling, r));
-    if (good.length === 0) out.push({ tpl: sibling, text: text(sibling), blockedBad: [], blockedGood: [], benefitCents: 0, costCents: 0, extendsFrom: JSON.stringify(c.tpl) });
+    for (const action of ['issue_refund', 'release_payment'] as Action[]) {
+      const sibling = { t: 'forbid_when', action, fact: c.tpl.fact } as PolicyTemplate;
+      if (has(sibling) || out.some(o => JSON.stringify(o.tpl) === JSON.stringify(sibling))) continue;
+      const good = reqs.filter(r => r.action === action && would(sibling, r));
+      if (good.length === 0) out.push({ tpl: sibling, text: text(sibling), blockedBad: [], blockedGood: [], benefitCents: 0, costCents: 0, extendsFrom: JSON.stringify(c.tpl) });
+    }
   }
   // Two rules that would have held back exactly the same requests are one rule; keep the plainer.
   const seen = new Set<string>();

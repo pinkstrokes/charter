@@ -9,6 +9,10 @@ import { AR_ACCOUNT_BY_KIND, appendActivity, bumpControl, exec, post, Rejection,
 const SYSTEM: Principal = { kind: 'system', id: 'erp', role: 'world' };
 const AUTO_SETTLE: Principal = { kind: 'system', id: 'auto-settlement', role: 'cash_app' };
 
+// Finance packs register the observation kinds they understand here, so the
+// core never needs to know about receivables, payables or anything else.
+export const INGESTORS: Record<string, (tx: Tx, obsId: bigint, data: any) => void> = {};
+
 export function addFact(tx: Tx, subject: string, attr: string, value: unknown, validFrom: string, sourceObs: bigint, trusted: boolean, activityId = 0n): bigint {
   const row = tx.db.fact.insert({
     id: 0n,
@@ -70,7 +74,8 @@ export function ingest(tx: Tx, kind: string, source: string, validAt: string, re
       appendActivity(tx, { principal: 'inbox', role: 'world', kind: 'ingest', command: 'email_received', params: { observation: Number(obs.id), subject }, used: [`obs:${obs.id}`], outcome: 'stored_untrusted' });
       break;
     default:
-      throw new Rejection(`unknown observation kind ${kind}`);
+      if (!INGESTORS[kind]) throw new Rejection(`unknown observation kind ${kind}`);
+      INGESTORS[kind](tx, obs.id, data);
   }
   return obs.id;
 }

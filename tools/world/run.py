@@ -91,7 +91,6 @@ class Runner:
         self.ratified: list[str] = []
         self.hook_log: list[dict] = []
         self.close_log: list[dict] = []
-        self.close_period_missing = False
 
     def setup(self) -> None:
         if self.args.reset:
@@ -198,20 +197,32 @@ class Runner:
         return out
 
     def close_month(self, day: str) -> list[str]:
-        """Month-end close for the previous period; the module may refuse with a reason."""
-        if self.close_period_missing:
+        """Month-end for the previous period: the internal auditor reports, then Dana closes the books (or is told why not)."""
+        period = add_days(day[:8] + "01", -1)[:7]
+        if period < self.world["window"][0][:7]:
             return []
-        prev = add_days(day[:8] + "01", -1)[:7]
-        if prev < self.world["window"][0][:7]:
-            return []
-        st, text = self.c["Dana"].call("close_period", prev, check=False)
-        if st == 404 or "no such reducer" in text.lower() or "not found" in text.lower():
-            self.close_period_missing = True
-            log(f"  close_period not available in this module ({st}); skipping month-end closes")
-            return []
-        self.close_log.append({"day": day, "period": prev, "ok": st == 200, "result": text[:300]})
-        log(f"  Dana close_period {prev}: {st} {text[:300]}")
-        return [f"close {prev} {'ok' if st == 200 else 'refused'}"]
+        auditor = REPO / "tools" / "audit" / "auditor.ts"
+        if auditor.exists():
+            try:
+                p = subprocess.run(["npx", "tsx", "tools/audit/auditor.ts", "--db", self.args.db, "--period", period], cwd=REPO, capture_output=True, text=True,
+                                   timeout=900, env={**os.environ, "STDB_DB": self.args.db})
+                for x in (p.stdout + p.stderr).splitlines()[-15:]:
+                    log(f"  auditor: {x}")
+                audit = "auditor ok" if p.returncode == 0 else f"auditor exit {p.returncode}"
+            except (subprocess.TimeoutExpired, OSError) as e:
+                audit = f"auditor failed ({e})"
+        else:
+            st, text = self.c["auditor"].call("record_opinion", period, "clean", 0, 0, 0, 0, json.dumps({"note": "placeholder: auditor tool not run"}), check=False)
+            audit = "placeholder opinion" if st == 200 else f"placeholder opinion failed {text[:100]}"
+        log(f"  internal audit of {period}: {audit}")
+        st, text = self.c["Dana"].call("close_period", period, check=False)
+        rows = self.c["Dana"].sql("SELECT id, outcome, reasons FROM activity WHERE command = 'close_period'")
+        last = max(rows, key=lambda r: r["id"]) if rows else None
+        ok = st == 200 and last is not None and last["outcome"] == "committed"
+        why = "" if ok else (json.loads(last["reasons"]) if last and last["reasons"] else [text[:200]])
+        self.close_log.append({"day": day, "period": period, "audit": audit, "closed": ok, "reasons": why})
+        log(f"  Dana close_period {period}: {'closed' if ok else f'refused: {why}'}")
+        return [f"close {period} {'ok' if ok else 'refused'}"]
 
 
 def compact(parts: list[str]) -> str:

@@ -15,11 +15,12 @@ import { decidePolicy, proposePolicy, proposeSkill, seedGovernance, setSkillStat
 import { fileFinding, recordOpinion } from './audit';
 import { closePeriod } from './close';
 import { cashAppCycle, collectionsCycle, refundsCycle, triage } from './seats';
+import { apClerkCycle, paymentsCycle, releasePayment } from './packs/payables';
 import { ingest } from './world';
 
 export default spacetimedb;
 
-const SEATS = ['cash_app', 'collections', 'refunds'];
+const SEATS = ['cash_app', 'collections', 'refunds', 'ap_clerk', 'payments'];
 
 export const init = spacetimedb.init(ctx => {
   ctx.db.principal.insert({ identity: ctx.sender, role: 'admin', name: 'publisher' });
@@ -30,7 +31,7 @@ function freshCompany(tx: Tx): void {
   tx.db.config.insert({ id: 0, companyName: '', companyKind: 'franchisor', currency: 'USD', simDate: '2026-01-05', autopilot: false, llmModel: 'qwen3.8-flash', checkerModel: 'kimi-k3' });
   tx.db.chainHead.insert({ id: 0, lastActivityId: 0n, hash: 'genesis', anchoredHash: '', anchoredAt: '' });
   seedGovernance(tx);
-  for (const seat of ['cash_app', 'collections']) tx.db.seatState.insert({ seat, lastRunAt: '', status: 'active', runs: 0, lastSummary: '' });
+  for (const seat of ['cash_app', 'collections', 'ap_clerk', 'payments']) tx.db.seatState.insert({ seat, lastRunAt: '', status: 'active', runs: 0, lastSummary: '' });
 }
 
 // ---------- who is calling ----------
@@ -113,6 +114,8 @@ export const reset_company = spacetimedb.reducer(ctx => {
   for (const r of [...ctx.db.securityEvent.iter()]) ctx.db.securityEvent.id.delete(r.id);
   for (const r of [...ctx.db.seatState.iter()]) ctx.db.seatState.seat.delete(r.seat);
   for (const r of [...ctx.db.seatTimer.iter()]) ctx.db.seatTimer.scheduledId.delete(r.scheduledId);
+  for (const r of [...ctx.db.bill.iter()]) ctx.db.bill.id.delete(r.id);
+  for (const r of [...ctx.db.payment.iter()]) ctx.db.payment.id.delete(r.id);
   for (const r of [...ctx.db.ruleStat.iter()]) ctx.db.ruleStat.key.delete(r.key);
   for (const r of [...ctx.db.finding.iter()]) ctx.db.finding.id.delete(r.id);
   for (const r of [...ctx.db.auditOpinion.iter()]) ctx.db.auditOpinion.period.delete(r.period);
@@ -190,6 +193,11 @@ export const answer_ask = spacetimedb.reducer({ askId: t.u64(), answer: t.string
 export const release_refund = spacetimedb.reducer({ refundId: t.u64() }, (ctx, { refundId }) => {
   const who = requireRole(ctx, 'controller');
   guard(() => releaseRefund(ctx, who, refundId));
+});
+
+export const release_payment = spacetimedb.reducer({ paymentId: t.string() }, (ctx, { paymentId }) => {
+  const who = requireRole(ctx, 'controller');
+  guard(() => releasePayment(ctx, who, paymentId));
 });
 
 export const endorse_routing = spacetimedb.reducer({ requestId: t.u64() }, (ctx, { requestId }) => {
@@ -283,7 +291,7 @@ export const decide_policy = spacetimedb.reducer({ key: t.string(), approve: t.b
 // ---------- the seats ----------
 
 function runSeats(ctx: ProcCtx): string {
-  const parts = [`triage ${triage(ctx)}`, `cash_app ${cashAppCycle(ctx)}`, `collections ${collectionsCycle(ctx)}`, `refunds ${refundsCycle(ctx)}`];
+  const parts = [`triage ${triage(ctx)}`, `cash_app ${cashAppCycle(ctx)}`, `collections ${collectionsCycle(ctx)}`, `refunds ${refundsCycle(ctx)}`, `ap_clerk ${apClerkCycle(ctx)}`, `payments ${paymentsCycle(ctx)}`];
   const summary = parts.join(' | ');
   ctx.withTx(tx => {
     const today = simDate(tx);

@@ -87,6 +87,7 @@ export const DOMAINS = {
       callback_status: { type: 'enum', values: ['none', 'confirmed', 'denied', 'no_answer'], doc: 'result of calling the number on file' },
       requests_last_30d: { type: 'number', doc: 'routing-change requests for this counterparty in the last 30 days' },
       urgency_language: { type: 'bool', doc: 'the message pressures for speed or secrecy' },
+      lookalike_sender: { type: 'bool', doc: "the sender's address imitates the contact on file" },
     },
   },
   allocation: {
@@ -103,6 +104,20 @@ export const DOMAINS = {
       open_items: { type: 'number', doc: 'open invoices this payer has' },
     },
   },
+  bill_match: {
+    doc: 'Decide whether a vendor bill can be approved for payment, held for a person, or rejected.',
+    outcomes: ['approve', 'hold_exception', 'reject'],
+    features: {
+      po_found: { type: 'bool', doc: 'a purchase order exists for the bill' },
+      receipt_found: { type: 'bool', doc: 'goods were received against that order' },
+      amount_vs_po: { type: 'number', doc: 'bill amount / order amount' },
+      amount_vs_received: { type: 'number', doc: 'bill amount / value of goods received' },
+      duplicate_score: { type: 'number', doc: '0..1, how closely the bill matches another bill from the same vendor (same amount, same number once punctuation is stripped, close dates)' },
+      vendor_bank_change_pending: { type: 'bool', doc: 'a change of the vendor bank account is waiting for verification' },
+      days_to_due: { type: 'number', doc: 'days until the bill is due' },
+      amount: { type: 'number', doc: 'bill amount (cents)' },
+    },
+  },
 } satisfies Record<string, DomainSpec>;
 
 export type DomainName = keyof typeof DOMAINS;
@@ -113,6 +128,7 @@ export const ESCALATING: Record<DomainName, string[]> = {
   pre_chase: ['ask_consultant', 'escalate_controller'],
   allocation: ['leave_unapplied_ask'],
   routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
+  bill_match: ['hold_exception'],
 };
 
 // Two outcomes agree when they lead to the same treatment of the case.

@@ -11,6 +11,7 @@ import { applyAllocations, CASH, closeWork, money, useCurrency, openItemsFor, pr
 import { addFact, aliasSubject, createInvoice, ingest, openWork } from './world';
 import { recordCheck } from './reliability';
 import { routeHeldEmail, type Extracted } from './seats';
+import { answerPayables, rejectBill } from './packs/payables';
 
 export function answerAsk(tx: Tx, who: Principal, askId: bigint, answer: string, reason: string): string {
   useCurrency(tx);
@@ -36,6 +37,8 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
   const today = simDate(tx);
   const evidence = JSON.parse(a.evidence || '{}');
   const plan = [`ask:${a.id}`];
+  const payables = answerPayables(tx, who, a.kind, a.subject, answer, plan);
+  if (payables !== null) return payables;
   if (a.kind.startsWith('spot_check:')) {
     const domain = a.kind.slice('spot_check:'.length);
     const correct = answer === 'correct' ? String(evidence.decided) : answer;
@@ -303,5 +306,7 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
     recordCheck(tx, d.domain, d.subject, outcome, 'correction', who.id);
     return `correction recorded on decision #${decisionId}: ${d.outcome} -> ${outcome}`;
   });
+  // Correcting an approval undoes it, through the kernel like everything else.
+  if (res.ok && d.domain === 'bill_match' && outcome === 'reject') return rejectBill(tx, who, d.subject.replace('bill:', ''), reason).summary;
   return res.summary;
 }

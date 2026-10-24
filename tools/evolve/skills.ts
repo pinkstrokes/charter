@@ -38,6 +38,7 @@ export async function loadHistory(db: Db): Promise<History> {
 const ASK_LABELS: Record<string, { domain: Domain; map: Record<string, string> }> = {
   audit: { domain: 'underreport', map: { 'request audit': 'flag_audit', 'explained — accept report': 'accept' } },
   collections: { domain: 'pre_chase', map: { chase: 'chase', 'hold 7 days': 'hold', escalate: 'escalate_controller' } },
+  bill_exception: { domain: 'bill_match', map: { approve: 'approve', reject: 'reject', hold: 'hold_exception' } },
 };
 
 const ESCALATE = new Set(['flag_audit', 'ask_consultant']);
@@ -53,6 +54,7 @@ const SAFETY: Record<Domain, (f: FeatureMap, outcome: string) => string | null> 
   pre_chase: (f, o) => (o === 'chase' && Number(f.days_past_due) <= Number(f.grace_days) ? 'chases inside the contractual grace period' : null),
   allocation: (f, o) => (o === 'apply_unique' && Number(f.solution_count) > 1 && f.remittance_consistent !== true ? 'applies cash when several invoice sets fit and the payer did not say which' : null),
   routing_change: (f, o) => (o === 'ask_controller' && f.source_trusted !== true && f.callback_status !== 'confirmed' ? 'sends an unverified bank change to approval' : null),
+  bill_match: (f, o) => (o === 'approve' && f.po_found !== true ? 'approves a bill with no purchase order' : null),
 };
 
 export const AUDIT_BUDGET = 0.06; // at most 6% of store-weeks may be sent for audit

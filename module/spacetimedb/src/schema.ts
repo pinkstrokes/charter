@@ -321,6 +321,40 @@ export const refund = table(
   }
 );
 
+// Payables: bills from vendors and the payments that settle them.
+export const bill = table(
+  { name: 'bill', public: true },
+  {
+    id: t.string().primaryKey(), // vendor code + the vendor's own invoice number as written
+    vendorCode: t.string().index('btree'),
+    billNo: t.string(),
+    poNo: t.string(),
+    billDate: t.string(),
+    dueAt: t.string(),
+    amountCents: t.i64(),
+    openCents: t.i64(),
+    status: t.string(), // received | held | approved | scheduled | paid | rejected
+    note: t.string(),
+    sourceObs: t.u64(),
+  }
+);
+
+export const payment = table(
+  { name: 'payment', public: true },
+  {
+    id: t.string().primaryKey(),
+    vendorCode: t.string().index('btree'),
+    billIds: t.string(), // JSON array
+    amountCents: t.i64(),
+    bankAccount: t.string(),
+    status: t.string(), // prepared | released | cancelled
+    preparedBy: t.string(),
+    approvals: t.string(), // JSON array of approver ids
+    preparedAt: t.string(),
+    activityId: t.u64(),
+  }
+);
+
 // Earned autonomy: how each rule of each skill version has done when checked.
 export const ruleStat = table(
   { name: 'rule_stat', public: true },
@@ -330,8 +364,10 @@ export const ruleStat = table(
     skillKey: t.string(),
     ruleIndex: t.i32(),
     decisions: t.u32(),
-    checked: t.u32(),
-    errors: t.u32(),
+    checked: t.u32(), // autonomous decisions whose outcome was later established
+    errors: t.u32(), // of those, how many were wrong: this is what autonomy is earned on
+    alarmsChecked: t.u32(), // escalations whose outcome was later established
+    falseAlarms: t.u32(), // escalations a person found unnecessary: cost, not risk
     recent: t.string(), // JSON array of the last 20 checks, 1 = wrong
     state: t.string(), // probation | normal | reduced | tightened | suspended
     sampleRate: t.f64(),
@@ -446,6 +482,8 @@ const spacetimedb = schema({
   policy,
   decision,
   refund,
+  bill,
+  payment,
   ruleStat,
   finding,
   auditOpinion,

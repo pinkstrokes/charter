@@ -19,14 +19,16 @@ const ESCALATE: Record<Domain, string[]> = {
   pre_chase: ['ask_consultant', 'escalate_controller'],
   allocation: ['leave_unapplied_ask'],
   routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
+  bill_match: ['hold_exception'],
 };
 
 function domainOf(subject: string): Domain | null {
   if (subject.startsWith('store:')) return 'underreport';
   if (subject.startsWith('receipt:')) return 'allocation';
   if (subject.startsWith('entity:')) return 'pre_chase';
-  if (subject.startsWith('routing:')) return 'routing_change';
-  return null;
+  routing_change: ['hold_and_verify', 'ask_controller', 'reject'],
+  bill_match: ['hold_exception'],
+};
 }
 
 // Exact one-sided 95% upper bound on an error rate (Clopper-Pearson), by bisection.

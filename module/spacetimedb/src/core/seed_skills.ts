@@ -3,6 +3,15 @@
 import { type SkillProgram, F, N, B, E, cmp, and, or, not, arith } from './dsl';
 
 export const SEED_SKILLS: Record<string, SkillProgram> = {
+  bill_match: {
+    domain: 'bill_match',
+    rules: [
+      { when: not(F('po_found')), then: { decide: 'hold_exception', note: 'no purchase order for this bill' } },
+      { when: not(F('receipt_found')), then: { decide: 'hold_exception', note: 'nothing has been received against the order' } },
+      { when: cmp('gt', F('amount_vs_received'), N(1.02)), then: { decide: 'hold_exception', note: 'billed for more than was received' } },
+    ],
+    otherwise: { decide: 'approve' },
+  },
   underreport: {
     domain: 'underreport',
     rules: [

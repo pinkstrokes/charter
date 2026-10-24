@@ -4,10 +4,10 @@
 // rule starts on probation, a proven one gets reduced inspection, a recent error
 // tightens it, and a rule we are 95% sure is worse than the tolerable error rate
 // is suspended, so its cases go to a person until a new version replaces it.
-import { sameTreatment } from './core/dsl';
+import { ESCALATING, sameTreatment } from './core/dsl';
 import { appendActivity, simDate, type Tx } from './kernel';
 
-export const TOLERABLE: Record<string, number> = { underreport: 0.05, pre_chase: 0.1, allocation: 0.02, routing_change: 0.02 };
+export const TOLERABLE: Record<string, number> = { underreport: 0.05, pre_chase: 0.1, allocation: 0.02, routing_change: 0.02, bill_match: 0.02 };
 export const SAMPLE_RATE: Record<string, number> = { probation: 0.25, normal: 0.1, reduced: 0.03, tightened: 0.4, suspended: 0 };
 
 // Stronger evidence overrides weaker evidence about the same decision.
@@ -55,7 +55,7 @@ export function statFor(tx: Tx, domain: string, skillKey: string, ruleIndex: num
   const key = `${skillKey}#${ruleIndex}`;
   const row = tx.db.ruleStat.key.find(key);
   if (row) return row;
-  return tx.db.ruleStat.insert({ key, domain, skillKey, ruleIndex, decisions: 0, checked: 0, errors: 0, recent: '[]', state: 'probation', sampleRate: SAMPLE_RATE.probation, updatedAt: simDate(tx) });
+  return tx.db.ruleStat.insert({ key, domain, skillKey, ruleIndex, decisions: 0, checked: 0, errors: 0, alarmsChecked: 0, falseAlarms: 0, recent: '[]', state: 'probation', sampleRate: SAMPLE_RATE.probation, updatedAt: simDate(tx) });
 }
 
 export function nextState(s: { domain: string; checked: number; errors: number; recent: string; state: string }): string {
@@ -79,6 +79,13 @@ export function recordCheck(tx: Tx, domain: string, subject: string, correct: st
   if (!d) return;
   const wrong = sameTreatment(domain, d.outcome, correct) ? 0 : 1;
   const stat = statFor(tx, domain, d.skillKey, d.ruleIndex);
+  if ((ESCALATING[domain as keyof typeof ESCALATING] ?? []).includes(d.outcome)) {
+    // An escalation is never a risk; when a person finds it unnecessary it is a false alarm.
+    if (d.label) return;
+    tx.db.decision.id.update({ ...d, label: correct, labelSource: `${source}:${by}` });
+    tx.db.ruleStat.key.update({ ...stat, alarmsChecked: stat.alarmsChecked + 1, falseAlarms: stat.falseAlarms + wrong, updatedAt: simDate(tx) });
+    return;
+  }
   let { checked, errors } = stat;
   const recent = JSON.parse(stat.recent) as number[];
   if (d.label) {

@@ -26,10 +26,13 @@ export const ACTIONS = [
   'hire_seat',
   'file_finding',
   'close_period',
+  'approve_bill',
+  'prepare_payment',
+  'release_payment',
 ] as const;
 export type Action = (typeof ACTIONS)[number];
 
-export const ROLES = ['cash_app', 'collections', 'refunds', 'controller', 'consultant', 'auditor', 'world', 'evolver', 'admin'] as const;
+export const ROLES = ['cash_app', 'collections', 'refunds', 'ap_clerk', 'payments', 'controller', 'consultant', 'auditor', 'world', 'evolver', 'admin'] as const;
 export type Role = (typeof ROLES)[number];
 
 export interface Principal {
@@ -148,14 +151,19 @@ export const CONSTITUTION: PolicyRule[] = [
   { id: 'C9', version: 1, constitutional: true, tpl: { t: 'forbid_when', action: 'send_notice', fact: 'bankruptcy_flag' }, text: 'No collection notices while the counterparty is in bankruptcy.' },
   { id: 'C10', version: 1, constitutional: true, tpl: { t: 'human_only', action: 'activate_skill' }, text: 'Only a person can put a new skill version in front of real work.' },
   { id: 'C11', version: 1, constitutional: true, tpl: { t: 'human_only', action: 'close_period' }, text: 'Only a person can close the books for a period.' },
+  { id: 'C12', version: 1, constitutional: true, tpl: { t: 'trusted_field', action: 'release_payment', field: 'bank_account' }, text: 'Vendors are paid only to bank accounts that came from a trusted source.' },
+  { id: 'C13', version: 1, constitutional: true, tpl: { t: 'sod', action: 'release_payment' }, text: 'Whoever prepares a payment cannot release it.' },
+  { id: 'C14', version: 1, constitutional: true, tpl: { t: 'two_person_above', action: 'release_payment', amountCents: 2_500_000 }, text: 'Vendor payments over $25,000 need two approvals.' },
 ];
 
 export const ROLE_MATRIX: PolicyRule[] = [
   { id: 'R-cash', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'cash_app', actions: ['post_invoice', 'apply_receipt', 'reverse_application', 'initiate_debit', 'request_audit', 'request_routing_change', 'record_adjustment'] }, text: 'The cash-application seat posts invoices, applies and reverses receipts, initiates scheduled debits and raises audit or bank-change requests.' },
   { id: 'R-coll', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'collections', actions: ['send_notice', 'assess_fee', 'request_audit', 'request_routing_change'] }, text: 'The collections seat sends notices and assesses contractual fees.' },
   { id: 'R-refund', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'refunds', actions: ['request_refund', 'request_routing_change'] }, text: 'The refunds seat prepares refunds of overpayments; someone else releases them.' },
-  { id: 'R-ctrl', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'controller', actions: ['approve', 'answer_ask', 'waive_fee', 'write_off', 'endorse_routing_change', 'activate_policy', 'activate_skill', 'record_adjustment', 'issue_refund', 'hire_seat', 'close_period'] }, text: 'The controller approves, waives, writes off and ratifies policies.' },
+  { id: 'R-ctrl', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'controller', actions: ['approve', 'answer_ask', 'waive_fee', 'write_off', 'endorse_routing_change', 'activate_policy', 'activate_skill', 'record_adjustment', 'issue_refund', 'hire_seat', 'close_period', 'approve_bill', 'release_payment'] }, text: 'The controller approves, waives, writes off and ratifies policies.' },
   { id: 'R-cons', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'consultant', actions: ['answer_ask'] }, text: 'Field consultants answer questions about their stores.' },
+  { id: 'R-ap', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'ap_clerk', actions: ['approve_bill', 'request_routing_change'] }, text: 'The payables clerk matches bills to orders and receipts and approves the ones that match.' },
+  { id: 'R-pay', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'payments', actions: ['prepare_payment'] }, text: 'The payments seat prepares payment runs; someone else releases them.' },
   { id: 'R-audit', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'auditor', actions: ['file_finding'] }, text: 'The internal auditor reads everything and may only report what it finds.' },
   { id: 'R-evo', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'evolver', actions: ['propose_policy', 'propose_skill'] }, text: 'The evolution engine may propose, never activate.' },
   { id: 'R-erp', version: 1, constitutional: false, tpl: { t: 'role_can', role: 'world', actions: ['post_invoice'] }, text: 'The ERP books supply invoices, trade invoices and credit notes.' },
