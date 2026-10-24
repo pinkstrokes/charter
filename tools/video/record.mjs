@@ -17,11 +17,12 @@ const W = 1920;
 const H = 930;
 
 // A drawn cursor that breathes slightly: the screencast only gets frames when
-// the page repaints, so a still page would otherwise record nothing.
+// the page repaints (an opacity change does not repaint), so a still page would
+// otherwise record nothing.
 const CURSOR = `
   if (!document.getElementById('fake-cursor')) {
     const st = document.createElement('style');
-    st.textContent = '@keyframes fake-cursor-breathe { from { opacity: 0.86 } to { opacity: 1 } }';
+    st.textContent = '@keyframes fake-cursor-breathe { from { box-shadow: 0 0 2px 1px rgba(235,104,52,0.25) } to { box-shadow: 0 0 6px 3px rgba(235,104,52,0.45) } }';
     document.head.appendChild(st);
     const c = document.createElement('div');
     c.id = 'fake-cursor';
@@ -31,14 +32,19 @@ const CURSOR = `
     document.body.appendChild(c);
   }`;
 
-// A visible control whose text is exactly this; with `within`, only inside the table row that mentions it.
+// A visible control whose text is exactly this; with `within`, only inside the table row that mentions it,
+// and otherwise inside an open drawer before the page behind it.
 // Never a near match: on a page full of actions, the wrong button can change the books.
 async function find(page, text, within) {
   return page.evaluateHandle(
     (t, w) => {
-      const scope = w ? [...document.querySelectorAll('tr')].find(r => r.textContent?.includes(w)) : document;
-      if (!scope) return null;
-      return [...scope.querySelectorAll('button, a, [role="button"], [role="tab"]')].find(e => e.offsetParent !== null && e.textContent?.trim() === t) ?? null;
+      const match = scope => [...scope.querySelectorAll('button, a, [role="button"], [role="tab"]')].find(e => e.offsetParent !== null && e.textContent?.trim() === t) ?? null;
+      if (w) {
+        const row = [...document.querySelectorAll('tr')].find(r => r.textContent?.includes(w));
+        return row ? match(row) : null;
+      }
+      const drawer = document.querySelector('.drawer');
+      return (drawer && match(drawer)) ?? match(document);
     },
     text,
     within ?? ''

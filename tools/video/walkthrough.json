@@ -255,7 +255,7 @@
  },
  {
   "url": "http://127.0.0.1:5190/?db=charter-a#/ledger/audit",
-  "ready": "The auditor's opinion",
+  "ready": "February 2026",
   "steps": [
    {
     "wait": 1200
@@ -272,7 +272,7 @@
  },
  {
   "url": "http://127.0.0.1:5190/?db=charter-a#/proof",
-  "ready": "Month by month",
+  "ready": "Real bank reconciliation",
   "steps": [
    {
     "wait": 1200
