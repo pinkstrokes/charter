@@ -1,0 +1,85 @@
+[
+ {
+  "title": {
+   "heading": "Charter",
+   "lines": [
+    "An AI finance team that catches its own mistakes,",
+    "pushes back when it is told something wrong,",
+    "and cannot be talked into moving money."
+   ]
+  },
+  "say": "Charter is an A.I. finance team: cash application, collections, refunds, payables and payments, working beside a controller, inside one database.",
+  "caption": "Cash application, collections, refunds, payables, payments — beside a controller, in one database"
+ },
+ {
+  "image": "shots/b4_guess.png",
+  "say": "The moment. A U.K. wholesaler's real invoices. On December twenty-eighth a customer's parent company pays two thousand one hundred and forty-nine pounds and names invoice 536784. In its first week, the team's skill matched it to three other invoices that came close.",
+  "caption": "Real invoices (UCI Online Retail II). Dec 28: £2,149.30 names 536784; the day-one skill matches three other invoices"
+ },
+ {
+  "image": "shots/b1_question.png",
+  "say": "Five days later the same payer sends thirty pounds naming invoice 536792, which our books say is already paid. Charter doesn't file it as a duplicate. It sees that 536792 was paid by its own guess, and asks the controller with the evidence.",
+  "caption": "Jan 2: £30 names 536792 — paid by our own guess. Charter asks the controller with the evidence"
+ },
+ {
+  "image": "shots/b3_reverse.png",
+  "say": "One answer, and the earlier application is reversed, both payments land where the customer said, and every step is a hash-chained row.",
+  "caption": "The guess is reversed; both payments land where the customer said; every step is on the chain"
+ },
+ {
+  "image": "shots/b5_autonomy.png",
+  "say": "And the rule that guessed loses its autonomy. Every rule earns it from checks, on exact binomial bounds: this one is now inspected four times as often, until it proves itself again.",
+  "caption": "The rule that guessed: probation → tightened. Autonomy is earned rule by rule, on exact binomial bounds"
+ },
+ {
+  "image": "shots/b6_proof.png",
+  "say": "On these real books the team settled more on its own each month and asked people less, and on the locked test split, three hundred and ten payments of three hundred and ten landed where the payer meant, with no mistakes among the two hundred and ninety-nine it settled alone.",
+  "caption": "Real books, month by month: settled alone 68% → 100%, questions 6 → 0; locked test: 310/310 landed right, 0/299 wrong alone"
+ },
+ {
+  "image": "shots/a1_email.png",
+  "say": "It cannot be talked into moving money. The day before a forty-eight-thousand-dollar payment run, Formosa Leaf's mailbox asks us to change bank details. Two models read it, the change is held, and the controller is asked to call the number we already had.",
+  "caption": "Thursday: new bank details for Formosa Leaf, the day before a $48,000 payment run — held for a callback"
+ },
+ {
+  "image": "shots/a2_refused.png",
+  "say": "Friday. The controller presses release. Refused, for the controller too, by policy P 3.",
+  "caption": "Friday: release refused — for the controller too — by P-3"
+ },
+ {
+  "image": "shots/a3_policies.png",
+  "say": "Nobody wrote P 3. In April a debit bounced during a bank change nobody had verified. Charter replayed every past money movement, found the one rule that would have stopped it while holding back almost nothing, and extended it from debits to refunds and vendor payments.",
+  "caption": "Learned in April from a bounced debit; replayed over every past money movement; extended to refunds and payments"
+ },
+ {
+  "image": "shots/a4_pushback.png",
+  "say": "And it pushes back. Tell it to chase a franchisee inside the grace period, and it keeps its decision: the agreement forbids it. That verdict is never counted against the rule, and never learned.",
+  "caption": "Told to chase inside the grace period, it keeps its decision: the agreement forbids it"
+ },
+ {
+  "image": "shots/a5_skill.png",
+  "say": "When people do teach it, a lesson is a pull request. A model writes a new version of the team's skill; a deterministic replay over every past decision decides whether a person even sees it.",
+  "caption": "A lesson is a pull request: a model writes the version, a replay over every past decision decides"
+ },
+ {
+  "image": "shots/a6_audit.png",
+  "say": "Every month, a read-only auditor on another model family re-performs a sample, and the controller closes the books into a certificate anchored in git.",
+  "caption": "A read-only auditor re-performs a sample every month; the close is a hashed certificate"
+ },
+ {
+  "image": "shots/p1_benchrec.png",
+  "say": "On a real bank's reconciliation, the same earned-autonomy rule matched eighty-four percent of bank lines at ninety-nine point nine percent precision, clearing the benchmark's floor that the matcher shipped with the dataset misses.",
+  "caption": "BenchRec (real bank reconciliation): 83.9% matched alone at 99.90% precision — the 99.8% floor cleared"
+ },
+ {
+  "title": {
+   "heading": "Would you hire it?",
+   "lines": [
+    "Limited access. A clean record. Knows when to ask — and when to say no.",
+    "36 attack emails: the attacker got nothing."
+   ]
+  },
+  "say": "Thirty-six attack emails, and the attacker got nothing. Limited access, a clean record, and it knows when to ask, and when to say no. That's what you need before you hire one.",
+  "caption": "Limited access · a clean record · knows when to ask — and when to say no"
+ }
+]

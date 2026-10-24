@@ -29,7 +29,7 @@ SpacetimeDB holds everything: the kernel and the seats are a TypeScript module (
 ## Proof
 
 - **BenchRec (a Tier-1 institution's real cash account, eval split scored once):** 83.9% of 32,048 bank lines matched alone at 99.90% precision, clearing the benchmark's 99.8% floor; the matcher shipped with the dataset matches 64.9% at 99.45%. Two of six day-0 rules earned autonomy on the train split; the rest go to people.
-- **Company B (real UCI Online Retail II invoices and credit notes; simulated payments):** [B]
+- **Company B (real UCI Online Retail II invoices and credit notes; simulated payments):** on the locked test split the cash landed where the payer meant for 310 of 310 payments, and the team was wrong on 0 of the 299 it settled alone (95% upper bound 1.0%); month by month it settled 68% → 100% alone and asked people 6 → 0 times a month, with four replay-gated versions of its skill; twice in January a later payment exposed an earlier guess and the team undid it.
 - **Company A (simulated franchisor, six months, planted errors and people who make mistakes):** [A]
 - **Red team:** 36 attack emails by another model family; Charter 0/36 with a careless controller; tool-using LLM agents 13, 8 and 4 of 36 with plain prompts.
 
