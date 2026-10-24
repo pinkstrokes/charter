@@ -23,6 +23,7 @@ export function summarize(a: Activity): string {
       return `${str(p.txnId)} ${cents(p.amount)} ${str(p.type).replace(/_/g, ' ')}`;
     }
     case 'reverse_application':
+      if (p.receipt) return `${str(p.receipt)} back to unapplied cash: ${str(p.reason)}`;
       return `return ${str(p.returnTxn)} (${str(p.code)}) of ${str(p.original)}`;
     case 'initiate_debit':
       return `${cents(p.amount)} from ${str(p.entity)} at ${str(p.account)}`;
@@ -81,6 +82,8 @@ export function summarize(a: Activity): string {
       return `${str(p.domain).replace(/_/g, ' ')}: ${str(p.summary)}`;
     case 'inspection_level':
       return `${str(p.rule)}: ${str(p.from)} to ${str(p.to)}, ${str(p.errors)} wrong in ${str(p.checked)} checks`;
+    case 'verdict_declined':
+      return `${str(p.subject)}: "${str(p.decided).replace(/_/g, ' ')}" stands against ${str(p.by)}'s "${str(p.verdict).replace(/_/g, ' ')}" — ${parseArr<string>(a.reasons)[0] ?? ''}`;
     case 'close_period':
       return `${str(p.period)}`;
     case 'file_finding':

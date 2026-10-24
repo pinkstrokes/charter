@@ -92,6 +92,7 @@ export const ACTION_LABEL: Record<string, string> = {
   post_invoice: 'Post invoice',
   apply_receipt: 'Apply receipt',
   reverse_application: 'Reverse application',
+  verdict_declined: 'Verdict declined',
   assess_fee: 'Assess fee',
   waive_fee: 'Waive fee',
   send_notice: 'Send notice',
