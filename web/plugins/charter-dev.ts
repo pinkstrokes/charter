@@ -5,7 +5,7 @@ import type { Plugin } from 'vite';
 import { createCharterCore, type CoreOptions } from './charter-core';
 
 export function charterDev(opts: CoreOptions): Plugin {
-  const { httpBase, defaultDb, personas, externalFile, companyDir, proofFiles } = createCharterCore(opts);
+  const { httpBase, defaultDb, personas, externalFile, companyDir, proofFiles, world } = createCharterCore(opts);
 
   async function handle(req: IncomingMessage, res: ServerResponse, next: () => void): Promise<void> {
     const url = new URL(req.url ?? '/', 'http://localhost');
@@ -29,6 +29,11 @@ export function charterDev(opts: CoreOptions): Plugin {
         return send(200, await personas(db, true));
       }
       if (url.pathname === '/__charter/proof') return send(200, proofFiles(companyDir(db, url.searchParams.get('dir')), db));
+      if (url.pathname === '/__charter/world' && req.method === 'POST') {
+        let raw = '';
+        for await (const chunk of req) raw += chunk;
+        return send(200, await world(db, JSON.parse(raw || '{}')));
+      }
       return send(404, { error: 'unknown endpoint' });
     } catch (e) {
       return send(500, { error: e instanceof Error ? e.message : String(e) });

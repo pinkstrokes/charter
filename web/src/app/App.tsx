@@ -13,6 +13,8 @@ import { Ledger } from '../screens/Ledger';
 import { Security } from '../screens/Security';
 import { Proof } from '../screens/Proof';
 import { Payables } from '../screens/Payables';
+import { World } from '../screens/World';
+import { isPublic } from '../stdb/api';
 import { Why } from '../screens/Why';
 import { Toasts } from '../components/Toast';
 
@@ -22,6 +24,7 @@ const TITLES: Record<Screen, string> = {
   knowledge: 'Knowledge',
   ledger: 'Ledger',
   payables: 'Payables',
+  world: 'World',
   security: 'Security',
   proof: 'Proof',
 };
@@ -47,6 +50,7 @@ export function App() {
         {ready && nav.screen === 'knowledge' && <Knowledge />}
         {ready && nav.screen === 'ledger' && <Ledger />}
         {ready && nav.screen === 'payables' && <Payables />}
+        {ready && nav.screen === 'world' && !isPublic && <World />}
         {ready && nav.screen === 'security' && <Security />}
         {nav.screen === 'proof' && <Proof />}
       </main>
@@ -77,7 +81,8 @@ function Header({ screen }: { screen: Screen }) {
       </div>
       <CompanySwitcher />
       <nav className="nav" aria-label="Screens">
-        {SCREENS.map(s => (
+        {/* The public page has no world feeder, so no World screen. */}
+        {SCREENS.filter(s => s !== 'world' || !isPublic).map(s => (
           <button key={s} className="nav-item" aria-current={screen === s ? 'page' : undefined} onClick={() => go(s)}>
             {TITLES[s]}
             {s === 'inbox' && <span className={`count ${askCount ? '' : 'zero'}`}>{askCount}</span>}

@@ -10,6 +10,7 @@
 //                                       whose report scripts/seed_story.py wrote there) or data/dev;
 //                                       ?dir=companyB (any folder under data/) or ?dir=local overrides;
 //                                       plus data/benchrec_eval/result.json, whatever the folder
+//   POST /__charter/world?db=NAME       a made-up payment or bill, delivered by the database's world feeder
 //
 // Persona tokens come from an identities file written by the world builder
 // (data/companyA/identities.json for charter-a, or $CHARTER_IDENTITIES), or, for
@@ -44,6 +45,20 @@ const SELF_MANAGED: { name: string; role: string }[] = [
 ];
 const ORDER = ['Dana', 'Sam', 'Lee', 'Priya'];
 const NEVER_BIND = new Set(['charter-iqwfr']);
+
+// A payment or a bill made up on the World screen (amounts in cents).
+export interface WorldEvent {
+  kind: 'payment' | 'bill';
+  amountCents: number;
+  type?: string;
+  counterpartyName?: string;
+  counterpartyAccount?: string;
+  reference?: string;
+  vendorCode?: string;
+  billNo?: string;
+  poNo?: string;
+  dueDate?: string;
+}
 
 export interface CoreOptions {
   repoRoot: string;
@@ -190,6 +205,68 @@ export function createCharterCore(opts: CoreOptions) {
     return { source, managed, personas: people, warning };
   }
 
+  // Something arriving from outside, made up on the World screen: a payment in the
+  // bank feed or a bill in the AP inbox. The database's own world feeder delivers it
+  // through ingest_obs, exactly as the simulation delivers its events; nothing about
+  // it tells a seat it was made up except the LIVE- prefix the bank gives it. With
+  // autopilot off the seats run once so the page sees what they did.
+  async function world(db: string, body: WorldEvent): Promise<{ id: string; date: string; existed: boolean; ran: string | null }> {
+    const ext = externalFile(db);
+    const ids = ext ? readJson<Record<string, IdentityEntry>>(ext) : null;
+    const feeder = ids && Object.values(ids).find(e => e?.role === 'world' && e.token);
+    if (!feeder) throw new Error(`${db} has no world feeder in its identities file; only world-built databases take made-up events`);
+    const query = async (sql: string) => {
+      const r = await stdb('POST', `/v1/database/${encodeURIComponent(db)}/sql`, sql, getAdminToken());
+      if (r.status !== 200) throw new Error(`database ${db}: ${r.status} ${r.text.slice(0, 200)}`);
+      const res = JSON.parse(r.text) as { schema: { elements: { name: { some: string } }[] }; rows: unknown[][] }[];
+      const names = res[0]?.schema.elements.map(e => e.name.some) ?? [];
+      return (res[0]?.rows ?? []).map(row => Object.fromEntries(names.map((n, i) => [n, row[i]])) as Record<string, unknown>);
+    };
+    const [cfg] = await query('SELECT sim_date, autopilot FROM config');
+    const date = String(cfg?.sim_date ?? '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`${db} has no business date yet`);
+    const cents = Number(body.amountCents);
+    if (!Number.isSafeInteger(cents) || cents <= 0 || cents > 10_000_000_000) throw new Error('the amount must be positive');
+    const text = (v: unknown, max: number) => String(v ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max);
+    let kind: string, source: string, refKey: string, subject: string, id: string, payload: Record<string, unknown>;
+    if (body.kind === 'payment') {
+      const type = ['wire_in', 'ach_credit_in', 'check_deposit'].includes(String(body.type)) ? String(body.type) : 'wire_in';
+      const account = text(body.counterpartyAccount, 8);
+      if (!/^\*{4}\d{4}$/.test(account)) throw new Error('the paying account is written ****1234');
+      const name = text(body.counterpartyName, 80);
+      if (!name) throw new Error('who is paying?');
+      id = `LIVE-${date.slice(2).replace(/-/g, '')}-${String(Math.floor(1000 + Math.random() * 9000))}`;
+      kind = 'bank_txn';
+      source = 'bank';
+      refKey = `bank:${id}`;
+      subject = `account:${account}`;
+      payload = { txnId: id, date, type, amountCents: cents, counterpartyName: name, counterpartyAccount: account, reference: text(body.reference, 140) };
+    } else if (body.kind === 'bill') {
+      const vendorCode = text(body.vendorCode, 20);
+      const billNo = text(body.billNo, 40);
+      const dueDate = text(body.dueDate, 10);
+      if (!vendorCode || !billNo) throw new Error('a bill needs a vendor and the vendor’s bill number');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) throw new Error('the due date is written YYYY-MM-DD');
+      id = `${vendorCode}:${billNo}`;
+      kind = 'vendor_invoice';
+      source = 'erp';
+      refKey = `bill:${id}`;
+      subject = `vendor:${vendorCode}`;
+      payload = { billNo, vendorCode, poNo: text(body.poNo, 40), date, dueDate, amountCents: cents };
+    } else {
+      throw new Error('a made-up event is a payment or a bill');
+    }
+    const existed = (await query(`SELECT id FROM observation WHERE ref_key = '${refKey.replace(/'/g, "''")}'`)).length > 0;
+    const call = async (fn: string, args: unknown[]) => {
+      const r = await stdb('POST', `/v1/database/${encodeURIComponent(db)}/call/${fn}`, args, feeder.token);
+      if (r.status !== 200) throw new Error(`${fn}: ${r.status} ${r.text.slice(0, 300)}`);
+      return r.text;
+    };
+    await call('ingest_obs', [kind, source, date, refKey, subject, JSON.stringify(payload)]);
+    const ran = cfg?.autopilot ? null : await call('run_seats', []);
+    return { id, date, existed, ran };
+  }
+
   // Where the world builder and evolution engine write for this database (same rule as tools/evolve).
   // A development database's own report (web/.data/<db>, gitignored), written by scripts/seed_story.py.
   const localDir = (db: string) => path.join(opts.webRoot, '.data', db);
@@ -257,7 +334,7 @@ export function createCharterCore(opts: CoreOptions) {
     return { dir: path.relative(opts.repoRoot, dir), current, available: availableDirs(db), files, benchrec: benchrec() };
   }
 
-  return { httpBase, defaultDb, personas, externalFile, companyDir, proofFiles };
+  return { httpBase, defaultDb, personas, externalFile, companyDir, proofFiles, world };
 }
 
 export type CharterCore = ReturnType<typeof createCharterCore>;

@@ -3,7 +3,7 @@
 // the page by scripts/export_public.ts.
 export const isPublic = import.meta.env.VITE_PUBLIC === '1';
 
-export function charterApi(what: 'env' | 'personas' | 'proof', db = '', dir = ''): string {
+export function charterApi(what: 'env' | 'personas' | 'proof' | 'world', db = '', dir = ''): string {
   if (isPublic) return `${import.meta.env.BASE_URL}__charter/${what}${what === 'proof' ? `-${db}` : ''}.json`;
   const q = new URLSearchParams();
   if (db && what !== 'env') q.set('db', db);

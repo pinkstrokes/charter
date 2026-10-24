@@ -2,7 +2,7 @@
 // lands on the same screen with the same Why panel open.
 import { useSyncExternalStore } from 'react';
 
-export const SCREENS = ['floor', 'inbox', 'knowledge', 'ledger', 'payables', 'security', 'proof'] as const;
+export const SCREENS = ['floor', 'inbox', 'knowledge', 'ledger', 'payables', 'world', 'security', 'proof'] as const;
 export type Screen = (typeof SCREENS)[number];
 
 export interface Nav {
