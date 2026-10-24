@@ -110,7 +110,10 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     const program = center(domain, current, c.program, examples, lesson, h, hidden, optional);
     if (JSON.stringify(program) === JSON.stringify(c.program)) continue;
     const ev = evaluate(domain, current, program, examples, lesson, h, hidden, optional);
-    if (ev.gate === 'pass') passing.push({ program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale });
+    if (ev.gate !== 'pass') continue;
+    const centred = { program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale };
+    scored.push(centred);
+    passing.push(centred);
   }
   passing.sort(rank);
   const secs = ((Date.now() - t0) / 1000).toFixed(1);

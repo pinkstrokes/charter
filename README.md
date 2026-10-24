@@ -6,9 +6,9 @@ Charter fills the receivables and payables seats of a finance team — mailroom 
 
 ## The moment
 
-A UK wholesaler's real invoices. On 29 December a customer's parent company pays £2,149.30 and names invoice 536784, which is £21.60 short of what it owes. On its first day the team's cash-application skill matches the money to three *other* invoices whose total comes close. Four days later the same customer pays £30.00 and names invoice 536792 — which the books say is already paid.
+A UK wholesaler's real invoices. On 28 December 2010 a customer's parent company pays £2,149.30 and names invoice 536784, which is £21.60 short of what it owes. In its first week the team's cash-application skill matches the money to three *other* invoices whose total comes close (£2,127.16). Five days later the same payer sends £30.00 naming invoice 536792 — which the books say is already paid.
 
-Charter does not file the £30 as a duplicate. It works out that 536792 was paid by its own guess on the 29th, while the customer had named a different invoice, and asks the controller with that evidence. One answer: the earlier application is reversed, both payments land where the customer said, and the rule that guessed loses its autonomy until it proves itself again. Every step is a hash-chained row a person can open.
+Charter does not file the £30 as a duplicate. It works out that 536792 was paid by its own guess on the 28th, while the payer had named a different invoice, and asks the controller with that evidence. One answer: the earlier application is reversed, both payments land where the customer said, and the rule that guessed loses its autonomy until it proves itself again. Every step is a hash-chained row a person can open.
 
 Two other moments the judges can trigger themselves:
 
