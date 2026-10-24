@@ -739,7 +739,9 @@ function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: Recei
   const referenced = [...tx.db.invoice.entityCode.filter(r.entityCode)].filter(i => r.reference.includes(i.id));
   // The payment reference names one open invoice whose balance is exactly the payment.
   const named = items.filter(i => r.reference.includes(i.id) && Math.abs(i.openCents - amount) <= 100);
+  // Every open invoice the payer named, whatever the balances: the payer's own words.
   const mentioned = items.filter(i => r.reference.includes(i.id));
+  const order = terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade'];
   const features: FeatureMap = {
     solution_count: Math.min(search.solutions.length, 3),
     exact_match: search.residuals[0] === 0,
@@ -749,8 +751,8 @@ function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: Recei
     receipt_amount: amount,
     reference_paid: referenced.length > 0 && referenced.every(i => i.openCents === 0n),
     reference_matches_open: named.length === 1,
-    reference_names_open: mentioned.length === 1,
-    reference_gap_cents: mentioned.length === 1 ? mentioned[0].openCents - amount : 0,
+    reference_names_open: mentioned.length > 0,
+    reference_gap_cents: mentioned.length ? mentioned.reduce((sum, i) => sum + i.openCents, 0) - amount : 0,
     open_items: items.length,
   };
   const overturn = paidByInference(tx, r.id, amount, referenced);
@@ -795,9 +797,10 @@ function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: Recei
       if (remitConsistent && perLine) return remitLines.map(l => ({ id: l.ref, cents: l.cents }));
       return allocationsForSubset(remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0], items);
     }
-    // Short payments stay open on the invoice the payer named; extra cash stays unapplied.
-    if (outcome === 'apply_to_reference' && mentioned.length === 1) return [{ id: mentioned[0].id, cents: Math.min(amount, mentioned[0].openCents) }];
-    if (outcome === 'apply_by_terms') return applyByTerms(amount, items, terms?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations;
+    // Only the invoices the payer named, in the agreement's order: a short payment stays
+    // open on the last of them, extra cash stays unapplied.
+    if (outcome === 'apply_to_reference' && mentioned.length) return applyByTerms(amount, mentioned, order).allocations;
+    if (outcome === 'apply_by_terms') return applyByTerms(amount, items, order).allocations;
     return [];
   };
   const treatments: Treatments = Object.fromEntries(DOMAINS.allocation.outcomes.map(o => [o, landing(allocationsFor(o))]));
@@ -811,8 +814,8 @@ function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: Recei
       toRole: d?.askRole ?? 'controller',
       question: `${money(amount)} from ${r.payerName} ${d ? `can be explained by ${search.solutions.length} different sets of invoices` : 'was applied automatically and a person said it should not have been'}. Which should it pay?`,
       // The payer's own words first, then the sets that add up, then every open invoice (oldest first).
-      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + ')), ...[...items].sort((x, y) => x.dueDate.localeCompare(y.dueDate)).map(i => i.id)])].concat(['apply oldest first', 'leave unapplied']),
-      evidence: { features, treatments, solutions: search.solutions, skill: d?.key ?? '', referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: d ? Number(d.id) : 0 },
+      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length ? [mentioned.map(i => i.id).join(' + ')] : []), ...search.solutions.map(sol => sol.join(' + ')), ...[...items].sort((x, y) => x.dueDate.localeCompare(y.dueDate)).map(i => i.id)])].concat(['apply oldest first', 'leave unapplied']),
+      evidence: { features, treatments, solutions: search.solutions, skill: d?.key ?? '', referenced: mentioned.map(i => i.id).join(' + '), remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: d ? Number(d.id) : 0 },
       confidence: 0.3,
       workItemId: workId,
       by: CASH.id,

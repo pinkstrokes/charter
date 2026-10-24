@@ -310,8 +310,8 @@ class Plan:
              "reference_paid": bool(referenced) and all(i.open == 0 for i in referenced), "open_items": len(items)}
         named = [i for i in items if i.id in rc["reference"] and abs(i.open - rc["amount"]) <= 100]
         mentioned = [i for i in items if i.id in rc["reference"]]
-        f.update(reference_matches_open=len(named) == 1, reference_names_open=len(mentioned) == 1,
-                 reference_gap_cents=mentioned[0].open - rc["amount"] if len(mentioned) == 1 else 0)
+        f.update(reference_matches_open=len(named) == 1, reference_names_open=len(mentioned) > 0,
+                 reference_gap_cents=sum(i.open for i in mentioned) - rc["amount"] if mentioned else 0)
         n = f["solution_count"]
         day0 = "apply_unique" if n == 1 else "apply_by_terms" if n == 0 else "leave_unapplied_ask"
         self.receipts[rc["txn"]].update(planned_features=f, predicted_day0=day0, solutions=[" + ".join(s) for s in sols])

@@ -131,10 +131,10 @@ function AskCard({ a, entities, stores }: { a: Ask; entities: Entity[]; stores: 
               The bank reference names <b style={{ fontWeight: 600 }}>{evidence.referenced}</b>
               {typeof features?.reference_gap_cents === 'number'
                 ? features.reference_gap_cents < 0
-                  ? `; the payment is ${money(-features.reference_gap_cents)} more than its open balance`
+                  ? `; the payment is ${money(-features.reference_gap_cents)} more than ${evidence.referenced.includes('+') ? 'their' : 'its'} open balance`
                   : features.reference_gap_cents > 0
-                    ? `; the payment is ${money(features.reference_gap_cents)} short of its open balance`
-                    : '; the payment is exactly its open balance'
+                    ? `; the payment is ${money(features.reference_gap_cents)} short of ${evidence.referenced.includes('+') ? 'their' : 'its'} open balance`
+                    : `; the payment is exactly ${evidence.referenced.includes('+') ? 'their' : 'its'} open balance`
                 : ''}
               .
             </span>

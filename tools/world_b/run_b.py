@@ -36,7 +36,7 @@ def build(seed, data=B, out=B):
     # The long tail of cash application, from its own random stream so every
     # payment drawn from the first stays as it was: bank charges and currency
     # differences on payments from abroad, money sent "on account" without a
-    # reference, and one payment covering two invoices.
+    # reference, and one payment covering two invoices (from abroad, short by the charges too).
     mess = random.Random(seed * 7919 + 1)
     customers = json.load(open(f"{data}/customers.json"))
     customer = {c["customer_code"]: c for c in customers}
@@ -68,6 +68,17 @@ def build(seed, data=B, out=B):
         for a, b2 in zip(mine, mine[1:]):
             later[a["invoice_no"]] = b2
     paid_with = {}  # invoice -> the earlier invoice whose payment also paid it
+    charged_with = set()  # ...by a transfer from abroad, short by the banks' charges
+
+    def skip_draws(cust, owed):
+        # The long-tail draws this invoice made before a transfer could pay it together with
+        # the one before, so every other payment stays as it was.
+        abroad, r = customer[cust]["country"] != "United Kingdom", mess.random()
+        if abroad and r < 0.6 and owed > 3000:
+            mess.choice([600, 800, 1000, 1200, 1500])
+        elif abroad and customer[cust].get("currency_guess") == "EUR" and r < 0.9:
+            mess.choice([-1, 1])
+            mess.uniform(0.005, 0.025)
 
     def pay_event(when, txn, amount, payer, account, reference, cust, invoices_paid, family, expected):
         events.append((when, 2, "bank_txn", {"txnId": txn, "date": when, "type": "ach_credit_in", "amountCents": amount, "counterpartyName": payer, "counterpartyAccount": account, "reference": reference}))
@@ -91,6 +102,8 @@ def build(seed, data=B, out=B):
         duplicate = rng.random() < 0.01
         no, cust = inv["invoice_no"], inv["customer_code"]
         if no in paid_with:
+            if no in charged_with:
+                skip_draws(cust, owed)
             continue  # paid together with an earlier invoice
         txn = f"BACS-{no}"
         payer = f"{cust} HOLDINGS LTD" if p == "parent" else f"CUSTOMER {cust[2:]}"
@@ -98,8 +111,17 @@ def build(seed, data=B, out=B):
         abroad, r = customer[cust]["country"] != "United Kingdom", mess.random()
         nxt = later.get(no)
         if abroad and r < 0.6 and owed > 3000:
-            # An international transfer arrives short by the intermediary banks' charges.
-            pay_event(pay, txn, owed - mess.choice([600, 800, 1000, 1200, 1500]), payer, account, no, cust, [no], "payment_bank_charge", "apply_to_reference")
+            # An international transfer arrives short by the intermediary banks' charges;
+            # now and then it pays this invoice and the next, both numbers in the reference.
+            charge = mess.choice([600, 800, 1000, 1200, 1500])
+            if r < 0.2 and nxt and owed_of[nxt["invoice_no"]] > 0 and nxt["invoice_no"] not in paid_with and \
+                    (datetime.fromisoformat(nxt["invoice_date"]) - datetime.fromisoformat(inv["invoice_date"])).days <= 30:
+                paid_with[nxt["invoice_no"]] = no
+                charged_with.add(nxt["invoice_no"])
+                pay_event(pay, txn, owed + owed_of[nxt["invoice_no"]] - charge, payer, account, f"{no} {nxt['invoice_no']}", cust, [no, nxt["invoice_no"]],
+                          "payment_two_invoices_bank_charge", "apply_to_reference")
+                continue
+            pay_event(pay, txn, owed - charge, payer, account, no, cust, [no], "payment_bank_charge", "apply_to_reference")
             continue
         if abroad and customer[cust].get("currency_guess") == "EUR" and r < 0.9:
             # Paid from a euro account: the sterling amount is off by the bank's exchange rate.
@@ -244,6 +266,7 @@ def answer(admin, dana, truth):
                 continue
             match = next((o for o in opts if set(o.split(" + ")) == set(t.get("invoices", []))), None)
             why = {"on_account": "called the customer: the money on account was for this invoice", "bank_charge": "the customer named the invoice; the difference is the banks' charges",
+                   "two_invoices_bank_charge": "the customer named both invoices; the difference is the banks' charges",
                    "fx_difference": "the customer named the invoice; the difference is the exchange rate"}.get(t.get("profile"), "the customer's remittance lists these invoices")
             dana.call("answer_ask", a["id"], match or "apply oldest first", why if match else "apply to the oldest")
         elif k == "identify_payer":
