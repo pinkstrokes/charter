@@ -238,6 +238,7 @@ export const activity = table(
     outcome: t.string(),
     reasons: t.string(),
     claims: t.string(),
+    context: t.string(), // JSON RequestContext: what the policy check saw
     prevHash: t.string(),
     hash: t.string(),
   }

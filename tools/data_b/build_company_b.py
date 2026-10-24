@@ -99,6 +99,9 @@ RECENCY_SCALE_DAYS = 14.0      # recency prior 1 / (1 + age_days / 14)^2 (fits t
 FULL_REVERSAL_BOOST = 10.0     # credit note reverses every goods line of the candidate (or its whole amount)
 NULL_WEIGHT = 0.01             # pseudo-candidate "the original is not in the data"
 LATER_MATCH_MIN_SHARE = 0.5    # a re-bill must be mostly the credited goods, not a big unrelated re-order
+LATER_MATCH_MIN_COVERAGE = 0.8 # ... and contain most of them (prices may differ: re-bills often re-price)
+MAX_EXTRA_INVOICES = 3         # a credit note may reverse items from up to 1 + 3 earlier invoices
+MIN_EXTRA_GAIN = 0.05          # an extra invoice must explain >= 5% of the credited value
 LATER_MATCH_WINDOW = timedelta(days=2)
 DUPLICATE_CREDIT_WINDOW = timedelta(days=31)
 DISCOUNT_LOOKBACK_DAYS = 31.0
@@ -406,30 +409,62 @@ class Match:
     share_of_invoice: float    # share of the candidate's goods value that this credit note reverses
     full_reversal: bool
     basis: str
+    matched: dict = field(default_factory=dict)      # credited stock key -> units found on the candidate
+    price_ok: frozenset = frozenset()                # credited stock keys found at the same unit price
+    typos: tuple = ()                                # (credited key, invoiced key) one character apart, see evaluate_goods
+    covered_value: float = 0.0                       # candidate goods value (pence) reversed
 
 
-def evaluate_goods(credit: dict, invoice: dict) -> Match | None:
+def _one_char_apart(a: str, b: str) -> bool:
+    """Same length and either one substituted character or two swapped neighbours (typo-like)."""
+    if len(a) != len(b) or a == b:
+        return False
+    diff = [i for i, (x, y) in enumerate(zip(a, b)) if x != y]
+    if len(diff) == 1:
+        return True
+    return len(diff) == 2 and diff[1] == diff[0] + 1 and a[diff[0]] == b[diff[1]] and a[diff[1]] == b[diff[0]]
+
+
+def _weights(credit: dict) -> tuple[dict, float]:
     weights = {k: max(v, 0) for k, (_, v, _) in credit.items()}
     if sum(weights.values()) <= 0:            # zero-priced credit lines: weight by units instead
         weights = {k: q for k, (q, _, _) in credit.items()}
-    total = sum(weights.values())
+    return weights, sum(weights.values())
+
+
+def evaluate_goods(credit: dict, invoice: dict) -> Match | None:
+    weights, total = _weights(credit)
     if total <= 0:
         return None
     cov = pcov = exact = 0.0
     covered_value = covered_units = 0.0
+    matched: dict[str, int] = {}
+    price_ok: set[str] = set()
+    typos: list[tuple[str, str]] = []
+    exact_hits = sum(1 for k in credit if k in invoice)
     for k, (q, _, prices) in credit.items():
-        hit = invoice.get(k)
-        if hit is None:
+        ik = k if k in invoice else None
+        if ik is None and exact_hits and q >= 2:
+            # neighbouring stock code (wrong variant keyed or returned): only on an invoice that already
+            # matches other credited codes, with the same quantity and unit price
+            near = [c for c, (iq, _, ip) in invoice.items()
+                    if c not in credit and iq == q and prices & ip and _one_char_apart(k, c)]
+            if len(near) == 1:
+                ik = near[0]
+                typos.append((k, ik))
+        if ik is None:
             continue
-        iq, iv, iprices = hit
-        frac = min(q, iq) / q
-        cov += weights[k] * frac
+        iq, iv, iprices = invoice[ik]
+        units = min(q, iq)
+        cov += weights[k] * units / q
         if prices & iprices:
-            pcov += weights[k] * frac
+            pcov += weights[k] * units / q
+            price_ok.add(k)
         if iq == q:
             exact += weights[k]
-        covered_value += iv * min(q, iq) / iq
-        covered_units += min(q, iq)
+        matched[k] = units
+        covered_value += iv * units / iq
+        covered_units += units
     if cov <= 0:
         return None
     inv_value = sum(iv for _, iv, _ in invoice.values())
@@ -437,7 +472,18 @@ def evaluate_goods(credit: dict, invoice: dict) -> Match | None:
     share = covered_value / inv_value if inv_value > 0 else covered_units / inv_units
     cov, pcov, exact = cov / total, pcov / total, exact / total
     full = cov >= 0.98 and share >= 0.98
-    return Match(cov, pcov, (cov + pcov) / 2, exact, share, full, "stock_codes")
+    basis = "stock_codes+neighbouring_code" if typos else "stock_codes"
+    return Match(cov, pcov, (cov + pcov) / 2, exact, share, full, basis, matched, frozenset(price_ok),
+                 tuple(typos), covered_value)
+
+
+def _residual(credit: dict, matched: dict) -> dict:
+    out = {}
+    for k, (q, v, prices) in credit.items():
+        left = q - matched.get(k, 0)
+        if left > 0:
+            out[k] = (left, v * left / q, prices)
+    return out
 
 
 def _matches_discount_percent(amount: int, base: int) -> bool:
@@ -511,23 +557,44 @@ def evaluate(cn: Doc, inv: Doc, lag_days: float) -> Match | None:
 
 @dataclass
 class Link:
-    invoice: Doc | None
+    invoice: Doc | None                 # primary (most likely) original
     confidence: float
     reason: str
-    match: Match | None
+    match: Match | None                 # primary match
     lag_days: float | None
     candidates: int
     plausible_alternatives: int
     later_match: Doc | None
-    later_match_effective: float | None
+    extra: list = field(default_factory=list)          # [(Doc, Match)] further originals, most valuable first
+    coverage: float = 0.0               # combined over primary + extra
+    price_coverage: float = 0.0
+    share_of_invoices: float = 0.0      # credited share of the linked invoices' goods value
+    allocations: list = field(default_factory=list)    # [(invoice_no, pence)], summing to the credit amount
+    typos: tuple = ()
+
+
+def _combined(credit: dict, matches: list[Match]) -> tuple[float, float]:
+    weights, total = _weights(credit)
+    got: Counter = Counter()
+    got_price: Counter = Counter()
+    for m in matches:
+        for k, units in m.matched.items():
+            got[k] += units
+            if k in m.price_ok:
+                got_price[k] += units
+    cov = sum(weights[k] * min(q, got[k]) / q for k, (q, _, _) in credit.items()) / total
+    pcov = sum(weights[k] * min(q, got_price[k]) / q for k, (q, _, _) in credit.items()) / total
+    return cov, pcov
 
 
 def link_credit_note(cn: Doc, earlier: list[Doc], later: list[Doc]) -> Link:
     """Pick the most likely original among the customer's earlier invoices.
 
     score      = effective^4 * (1 + exact_qty_share) * (10 if full reversal) / (1 + age_days / 14)^2
-    confidence = best score / (sum of scores + 0.01 for "not in the data") * best effective coverage
-    `later` holds the customer's invoices raised up to 2 days after the credit note (re-bills).
+    confidence = best score / (sum of scores + 0.01 for "not in the data") * effective coverage
+    If the primary leaves >5% of the credited goods unexplained, further earlier invoices are added
+    greedily (each must explain >= 5%). `later` holds the customer's invoices raised up to 2 days
+    after the credit note, to spot re-bills.
     """
     scored = []
     for inv in earlier:
@@ -538,29 +605,79 @@ def link_credit_note(cn: Doc, earlier: list[Doc], later: list[Doc]) -> Link:
     scored.sort(key=lambda t: (t[0], t[1], t[2]), reverse=True)
 
     later_match = None
-    later_eff = None
+    later_cov = None
     for inv in sorted(later, key=lambda d: (d.ts, d.number)):
         m = evaluate(cn, inv, 0.0)
-        if m is None or m.effective < 0.9 or m.share_of_invoice < LATER_MATCH_MIN_SHARE:
+        if m is None or m.coverage < LATER_MATCH_MIN_COVERAGE or m.share_of_invoice < LATER_MATCH_MIN_SHARE:
             continue
-        if later_eff is None or m.effective > later_eff:
-            later_match, later_eff = inv, m.effective
+        if later_cov is None or m.coverage > later_cov:
+            later_match, later_cov = inv, m.coverage
 
     has_goods = bool(cn.goods)
-    if not scored or scored[0][0] <= 0:
+    if not scored:
         reason = "return" if has_goods else "manual_adjustment"
-        return Link(None, 0.0, reason, None, None, len(scored), 0, later_match, later_eff)
+        return Link(None, 0.0, reason, None, None, 0, 0, later_match)
     best_score, _, _, inv, m, lag = scored[0]
-    total = sum(s[0] for s in scored) + NULL_WEIGHT
-    confidence = round(best_score / total * m.effective, 3)
-    alternatives = sum(1 for s in scored[1:] if s[0] >= 0.5 * best_score)
+    posterior = best_score / (sum(t[0] for t in scored) + NULL_WEIGHT)
+    alternatives = sum(1 for t in scored[1:] if t[0] >= 0.5 * best_score)
+
+    extra: list[tuple[Doc, Match]] = []
+    cov, pcov = m.coverage, m.price_coverage
+    if has_goods and cov < 1.0 - MIN_EXTRA_GAIN:
+        residual = _residual(cn.goods, m.matched)
+        used = {inv.number}
+        while residual and len(extra) < MAX_EXTRA_INVOICES:
+            best = None
+            for _, _, _, cand, _, cand_lag in scored[1:]:
+                if cand.number in used:
+                    continue
+                m2 = evaluate_goods(residual, cand.goods)
+                if m2 is None:
+                    continue
+                gain = _combined(cn.goods, [m2])[0]
+                if gain < MIN_EXTRA_GAIN:
+                    continue
+                key = (candidate_score(m2, cand_lag), cand.ts, cand.number)
+                if best is None or key > best[0]:
+                    best = (key, cand, m2)
+            if best is None:
+                break
+            extra.append((best[1], best[2]))
+            used.add(best[1].number)
+            residual = _residual(residual, best[2].matched)
+        if extra:
+            cov, pcov = _combined(cn.goods, [m] + [mx for _, mx in extra])
+    effective = (cov + pcov) / 2
+    linked = [(inv, m)] + extra
+    if has_goods:
+        share = sum(mx.covered_value for _, mx in linked) / max(sum(d.goods_pence for d, _ in linked), 1)
+    else:
+        share = m.share_of_invoice
+    if extra:  # score the set of linked invoices as one hypothesis against the remaining candidates
+        full = cov >= 0.98 and share >= 0.98
+        joint = candidate_score(Match(cov, pcov, effective, 1.0 if full else 0.0, share, full, ""), lag)
+        numbers = {d.number for d, _ in linked}
+        rest = sum(t[0] for t in scored if t[2] not in numbers)
+        posterior = max(posterior, joint / (joint + rest + NULL_WEIGHT))
+    confidence = round(posterior * effective, 3)
+
+    # allocate the credit to the linked invoices: each extra invoice gets the credited value it explains,
+    # the primary gets the rest (including unexplained value and special lines)
+    amount = -cn.total_pence
+    allocations = []
+    for d, mx in extra:
+        allocations.append((d.number, int(round(sum(cn.goods[k][1] * units / cn.goods[k][0] for k, units in mx.matched.items())))))
+    allocations.insert(0, (inv.number, amount - sum(a for _, a in allocations)))
+
     if not has_goods:
         reason = "manual_adjustment"
-    elif m.share_of_invoice >= CANCELLATION_SHARE and m.effective >= 0.9:
+    elif share >= CANCELLATION_SHARE and effective >= 0.9:
         reason = "cancellation"
     else:
         reason = "return"
-    return Link(inv, confidence, reason, m, lag, len(scored), alternatives, later_match, later_eff)
+    typos = tuple(t for _, mx in linked for t in mx.typos)
+    return Link(inv, confidence, reason, m, lag, len(scored), alternatives, later_match, extra,
+                cov, pcov, share, allocations, typos)
 
 
 # --------------------------------------------------------------------------- helpers
@@ -694,14 +811,15 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
                 break
 
     credited_by: dict[str, list[str]] = defaultdict(list)
+    allocated: Counter = Counter()
     rebill_of: dict[str, list[str]] = defaultdict(list)
     for cn in credits:
         lk = links[cn.number]
-        if lk.invoice is not None:
-            credited_by[lk.invoice.number].append(cn.number)
+        for inv_no, pence_ in lk.allocations:
+            credited_by[inv_no].append(cn.number)
+            allocated[inv_no] += pence_
         if lk.later_match is not None:
             rebill_of[lk.later_match.number].append(cn.number)
-    cn_amount = {cn.number: -cn.total_pence for cn in credits}
 
     # ---- invoice-level messy signals
     day_net = Counter((d.customer_id, d.ts.date(), d.total_pence) for d in invoices)
@@ -730,7 +848,7 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
     for d in invoices:
         b = d.buckets()
         cns = sorted(credited_by.get(d.number, []), key=lambda n: (docs[n].ts, n))
-        credited = sum(cn_amount[n] for n in cns)
+        credited = allocated[d.number]
         flags = doc_line_flags(d)
         if day_net[(d.customer_id, d.ts.date(), d.total_pence)] > 1:
             flags.append("duplicate_looking_same_day_same_amount")
@@ -763,6 +881,7 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
         b = {k: -v for k, v in cn.buckets().items()}
         flags = doc_line_flags(cn)
         m = lk.match
+        linked_docs = [lk.invoice] + [d for d, _ in lk.extra] if lk.invoice else []
         if lk.invoice is None:
             flags.append("no_findable_original")
         else:
@@ -770,14 +889,18 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
                 flags.append("original_before_window")
             if lk.plausible_alternatives:
                 flags.append("ambiguous_original")
-            if m.coverage < 0.999:
+            if lk.coverage < 0.999:
                 flags.append("partially_traceable")
-            if cn.goods and m.price_coverage < m.coverage - 1e-9:
+            if cn.goods and lk.price_coverage < lk.coverage - 1e-9:
                 flags.append("price_differs_from_original")
-            if -cn.total_pence > lk.invoice.total_pence:
+            if -cn.total_pence > sum(d.total_pence for d in linked_docs):
                 flags.append("exceeds_original_invoice")
+            if lk.extra:
+                flags.append("spans_several_invoices")
+            if lk.typos:
+                flags.append("neighbouring_stock_code_matched")
         if lk.later_match is not None:
-            flags.append("cancel_and_rebill" if lk.invoice is not None and m.effective >= 0.9 else "precedes_matching_invoice")
+            flags.append("cancel_and_rebill" if lk.invoice is not None and lk.coverage >= 0.9 else "precedes_matching_invoice")
         if not cn.goods:
             flags.append("special_lines_only")
         if cn.number in repeat_of:
@@ -794,14 +917,17 @@ def build(all_rows: list[Row], source_sha256: str, p: Params) -> dict:
             "linked_invoice_date": lk.invoice.ts.isoformat() if lk.invoice else None,
             "linked_invoice_net_pence": lk.invoice.total_pence if lk.invoice else None,
             "linked_invoice_in_window": (lk.invoice.number in window_invoice_nos) if lk.invoice else None,
+            "additional_linked_invoice_nos": [d.number for d, _ in lk.extra],
+            "allocations": [{"invoice_no": n, "amount_pence": a} for n, a in lk.allocations],
             "match": None if m is None else {
-                "basis": m.basis,
-                "coverage": round(m.coverage, 3),
-                "price_coverage": round(m.price_coverage, 3),
-                "share_of_invoice_credited": round(m.share_of_invoice, 3),
+                "basis": "+".join(sorted({m.basis, *(mx.basis for _, mx in lk.extra)})),
+                "coverage": round(lk.coverage, 3),
+                "price_coverage": round(lk.price_coverage, 3),
+                "share_of_invoice_credited": round(lk.share_of_invoices, 3),
                 "days_after_invoice": round(lk.lag_days, 2),
                 "candidates": lk.candidates,
                 "plausible_alternatives": lk.plausible_alternatives,
+                "neighbouring_code_matches": [list(t) for t in lk.typos],
             },
             "later_matching_invoice_no": lk.later_match.number if lk.later_match else None,
             "goods_pence": -cn.goods_pence,
@@ -939,6 +1065,15 @@ def build_stats(rows, window_rows, overlap, selection_info, p, sha, docs, invoic
     x = cn_flag("exceeds_original_invoice")
     ph.append(phenomenon("credit_note_exceeds_linked_invoice", "selected",
                          "credit note amount is larger than the whole linked invoice", len(x), x))
+    x = cn_flag("spans_several_invoices")
+    ph.append(phenomenon("credit_note_spans_several_invoices", "selected",
+                         "one credit note reverses items from two or more earlier invoices (see additional_linked_invoice_nos / allocations)",
+                         len(x), x))
+    x = cn_flag("neighbouring_stock_code_matched")
+    ph.append(phenomenon("credit_line_neighbouring_stock_code", "selected",
+                         "a credited stock code is one character away from a code on the linked invoice with the same quantity and price, "
+                         "on an invoice that matches the credit note otherwise (wrong variant keyed, e.g. 47566B 'TEA TIME PARTY BUNTING' credited against 47556B 'TEA TIME TEA TOWELS')",
+                         len(x), x))
     x = cn_flag("cancel_and_rebill")
     ph.append(phenomenon("cancel_and_rebill", "selected",
                          "credit note reverses an earlier invoice and a near-identical invoice follows within 2 days", len(x), x))

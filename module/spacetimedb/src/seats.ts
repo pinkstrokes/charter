@@ -70,7 +70,7 @@ export function termsForEntity(tx: Tx, entityCode: string): ContractTerms | null
   return fallback ? (JSON.parse(fallback.termsJson) as ContractTerms) : null;
 }
 
-function termsForStore(tx: Tx, storeCode: string): ContractTerms | null {
+export function termsForStore(tx: Tx, storeCode: string): ContractTerms | null {
   const s = tx.db.store.code.find(storeCode);
   if (!s) return null;
   const cv = tx.db.contractVersion.version.find(s.contractVersion);
@@ -78,7 +78,7 @@ function termsForStore(tx: Tx, storeCode: string): ContractTerms | null {
 }
 
 function factsOf(tx: Tx, subject: string, attr: string): { id: bigint; value: any; trusted: boolean; validFrom: string; knownAt: string; sourceObs: bigint }[] {
-  return [...tx.db.fact.subject.filter(subject)].filter(f => f.attr === attr).map(f => ({ id: f.id, value: JSON.parse(f.value), trusted: f.trusted, validFrom: f.validFrom, knownAt: f.knownAt, sourceObs: f.sourceObs }));
+  return [...tx.db.fact.subject.filter(subject)].filter(f => f.attr === attr).sort((a, b) => (a.id < b.id ? -1 : 1)).map(f => ({ id: f.id, value: JSON.parse(f.value), trusted: f.trusted, validFrom: f.validFrom, knownAt: f.knownAt, sourceObs: f.sourceObs }));
 }
 
 export function openAsk(
@@ -606,12 +606,22 @@ export function preChaseFeatures(tx: Tx, entityCode: string, today: string): Fea
     grace_days: terms?.graceDays ?? 0,
     open_amount: open.reduce((s, i) => s + Number(i.openCents), 0),
     unapplied_amount: unapplied,
-    announced_payment: 0,
+    announced_payment: announcedPayment(tx, entityCode, today),
     open_credit_notes: credits,
     open_dispute: facts.open_dispute,
     recent_return: facts.recent_return,
     notices_last_30d: notices,
   };
+}
+
+// Promised payments from the last 10 days not yet matched by money in the bank.
+function announcedPayment(tx: Tx, entityCode: string, today: string): number {
+  const promises = factsOf(tx, `entity:${entityCode}`, 'promise').filter(f => daysBetween(f.validFrom, today) <= 10);
+  if (promises.length === 0) return 0;
+  const since = promises.map(f => f.validFrom).sort()[0];
+  const promised = promises.reduce((s, f) => s + Number(f.value.amount || 0), 0);
+  const received = [...tx.db.receipt.entityCode.filter(entityCode)].filter(r => r.receivedAt >= since && r.method !== 'ach_debit_settled').reduce((s, r) => s + Number(r.amountCents), 0);
+  return Math.max(0, promised - received);
 }
 
 export function collectionsCycle(ctx: ProcCtx): string {

@@ -61,6 +61,17 @@ export interface ExecInput {
   facts?: Record<string, boolean>;
 }
 
+// What the policy check saw, kept on the record so a proposed policy can be
+// replayed against every past request of the same action.
+export interface RequestContext {
+  amountCents?: number;
+  requestedBy?: string;
+  approvals?: number;
+  trustedFields?: Record<string, boolean>;
+  facts?: Record<string, boolean>;
+  principalKind?: string;
+}
+
 export interface ExecResult {
   ok: boolean;
   activityId: bigint;
@@ -83,7 +94,7 @@ export function activePolicies(tx: Tx): PolicyRule[] {
 
 export function appendActivity(
   tx: Tx,
-  rec: { principal: string; role: string; kind: string; command: string; params: unknown; used?: string[]; plan?: string[]; outcome: string; reasons?: string[]; claims?: Claim[] }
+  rec: { principal: string; role: string; kind: string; command: string; params: unknown; used?: string[]; plan?: string[]; outcome: string; reasons?: string[]; claims?: Claim[]; context?: RequestContext }
 ): bigint {
   const head = tx.db.chainHead.id.find(0) ?? { id: 0, lastActivityId: 0n, hash: 'genesis', anchoredHash: '', anchoredAt: '' };
   const body = {
@@ -98,6 +109,7 @@ export function appendActivity(
     outcome: rec.outcome,
     reasons: rec.reasons ?? [],
     claims: rec.claims ?? [],
+    context: rec.context ?? {},
   };
   const hash = chainHash(head.hash, body);
   const row = tx.db.activity.insert({
@@ -115,6 +127,7 @@ export function appendActivity(
     outcome: rec.outcome,
     reasons: canonical(body.reasons),
     claims: canonical(body.claims),
+    context: canonical(body.context),
     prevHash: head.hash,
     hash,
   });
@@ -149,6 +162,7 @@ export function exec(tx: Tx, input: ExecInput, handler: (activityId: bigint) => 
   });
   const claimFailures = checkClaims(tx, input.claims);
   const reasons = [...decision.reasons, ...claimFailures];
+  const context: RequestContext = { amountCents: input.amountCents, requestedBy: input.requestedBy, approvals: input.approvals, trustedFields: input.trustedFields, facts: input.facts, principalKind: input.principal.kind };
   const plan = [...(input.plan ?? []), ...decision.permittedBy, ...decision.checked.filter(id => !decision.permittedBy.includes(id))];
   if (reasons.length > 0) {
     const id = appendActivity(tx, {
@@ -162,6 +176,7 @@ export function exec(tx: Tx, input: ExecInput, handler: (activityId: bigint) => 
       outcome: 'denied',
       reasons,
       claims: input.claims,
+      context,
     });
     return { ok: false, activityId: id, reasons, summary: reasons[0] };
   }
@@ -176,6 +191,7 @@ export function exec(tx: Tx, input: ExecInput, handler: (activityId: bigint) => 
     plan,
     outcome: 'committed',
     claims: input.claims,
+    context,
   };
   const activityId = appendActivity(tx, record);
   let summary: string;
@@ -269,7 +285,7 @@ export function factsFor(tx: Tx, entityCode: string): Record<string, boolean> {
     d => d.status === 'returned' && daysApart(d.scheduledFor, today) <= 14
   );
   const audits = new Map<string, string>();
-  for (const f of tx.db.fact.subject.filter(`entity:${entityCode}`)) {
+  for (const f of [...tx.db.fact.subject.filter(`entity:${entityCode}`)].sort((a, b) => (a.id < b.id ? -1 : 1))) {
     if (f.attr !== 'audit') continue;
     const v = JSON.parse(f.value) as { store: string; week: string; status: string };
     audits.set(`${v.store}:${v.week}`, v.status);

@@ -10,7 +10,7 @@ import type { SkillProgram } from './core/dsl';
 import type { PolicyTemplate, Principal, Role } from './core/policy';
 import { appendActivity, checkInvariants, Rejection, simDate, type Ctx, type Tx } from './kernel';
 import type { ProcCtx } from './llm';
-import { answerAsk, endorseRouting, releaseRefund, waiveFee } from './answers';
+import { answerAsk, closeAudit, endorseRouting, raiseConcern, releaseRefund, waiveFee } from './answers';
 import { decidePolicy, proposePolicy, proposeSkill, seedGovernance, setSkillStatus } from './governance';
 import { cashAppCycle, collectionsCycle, refundsCycle, triage } from './seats';
 import { ingest } from './world';
@@ -188,6 +188,16 @@ export const endorse_routing = spacetimedb.reducer({ requestId: t.u64() }, (ctx,
 export const waive_fee = spacetimedb.reducer({ invoiceId: t.string(), reason: t.string() }, (ctx, { invoiceId, reason }) => {
   const who = requireRole(ctx, 'controller');
   guard(() => waiveFee(ctx, who, invoiceId, [`reason:${reason}`]));
+});
+
+export const raise_concern = spacetimedb.reducer({ store: t.string(), week: t.string(), note: t.string() }, (ctx, { store, week, note }) => {
+  const who = requireRole(ctx, 'consultant', 'controller');
+  guard(() => raiseConcern(ctx, who, store, week, note));
+});
+
+export const close_audit = spacetimedb.reducer({ store: t.string(), week: t.string(), auditedGrossCents: t.i64(), note: t.string() }, (ctx, { store, week, auditedGrossCents, note }) => {
+  const who = requireRole(ctx, 'consultant', 'controller');
+  guard(() => closeAudit(ctx, who, store, week, Number(auditedGrossCents), note));
 });
 
 // A new seat starts with everything the team already knows: the same skills and policies.

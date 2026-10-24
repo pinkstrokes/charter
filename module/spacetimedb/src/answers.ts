@@ -3,11 +3,11 @@
 // Every path goes through the kernel, so a person is bound by the same policies.
 import type { CallbackPayload } from './core/contracts';
 import { applyByTerms, allocationsForSubset } from './core/matching';
-import { addDays } from './core/money';
+import { addDays, bpOf } from './core/money';
 import type { Principal } from './core/policy';
 import { AR_ACCOUNT_BY_KIND, bumpControl, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from './kernel';
-import { applyAllocations, CASH, closeWork, money, openItemsFor, preChaseFeatures, sendNotice, termsForEntity } from './seats';
-import { addFact, aliasSubject, ingest, openWork } from './world';
+import { applyAllocations, CASH, closeWork, money, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
+import { addFact, aliasSubject, createInvoice, ingest, openWork } from './world';
 
 export function answerAsk(tx: Tx, who: Principal, askId: bigint, answer: string, reason: string): string {
   const a = tx.db.ask.id.find(askId);
@@ -206,4 +206,46 @@ export function creditInvoice(tx: Tx, who: Principal, invoiceId: string, cents: 
     bumpControl(tx, `ar_${inv.kind}`, -cents);
     return `credited ${money(cents)} on ${invoiceId}`;
   });
+}
+
+// A person noticed something the seats did not. The note is recorded as an
+// answered question carrying the case's features: what the evolver learns from.
+export function raiseConcern(tx: Tx, who: Principal, store: string, week: string, note: string): string {
+  const f = underreportFeatures(tx, store, week);
+  const s = tx.db.store.code.find(store);
+  if (!f || !s) throw new Rejection(`no sales report for ${store}, week of ${week}`);
+  const subject = `store:${store}:${week}`;
+  const res = exec(tx, { principal: who, action: 'answer_ask', params: { concern: subject, note }, used: [`fact:${f.reportFactId}`] }, () => {
+    const today = simDate(tx);
+    tx.db.ask.insert({
+      id: 0n, createdAt: today, kind: 'audit', subject, toRole: who.role,
+      question: `${who.id} raised a concern about ${s.name}, week of ${week}`,
+      options: JSON.stringify(['request audit', 'explained — accept report']),
+      evidence: JSON.stringify({ features: f.features, raisedBy: who.id }),
+      confidence: 1, precedent: '', status: 'answered', answer: 'request audit', reason: note,
+      answeredBy: who.id, answeredAt: today, deadline: today, workItemId: 0n,
+    });
+    addFact(tx, `entity:${s.entityCode}`, 'audit', { store, week, status: 'open', by: who.id }, today, 0n, true);
+    return `concern on ${store}, week of ${week} recorded; audit opened`;
+  });
+  return res.summary;
+}
+
+// The field audit's finding. Royalty on sales that were not reported is billed.
+export function closeAudit(tx: Tx, who: Principal, store: string, week: string, auditedGrossCents: number, note: string): string {
+  const s = tx.db.store.code.find(store);
+  const terms = termsForStore(tx, store);
+  if (!s || !terms) throw new Rejection(`no store ${store}`);
+  const prefix = `R-${store}-${week}`;
+  const billed = [...tx.db.invoice.entityCode.filter(s.entityCode)].filter(i => (i.kind === 'royalty' && i.id.startsWith(prefix)) || i.id === `A-${store}-${week}`).reduce((sum, i) => sum + Number(i.amountCents), 0);
+  const owed = bpOf(auditedGrossCents, terms.royaltyBp) - billed;
+  const res = exec(tx, { principal: who, action: 'answer_ask', params: { audit: `${store}:${week}`, auditedGrossCents, owed, note }, used: [`audit:${store}:${week}`] }, () => {
+    addFact(tx, `entity:${s.entityCode}`, 'audit', { store, week, status: 'closed', auditedGrossCents, owedCents: Math.max(0, owed), by: who.id, note }, simDate(tx), 0n, true);
+    return `audit of ${store}, week of ${week} closed: ${owed > 0 ? `${money(owed)} royalty under-billed` : 'report was right'}`;
+  });
+  if (res.ok && owed > 0) {
+    const today = simDate(tx);
+    createInvoice(tx, CASH, { id: `A-${store}-${week}`, kind: 'audit', entityCode: s.entityCode, storeCode: store, period: week, issuedAt: today, dueAt: addDays(today, terms.paymentTermsDays), amountCents: owed, source: `audit by ${who.id}` }, [`audit:${store}:${week}`], [`activity:${res.activityId}`], '4000', 'record_adjustment');
+  }
+  return res.summary;
 }

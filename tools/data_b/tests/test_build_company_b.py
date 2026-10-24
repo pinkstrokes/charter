@@ -75,7 +75,7 @@ def test_credit_notes_refer_to_existing_customers(world):
         assert 0.0 <= cn["link_confidence"] <= 1.0
         assert cn["reason_guess"] in {"cancellation", "return", "manual_adjustment"}
         if cn["linked_invoice_no"] is None:
-            assert cn["link_confidence"] == 0.0
+            assert cn["link_confidence"] == 0.0 and cn["allocations"] == [] and cn["additional_linked_invoice_nos"] == []
             continue
         assert cn["linked_invoice_date"] <= cn["date"], "an original must not be later than its credit note"
         if cn["linked_invoice_in_window"]:
@@ -84,6 +84,18 @@ def test_credit_notes_refer_to_existing_customers(world):
             assert cn["credit_no"] in inv["credit_note_nos"]
         else:
             assert cn["linked_invoice_no"] not in invoices
+        alloc = cn["allocations"]
+        assert [a["invoice_no"] for a in alloc] == [cn["linked_invoice_no"], *cn["additional_linked_invoice_nos"]]
+        assert sum(a["amount_pence"] for a in alloc) == cn["amount_pence"]
+        for a in alloc:
+            if a["invoice_no"] in invoices:
+                assert cn["credit_no"] in invoices[a["invoice_no"]]["credit_note_nos"]
+    allocated = {}
+    for cn in world["credit_notes"]:
+        for a in cn["allocations"]:
+            allocated[a["invoice_no"]] = allocated.get(a["invoice_no"], 0) + a["amount_pence"]
+    for inv in world["invoices"]:
+        assert inv["credited_pence"] == allocated.get(inv["invoice_no"], 0)
 
 
 def test_invoice_net_matches_raw_window_totals(world):
@@ -198,6 +210,24 @@ def test_matching_price_beats_a_more_recent_invoice():
 def test_manual_credit_reversing_a_manual_invoice():
     lk = _link([("300", "M", 1, "100", 0), ("C301", "M", -1, "100", 5)], "C301")
     assert lk.invoice.number == "300" and lk.reason == "manual_adjustment" and lk.confidence > 0.9
+
+
+def test_one_credit_note_reversing_two_invoices_with_a_miskeyed_code():
+    # the real B-15749 pattern: two bulk invoices, one credit note for both (one code keyed one digit off),
+    # then a re-bill at lower prices a few minutes later
+    day = 97 * 1440
+    lk = _link([
+        ("500", "85123A", 1930, "2.55", 0), ("500", "21175", 2000, "1.85", 0), ("500", "21108", 3114, "2.10", 0),
+        ("501", "47556B", 1300, "2.55", 2), ("501", "48185", 670, "6.75", 2),
+        ("C502", "48185", -670, "6.75", day), ("C502", "47566B", -1300, "2.55", day),
+        ("C502", "85123A", -1930, "2.55", day), ("C502", "21175", -2000, "1.85", day), ("C502", "21108", -3114, "2.10", day),
+        ("503", "85123A", 1930, "2.40", day + 12), ("503", "47556B", 1300, "2.10", day + 12),
+        ("503", "48185", 670, "6.35", day + 12), ("503", "21175", 2000, "1.69", day + 12), ("503", "21108", 3114, "2.10", day + 12),
+    ], "C502")
+    assert {lk.invoice.number, *(d.number for d, _ in lk.extra)} == {"500", "501"}
+    assert sorted(a for _, a in lk.allocations) == sorted([1930 * 255 + 2000 * 185 + 3114 * 210, 1300 * 255 + 670 * 675])
+    assert lk.typos == (("47566B", "47556B"),) and lk.reason == "cancellation" and lk.coverage == 1.0
+    assert lk.later_match is not None and lk.later_match.number == "503"
 
 
 def test_unbought_item_is_unlinked_and_later_invoices_are_never_originals():
