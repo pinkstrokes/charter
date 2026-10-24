@@ -32,6 +32,7 @@ Two other moments the judges can trigger themselves:
 | | Real | Simulated | How we know |
 |---|---|---|---|
 | Company B, a UK giftware wholesaler | 1,645 invoices and 380 credit notes from UCI Online Retail II (CC BY 4.0), with their own defects | customer payments and remittance advice, with the long tail of cash application: payments from abroad short by bank charges or off by the exchange rate, money sent "on account" without a reference, one payment for two invoices, duplicates | answer key written before the run; locked test split the evolver never sees |
+| Company C, a sister ledger | 1,876 invoices and 456 credit notes from the same dataset's previous year (December 2009 to May 2010), its own 120 largest customers | payments with the same long tail, drawn under their own seed | run twice on identical events: started from company B's skill, and from scratch |
 | BenchRec, a Tier-1 institution's cash account | 68,975 reconciled bank lines to learn from and 32,048 to reconcile, with the benchmark's own solution (CC BY 4.0) | — | the benchmark's scoring: precision must clear 99.8% before match rate counts |
 | Company A, Pearl Lane Tea Co., a franchisor | franchise terms modelled on practice | six months: 20 stores, sales reports, card settlements, supply orders, debits, vendors, bills, emails, people who make mistakes; planted errors with an answer key | answer key, locked test split, a live split for June |
 | Attacks | — | 36 emails written by deepseek-v4-pro, another model family | same emails against tool-using LLM agents |
@@ -49,6 +50,8 @@ Two other moments the judges can trigger themselves:
 | Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 114 | 99.45% | no |
 
 By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher, and that ranking is exactly what Charter will not play to. On the locked eval split the 918 lines the learned desk hands to people instead were wrong 36 times when day 0 matched them alone, one in 25: day 0 clears the floor only by averaging that pattern into clean matches. Every rule earns its autonomy on its own record, so a pattern wrong 4% of the time never acts alone, whatever the average around it.
+
+![BenchRec on the locked eval split: the learned desk, its day-0 rule, rules written by hand and the matcher shipped with the dataset; and how it learned, month by month](docs/img/p1_benchrec.png)
 
 **Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **312 of 317** payments, and the team was wrong on **4 of the 300** it settled without a person (95% upper bound 3.0%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
 
@@ -87,7 +90,21 @@ Eleven times, nine of them in January, a later payment exposed an earlier applic
 
 Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicate bills was stopped and none paid. The internal auditor qualified February and March (two duplicate liabilities of $34,800 and $10,750, and a royalty billed $59.03 too high) and gave clean opinions for January, April and May; all five months are closed into certificates anchored in git. Seven times a person's spot-check verdict contradicted a rule with a clean record; asked to look again, people called four of them slips and stood by three, and a later run of slips no longer teaches a desk to ask more. Settled without a person on the test and live splits: under-reporting 6 wrong of 111 (95% upper bound 10%), collections 3 of 30, payables 2 of 23, cash 1 of 9. What it still misses: store 31's milder under-reporting in June (0 of 3 live weeks: its cash share ran 11–13 points under its own history, while every week people taught it ran 20 or more under), and short payments, which A's franchisees pay without an invoice number in the reference (none of 3 applied where meant).
 
-**Skills travel; the target decides.** Company B's cash-application skill was offered to company A as a program, whole and rule by rule at every place in A's own program. A's gate replayed every variant over A's history and refused them all before a person saw them: B's whole program would get 4 of A's labeled cases wrong, and none of its rules handles a case A's people taught. A's franchisees do not write invoice numbers in their payment references, so B's best lesson, "a payment naming one open invoice goes there even when short", never fires at A.
+**Skills travel; the target decides.** A skill crosses between companies as a program and a few numbers from its proof; no record crosses, and the receiving company decides.
+
+*A new ledger starts from what a sister company learned.* Company C is a second ledger built from the same public dataset's previous year: 1,876 real invoices and 456 credit notes, December 2009 to May 2010, for its own 120 largest customers, with payments drawn by the same simulation under their own seed. We ran it twice on identical events. Once its controller started cash application from the skill company B had learned (every rule of it starting on probation, as any new version does); once it started from the hand-written day-one skill. From then on each learned on its own.
+
+| Company C | Started from B's skill | Started from scratch |
+|---|---|---|
+| First three months: wrong when it settled alone | **3** of 357 | 22 of 342 |
+| First three months: questions to people | **12** | 33 |
+| New versions it needed | 2 | 6 |
+| Locked test split: cash landed where the payer meant | **325** of 329 | 318 of 329 |
+| Test and live splits: wrong when it settled alone | **4** of 324 (95% upper bound 2.8%) | 11 of 313 (5.8%) |
+
+![Company C's cash skill: version 2 learned at company B and ratified by C's controller, versions 3 and 4 learned from C's own answers](docs/img/c1_sister.png)
+
+*A skill that does not fit is refused.* Company B's cash skill was also offered to company A, whose history is six months long: A's gate replayed it, whole and rule by rule at every place in A's own program, over A's own history, and refused every variant before a person saw it. The whole program would get 4 of A's labeled cases wrong, and none of its rules handles a case A's people taught: A's franchisees do not write invoice numbers in their payment references, so B's best lesson, "a payment naming one open invoice goes there even when short", never fires at A.
 
 **Attacks.** 36 attack emails: Charter gave the attacker nothing (0/36), with the people played as an attacker would hope — a careless controller tries to release every refund and endorse every bank change. Tool-using agents on the same emails: qwen3.8-max 13/36, kimi-k3 8/36, glm-5.3 4/36 with plain prompts; 0, 2 and 1 with careful prompts.
 
@@ -100,7 +117,7 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 3. **Policies are learned from losses and bind every desk.** An exhaustive search replays every past money movement with the facts the kernel saw at the time; a rule is offered only if it stops a loss no rule in force stops and holds back little that was legitimate, and it extends to every other way money leaves.
 4. **A lesson is a pull request with a replay proof.** A person's one-line correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision: it must handle what people taught, never break a safety rule, stay inside a change budget, and pass three statistical tests that use the same arithmetic as earned autonomy — a new mistake on a labeled case fails it unless the record proves such mistakes rarer than the domain tolerates (impossible on a few dozen cases, possible on 69,000 bank lines); taking work from people needs three agreeing precedents; handing work back to people needs the evidence that would suspend a rule, so a few slips cannot teach it to ask. Candidates are ranked by value: one mistake stopped is worth 1/tolerable questions, because at that error rate acting alone and asking cost the same. New rules no known case supports are dropped, failing candidates are repaired, and new thresholds are searched over the values the cases actually take and centred between the nearest known cases.
 5. **Sources disagree; the team weighs them.** Who paid is voted by the account on file, the invoice the payer named and the payer's name; masked account numbers collide, so one source loses to two and a tie goes to a person with every reading. Two model families read every email that could move money; a disagreement waits for a person.
-6. **Skills travel, data does not — and the target decides.** A skill learned at one company is offered to another as a program; the target replays it, whole and rule by rule at every place in its own program, over its own history, and adopts only what handles something its own people taught and passes its own gate.
+6. **Skills travel, data does not — and the target decides.** A new ledger can start from the skill a sister company learned: the program crosses, its controller ratifies it, and every rule starts on probation; started that way, company C made 3 mistakes in its first three months instead of 22. A company with a history replays an offered skill, whole and rule by rule at every place in its own program, over its own history, and adopts only what handles something its own people taught and passes its own gate.
 7. **The same action under another name is the same decision.** Every decision records what each outcome would have done with that case — for cash, which invoices each would pay. Checks, the gate and the grading compare where the money goes, not what the outcome is called. Without it, "apply to the invoice the payer named" and "apply oldest first" looked like contradictory answers for a customer with one open invoice, and no candidate could learn bank charges.
 
 ![One consultant's answer becomes a new version, replayed over every past decision, that catches weeks the old one accepted](docs/img/a5_skill.png)
@@ -127,6 +144,8 @@ spacetime start                                    # local SpacetimeDB on 127.0.
 spacetime publish charter-a --server local --module-path module/spacetimedb --yes
 python3 tools/world/run.py --reset                 # company A, six months (~30 min)
 STDB_DB=charter-b python3 tools/world_b/run_b.py   # company B on UCI Online Retail II
+STDB_DB=charter-c python3 tools/world_b/run_b.py --data data/companyC --start 2009-12-01 --until 2010-06-30 --seed 7 --start-from charter-b   # company C from B's skill
+python3 tools/evolve/compare.py data/companyC data/companyC-alone   # against the same ledger started from scratch
 npx tsx tools/evolve/report.ts --db charter-a      # proof numbers from the database and the answer key
 npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
 npx tsx tools/evolve/gate_check.ts                 # the gate's regression checks, offline

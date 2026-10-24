@@ -1,6 +1,6 @@
 # Demo: three minutes, then the judges' own scenario
 
-Two databases on the projector: `charter-b` (company B, real UCI invoices, finished) and `charter-a` (company A after six months, prepared to the Thursday before a payment run). UI at `http://127.0.0.1:5190/?db=charter-a` (switch with `?db=charter-b`). The evolver runs live: `npx tsx tools/evolve/evolve.ts --db charter-a --watch`.
+Three databases on the projector: `charter-b` (company B, real UCI invoices, finished), `charter-c` (company C, the sister ledger started from B's skill, finished) and `charter-a` (company A after six months, prepared for a payment run). UI at `http://127.0.0.1:5190/?db=charter-a` (switch with `?db=charter-b` or `?db=charter-c`). The evolver runs live: `npx tsx tools/evolve/evolve.ts --db charter-a --watch`.
 
 ## Before judging
 
@@ -21,7 +21,8 @@ From scratch instead (about 30 minutes): `spacetime publish charter-a --server l
 | 0:00 | charter-b, Why panel of the "cash applied to the wrong invoice?" question | "Real invoices from a UK wholesaler. On 28 December a customer pays £2,149 and names invoice 536784. Our day-one skill matched it to three other invoices that came close. Five days later the customer pays £30 naming 536792 — which our books say is paid." |
 | 0:20 | Why panel of the reversal, then Knowledge → Autonomy | "Charter doesn't call it a duplicate. It sees 536792 was paid by its own guess, asks the controller, reverses its earlier application, puts both payments where the customer said — and the rule that guessed is inspected four times as often until it proves itself again." |
 | 0:45 | Proof → company B trend | "Real customers pay messily: bank charges, exchange differences, money on account. The day-one skill was wrong on 18 of the 300 test payments it settled alone; the controller's answers became four replay-gated versions, and the current one is wrong on 4 of 306. The pennies bank charges leave are listed every Monday and written off by the controller, never chased." |
-| 1:00 | charter-a, Security → send the bank-change email from Formosa Leaf's own address | "Now try to steal from us: new bank details the day before a $92,400 payment run." |
+| 0:55 | charter-c, Knowledge → Applying receipts → Versions | "Skills travel. A sister ledger, the same wholesaler's previous year, started from the skill this team learned; its controller ratified it and every rule started on probation. First three months: 3 mistakes instead of 22, 12 questions instead of 33." |
+| 1:10 | charter-a, Security → send the bank-change email from Formosa Leaf's own address | "Now try to steal from us: new bank details hours before a $92,400 payment run." |
 | 1:15 | Inbox: the callback question | "Two models read it; the change is held; the controller is asked to call the number we already had." |
 | 1:25 | Payables → the Formosa Leaf run (or, after a judge's attack, Pacific Cup's) → release | "Friday. The controller presses release — refused, for the controller too, by P-3." |
 | 1:40 | Knowledge → Policies → P-1, P-2, P-3 | "Nobody wrote P-3. A debit bounced in April during a bank change nobody verified; Charter replayed every past money movement, found the one rule that would have stopped it without holding back anything legitimate, and extended it to refunds and vendor payments." |
@@ -38,6 +39,7 @@ From scratch instead (about 30 minutes): `spacetime publish charter-a --server l
 
 ## Questions to expect
 
+- **Does knowledge transfer?** Where the work is the same, yes: company C started from company B's skill and made 3 mistakes in its first three months instead of 22. Where it differs, the target refuses: B's skill offered to company A failed A's own gate, because A's franchisees do not write invoice numbers in their references.
 - **What is real?** Company B's invoices and credit notes (UCI Online Retail II) and BenchRec's bank and ledger lines are real; company B's payments and company A are simulated, with answer keys the system never sees when choosing.
 - **Why rules and not the model deciding?** The model reads email and writes candidate skills; the kernel decides what may happen; skills are small programs we can replay, bound and audit.
 - **What does a person still do?** Answer questions, release money, endorse bank changes, approve skill versions and policies, close the books — and get pushed back on when they are wrong.

@@ -16,6 +16,13 @@ const POLICY_KEYS = new Set(['gate', 'searched', 'replayedRequests', 'wouldHaveS
 
 export function Gate({ gate }: { gate?: unknown }) {
   if (gate === undefined || gate === null) return null;
+  // A skill another company learned, ratified by this company's controller when it had no history to replay.
+  if (gate === 'imported')
+    return (
+      <span className="gate pass">
+        <Check size={14} /> learned elsewhere, ratified here
+      </span>
+    );
   const pass = gate === 'pass' || gate === true;
   return (
     <span className={`gate ${pass ? 'pass' : 'fail'}`}>

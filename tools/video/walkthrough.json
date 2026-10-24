@@ -104,6 +104,23 @@
   "caption": "Locked test split: 312/317 payments landed where the payer meant; small differences written off weekly by the controller, never chased"
  },
  {
+  "url": "http://127.0.0.1:5190/?db=charter-c#/knowledge/allocation",
+  "ready": "Versions",
+  "steps": [
+   {
+    "wait": 1500
+   },
+   {
+    "scrollTo": "Versions"
+   },
+   {
+    "wait": 3000
+   }
+  ],
+  "say": "And skills travel. A sister ledger, the same wholesaler's previous year, started from the skill this team learned. Its controller ratified it, and every rule started on probation. In its first three months it was wrong three times instead of 22, and asked people 12 times instead of 33.",
+  "caption": "Sister ledger (real 2009-10 invoices) started from this skill: first three months 3 mistakes instead of 22, 12 questions instead of 33"
+ },
+ {
   "url": "http://127.0.0.1:5190/?db=charter-a#/security",
   "ready": "Try to steal from us",
   "steps": [

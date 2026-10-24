@@ -1,74 +1,46 @@
 [
  {
-  "name": "b4_guess",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/inbox?why=70948",
-  "waitFor": "BACS-536784",
-  "settle": 3000
- },
- {
   "name": "b1_question",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/inbox?why=71065",
+  "url": "http://127.0.0.1:5190/?db=charter-b#/inbox?why=4413",
   "waitFor": "wrong invoice",
   "settle": 3000
  },
  {
-  "name": "b3_reverse",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/inbox?why=71099",
-  "waitFor": "BACS-536784",
+  "name": "b7_lineage",
+  "url": "http://127.0.0.1:5190/?db=charter-b#/knowledge/allocation",
+  "waitFor": "Replay gate",
   "settle": 3000
- },
- {
-  "name": "b5_autonomy",
-  "url": "http://127.0.0.1:5190/?db=charter-b#/knowledge/autonomy?why=71098",
-  "waitFor": "tightened",
-  "settle": 4000
  },
  {
   "name": "b6_proof",
   "url": "http://127.0.0.1:5190/?db=charter-b#/proof",
-  "waitFor": "Proof",
-  "settle": 4000
- },
- {
-  "name": "a1_email",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/security?why=6555",
-  "waitFor": "Formosa",
+  "waitFor": "Month by month",
   "settle": 4000
  },
  {
   "name": "a2_refused",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/payables?why=6580",
+  "url": "http://127.0.0.1:5190/?db=charter-a#/payables?why=5259",
   "waitFor": "P-3",
-  "settle": 4000
- },
- {
-  "name": "a3_policies",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/knowledge/policies",
-  "waitFor": "P-3",
-  "settle": 4000
- },
- {
-  "name": "a4_pushback",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/knowledge?why=6582",
-  "waitFor": "grace",
   "settle": 4000
  },
  {
   "name": "a5_skill",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/knowledge/skills",
-  "waitFor": "underreport",
+  "url": "http://127.0.0.1:5190/?db=charter-a#/knowledge/underreport",
+  "waitFor": "Replay gate",
   "settle": 4000
  },
  {
-  "name": "a6_audit",
+  "name": "p1_benchrec",
   "url": "http://127.0.0.1:5190/?db=charter-a#/proof",
-  "waitFor": "Proof",
+  "waitFor": "Real bank reconciliation",
+  "scrollTo": "Real bank reconciliation",
   "settle": 4000
  },
  {
-  "name": "a7_floor",
-  "url": "http://127.0.0.1:5190/?db=charter-a#/floor",
-  "waitFor": "Floor",
-  "settle": 4000
+  "name": "c1_sister",
+  "url": "http://127.0.0.1:5190/?db=charter-c#/knowledge/allocation",
+  "waitFor": "learned elsewhere",
+  "scrollTo": "Versions",
+  "settle": 3000
  }
 ]
