@@ -72,9 +72,11 @@ function text(tpl: PolicyTemplate): string {
   return '';
 }
 
-export function search(reqs: Request[], active: PolicyTemplate[]): PolicyCandidate[] {
+// `known` are rules already proposed, binding or rejected (never offered twice);
+// `binding` are the rules in force or awaiting a person, whose stops count as covered.
+export function search(reqs: Request[], known: PolicyTemplate[], binding: PolicyTemplate[]): PolicyCandidate[] {
   const candidates: PolicyCandidate[] = [];
-  const has = (tpl: PolicyTemplate) => active.some(a => JSON.stringify(a) === JSON.stringify(tpl));
+  const has = (tpl: PolicyTemplate) => known.some(a => JSON.stringify(a) === JSON.stringify(tpl));
   for (const action of MONEY_OUT) {
     const mine = reqs.filter(r => r.action === action);
     for (const fact of Object.keys(FACT_LIBRARY)) {
@@ -96,7 +98,7 @@ export function search(reqs: Request[], active: PolicyTemplate[]): PolicyCandida
   // while holding back good ones is never offered.
   candidates.sort((a, b) => b.benefitCents - b.costCents - (a.benefitCents - a.costCents) || (a.tpl.t === 'forbid_when' ? -1 : 1));
   const kept: PolicyCandidate[] = [];
-  const stopped = new Set<number>();
+  const stopped = new Set(reqs.filter(r => r.bad && binding.some(tpl => would(tpl, r))).map(r => r.activityId));
   for (const c of candidates) {
     if (c.blockedBad.every(b => stopped.has(b.activityId))) continue;
     kept.push(c);
@@ -117,9 +119,14 @@ export function search(reqs: Request[], active: PolicyTemplate[]): PolicyCandida
 
 export async function searchPolicies(db: Db, dryRun: boolean, dir: string): Promise<string[]> {
   const [reqs, policies] = await Promise.all([requests(db), db.sql('SELECT key, policy_id, template, status FROM policy')]);
-  const active = policies.filter(p => p.status === 'active' || p.status === 'proposed' || p.status === 'rejected').map(p => JSON.parse(p.template) as PolicyTemplate);
-  const found = search(reqs, active);
-  if (!found.length) return [`policies: searched ${MONEY_OUT.length * Object.keys(FACT_LIBRARY).length * 2} tightening rules over ${reqs.length} past money movements; none would have prevented a loss`];
+  const tpl = (p: Row) => JSON.parse(p.template) as PolicyTemplate;
+  const binding = policies.filter(p => p.status === 'active' || p.status === 'proposed').map(tpl);
+  const found = search(reqs, policies.filter(p => ['active', 'proposed', 'rejected'].includes(p.status)).map(tpl), binding);
+  if (!found.length) {
+    const losses = reqs.filter(r => r.bad);
+    const covered = losses.filter(r => binding.some(t => would(t, r))).length;
+    return [`policies: searched ${MONEY_OUT.length * Object.keys(FACT_LIBRARY).length * 2} tightening rules over ${reqs.length} past money movements and ${losses.length} loss(es); ${covered} already stopped by rules in force, no new rule saves more than it holds back`];
+  }
   const lines: string[] = [];
   for (const c of found) {
     const proof = {
