@@ -142,6 +142,7 @@ def main():
             n_ing += 1
         world.call("run_seats")
         answer(admin, dana, truth)
+        customers_notice_duplicates(admin, dana, truth, d)
         if d.weekday() == 6 and not a.no_evolve:
             r = subprocess.run(["npx", "tsx", "tools/evolve/evolve.ts", "--db", DB, "--once", "--data", "data/companyB", "--no-policies"], cwd=ROOT, capture_output=True, text=True)
             for line in (r.stdout or "").splitlines():
@@ -164,7 +165,9 @@ def answer(admin, dana, truth):
         t = truth.get(subj.replace("receipt:", ""), {})
         opts = json.loads(a["options"] or "[]")
         if k == "allocation":
-            want = " + ".join(t.get("invoices", []))
+            if t and not t.get("invoices"):
+                dana.call("answer_ask", a["id"], "leave unapplied", "nothing open matches; this looks like a second payment of an invoice already paid")
+                continue
             match = next((o for o in opts if set(o.split(" + ")) == set(t.get("invoices", []))), None)
             dana.call("answer_ask", a["id"], match or "apply oldest first", "the customer's remittance lists these invoices" if match else "apply to the oldest")
         elif k == "identify_payer":
@@ -185,6 +188,28 @@ def answer(admin, dana, truth):
             dana.call("answer_ask", a["id"], "reading A", "matches the email")
         elif k == "finding":
             dana.call("answer_ask", a["id"], "acknowledge", "noted")
+
+
+NOTICED = set()
+
+
+# A week after a duplicate payment was applied to other invoices, the customer writes
+# to ask for it back; the controller corrects the decision that applied it.
+def customers_notice_duplicates(admin, dana, truth, today):
+    for txn, t in truth.items():
+        if t.get("profile") != "duplicate" or txn in NOTICED:
+            continue
+        rows = admin.sql(f"SELECT id, received_at FROM receipt WHERE id = '{txn}'")
+        if not rows or rows[0]["received_at"] > (today - timedelta(days=7)).isoformat():
+            continue
+        applied = [x for x in admin.sql(f"SELECT reversed FROM application WHERE receipt_id = '{txn}'") if not x["reversed"]]
+        NOTICED.add(txn)
+        if not applied:
+            continue
+        dec = sorted((x for x in admin.sql("SELECT id, subject, domain FROM decision WHERE domain = 'allocation'") if x["subject"] == f"receipt:{txn}"), key=lambda x: x["id"])
+        if dec:
+            dana.call("correct_decision", dec[-1]["id"], "leave_unapplied_ask",
+                      "the customer paid this invoice twice; the second payment should not have been spread over other invoices", check=False)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ import { applyByTerms, allocationsForSubset } from './core/matching';
 import { addDays, bpOf } from './core/money';
 import type { Principal } from './core/policy';
 import { AR_ACCOUNT_BY_KIND, bumpControl, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from './kernel';
-import { applyAllocations, CASH, closeWork, money, useCurrency, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
+import { applyAllocations, CASH, closeWork, money, openAsk, useCurrency, openItemsFor, preChaseFeatures, sendNotice, termsForEntity, termsForStore, underreportFeatures } from './seats';
 import { addFact, aliasSubject, createInvoice, ingest, openWork } from './world';
 import { recordCheck } from './reliability';
 import { routeHeldEmail, type Extracted } from './seats';
@@ -78,14 +78,22 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
       const r = tx.db.receipt.id.find(receiptId);
       if (!r) return 'unknown receipt';
       recordCheck(tx, 'allocation', a.subject, allocationLabel(evidence, answer), 'answer', who.id);
+      if (answer === 'leave unapplied') {
+        openAsk(tx, { kind: 'unapplied_cash', subject: a.subject, toRole: 'controller', question: `${money(Number(r.unappliedCents))} from ${r.payerName} stays unapplied. Keep it as a credit or refund it?`, options: ['keep as credit', 'refund'], evidence: { features: evidence.features ?? {}, decision: evidence.decision ?? 0 }, confidence: 0.5, by: who.id });
+        return `${receiptId} left unapplied`;
+      }
       const items = openItemsFor(tx, r.entityCode);
       const picked = answer.split(' + ').filter(id => items.some(i => i.id === id));
+      const lines = (evidence.remittanceLines ?? []) as { ref: string; cents: number }[];
+      const asRemitted = lines.length > 0 && lines.length === picked.length && lines.every(l => picked.includes(l.ref));
       const allocations =
         answer === 'apply oldest first'
           ? applyByTerms(Number(r.unappliedCents), items, termsForEntity(tx, r.entityCode)?.applicationOrder ?? ['interest', 'fee', 'royalty', 'supply', 'trade']).allocations
-          : picked.length === 1
-            ? [{ id: picked[0], cents: Math.min(Number(r.unappliedCents), items.find(i => i.id === picked[0])!.openCents) }]
-            : allocationsForSubset(picked, items);
+          : asRemitted
+            ? lines.map(l => ({ id: l.ref, cents: l.cents }))
+            : picked.length === 1
+              ? [{ id: picked[0], cents: Math.min(Number(r.unappliedCents), items.find(i => i.id === picked[0])!.openCents) }]
+              : allocationsForSubset(picked, items);
       return applyAllocations(tx, CASH, receiptId, allocations, plan, {}, fromDecision) ? `applied ${receiptId} as told` : `could not apply ${receiptId}`;
     }
     case 'identify_payer': {
@@ -316,7 +324,38 @@ export function correctDecision(tx: Tx, who: Principal, decisionId: bigint, outc
     recordCheck(tx, d.domain, d.subject, outcome, 'correction', who.id);
     return `correction recorded on decision #${decisionId}: ${d.outcome} -> ${outcome}`;
   });
-  // Correcting an approval undoes it, through the kernel like everything else.
+  // Correcting a decision undoes what it did, through the kernel like everything else.
   if (res.ok && d.domain === 'bill_match' && outcome === 'reject') return rejectBill(tx, who, d.subject.replace('bill:', ''), reason).summary;
+  if (res.ok && d.domain === 'allocation' && outcome !== d.outcome) {
+    const receiptId = d.subject.replace('receipt:', '');
+    const undone = reverseApplications(tx, who, receiptId, reason);
+    const r = tx.db.receipt.id.find(receiptId);
+    if (r && r.unappliedCents > 0n) openWork(tx, 'cash_app', 'apply_receipt', `entity:${r.entityCode}`, { receiptId }, who.id);
+    return undone ? `${res.summary}; ${undone.summary}` : res.summary;
+  }
   return res.summary;
+}
+
+// Undo cash applications a person found wrong: the invoices reopen and the money
+// returns to unapplied cash, to be applied again.
+export function reverseApplications(tx: Tx, who: Principal, receiptId: string, reason: string): ExecResult | null {
+  const apps = [...tx.db.application.receiptId.filter(receiptId)].filter(x => !x.reversed);
+  if (!apps.length) return null;
+  const total = apps.reduce((s, x) => s + Number(x.amountCents), 0);
+  return exec(tx, { principal: who, action: 'reverse_application', params: { receipt: receiptId, applications: apps.map(x => Number(x.id)), reason }, used: [`receipt:${receiptId}`, ...apps.map(x => `invoice:${x.invoiceId}`)], amountCents: total }, activityId => {
+    for (const app of apps) {
+      const inv = tx.db.invoice.id.find(app.invoiceId)!;
+      tx.db.invoice.id.update({ ...inv, openCents: inv.openCents + app.amountCents, status: 'open' });
+      tx.db.application.id.update({ ...app, reversed: true });
+      post(tx, `JE-UNAPP-${app.id}`, [
+        { account: AR_ACCOUNT_BY_KIND[inv.kind], debit: Number(app.amountCents), entity: inv.entityCode, memo: `reverse ${receiptId} on ${inv.id}: ${reason}` },
+        { account: '2100', credit: Number(app.amountCents), entity: inv.entityCode, memo: `${receiptId} back to unapplied` },
+      ], activityId);
+      bumpControl(tx, `ar_${inv.kind}`, app.amountCents);
+      bumpControl(tx, 'unapplied', app.amountCents);
+    }
+    const r = tx.db.receipt.id.find(receiptId)!;
+    tx.db.receipt.id.update({ ...r, unappliedCents: r.unappliedCents + BigInt(total), status: 'unapplied' });
+    return `${money(total)} of ${receiptId} returned to unapplied cash`;
+  });
 }

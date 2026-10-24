@@ -56,36 +56,53 @@ def _subset_sums(items):
 
 
 def find_subsets(amount: int, items: list[Invoice], tolerance: int = TOLERANCE_CENTS, max_solutions: int = 3):
-    """Subsets whose total is within [amount - tolerance, amount], best first: (solutions, residuals)."""
+    """Port of core/matching.ts findSubsets: exact subsets first (uniqueness is judged on them); only when
+    none exists, each left half's closest partner within [amount - tolerance, amount]. Returns (solutions, residuals)."""
     pool = sorted(items, key=lambda i: (i.due, i.id))[:MAX_ITEMS]
     half = len(pool) // 2
     left, right = pool[:half], pool[half:]
+    left_sums = _subset_sums(left)
     right_sums = sorted(_subset_sums(right), key=lambda x: x[0])
-    found = []
-    for lsum, lmask in _subset_sums(left):
-        lo, hi = amount - tolerance - lsum, amount - lsum
-        if hi < 0:
-            continue
+
+    def first_at_least(x: int) -> int:
         a, b = 0, len(right_sums)
         while a < b:
             m = (a + b) // 2
-            if right_sums[m][0] < lo:
+            if right_sums[m][0] < x:
                 a = m + 1
             else:
                 b = m
-        k = a
-        while k < len(right_sums) and right_sums[k][0] <= hi:
-            total = lsum + right_sums[k][0]
-            if total != 0:
-                ids = [it.id for i, it in enumerate(left) if lmask & (1 << i)] + [it.id for i, it in enumerate(right) if right_sums[k][1] & (1 << i)]
-                found.append((ids, amount - total))
-                if len(found) > 50:
-                    break
+        return a
+
+    def ids_of(lmask: int, rmask: int) -> list[str]:
+        return [it.id for i, it in enumerate(left) if lmask & (1 << i)] + [it.id for i, it in enumerate(right) if rmask & (1 << i)]
+
+    exact: list[list[str]] = []
+    for lsum, lmask in left_sums:
+        need = amount - lsum
+        if need < 0:
+            continue
+        k = first_at_least(need)
+        while k < len(right_sums) and right_sums[k][0] == need and len(exact) <= max_solutions:
+            if lsum + right_sums[k][0] > 0:
+                exact.append(ids_of(lmask, right_sums[k][1]))
             k += 1
-        if len(found) > 50:
+        if len(exact) > max_solutions:
             break
-    found.sort(key=lambda f: (f[1], len(f[0])))
-    top = found[:max_solutions]
+    if exact:
+        top = sorted(exact, key=len)[:max_solutions]
+        return top, [0] * len(top)
+    near = []
+    for lsum, lmask in left_sums:
+        k = first_at_least(amount - lsum + 1) - 1
+        if k < 0:
+            continue
+        total = lsum + right_sums[k][0]
+        if total == 0 or amount - total > tolerance:
+            continue
+        near.append((ids_of(lmask, right_sums[k][1]), amount - total))
+    near.sort(key=lambda f: (f[1], len(f[0])))
+    top = near[:max_solutions]
     return [f[0] for f in top], [f[1] for f in top]
 
 

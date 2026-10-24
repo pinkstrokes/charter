@@ -248,6 +248,7 @@ export interface Extracted {
   gross_sales?: string;
   amount?: string;
   invoice_refs?: string[];
+  invoice_amounts?: string[];
   new_account_last4?: string;
   revised?: boolean;
   urgency?: boolean;
@@ -268,7 +269,7 @@ function parseRemittanceCsv(p: EmailPayload): Extracted | null {
   const lines = rows.slice(1).filter(r => r[iInv]);
   const total = lines.reduce((sum, r) => sum + Number((r[iAmt] ?? '0').replace(/[^0-9.\-]/g, '')), 0);
   if (!lines.length || !Number.isFinite(total)) return null;
-  return { type: 'remittance', invoice_refs: lines.map(r => r[iInv]), amount: total.toFixed(2), reason: `remittance advice for ${lines.length} invoices` };
+  return { type: 'remittance', invoice_refs: lines.map(r => r[iInv]), invoice_amounts: lines.map(r => (r[iAmt] ?? '').replace(/[^0-9.\-]/g, '')), amount: total.toFixed(2), reason: `remittance advice for ${lines.length} invoices` };
 }
 
 function parseReportCsv(p: EmailPayload): Extracted | null {
@@ -463,7 +464,11 @@ function routeEmail(tx: Tx, obsId: bigint, p: EmailPayload, x: Extracted, inject
       return;
     }
     case 'remittance':
-      if (entityCode) addFact(tx, `entity:${entityCode}`, 'remittance', { amount: centsFrom(x.amount), refs: x.invoice_refs ?? [] }, today, obsId, false);
+      if (entityCode) {
+        const refs = x.invoice_refs ?? [];
+        const amounts = x.invoice_amounts && x.invoice_amounts.length === refs.length ? x.invoice_amounts.map(centsFrom) : [];
+        addFact(tx, `entity:${entityCode}`, 'remittance', { amount: centsFrom(x.amount), refs, lines: amounts.length ? refs.map((ref, i) => ({ ref, cents: amounts[i] })) : [] }, today, obsId, false);
+      }
       return;
     case 'routing_change':
       requestRoutingChange(tx, CASH, entityCode, x, obsId, senderMatches);
@@ -660,9 +665,15 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
   const search = findSubsets(amount, items, 2_500);
   const remits = factsOf(tx, `entity:${r.entityCode}`, 'remittance').filter(f => Math.abs(f.value.amount - amount) <= 100);
   const remitRefs: string[] = remits.length ? remits[remits.length - 1].value.refs : [];
-  // The payer's own list counts when every invoice on it is open here and together they make up the payment.
+  const remitLines: { ref: string; cents: number }[] = remits.length ? remits[remits.length - 1].value.lines ?? [] : [];
+  // The payer's own list counts when every invoice on it is open here and the
+  // amounts it says it pays (or, without amounts, the open balances) make up the payment.
   const listed = remitRefs.map(id => items.find(i => i.id === id)).filter((i): i is OpenItem => !!i);
-  const remitConsistent = remitRefs.length > 0 && listed.length === remitRefs.length && Math.abs(listed.reduce((s2, i) => s2 + i.openCents, 0) - amount) <= 100;
+  const perLine = remitLines.length === remitRefs.length && remitLines.every(l => { const it = items.find(i => i.id === l.ref); return !!it && l.cents > 0 && l.cents <= it.openCents; });
+  const remitConsistent =
+    remitRefs.length > 0 &&
+    listed.length === remitRefs.length &&
+    (perLine ? Math.abs(remitLines.reduce((s2, l) => s2 + l.cents, 0) - amount) <= 100 : Math.abs(listed.reduce((s2, i) => s2 + i.openCents, 0) - amount) <= 100);
   const referenced = [...tx.db.invoice.entityCode.filter(r.entityCode)].filter(i => r.reference.includes(i.id));
   // The payment reference names one open invoice whose balance is exactly the payment.
   const named = items.filter(i => r.reference.includes(i.id) && Math.abs(i.openCents - amount) <= 100);
@@ -699,8 +710,8 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
   let allocations: { id: string; cents: number }[] = [];
   if (d.decide === 'apply_unique' && (remitConsistent || named.length === 1 || search.solutions.length >= 1)) {
     // The payer's word, when it is consistent, decides which invoices are paid.
-    const chosen = remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0];
-    allocations = allocationsForSubset(chosen, items);
+    if (remitConsistent && perLine) allocations = remitLines.map(l => ({ id: l.ref, cents: l.cents }));
+    else allocations = allocationsForSubset(remitConsistent ? remitRefs : named.length === 1 ? [named[0].id] : search.solutions[0], items);
   } else if (d.decide === 'apply_to_reference' && mentioned.length === 1) {
     // Short payments stay open on the invoice the payer named; extra cash stays unapplied.
     allocations = [{ id: mentioned[0].id, cents: Math.min(amount, mentioned[0].openCents) }];
@@ -712,8 +723,8 @@ function processReceipt(tx: Tx, workId: bigint, receiptId: string): void {
       subject: `receipt:${r.id}`,
       toRole: d.askRole,
       question: `${money(amount)} from ${r.payerName} can be explained by ${search.solutions.length} different sets of invoices. Which should it pay?`,
-      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first']),
-      evidence: { features, solutions: search.solutions, skill: d.key, referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, decision: Number(d.id) },
+      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first', 'leave unapplied']),
+      evidence: { features, solutions: search.solutions, skill: d.key, referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: Number(d.id) },
       confidence: 0.3,
       workItemId: workId,
       by: CASH.id,
