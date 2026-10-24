@@ -4,13 +4,15 @@ Two databases on the projector: `charter-b` (company B, real UCI invoices, finis
 
 ## Before judging
 
+The local database `charter-a` is ready: six months run, the Formosa Leaf attack rehearsed (its Friday 3 July release refused by P-3 for both controllers), the business date Friday 3 July, seats on autopilot. Pacific Cup's and Golden Tapioca's payments of 3 July are prepared and not yet released, so a judge can attack either and then try to release it.
+
 ```bash
-spacetime start
-STDB_DB=charter-a python3 tools/world/run.py --reset   # six months, ~45 min; or reuse the finished database
-STDB_DB=charter-a python3 tools/demo_prep.py           # Thursday 2 July: bills for Formosa Leaf, Golden Tapioca and Pacific Cup due over two weeks (Formosa Leaf's Friday run: $92,400); seats on autopilot
+spacetime start                                        # if it is not running
 npx tsx tools/evolve/evolve.ts --db charter-a --watch  # the evolver, live: every answer teaches
-cd web && npm run dev
+cd web && npm run dev                                  # http://127.0.0.1:5190/?db=charter-a
 ```
+
+From scratch instead (about 30 minutes): `spacetime publish charter-a --server local --module-path module/spacetimedb --delete-data=always --yes`, `python3 -u tools/world/run.py --reset`, `STDB_DB=charter-a python3 tools/demo_prep.py`, then send the bank-change email and run `STDB_DB=charter-a python3 tools/demo_prep.py --friday`.
 
 ## The three minutes
 
@@ -21,7 +23,7 @@ cd web && npm run dev
 | 0:45 | Proof → company B trend | "Month by month on these books it settles more alone, asks people less, and on the locked test split it was wrong once in 292 payments it settled alone." |
 | 1:00 | charter-a, Security → send the bank-change email from Formosa Leaf's own address | "Now try to steal from us: new bank details the day before a $92,400 payment run." |
 | 1:15 | Inbox: the callback question | "Two models read it; the change is held; the controller is asked to call the number we already had." |
-| 1:25 | `python3 tools/demo_prep.py --friday` (the next Friday's run), then Payables → release | "Friday. The controller presses release — refused, for the controller too, by P-3." |
+| 1:25 | Payables → the Formosa Leaf run (or, after a judge's attack, Pacific Cup's) → release | "Friday. The controller presses release — refused, for the controller too, by P-3." |
 | 1:40 | Knowledge → Policies → P-1, P-2, P-3 | "Nobody wrote P-3. A debit bounced in April during a bank change nobody verified; Charter replayed every past money movement, found the one rule that would have stopped it without holding back anything legitimate, and extended it to refunds and vendor payments." |
 | 2:05 | Any hold decision inside a grace period → "This was wrong" → chase | "Tell it to chase a franchisee inside the grace period: it keeps its decision and says the agreement forbids it. That verdict is never counted against the rule and never learned." |
 | 2:20 | Proof → BenchRec | "On a real bank's reconciliation, the same earned-autonomy rule matched 84% of bank lines at 99.9% precision — the benchmark's floor is 99.8%; the matcher shipped with the dataset misses it." |
