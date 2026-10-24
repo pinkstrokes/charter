@@ -200,43 +200,7 @@
         },
         "then": {
           "decide": "leave_unapplied_ask",
-          "note": "no subset matches and no reliable reference to apply against"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "ge",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
-                "v": 2
-              }
-            },
-            {
-              "op": "or",
-              "args": [
-                {
-                  "op": "feat",
-                  "name": "remittance_consistent"
-                },
-                {
-                  "op": "feat",
-                  "name": "reference_matches_open"
-                }
-              ]
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_unique",
-          "note": "multiple subsets fit but payer confirmed which invoices; safe to apply"
+          "note": "no subset matches and no reliable reference; ask controller"
         }
       }
     ],
@@ -261,8 +225,8 @@
         "receipt:BACS-499505-A",
         "receipt:BACS-502219-A"
       ],
-      "optionalFixed": 17,
-      "optionalTotal": 52,
+      "optionalFixed": 0,
+      "optionalTotal": 48,
       "cases": [
         {
           "subject": "receipt:BACS-495766",
@@ -274,21 +238,21 @@
         {
           "subject": "receipt:BACS-499505-A",
           "label": "leave_unapplied_ask",
-          "source": "ask #433 answered by controller:Dana",
+          "source": "ask #434 answered by controller:Dana",
           "reason": "landed on 499220, 499505, the customer paid 499505",
           "handled": true
         },
         {
           "subject": "receipt:BACS-500654",
           "label": "apply_to_reference",
-          "source": "ask #441 answered by controller:Dana",
+          "source": "ask #442 answered by controller:Dana",
           "reason": "landed on 500353, the customer paid 500654",
           "handled": false
         },
         {
           "subject": "receipt:BACS-502219-A",
           "label": "leave_unapplied_ask",
-          "source": "ask #510 answered by controller:Dana",
+          "source": "ask #511 answered by controller:Dana",
           "reason": "called the customer: the money on account was for this invoice",
           "handled": true
         },
@@ -407,28 +371,11 @@
       ]
     },
     "labeled": {
-      "n": 188,
-      "correctBefore": 132,
-      "correctAfter": 134,
+      "n": 175,
+      "correctBefore": 123,
+      "correctAfter": 110,
       "fixed": [
-        "receipt:STMT-C-13694-2010-01",
-        "receipt:BACS-492711",
-        "receipt:STMT-C-17850-2010-01",
-        "receipt:STMT-C-17841-2010-01",
-        "receipt:STMT-C-17949-2010-01",
-        "receipt:STMT-C-15311-2010-01",
-        "receipt:STMT-C-16029-2010-01",
-        "receipt:STMT-C-15311-2010-02",
-        "receipt:STMT-C-17841-2010-02",
-        "receipt:STMT-C-13694-2010-02",
-        "receipt:STMT-C-12835-2010-02",
-        "receipt:STMT-C-13089-2010-02",
-        "receipt:STMT-C-13027-2010-02",
-        "receipt:BACS-498943",
-        "receipt:BACS-498945",
         "receipt:BACS-499505-A",
-        "receipt:STMT-C-13694-2010-03",
-        "receipt:STMT-C-15311-2010-03",
         "receipt:BACS-502219-A"
       ],
       "broken": [],
@@ -447,29 +394,27 @@
         "receipt:BACS-499795",
         "receipt:BACS-501575",
         "receipt:BACS-501011-A",
-        "receipt:BACS-501534",
-        "receipt:BACS-502267-A",
-        "receipt:BACS-501874-A"
+        "receipt:BACS-501534"
       ],
-      "newAlone": 17
+      "newAlone": 0
     },
     "budget": null,
     "changed": {
       "n": 19,
-      "total": 538,
-      "rate": 0.03531598513011153,
+      "total": 503,
+      "rate": 0.03777335984095427,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 55,
-    "robustness": 0.7127659574468085,
+    "complexity": 47,
+    "robustness": 0.6285714285714286,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Changed the solution_count=0 fallback from apply_by_terms to leave_unapplied_ask so ambiguous receipts without a valid reference are escalated, fixing BACS-500654 and BACS-502219-A. Added a rule for solution_count>=2 that applies only when remittance_consistent or reference_matches_open is true, safely taking over cases people previously resolved while respecting the safety constraint.",
+    "rationale": "Changed the solution_count=0 fallback from apply_by_terms to leave_unapplied_ask so that when no subset matches and the reference doesn't name an open invoice (mistake BACS-502219-A) or the gap is positive with few items (mistake BACS-500654), we escalate rather than blindly applying by terms. This also safely handles the previously-asked cases where controllers chose apply_to_reference for small bank-charge gaps, since those still match earlier reference_names_open rules.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 17.5,
+    "seconds": 13.7,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -479,14 +424,14 @@
           "candidate": 14
         },
         "payment_late": {
-          "n": 19,
-          "current": 19,
-          "candidate": 19
+          "n": 16,
+          "current": 16,
+          "candidate": 16
         },
         "payment_prompt": {
-          "n": 73,
-          "current": 73,
-          "candidate": 72
+          "n": 67,
+          "current": 67,
+          "candidate": 66
         },
         "payment_bank_charge": {
           "n": 12,
@@ -511,7 +456,7 @@
         "payment_fx_difference": {
           "n": 11,
           "current": 4,
-          "candidate": 5
+          "candidate": 4
         },
         "payment_two_invoices_bank_charge": {
           "n": 3,
@@ -521,49 +466,49 @@
         "payment_statement_with_remittance": {
           "n": 22,
           "current": 16,
-          "candidate": 18
+          "candidate": 13
         }
       },
       "train": {
         "payment_two_invoices_bank_charge": {
-          "n": 13,
+          "n": 12,
           "current": 5,
           "candidate": 4
         },
         "payment_prompt": {
-          "n": 155,
-          "current": 154,
-          "candidate": 148
+          "n": 148,
+          "current": 147,
+          "candidate": 141
         },
         "payment_parent": {
-          "n": 27,
-          "current": 25,
-          "candidate": 26
+          "n": 21,
+          "current": 19,
+          "candidate": 18
         },
         "payment_fx_difference": {
-          "n": 15,
-          "current": 12,
-          "candidate": 12
+          "n": 13,
+          "current": 11,
+          "candidate": 11
         },
         "payment_late": {
-          "n": 52,
-          "current": 50,
-          "candidate": 50
+          "n": 49,
+          "current": 47,
+          "candidate": 47
         },
         "payment_on_account": {
-          "n": 12,
-          "current": 9,
+          "n": 10,
+          "current": 7,
           "candidate": 2
         },
         "payment_bank_charge": {
-          "n": 28,
-          "current": 18,
-          "candidate": 11
+          "n": 24,
+          "current": 16,
+          "candidate": 9
         },
         "payment_on_account_balance": {
-          "n": 11,
-          "current": 11,
-          "candidate": 10
+          "n": 10,
+          "current": 10,
+          "candidate": 9
         },
         "payment_duplicate": {
           "n": 5,
@@ -578,19 +523,19 @@
         "payment_statement_with_remittance": {
           "n": 47,
           "current": 38,
-          "candidate": 47
+          "candidate": 38
         }
       },
       "test": {
         "payment_prompt": {
-          "n": 80,
-          "current": 80,
-          "candidate": 78
+          "n": 76,
+          "current": 76,
+          "candidate": 74
         },
         "payment_bank_charge": {
-          "n": 18,
+          "n": 17,
           "current": 15,
-          "candidate": 7
+          "candidate": 8
         },
         "payment_parent": {
           "n": 20,
@@ -608,9 +553,9 @@
           "candidate": 2
         },
         "payment_on_account_balance": {
-          "n": 6,
-          "current": 6,
-          "candidate": 6
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "payment_fx_difference": {
           "n": 11,
@@ -628,17 +573,17 @@
           "candidate": 8
         },
         "payment_duplicate": {
-          "n": 2,
-          "current": 2,
-          "candidate": 2
+          "n": 1,
+          "current": 1,
+          "candidate": 1
         },
         "payment_statement_with_remittance": {
           "n": 26,
           "current": 23,
-          "candidate": 24
+          "candidate": 21
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:09:30.566Z"
+    "evaluatedAt": "2026-10-24T23:39:53.105Z"
   }
 }

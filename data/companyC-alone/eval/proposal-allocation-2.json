@@ -168,7 +168,7 @@
     "rationale": "Added a rule before the generic solution_count=0 fallback: when no subset matches, the reference names an open invoice, and the payment fully covers it (reference_gap_cents <= 0), we apply to that reference. This correctly handles BACS-490687 where the customer overpaid a single referenced invoice, while preserving apply_by_terms for cases like BACS-490925 and BACS-490733 where the reference falls short of the named invoices' balances.",
     "candidatesTried": 3,
     "candidatesPassed": 2,
-    "seconds": 15.1,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -263,6 +263,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:04:36.645Z"
+    "evaluatedAt": "2026-10-24T23:37:43.558Z"
   }
 }

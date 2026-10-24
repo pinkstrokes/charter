@@ -1,6 +1,6 @@
 {
  "db": "charter-c0",
- "generatedAt": "2026-10-24T21:24:08.404Z",
+ "generatedAt": "2026-10-24T23:48:00.097Z",
  "answerKeyEntries": 1280,
  "outcomes": {
   "val": {
@@ -318,9 +318,9 @@
  "learnedPolicies": [],
  "knowingWhenToAsk": {
   "allocation": {
-   "handledAlone": 290,
+   "handledAlone": 287,
    "wrong": 8,
-   "upper95": 0.04922309102215695
+   "upper95": 0.04973179904095072
   }
  },
  "generations": [
@@ -770,26 +770,26 @@
   },
   {
    "key": "allocation@7",
-   "status": "active",
-   "createdAt": "2010-04-25",
-   "activatedAt": "2010-04-25",
+   "status": "retired",
+   "createdAt": "2010-04-18",
+   "activatedAt": "2010-04-18",
    "test": {
     "payment_prompt": {
      "n": 127,
-     "right": 125,
-     "alone": 125,
+     "right": 124,
+     "alone": 124,
      "wrong": 0
     },
     "payment_bank_charge": {
      "n": 28,
-     "right": 10,
-     "alone": 8,
+     "right": 11,
+     "alone": 9,
      "wrong": 0
     },
     "payment_parent": {
      "n": 33,
-     "right": 32,
-     "alone": 32,
+     "right": 31,
+     "alone": 31,
      "wrong": 0
     },
     "payment_late": {
@@ -836,8 +836,82 @@
     },
     "payment_statement_with_remittance": {
      "n": 43,
-     "right": 41,
-     "alone": 41,
+     "right": 36,
+     "alone": 36,
+     "wrong": 0
+    }
+   }
+  },
+  {
+   "key": "allocation@8",
+   "status": "active",
+   "createdAt": "2010-04-25",
+   "activatedAt": "2010-04-25",
+   "test": {
+    "payment_prompt": {
+     "n": 127,
+     "right": 124,
+     "alone": 124,
+     "wrong": 0
+    },
+    "payment_bank_charge": {
+     "n": 28,
+     "right": 11,
+     "alone": 9,
+     "wrong": 0
+    },
+    "payment_parent": {
+     "n": 33,
+     "right": 31,
+     "alone": 31,
+     "wrong": 0
+    },
+    "payment_late": {
+     "n": 37,
+     "right": 37,
+     "alone": 37,
+     "wrong": 0
+    },
+    "payment_two_invoices_bank_charge": {
+     "n": 7,
+     "right": 2,
+     "alone": 2,
+     "wrong": 0
+    },
+    "payment_on_account_balance": {
+     "n": 9,
+     "right": 9,
+     "alone": 9,
+     "wrong": 0
+    },
+    "payment_fx_difference": {
+     "n": 16,
+     "right": 8,
+     "alone": 7,
+     "wrong": 0
+    },
+    "payment_on_account": {
+     "n": 11,
+     "right": 2,
+     "alone": 3,
+     "wrong": 3
+    },
+    "payment_two_invoices": {
+     "n": 8,
+     "right": 8,
+     "alone": 8,
+     "wrong": 0
+    },
+    "payment_duplicate": {
+     "n": 2,
+     "right": 2,
+     "alone": 0,
+     "wrong": 0
+    },
+    "payment_statement_with_remittance": {
+     "n": 43,
+     "right": 40,
+     "alone": 40,
      "wrong": 0
     }
    }
@@ -983,16 +1057,16 @@
    "domains": {
     "allocation": {
      "decisions": 201,
-     "alone": 169,
-     "aloneGraded": 169,
-     "aloneRight": 169,
-     "questions": 32,
-     "aloneShare": 0.8407960199004975,
+     "alone": 165,
+     "aloneGraded": 165,
+     "aloneRight": 165,
+     "questions": 36,
+     "aloneShare": 0.8208955223880597,
      "aloneAccuracy": 1
     },
     "pre_chase": {
-     "decisions": 1620,
-     "alone": 1620,
+     "decisions": 1621,
+     "alone": 1621,
      "aloneGraded": 0,
      "aloneRight": 0,
      "questions": 0,
@@ -1006,12 +1080,12 @@
    "domains": {
     "allocation": {
      "decisions": 224,
-     "alone": 200,
-     "aloneGraded": 200,
-     "aloneRight": 198,
-     "questions": 29,
-     "aloneShare": 0.8928571428571429,
-     "aloneAccuracy": 0.99
+     "alone": 198,
+     "aloneGraded": 198,
+     "aloneRight": 196,
+     "questions": 31,
+     "aloneShare": 0.8839285714285714,
+     "aloneAccuracy": 0.98989898989899
     },
     "pre_chase": {
      "decisions": 1548,
@@ -1034,8 +1108,8 @@
  },
  "security": {},
  "attempts": {
-  "total": 9915,
-  "denied": 0,
+  "total": 10160,
+  "denied": 254,
   "rejected": 18
  },
  "invariants": {
@@ -1047,9 +1121,9 @@
   "cashEqualsBank": true
  },
  "chain": {
-  "rows": 9915,
-  "verified": 9915,
+  "rows": 10160,
+  "verified": 10160,
   "firstBreak": null,
-  "head": "678a53a7d59e272a37539f2040ca35f01b7b24a7e2e5b9b2315532b29014c0ae"
+  "head": "5f62ada2943098f390dc2ed59182a78990b8ea69d2f47c18bef02a2430578d5c"
  }
 }

@@ -401,7 +401,7 @@
     "rationale": "Added a top-priority rule to leave unapplied and ask when the payment reference points to an already-paid invoice, catching duplicate payments like BACS-493978-DUP. This also corrects BACS-495766 by preventing the earlier solution_count=0 rules from misfiring before the reference check applies.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 14.8,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -571,6 +571,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:06:44.557Z"
+    "evaluatedAt": "2026-10-24T23:38:23.655Z"
   }
 }

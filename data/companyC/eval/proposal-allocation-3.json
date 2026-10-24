@@ -336,33 +336,33 @@
         "receipt:STMT-C-13081-2010-04"
       ],
       "optionalFixed": 0,
-      "optionalTotal": 33,
+      "optionalTotal": 44,
       "cases": [
         {
           "subject": "receipt:BACS-497384",
           "label": "leave_unapplied_ask",
-          "source": "ask #4148 answered by controller:Dana",
+          "source": "ask #280 answered by controller:Dana",
           "reason": "checked again against the remittance and the bank line: the verdict stands",
           "handled": false
         },
         {
           "subject": "receipt:BACS-499890-A",
           "label": "leave_unapplied_ask",
-          "source": "ask #4205 answered by controller:Dana",
+          "source": "ask #337 answered by controller:Dana",
           "reason": "called the customer: the money on account was for this invoice",
           "handled": false
         },
         {
           "subject": "receipt:BACS-502219-A",
           "label": "leave_unapplied_ask",
-          "source": "ask #4276 answered by controller:Dana",
+          "source": "ask #408 answered by controller:Dana",
           "reason": "landed on 500867, the customer paid 502219",
           "handled": false
         },
         {
           "subject": "receipt:STMT-C-13081-2010-04",
           "label": "apply_unique",
-          "source": "ask #4322 answered by controller:Dana",
+          "source": "ask #454 answered by controller:Dana",
           "reason": "checked again against the remittance and the bank line: the verdict stands",
           "handled": true
         },
@@ -439,51 +439,51 @@
         {
           "subject": "receipt:BACS-496008",
           "label": "apply_to_reference",
-          "source": "ask #4097 answered by controller:Dana",
+          "source": "ask #229 answered by controller:Dana",
           "reason": "the customer named both invoices; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495235",
           "label": "apply_to_reference",
-          "source": "ask #4103 answered by controller:Dana",
+          "source": "ask #235 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the exchange rate",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495733",
           "label": "apply_to_reference",
-          "source": "ask #4109 answered by controller:Dana",
+          "source": "ask #241 answered by controller:Dana",
           "reason": "the customer named both invoices; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-495782",
           "label": "apply_to_reference",
-          "source": "ask #4113 answered by controller:Dana",
+          "source": "ask #245 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the exchange rate",
           "handled": false
         },
         {
           "subject": "receipt:BACS-496564",
           "label": "apply_to_reference",
-          "source": "ask #4120 answered by controller:Dana",
+          "source": "ask #252 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-497217",
           "label": "apply_to_reference",
-          "source": "ask #4152 answered by controller:Dana",
+          "source": "ask #284 answered by controller:Dana",
           "reason": "the customer named both invoices; the difference is the banks' charges",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 120,
-      "correctBefore": 83,
-      "correctAfter": 84,
+      "n": 138,
+      "correctBefore": 90,
+      "correctAfter": 91,
       "fixed": [
         "receipt:STMT-C-13081-2010-04"
       ],
@@ -494,45 +494,154 @@
     "budget": null,
     "changed": {
       "n": 1,
-      "total": 618,
-      "rate": 0.0016181229773462784,
+      "total": 749,
+      "rate": 0.0013351134846461949,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
     "complexity": 72,
-    "robustness": 0.7,
+    "robustness": 0.6594202898550725,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule before the catch-all solution_count=0 case so that when no subset matches but remittance_consistent is true we apply_unique, fixing STMT-C-13081-2010-04. The other two mistakes (BACS-502219-A and BACS-497384) were already handled correctly by existing rules 6 and 2 respectively.",
+    "rationale": "Added a rule for solution_count=0 with remittance_consistent=true to decide apply_unique, fixing STMT-C-13081-2010-04 where the payer's remittance confirmed the invoices despite no algorithmic subset match. The other two mistakes (BACS-502219-A and BACS-497384) were already correctly handled by existing rules falling through to leave_unapplied_ask.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 22.8,
+    "seconds": 23.8,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
         "payment_parent": {
-          "n": 18,
-          "current": 18,
-          "candidate": 18
+          "n": 23,
+          "current": 23,
+          "candidate": 23
         },
         "payment_late": {
-          "n": 22,
-          "current": 22,
-          "candidate": 22
+          "n": 27,
+          "current": 27,
+          "candidate": 27
         },
         "payment_prompt": {
-          "n": 86,
-          "current": 86,
-          "candidate": 86
+          "n": 104,
+          "current": 104,
+          "candidate": 104
         },
         "payment_bank_charge": {
-          "n": 12,
-          "current": 9,
-          "candidate": 9
+          "n": 16,
+          "current": 12,
+          "candidate": 12
         },
         "payment_two_invoices": {
           "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_on_account_balance": {
+          "n": 9,
+          "current": 9,
+          "candidate": 9
+        },
+        "payment_on_account": {
+          "n": 8,
+          "current": 6,
+          "candidate": 6
+        },
+        "payment_fx_difference": {
+          "n": 13,
+          "current": 6,
+          "candidate": 6
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 7,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_statement_with_remittance": {
+          "n": 27,
+          "current": 26,
+          "candidate": 27
+        }
+      },
+      "train": {
+        "payment_two_invoices_bank_charge": {
+          "n": 15,
+          "current": 6,
+          "candidate": 6
+        },
+        "payment_prompt": {
+          "n": 209,
+          "current": 207,
+          "candidate": 207
+        },
+        "payment_parent": {
+          "n": 43,
+          "current": 43,
+          "candidate": 43
+        },
+        "payment_fx_difference": {
+          "n": 19,
+          "current": 14,
+          "candidate": 14
+        },
+        "payment_late": {
+          "n": 73,
+          "current": 71,
+          "candidate": 71
+        },
+        "payment_on_account": {
+          "n": 19,
+          "current": 12,
+          "candidate": 12
+        },
+        "payment_bank_charge": {
+          "n": 41,
+          "current": 35,
+          "candidate": 35
+        },
+        "payment_on_account_balance": {
+          "n": 17,
+          "current": 17,
+          "candidate": 17
+        },
+        "payment_duplicate": {
+          "n": 5,
+          "current": 5,
+          "candidate": 5
+        },
+        "payment_two_invoices": {
+          "n": 6,
+          "current": 6,
+          "candidate": 6
+        },
+        "payment_statement_with_remittance": {
+          "n": 65,
+          "current": 64,
+          "candidate": 65
+        }
+      },
+      "test": {
+        "payment_prompt": {
+          "n": 109,
+          "current": 109,
+          "candidate": 109
+        },
+        "payment_bank_charge": {
+          "n": 24,
+          "current": 19,
+          "candidate": 19
+        },
+        "payment_parent": {
+          "n": 28,
+          "current": 28,
+          "candidate": 28
+        },
+        "payment_late": {
+          "n": 31,
+          "current": 31,
+          "candidate": 31
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 7,
           "current": 3,
           "candidate": 3
         },
@@ -541,122 +650,13 @@
           "current": 8,
           "candidate": 8
         },
-        "payment_on_account": {
-          "n": 7,
-          "current": 5,
-          "candidate": 5
-        },
         "payment_fx_difference": {
-          "n": 11,
-          "current": 5,
-          "candidate": 5
-        },
-        "payment_two_invoices_bank_charge": {
-          "n": 4,
-          "current": 2,
-          "candidate": 2
-        },
-        "payment_statement_with_remittance": {
-          "n": 25,
-          "current": 24,
-          "candidate": 25
-        }
-      },
-      "train": {
-        "payment_two_invoices_bank_charge": {
           "n": 14,
-          "current": 6,
-          "candidate": 6
-        },
-        "payment_prompt": {
-          "n": 173,
-          "current": 171,
-          "candidate": 171
-        },
-        "payment_parent": {
-          "n": 32,
-          "current": 32,
-          "candidate": 32
-        },
-        "payment_fx_difference": {
-          "n": 15,
-          "current": 12,
-          "candidate": 12
-        },
-        "payment_late": {
-          "n": 61,
-          "current": 59,
-          "candidate": 59
+          "current": 8,
+          "candidate": 8
         },
         "payment_on_account": {
-          "n": 13,
-          "current": 9,
-          "candidate": 9
-        },
-        "payment_bank_charge": {
-          "n": 32,
-          "current": 29,
-          "candidate": 29
-        },
-        "payment_on_account_balance": {
-          "n": 13,
-          "current": 13,
-          "candidate": 13
-        },
-        "payment_duplicate": {
-          "n": 5,
-          "current": 5,
-          "candidate": 5
-        },
-        "payment_two_invoices": {
-          "n": 4,
-          "current": 4,
-          "candidate": 4
-        },
-        "payment_statement_with_remittance": {
-          "n": 60,
-          "current": 59,
-          "candidate": 60
-        }
-      },
-      "test": {
-        "payment_prompt": {
-          "n": 91,
-          "current": 91,
-          "candidate": 91
-        },
-        "payment_bank_charge": {
-          "n": 20,
-          "current": 18,
-          "candidate": 18
-        },
-        "payment_parent": {
-          "n": 24,
-          "current": 24,
-          "candidate": 24
-        },
-        "payment_late": {
-          "n": 22,
-          "current": 22,
-          "candidate": 22
-        },
-        "payment_two_invoices_bank_charge": {
-          "n": 5,
-          "current": 3,
-          "candidate": 3
-        },
-        "payment_on_account_balance": {
-          "n": 7,
-          "current": 7,
-          "candidate": 7
-        },
-        "payment_fx_difference": {
-          "n": 12,
-          "current": 7,
-          "candidate": 7
-        },
-        "payment_on_account": {
-          "n": 8,
+          "n": 10,
           "current": 5,
           "candidate": 5
         },
@@ -671,12 +671,12 @@
           "candidate": 2
         },
         "payment_statement_with_remittance": {
-          "n": 37,
-          "current": 37,
-          "candidate": 37
+          "n": 38,
+          "current": 38,
+          "candidate": 38
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:18:17.745Z"
+    "evaluatedAt": "2026-10-24T23:46:45.983Z"
   }
 }

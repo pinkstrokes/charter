@@ -195,7 +195,7 @@
     "rationale": "Added a rule before the generic solution_count=1 fallback: when there is one inexact subset but the reference names an open invoice, trust the payer's reference and apply_to_reference. This fixes BACS-492737 where the controller confirmed the customer intended to pay the referenced invoice despite the near-match subset.",
     "candidatesTried": 3,
     "candidatesPassed": 2,
-    "seconds": 13.9,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -315,6 +315,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:04:54.654Z"
+    "evaluatedAt": "2026-10-24T23:37:50.952Z"
   }
 }

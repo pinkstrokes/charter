@@ -274,7 +274,7 @@
     "rationale": "Added a guard to the first rule so that when reference_paid is true (duplicate payment of an already-paid invoice) we skip apply_unique and fall through to leave_unapplied_ask. Also inserted a new rule before apply_by_terms to route solution_count=0 cases with reference_names_open to apply_to_reference, fixing the three bank-charge mismatch mistakes.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 13.6,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -399,6 +399,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:05:35.672Z"
+    "evaluatedAt": "2026-10-24T23:37:51.024Z"
   }
 }

@@ -332,7 +332,7 @@
     "rationale": "Added a top-priority rule that catches likely duplicate payments: when the reference doesn't match an open invoice and either the reference is already paid or there are multiple solutions with only a non-matching reference, we leave unapplied and ask. This fixes all three reported mistakes while preserving correct behavior for legitimate single-match and reference-guided cases.",
     "candidatesTried": 4,
     "candidatesPassed": 2,
-    "seconds": 13.9,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -502,6 +502,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:09:07.470Z"
+    "evaluatedAt": "2026-10-24T23:38:46.485Z"
   }
 }

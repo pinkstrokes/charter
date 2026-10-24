@@ -276,7 +276,7 @@
     "rationale": "Added a rule for solution_count=0 with reference_names_open when open_items>2 to trust the payer's reference instead of falling through to apply_by_terms, fixing BACS-491750. The open_items threshold preserves existing apply_by_terms behavior for accounts with 1-2 open invoices where ordering is unambiguous.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 15.1,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -426,6 +426,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:05:46.916Z"
+    "evaluatedAt": "2026-10-24T23:38:06.817Z"
   }
 }

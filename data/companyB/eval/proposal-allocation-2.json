@@ -275,7 +275,7 @@
     "rationale": "Added rules so that when solution_count=1 is inexact but reference_names_open, we apply_to_reference (fixing BACS-536784), and when multiple solutions exist we only apply if the payer indicated which via remittance_consistent, reference_matches_open, or reference_names_open (satisfying the safety rule and the controller's past decisions).",
     "candidatesTried": 2,
     "candidatesPassed": 2,
-    "seconds": 38.1,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -320,6 +320,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:04:55.948Z"
+    "evaluatedAt": "2026-10-24T23:37:36.399Z"
   }
 }

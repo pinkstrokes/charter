@@ -360,7 +360,7 @@
     "rationale": "Added a new first rule that handles cases where multiple subsets exist but one is an exact match with zero residual and the reference names open invoices, safely applying to reference as the team demonstrated. This respects the safety constraint because reference_names_open is true and the exact match with zero residual eliminates ambiguity about which invoices are being paid.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 16.8,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -535,6 +535,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:09:51.449Z"
+    "evaluatedAt": "2026-10-24T23:38:57.355Z"
   }
 }

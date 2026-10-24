@@ -1,6 +1,6 @@
 {
  "db": "charter-a",
- "generatedAt": "2026-10-24T21:41:50.878Z",
+ "generatedAt": "2026-10-24T23:47:57.857Z",
  "answerKeyEntries": 834,
  "outcomes": {
   "val": {
@@ -339,7 +339,7 @@
    "approvedAt": "2026-04-19",
    "learnedFrom": [
     {
-     "activityId": 2674,
+     "activityId": 8411,
      "at": "2026-04-08",
      "why": "the debit was returned by the bank"
     }
@@ -1082,6 +1082,6 @@
   "rows": 5191,
   "verified": 5191,
   "firstBreak": null,
-  "head": "2192f5e2c648ea79d3261a0534918395ecc726c698d1cf637f5edcbac4e3ad2c"
+  "head": "adf965c3f2800d7da626604ebaa8cfae7c11111698126b21fdf0afd804a56855"
  }
 }

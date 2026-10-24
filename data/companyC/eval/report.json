@@ -1,6 +1,6 @@
 {
  "db": "charter-c",
- "generatedAt": "2026-10-24T21:23:59.363Z",
+ "generatedAt": "2026-10-24T23:47:59.386Z",
  "answerKeyEntries": 1280,
  "outcomes": {
   "val": {
@@ -474,9 +474,9 @@
   },
   {
    "key": "allocation@3",
-   "status": "retired",
-   "createdAt": "2010-05-09",
-   "activatedAt": "2010-05-09",
+   "status": "active",
+   "createdAt": "2010-06-06",
+   "activatedAt": "2010-06-06",
    "test": {
     "payment_prompt": {
      "n": 129,
@@ -525,80 +525,6 @@
      "right": 6,
      "alone": 11,
      "wrong": 5
-    },
-    "payment_two_invoices": {
-     "n": 8,
-     "right": 8,
-     "alone": 8,
-     "wrong": 0
-    },
-    "payment_duplicate": {
-     "n": 2,
-     "right": 2,
-     "alone": 0,
-     "wrong": 0
-    },
-    "payment_statement_with_remittance": {
-     "n": 43,
-     "right": 43,
-     "alone": 43,
-     "wrong": 0
-    }
-   }
-  },
-  {
-   "key": "allocation@4",
-   "status": "active",
-   "createdAt": "2010-06-13",
-   "activatedAt": "2010-06-13",
-   "test": {
-    "payment_prompt": {
-     "n": 129,
-     "right": 129,
-     "alone": 129,
-     "wrong": 0
-    },
-    "payment_bank_charge": {
-     "n": 28,
-     "right": 22,
-     "alone": 22,
-     "wrong": 0
-    },
-    "payment_parent": {
-     "n": 33,
-     "right": 33,
-     "alone": 33,
-     "wrong": 0
-    },
-    "payment_late": {
-     "n": 37,
-     "right": 37,
-     "alone": 37,
-     "wrong": 0
-    },
-    "payment_two_invoices_bank_charge": {
-     "n": 7,
-     "right": 3,
-     "alone": 3,
-     "wrong": 0
-    },
-    "payment_on_account_balance": {
-     "n": 9,
-     "right": 9,
-     "alone": 9,
-     "wrong": 0
-    },
-    "payment_fx_difference": {
-     "n": 16,
-     "right": 10,
-     "alone": 10,
-     "wrong": 0
-    },
-    "payment_on_account": {
-     "n": 11,
-     "right": 7,
-     "alone": 9,
-     "wrong": 3
     },
     "payment_two_invoices": {
      "n": 8,
@@ -784,12 +710,12 @@
    "domains": {
     "allocation": {
      "decisions": 225,
-     "alone": 213,
-     "aloneGraded": 213,
-     "aloneRight": 210,
-     "questions": 15,
-     "aloneShare": 0.9466666666666667,
-     "aloneAccuracy": 0.9859154929577465
+     "alone": 212,
+     "aloneGraded": 212,
+     "aloneRight": 209,
+     "questions": 16,
+     "aloneShare": 0.9422222222222222,
+     "aloneAccuracy": 0.9858490566037735
     },
     "pre_chase": {
      "decisions": 1581,
@@ -812,8 +738,8 @@
  },
  "security": {},
  "attempts": {
-  "total": 9612,
-  "denied": 0,
+  "total": 9714,
+  "denied": 170,
   "rejected": 16
  },
  "invariants": {
@@ -825,9 +751,9 @@
   "cashEqualsBank": true
  },
  "chain": {
-  "rows": 9612,
-  "verified": 9612,
+  "rows": 9714,
+  "verified": 9714,
   "firstBreak": null,
-  "head": "d2c82a901ad4048dd6502c17537bff111609607e4e58869e4e6e13c887d00db2"
+  "head": "203ceef1e220c7060b7541321a1279d17a6fcf02a122863e6531c7271be20400"
  }
 }

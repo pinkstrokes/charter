@@ -192,7 +192,7 @@
     "rationale": "Added guards against auto-applying when the payment reference is already paid, when there is no exact match, or when multiple invoices are open without any confirming signal like remittance or a matching reference. Safe takeovers only occur when remittance_consistent or reference_matches_open confirms intent for ambiguous cases, otherwise we ask.",
     "candidatesTried": 12,
     "candidatesPassed": 9,
-    "seconds": 11.2,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -277,6 +277,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T21:41:04.562Z"
+    "evaluatedAt": "2026-10-24T23:39:36.837Z"
   }
 }

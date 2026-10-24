@@ -53,10 +53,10 @@
     {
      "month": "2010-06",
      "decisions": 225,
-     "aloneShare": 0.947,
-     "questions": 15,
+     "aloneShare": 0.942,
+     "questions": 16,
      "wrongAlone": 3,
-     "gradedAlone": 213
+     "gradedAlone": 212
     }
    ],
    "versions": [
@@ -78,18 +78,10 @@
     },
     {
      "key": "allocation@3",
-     "liveFrom": "2010-05-09",
+     "liveFrom": "2010-06-06",
      "alone": 305,
      "wrong": 5,
      "right": 302,
-     "n": 323
-    },
-    {
-     "key": "allocation@4",
-     "liveFrom": "2010-06-13",
-     "alone": 303,
-     "wrong": 3,
-     "right": 303,
      "n": 323
     }
    ],
@@ -148,18 +140,18 @@
     {
      "month": "2010-05",
      "decisions": 201,
-     "aloneShare": 0.841,
-     "questions": 32,
+     "aloneShare": 0.821,
+     "questions": 36,
      "wrongAlone": 0,
-     "gradedAlone": 169
+     "gradedAlone": 165
     },
     {
      "month": "2010-06",
      "decisions": 224,
-     "aloneShare": 0.893,
-     "questions": 29,
+     "aloneShare": 0.884,
+     "questions": 31,
      "wrongAlone": 2,
-     "gradedAlone": 200
+     "gradedAlone": 198
     }
    ],
    "versions": [
@@ -213,10 +205,18 @@
     },
     {
      "key": "allocation@7",
-     "liveFrom": "2010-04-25",
-     "alone": 272,
+     "liveFrom": "2010-04-18",
+     "alone": 266,
      "wrong": 3,
-     "right": 276,
+     "right": 270,
+     "n": 321
+    },
+    {
+     "key": "allocation@8",
+     "liveFrom": "2010-04-25",
+     "alone": 270,
+     "wrong": 3,
+     "right": 274,
      "n": 321
     }
    ],
@@ -225,9 +225,9 @@
     "n": 324
    },
    "knowingWhenToAsk": {
-    "handledAlone": 290,
+    "handledAlone": 287,
     "wrong": 8,
-    "upper95": 0.04922309102215695
+    "upper95": 0.04973179904095072
    }
   }
  }

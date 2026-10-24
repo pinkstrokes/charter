@@ -4,7 +4,7 @@
   "2026-01-05",
   "2026-06-28"
  ],
- "wall_seconds": 755,
+ "wall_seconds": 149,
  "seat_runs": 175,
  "llm": {
   "world_prose_cached_texts": 497,
@@ -2575,105 +2575,105 @@
   {
    "day": "2026-01-11",
    "status": "ok",
-   "seconds": 17.0,
+   "seconds": 1.2,
    "lines": [
     "underreport: nothing new to learn (0 labeled cases, all handled)",
     "pre_chase: nothing new to learn (0 labeled cases, all handled)",
-    "allocation: 3 candidates in 15.0s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (0 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 0 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 0 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-01-18",
    "status": "ok",
-   "seconds": 14.4,
+   "seconds": 1.0,
    "lines": [
     "underreport: nothing new to learn (3 labeled cases, all handled)",
     "pre_chase: nothing new to learn (3 labeled cases, all handled)",
-    "allocation: 3 candidates in 12.5s, none passed: hands 2 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
+    "allocation: 3 candidates in 0.1s, none passed: hands 2 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
     "routing_change: nothing new to learn (0 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 14 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 14 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-01-25",
    "status": "ok",
-   "seconds": 17.0,
+   "seconds": 0.9,
    "lines": [
     "underreport: nothing new to learn (8 labeled cases, all handled)",
     "pre_chase: nothing new to learn (11 labeled cases, all handled)",
-    "allocation: 3 candidates in 12.6s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (0 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 28 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 28 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-02-01",
    "status": "ok",
-   "seconds": 28.1,
+   "seconds": 0.8,
    "lines": [
     "underreport: nothing new to learn (12 labeled cases, all handled)",
     "pre_chase: nothing new to learn (16 labeled cases, all handled)",
-    "allocation: 3 candidates in 25.3s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (0 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 42 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 42 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-02-08",
    "status": "ok",
-   "seconds": 160.3,
+   "seconds": 0.9,
    "lines": [
     "underreport: nothing new to learn (14 labeled cases, all handled)",
     "pre_chase: nothing new to learn (29 labeled cases, all handled)",
-    "allocation: 3 candidates in 11.3s, none passed: handles none of the cases people just taught; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 2% of the time; changes 28.6% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 2% of the time; changes 28.6% of past decisions (limit 10%)",
     "routing_change: proposed v2 in 0.0s (3/3 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 60 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 60 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-02-15",
    "status": "ok",
-   "seconds": 12.6,
+   "seconds": 1.0,
    "lines": [
     "underreport: nothing new to learn (19 labeled cases, all handled)",
     "pre_chase: nothing new to learn (31 labeled cases, all handled)",
-    "allocation: 3 candidates in 10.7s, none passed: handles none of the cases people just taught",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 78 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 78 past money movements and 0 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-02-22",
    "status": "ok",
-   "seconds": 17.7,
+   "seconds": 0.9,
    "lines": [
     "underreport: nothing new to learn (20 labeled cases, all handled)",
     "pre_chase: nothing new to learn (33 labeled cases, all handled)",
-    "allocation: 3 candidates in 16.7s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 18.2% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 18.2% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: takes over none of the cases people said could be settled",
-    "policies: searched 48 tightening rules over 96 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 96 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-03-01",
    "status": "ok",
-   "seconds": 18.9,
+   "seconds": 0.9,
    "lines": [
-    "underreport: 3 candidates in 0.0s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time",
+    "underreport: 3 candidates in 0.1s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time",
     "pre_chase: nothing new to learn (39 labeled cases, all handled)",
-    "allocation: 3 candidates in 17.9s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 26.7% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 26.7% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 115 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 115 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
@@ -2681,87 +2681,87 @@
    "status": "ok",
    "seconds": 1.0,
    "lines": [
-    "underreport: 3 candidates in 0.0s, none passed: hands 7 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time; would send 21.0% of store-weeks to audit (limit 6%); changes 15.1% of past decisions (limit 10%)",
+    "underreport: 3 candidates in 0.1s, none passed: hands 7 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time; would send 21.0% of store-weeks to audit (limit 6%); changes 15.1% of past decisions (limit 10%)",
     "pre_chase: proposed v2 in 0.0s (3/3 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
     "allocation: 3 candidates in 0.0s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 29.4% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 132 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 132 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-03-15",
    "status": "ok",
-   "seconds": 11.7,
+   "seconds": 1.0,
    "lines": [
-    "underreport: 3 candidates in 0.0s, none passed: would send 26.9% of store-weeks to audit (limit 6%); changes 17.9% of past decisions (limit 10%)",
+    "underreport: 3 candidates in 0.1s, none passed: would send 26.9% of store-weeks to audit (limit 6%); changes 17.9% of past decisions (limit 10%)",
     "pre_chase: 3 candidates in 0.0s, none passed: hands 7 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 10% of the time; changes 10.3% of past decisions (limit 10%)",
-    "allocation: 3 candidates in 11.0s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 27.8% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 4 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 27.8% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 150 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 150 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-03-22",
    "status": "ok",
-   "seconds": 11.8,
+   "seconds": 1.5,
    "lines": [
-    "underreport: proposed v2 in 0.2s (4/7 candidates passed; handles 3/4 lessons, fixes 3, breaks 0, new leads 4)",
+    "underreport: proposed v2 in 0.4s (4/7 candidates passed; handles 3/4 lessons, fixes 3, breaks 0, new leads 4)",
     "pre_chase: 3 candidates in 0.0s, none passed: hands 10 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 10% of the time",
-    "allocation: 3 candidates in 11.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 25.0% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 25.0% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 0 would take over work people did on the strength of 2 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 168 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 168 past money movements and 1 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-03-29",
    "status": "ok",
-   "seconds": 1.8,
+   "seconds": 1.1,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: invalid: program too complex; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 5% of the time; would send 11.0% of store-weeks to audit (limit 6%)",
     "pre_chase: 3 candidates in 0.0s, none passed: hands 12 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 10% of the time",
     "allocation: 3 candidates in 0.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 27.3% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 187 past money movements and 2 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 187 past money movements and 2 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-04-05",
    "status": "ok",
-   "seconds": 12.3,
+   "seconds": 1.0,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: hands 3 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time; would send 8.3% of store-weeks to audit (limit 6%)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 11.3s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 26.1% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 26.1% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 0 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 204 past money movements and 2 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 204 past money movements and 2 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-04-12",
    "status": "ok",
-   "seconds": 19.6,
+   "seconds": 1.0,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: hands 20 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 5% of the time; would send 35.9% of store-weeks to audit (limit 6%); changes 21.2% of past decisions (limit 10%)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 18.5s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 26.9% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 26.9% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 0 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 221 past money movements and 2 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 221 past money movements and 2 loss(es); 0 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-04-19",
    "status": "ok",
-   "seconds": 19.1,
+   "seconds": 1.2,
    "lines": [
     "underreport: proposed v3 in 0.1s (2/3 candidates passed; handles 0/0 lessons, fixes 3, breaks 0, new leads 0)",
     "pre_chase: 3 candidates in 0.0s, none passed: hands 40 case(s) back to people, of which the current version got 5 wrong: not proof that it is wrong there more than 10% of the time; changes 37.2% of past decisions (limit 10%)",
-    "allocation: 3 candidates in 17.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 27.6% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 5 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 27.6% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; rule 0 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
     "policies: proposed \"No debit is initiated while a bank-account change is pending and has not been confirmed out of band.\" (stops 1 bad, delays 1 good)",
@@ -2772,131 +2772,131 @@
   {
    "day": "2026-04-26",
    "status": "ok",
-   "seconds": 19.3,
+   "seconds": 1.1,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: takes over none of the cases people said could be settled",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 17.8s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
+    "allocation: 3 candidates in 0.0s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: proposed v2 in 0.0s (6/8 candidates passed; handles 1/1 lessons, fixes 1, breaks 0, new leads 0)",
-    "policies: searched 48 tightening rules over 257 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 257 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-03",
    "status": "ok",
-   "seconds": 26.6,
+   "seconds": 1.1,
    "lines": [
-    "underreport: 3 candidates in 0.1s, none passed: takes over none of the cases people said could be settled",
+    "underreport: 3 candidates in 0.2s, none passed: takes over none of the cases people said could be settled",
     "pre_chase: 3 candidates in 0.0s, none passed: hands 11 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 10% of the time",
-    "allocation: 3 candidates in 18.3s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
+    "allocation: 3 candidates in 0.0s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 2 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 274 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 274 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-10",
    "status": "ok",
-   "seconds": 13.7,
+   "seconds": 1.2,
    "lines": [
-    "underreport: 3 candidates in 0.1s, none passed: hands 3 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time; would send 7.3% of store-weeks to audit (limit 6%)",
+    "underreport: 3 candidates in 0.2s, none passed: hands 3 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 5% of the time; would send 7.3% of store-weeks to audit (limit 6%)",
     "pre_chase: 3 candidates in 0.0s, none passed: hands 107 case(s) back to people, of which the current version got 7 wrong: not proof that it is wrong there more than 10% of the time; changes 75.6% of past decisions (limit 10%)",
-    "allocation: 3 candidates in 12.6s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes or drops rule 1 (\"one subset explains the amount within tolerance\") of the current version though no labeled case shows it was wrong; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes or drops rule 1 (\"one subset explains the amount within tolerance\") of the current version though no labeled case shows it was wrong; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: rule 3 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 293 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 293 past money movements and 3 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-17",
    "status": "ok",
-   "seconds": 14.1,
+   "seconds": 1.0,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: rule 2 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 5%)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 13.3s, none passed: hands 2 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 18.9% of past decisions (limit 10%)",
+    "allocation: 3 candidates in 0.0s, none passed: hands 2 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time; changes 18.9% of past decisions (limit 10%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 311 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 311 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-24",
    "status": "ok",
-   "seconds": 17.7,
+   "seconds": 1.5,
    "lines": [
     "underreport: 2 candidates in 0.1s, none passed: takes over none of the cases people said could be settled; gets 1 case(s) wrong that the current version gets right; changes or drops rule 0 (\"Supply-implied gross exceeds reported by over 10% and cash share dropped sharply from this store's own history\") of the current version though no labeled case shows it was wrong; changes or drops rule 3 (\"Supplies imply much higher gross and cash share elevated versus peers; needs consultant review given sufficient history\") of the current version though no labeled case shows it was wrong; the default would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 5%)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 16.4s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
+    "allocation: 3 candidates in 0.0s, none passed: hands 1 case(s) back to people, of which the current version got 1 wrong: not proof that it is wrong there more than 2% of the time",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 329 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 329 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-05-31",
    "status": "ok",
-   "seconds": 13.2,
+   "seconds": 0.8,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: rule 3 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 5%)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: 3 candidates in 12.0s, none passed: hands 2 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 2% of the time",
+    "allocation: 3 candidates in 0.0s, none passed: hands 2 case(s) back to people, of which the current version got 2 wrong: not proof that it is wrong there more than 2% of the time",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 348 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 348 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-07",
    "status": "ok",
-   "seconds": 12.2,
+   "seconds": 1.1,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: takes over none of the cases people said could be settled",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught",
-    "allocation: proposed v2 in 11.2s (9/12 candidates passed; handles 3/4 lessons, fixes 3, breaks 0, new leads 0)",
+    "allocation: proposed v2 in 0.0s (9/12 candidates passed; handles 3/4 lessons, fixes 3, breaks 0, new leads 0)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 364 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 364 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-14",
    "status": "ok",
-   "seconds": 17.1,
+   "seconds": 1.0,
    "lines": [
-    "underreport: 3 candidates in 0.1s, none passed: rule 3 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 5%)",
+    "underreport: 3 candidates in 0.2s, none passed: rule 3 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 5%)",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 10% of the time",
-    "allocation: 3 candidates in 16.3s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 4 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 382 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 382 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-21",
    "status": "ok",
-   "seconds": 0.7,
+   "seconds": 1.2,
    "lines": [
-    "underreport: 3 candidates in 0.1s, none passed: rule 3 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 5%)",
-    "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 10% of the time",
+    "underreport: 3 candidates in 0.2s, none passed: rule 3 would take over work people did on the strength of 2 labeled case(s) (needs 3, and disagreements provably under 5%)",
+    "pre_chase: 3 candidates in 0.1s, none passed: handles none of the cases people just taught; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 10% of the time",
     "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; rule 2 would take over work people did on the strength of 1 labeled case(s) (needs 3, and disagreements provably under 2%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 5 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 400 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 400 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   },
   {
    "day": "2026-06-28",
    "status": "ok",
-   "seconds": 19.7,
+   "seconds": 1.0,
    "lines": [
     "underreport: 3 candidates in 0.1s, none passed: takes over none of the cases people said could be settled",
     "pre_chase: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; hands 1 case(s) back to people, of which the current version got 0 wrong: not proof that it is wrong there more than 10% of the time",
-    "allocation: 3 candidates in 18.9s, none passed: handles none of the cases people just taught; gets 1 case(s) wrong that the current version gets right; rule 1 would take over work people did on the strength of 2 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+    "allocation: 3 candidates in 0.0s, none passed: handles none of the cases people just taught; gets 1 case(s) wrong that the current version gets right; rule 1 would take over work people did on the strength of 2 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
     "routing_change: nothing new to learn (1 labeled cases, all handled)",
     "bill_match: 3 candidates in 0.0s, none passed: gets 1 case(s) wrong that the current version gets right; changes or drops rule 3 (\"billed significantly more than was received\") of the current version though no labeled case shows it was wrong; rule 3 would take over work people did on the strength of 5 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-    "policies: searched 48 tightening rules over 418 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
+    "policies: searched 54 tightening rules over 418 past money movements and 4 loss(es); 1 already stopped by rules in force, no new rule saves more than it holds back"
    ]
   }
  ],
