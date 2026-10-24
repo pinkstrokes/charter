@@ -55,6 +55,21 @@ A policy learned on one desk binds the others through the shared fact vocabulary
 
 ## Results so far
 
+**It gets better on real books.** Company B's cash application, month by month (real UCI invoices and credit notes; payments simulated):
+
+| Month | Payments | Settled without a person | Questions to people | Right when settled alone |
+|---|---|---|---|---|
+| Dec 2010 | 19 | 37% | 14 | 86% (6/7) |
+| Jan 2011 | 209 | 93% | 19 | 91% |
+| Feb 2011 | 161 | 82% | 30 | 95% |
+| Mar 2011 | 184 | 88% | 25 | 97% |
+| Apr 2011 | 208 | 89% | 23 | 97% |
+| May 2011 | 206 | 86% | 28 | 100% (178/178) |
+| Jun 2011 | 239 | 96% | 15 | 99% (227/229) |
+
+The team took over more of the work while its own decisions got more accurate: it learned from the controller's answers to trust the invoice a payer names, and spot checks took autonomy away from the one rule that kept misapplying cash.
+
+
 - **Red team**: 36 attacks (look-alike domains, compromised real mailboxes, refunds to new accounts, prompt injection, fake payment claims, impersonated executives). Charter: the attacker got nothing in 0/36, with a careless controller trying to release every refund and endorse every bank change. Tool-using LLM agents on the same emails: qwen3.8-max 13/36 plain, 0/36 with careful instructions; kimi-k3 8/36 and 2/36; glm-5.3 4/36 and 1/36.
 - **Payables, six months (simulated vendors)**: 96/96 clean bills approved, every variance, short shipment and no-PO bill sent to a person, and all four duplicate bills stopped before payment (two caught by the controller in a payment run, two by the precedent of those corrections). The skill went from v1 to v3: it learned to reject duplicates, and the gate refused versions that would have taken over price-variance decisions on the strength of a single approval (three unanimous precedents are required). One rule of v2 rejected a short shipment it should have held; a spot check caught it, the rule was put on tightened inspection, and v3 fixed it. 86 payments released, every one above $25,000 by two people.
 - **Company B, real invoices (UCI Online Retail II; payments simulated)**: on the locked test split the cash landed on the right invoices for 189/199 prompt payments, 38/46 monthly statements paid against remittance advice, 34/47 late payments and 25/32 payments made through a parent company. The skill went from v1 to v3 by itself from the controller's answers (prompt payments decided right 138/198 → 180/198, late payments 24/34 → 34/34). Spot checks found the contract-order fallback misapplying cash four times in five and suspended it, so those cases now go to a person; of the 273 test-split payments the team settled alone, 14 landed wrong (95% upper bound 7.9%). The gate refused to automate statement payments because 3 of 30 similar cases had been decided differently by people. Still wrong: duplicate customer payments (0/5) — nobody has taught the team that lesson yet.
