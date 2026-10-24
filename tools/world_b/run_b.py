@@ -122,7 +122,7 @@ def build(seed, data=B, out=B):
             dup = f"{txn}-DUP"
             events.append(((date.fromisoformat(pay) + timedelta(days=3)).isoformat(), 2, "bank_txn", {"txnId": dup, "date": pay, "type": "ach_credit_in", "amountCents": owed, "counterpartyName": payer,
                                                                                                     "counterpartyAccount": acct(inv["customer_code"]), "reference": inv["invoice_no"]}))
-            truth[dup] = {"customer": inv["customer_code"], "invoices": [], "profile": "duplicate"}
+            truth[dup] = {"customer": inv["customer_code"], "invoices": [], "profile": "duplicate", "arrives": (date.fromisoformat(pay) + timedelta(days=3)).isoformat()}
             key.append({"caseId": f"b-{dup}", "family": "payment_duplicate", "split": split_of(f"receipt:{dup}"), "subject": f"receipt:{dup}", "truth": truth[dup], "expected": "leave_unapplied_ask"})
     for (cust, m), items in statements.items():
         y, mo = map(int, m.split("-"))
@@ -234,9 +234,7 @@ def onboard(source_db, evolver, dana):
 
 
 def answer(admin, dana, truth):
-    for a in admin.sql("SELECT id, kind, subject, status, options, evidence FROM ask"):
-        if a["status"] != "open":
-            continue
+    for a in admin.sql("SELECT id, kind, subject, status, options, evidence FROM ask WHERE status = 'open'"):
         k, subj = a["kind"], a["subject"]
         t = truth.get(subj.replace("receipt:", ""), {})
         opts = json.loads(a["options"] or "[]")
@@ -289,7 +287,7 @@ NOTICED = set()
 # to ask for it back; the controller corrects the decision that applied it.
 def customers_notice_duplicates(admin, dana, truth, today):
     for txn, t in truth.items():
-        if t.get("profile") != "duplicate" or txn in NOTICED:
+        if t.get("profile") != "duplicate" or txn in NOTICED or today < date.fromisoformat(t["arrives"]) + timedelta(days=7):
             continue
         rows = admin.sql(f"SELECT id, received_at FROM receipt WHERE id = '{txn}'")
         if not rows or rows[0]["received_at"] > (today - timedelta(days=7)).isoformat():

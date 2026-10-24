@@ -1,19 +1,33 @@
 """Minimal client for the Charter module over SpacetimeDB's HTTP API (stdlib only)."""
+import http.client as httpclient
 import json
 import os
+import ssl
 import subprocess
-import urllib.error
-import urllib.request
+import urllib.parse
 
 BASE = os.environ.get("STDB_URL", "http://127.0.0.1:3000")
 DB = os.environ.get("STDB_DB", "charter-iqwfr")
+_conn = None  # one kept-alive connection: against a remote server it halves every call
 
 
 class CallError(Exception):
     pass
 
 
+def _connection(timeout):
+    global _conn
+    if _conn is None:
+        u = urllib.parse.urlsplit(BASE)
+        if u.scheme == "https":
+            _conn = httpclient.HTTPSConnection(u.netloc, timeout=timeout, context=ssl.create_default_context())
+        else:
+            _conn = httpclient.HTTPConnection(u.netloc, timeout=timeout)
+    return _conn
+
+
 def http(method, path, body=None, token=None, timeout=300):
+    global _conn
     data, headers = None, {}
     if body is not None:
         if isinstance(body, str):
@@ -22,12 +36,20 @@ def http(method, path, body=None, token=None, timeout=300):
             data, headers["Content-Type"] = json.dumps(body).encode(), "application/json"
     if token:
         headers["Authorization"] = "Bearer " + token
-    req = urllib.request.Request(BASE + path, data=data, method=method, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+    prefix = urllib.parse.urlsplit(BASE).path.rstrip("/")
+    for attempt in (1, 2):
+        try:
+            conn = _connection(timeout)
+            conn.request(method, prefix + path, body=data, headers=headers)
+            r = conn.getresponse()
             return r.status, r.read().decode()
-    except urllib.error.HTTPError as e:
-        return e.code, e.read().decode()
+        except (httpclient.HTTPException, OSError):
+            # A dropped connection (the server closed it, or the machine slept): reconnect once.
+            if _conn is not None:
+                _conn.close()
+            _conn = None
+            if attempt == 2:
+                raise
 
 
 def new_identity():
