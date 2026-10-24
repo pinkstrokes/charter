@@ -411,8 +411,8 @@ export async function propose(model: string, domain: Domain, current: SkillProgr
 // Thresholds the model wrote sit wherever it guessed, often hugging the cases it
 // was shown. Each constant of a new rule moves to the middle of the widest range
 // of values that gets the most labeled cases right, leaves every unlabeled past
-// decision as it was and passes the gate: as far from the nearest known case on
-// either side as the evidence allows. Rules carried over keep their constants.
+// decision as it was and passes the gate — when known cases bound that range on
+// both sides. Rules carried over keep their constants.
 export function center(domain: Domain, current: SkillProgram, cand: SkillProgram, examples: Example[], lesson: Example[], h: History, hidden: Set<string>, optional: Example[] = []): SkillProgram {
   const sig = (r: SkillProgram['rules'][number]) => JSON.stringify([r.when, r.then?.decide]);
   const inherited = new Set(current.rules.map(sig));
@@ -460,7 +460,10 @@ export function center(domain: Domain, current: SkillProgram, cand: SkillProgram
         run0 = -1;
       }
     }
-    n.set(bestRun[0] < 0 ? v0 : round((grid[bestRun[0]] + grid[bestRun[1] - 1]) / 2));
+    // Centre only between two known cases: a range that runs to the edge of the
+    // scan has no evidence on that side, and the model's value stays.
+    const bounded = bestRun[0] > 0 && bestRun[1] < grid.length;
+    n.set(bestRun[0] < 0 || !bounded ? v0 : round((grid[bestRun[0]] + grid[bestRun[1] - 1]) / 2));
   }
   return prog;
 }
