@@ -1,6 +1,6 @@
 # Finance packs
 
-Charter's core — the kernel, skills and their evolution, earned autonomy, internal audit, the close, packets — knows nothing about receivables or payables. A finance function plugs in as a pack that declares seven things. Two packs are built (receivables, payables); the rest of this page shows how other desks map onto the same primitives.
+Charter's core — the kernel, skills and their evolution, earned autonomy, internal audit, the close, packets — knows nothing about receivables or payables. A finance function plugs in as a pack that declares seven things. Two packs run in the database (receivables, payables) and a bank-reconciliation skill is measured on a real bank's data (BenchRec: 83.9% of lines matched alone at 99.90% precision); the rest of this page shows how other desks map onto the same primitives.
 
 ## What a pack declares
 
@@ -20,12 +20,12 @@ Everything else comes for free: policies bind the new desk the moment it exists,
 |---|---|---|---|
 | Receivables (`seats.ts`) | mailroom, cash application, collections, refunds | underreport, allocation, pre_chase, routing_change | refunds released by someone else; two people above $5,000; only to verified accounts |
 | Payables (`packs/payables.ts`) | payables clerk, payments | bill_match | payments released by someone else; two people above $25,000; only to verified accounts |
+| Bank reconciliation (`tools/benchrec/benchrec.ts`, measured offline) | reconciliation clerk | bank_match: exact candidates on the value date, contested lines, booking gap, allocation sums, near dates → match / ask | none moves; a rule acts alone only when 95% sure of under 0.2% error |
 
 ## How other desks map
 
 | Desk | Observations | Decision domain (features → outcomes) | Money / limits | Typical lesson the team would learn |
 |---|---|---|---|---|
-| Bank reconciliation | bank statement lines (trusted), ledger cash postings | match a bank line: amount, date gap, reference similarity, counterparty → match / investigate | none moves; breaks above a threshold need a person | "card processor batches settle a day late on holidays" |
 | Expense audit | receipts (OCR, untrusted), card feed (trusted), travel policy | approve an expense line: policy limit, receipt present, duplicate score, merchant category → approve / return to employee / escalate | reimbursement released by someone else | "hotel taxes are not an overage" |
 | Revenue recognition (ASC 606) | contracts, invoices, delivery events | recognise a performance obligation: delivered, variable consideration, constraint → recognise / defer / ask | journal entries only; reversals need a person | "usage-based royalties are recognised when the sales occur" (already used for franchise royalties) |
 | Payroll exceptions | timesheets, HR changes (untrusted when by email) | flag a pay line: hours vs schedule, rate change, new bank account → pay / hold / ask | bank changes verified by callback, as for vendors | the same rule as payables: no pay to an unverified account |
