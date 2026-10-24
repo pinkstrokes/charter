@@ -6,7 +6,9 @@ An AI finance team that lives in one database: it catches and undoes its own mis
 
 ## Try it
 
-Live, read-only for anyone: https://pinkstrokes.github.io/charter/ (the three companies replayed on SpacetimeDB maincloud). Code, data and the replay caches: https://github.com/pinkstrokes/charter
+- Website: https://pinkstrokes.github.io/charter/ — give the team a task (a payment, a bank change, a chase, a rule to learn) and watch it decide on the real history.
+- The live system, read-only for anyone: https://pinkstrokes.github.io/charter/app/ (the three companies replayed on SpacetimeDB maincloud).
+- Code, data and the replay caches: https://github.com/pinkstrokes/charter
 
 ## Seats it fills
 
