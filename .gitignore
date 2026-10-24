@@ -7,3 +7,6 @@ dist/
 *.env
 data/companyA/identities.json
 data/*/identities.json
+.venv/
+data/.*.json
+data/companyB/identities.json
