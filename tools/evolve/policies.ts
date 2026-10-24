@@ -73,7 +73,7 @@ function text(tpl: PolicyTemplate): string {
 }
 
 export function search(reqs: Request[], active: PolicyTemplate[]): PolicyCandidate[] {
-  const out: PolicyCandidate[] = [];
+  const candidates: PolicyCandidate[] = [];
   const has = (tpl: PolicyTemplate) => active.some(a => JSON.stringify(a) === JSON.stringify(tpl));
   for (const action of MONEY_OUT) {
     const mine = reqs.filter(r => r.action === action);
@@ -87,31 +87,32 @@ export function search(reqs: Request[], active: PolicyTemplate[]): PolicyCandida
         if (!blockedBad.length) continue;
         const benefitCents = blockedBad.length * COST.returnedDebit;
         const costCents = Math.round(blockedGood.reduce((s, g) => s + g.amountCents * COST.delayedDebitPerDollarWeek, 0));
-        if (benefitCents > costCents) out.push({ tpl, text: text(tpl), blockedBad, blockedGood, benefitCents, costCents });
+        if (benefitCents > costCents) candidates.push({ tpl, text: text(tpl), blockedBad, blockedGood, benefitCents, costCents });
       }
     }
   }
-  // The same risk on the other way money leaves: extend the rule if it would
-  // never have held back a good request of that kind.
-  for (const c of [...out]) {
-    if (c.tpl.t !== 'forbid_when' || c.tpl.action !== 'initiate_debit') continue;
-    for (const action of ['issue_refund', 'release_payment'] as Action[]) {
+  // Best net saving first; a rule is kept only if it stops a loss that no kept
+  // rule already stops, so a broader rule that catches the same returned debit
+  // while holding back good ones is never offered.
+  candidates.sort((a, b) => b.benefitCents - b.costCents - (a.benefitCents - a.costCents) || (a.tpl.t === 'forbid_when' ? -1 : 1));
+  const kept: PolicyCandidate[] = [];
+  const stopped = new Set<number>();
+  for (const c of candidates) {
+    if (c.blockedBad.every(b => stopped.has(b.activityId))) continue;
+    kept.push(c);
+    for (const b of c.blockedBad) stopped.add(b.activityId);
+  }
+  // The same risk on the other ways money leaves: extend a kept rule if it
+  // would never have held back a good request of that kind.
+  for (const c of [...kept]) {
+    if (c.tpl.t !== 'forbid_when') continue;
+    for (const action of MONEY_OUT.filter(a => a !== (c.tpl as { action: Action }).action)) {
       const sibling = { t: 'forbid_when', action, fact: c.tpl.fact } as PolicyTemplate;
-      if (has(sibling) || out.some(o => JSON.stringify(o.tpl) === JSON.stringify(sibling))) continue;
-      const good = reqs.filter(r => r.action === action && would(sibling, r));
-      if (good.length === 0) out.push({ tpl: sibling, text: text(sibling), blockedBad: [], blockedGood: [], benefitCents: 0, costCents: 0, extendsFrom: JSON.stringify(c.tpl) });
+      if (has(sibling) || kept.some(o => JSON.stringify(o.tpl) === JSON.stringify(sibling))) continue;
+      if (!reqs.some(r => r.action === action && would(sibling, r))) kept.push({ tpl: sibling, text: text(sibling), blockedBad: [], blockedGood: [], benefitCents: 0, costCents: 0, extendsFrom: JSON.stringify(c.tpl) });
     }
   }
-  // Two rules that would have held back exactly the same requests are one rule; keep the plainer.
-  const seen = new Set<string>();
-  return out
-    .sort((a, b) => b.benefitCents - b.costCents - (a.benefitCents - a.costCents) || (a.tpl.t === 'forbid_when' ? -1 : 1))
-    .filter(c => {
-      const sig = `${(c.tpl as { action: string }).action}|${c.blockedBad.map(x => x.activityId).join(',')}|${c.blockedGood.map(x => x.activityId).join(',')}|${c.extendsFrom ?? ''}`;
-      if (seen.has(sig)) return false;
-      seen.add(sig);
-      return true;
-    });
+  return kept;
 }
 
 export async function searchPolicies(db: Db, dryRun: boolean, dir: string): Promise<string[]> {
@@ -120,7 +121,7 @@ export async function searchPolicies(db: Db, dryRun: boolean, dir: string): Prom
   const found = search(reqs, active);
   if (!found.length) return [`policies: searched ${MONEY_OUT.length * Object.keys(FACT_LIBRARY).length * 2} tightening rules over ${reqs.length} past money movements; none would have prevented a loss`];
   const lines: string[] = [];
-  for (const c of found.slice(0, 2)) {
+  for (const c of found) {
     const proof = {
       gate: 'pass',
       searched: MONEY_OUT.length * Object.keys(FACT_LIBRARY).length * 2,
