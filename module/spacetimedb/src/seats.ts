@@ -774,7 +774,8 @@ function processReceipt(tx: Tx, workId: bigint, { receiptId, payer, ask }: Recei
       subject: `receipt:${r.id}`,
       toRole: d?.askRole ?? 'controller',
       question: `${money(amount)} from ${r.payerName} ${d ? `can be explained by ${search.solutions.length} different sets of invoices` : 'was applied automatically and a person said it should not have been'}. Which should it pay?`,
-      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + '))])].concat(['apply oldest first', 'leave unapplied']),
+      // The payer's own words first, then the sets that add up, then any single open invoice (oldest first).
+      options: [...new Set([...(remitConsistent ? [remitRefs.join(' + ')] : []), ...(mentioned.length === 1 ? [mentioned[0].id] : []), ...search.solutions.map(sol => sol.join(' + ')), ...[...items].sort((x, y) => x.dueDate.localeCompare(y.dueDate)).slice(0, 12).map(i => i.id)])].concat(['apply oldest first', 'leave unapplied']),
       evidence: { features, solutions: search.solutions, skill: d?.key ?? '', referenced: mentioned.length === 1 ? mentioned[0].id : '', remittance: remitRefs, remittanceLines: perLine ? remitLines : [], decision: d ? Number(d.id) : 0 },
       confidence: 0.3,
       workItemId: workId,

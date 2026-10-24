@@ -543,8 +543,8 @@ class Plan:
             self._dispute("SP2", "2026-05-13", "F09", [inv], "uphold", "2026-05-14",
                           f"They deducted the $92.50 fuel surcharge from {inv} and wired {money(amount)}; they say their franchise agreement does not allow "
                           "freight surcharges.", family="short_payment", valid=False)
-            self.corrections.append({"date": "2026-05-13", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "leave_unapplied_ask",
-                                     "why": f"the wire names {inv} and is short only by the disputed surcharge; this should have come to me, it belongs on that invoice"})
+            self.corrections.append({"date": "2026-05-13", "actor": "Dana", "subject": f"receipt:{rc['txn']}", "domain": "allocation", "outcome": "apply_to_reference",
+                                     "why": f"the wire names {inv} and is short only by the disputed surcharge; the cash belongs on that invoice and the surcharge stays open until the dispute is settled"})
         self.hooks["2026-05-12"].append(sp2)
 
         def sp3(d):  # missing goods the delivery receipt shows were signed for

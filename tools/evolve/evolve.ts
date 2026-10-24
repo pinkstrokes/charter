@@ -103,7 +103,10 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
       for (const v of repair(domain, current, p.program, ev, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${MODEL} style ${p.style}, unsupported rules removed by replay`, rationale: p.rationale });
     }
   }
-  const rank = (a: Scored, b: Scored) => b.ev.lesson.handled.length - a.ev.lesson.handled.length || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.complexity - b.ev.complexity;
+  // Most taught cases handled, most labeled cases right, most robust, then the
+  // smallest change to past decisions nobody labeled, then the simplest.
+  const rank = (a: Scored, b: Scored) =>
+    b.ev.lesson.handled.length - a.ev.lesson.handled.length || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.changed.n - b.ev.changed.n || a.ev.complexity - b.ev.complexity;
   const passing = scored.filter(s => s.ev.gate === 'pass').sort(rank);
   // The leading candidates get their new thresholds centred between the known cases.
   for (const c of passing.slice(0, 3)) {

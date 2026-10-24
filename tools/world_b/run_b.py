@@ -28,7 +28,13 @@ def acct(code, salt=""):
 
 def build(seed):
     rng = random.Random(seed)
+    # The long tail of cash application, from its own random stream so every
+    # payment drawn from the first stays as it was: bank charges and currency
+    # differences on payments from abroad, money sent "on account" without a
+    # reference, and one payment covering two invoices.
+    mess = random.Random(seed * 7919 + 1)
     customers = json.load(open(f"{B}/customers.json"))
+    customer = {c["customer_code"]: c for c in customers}
     invoices = json.load(open(f"{B}/invoices.json"))
     credits = json.load(open(f"{B}/credit_notes.json"))
     profile = {}
@@ -50,6 +56,19 @@ def build(seed):
                 credit_by_invoice[a["invoice_no"]] = credit_by_invoice.get(a["invoice_no"], 0) + a["amount_pence"]
     key, truth = [], {}
     statements = {}
+    owed_of = {i["invoice_no"]: i["net_pence"] - credit_by_invoice.get(i["invoice_no"], 0) for i in invoices}
+    later = {}  # the customer's next invoice, for a payment that covers two
+    for cust in {i["customer_code"] for i in invoices}:
+        mine = sorted((i for i in invoices if i["customer_code"] == cust), key=lambda i: i["invoice_date"])
+        for a, b2 in zip(mine, mine[1:]):
+            later[a["invoice_no"]] = b2
+    paid_with = {}  # invoice -> the earlier invoice whose payment also paid it
+
+    def pay_event(when, txn, amount, payer, account, reference, cust, invoices_paid, family, expected):
+        events.append((when, 2, "bank_txn", {"txnId": txn, "date": when, "type": "ach_credit_in", "amountCents": amount, "counterpartyName": payer, "counterpartyAccount": account, "reference": reference}))
+        truth[txn] = {"customer": cust, "invoices": invoices_paid, "profile": family.removeprefix("payment_")}
+        key.append({"caseId": f"b-{txn}", "family": family, "split": split_of(f"receipt:{txn}"), "subject": f"receipt:{txn}", "truth": truth[txn], "expected": expected})
+
     for inv in invoices:
         d = inv["invoice_date"][:10]
         due = (date.fromisoformat(d) + timedelta(days=30)).isoformat()
@@ -64,13 +83,37 @@ def build(seed):
             continue
         offset = rng.randint(20, 50) if p == "late" else rng.randint(-4, 5)
         pay = (date.fromisoformat(due) + timedelta(days=offset)).isoformat()
-        txn = f"BACS-{inv['invoice_no']}"
-        payer = f"{inv['customer_code']} HOLDINGS LTD" if p == "parent" else f"CUSTOMER {inv['customer_code'][2:]}"
-        events.append((pay, 2, "bank_txn", {"txnId": txn, "date": pay, "type": "ach_credit_in", "amountCents": owed, "counterpartyName": payer,
-                                            "counterpartyAccount": acct(inv["customer_code"], "parent") if p == "parent" else acct(inv["customer_code"]), "reference": inv["invoice_no"]}))
-        truth[txn] = {"customer": inv["customer_code"], "invoices": [inv["invoice_no"]], "profile": p}
-        key.append({"caseId": f"b-{txn}", "family": f"payment_{p}", "split": split_of(f"receipt:{txn}"), "subject": f"receipt:{txn}", "truth": truth[txn], "expected": "apply_unique"})
-        if rng.random() < 0.01:
+        duplicate = rng.random() < 0.01
+        no, cust = inv["invoice_no"], inv["customer_code"]
+        if no in paid_with:
+            continue  # paid together with an earlier invoice
+        txn = f"BACS-{no}"
+        payer = f"{cust} HOLDINGS LTD" if p == "parent" else f"CUSTOMER {cust[2:]}"
+        account = acct(cust, "parent") if p == "parent" else acct(cust)
+        abroad, r = customer[cust]["country"] != "United Kingdom", mess.random()
+        nxt = later.get(no)
+        if abroad and r < 0.6 and owed > 3000:
+            # An international transfer arrives short by the intermediary banks' charges.
+            pay_event(pay, txn, owed - mess.choice([600, 800, 1000, 1200, 1500]), payer, account, no, cust, [no], "payment_bank_charge", "apply_to_reference")
+            continue
+        if abroad and customer[cust].get("currency_guess") == "EUR" and r < 0.9:
+            # Paid from a euro account: the sterling amount is off by the bank's exchange rate.
+            pay_event(pay, txn, round(owed * (1 + mess.choice([-1, 1]) * mess.uniform(0.005, 0.025))), payer, account, no, cust, [no], "payment_fx_difference", "apply_to_reference")
+            continue
+        if p == "prompt" and r < 0.07 and owed >= 4000:
+            # Half "on account" with no reference, the balance a week later naming the invoice.
+            first = owed // 2 // 100 * 100
+            pay_event(pay, f"{txn}-A", first, payer, account, "ON ACCOUNT", cust, [no], "payment_on_account", "leave_unapplied_ask")
+            pay_event((date.fromisoformat(pay) + timedelta(days=7)).isoformat(), txn, owed - first, payer, account, no, cust, [no], "payment_on_account_balance", "apply_unique")
+            continue
+        if p == "prompt" and r < 0.12 and nxt and owed_of[nxt["invoice_no"]] > 0 and nxt["invoice_no"] not in paid_with and \
+                (datetime.fromisoformat(nxt["invoice_date"]) - datetime.fromisoformat(inv["invoice_date"])).days <= 10:
+            # One payment for this invoice and the next, both numbers in the reference.
+            paid_with[nxt["invoice_no"]] = no
+            pay_event(pay, txn, owed + owed_of[nxt["invoice_no"]], payer, account, f"{no} {nxt['invoice_no']}", cust, [no, nxt["invoice_no"]], "payment_two_invoices", "apply_unique")
+            continue
+        pay_event(pay, txn, owed, payer, account, no, cust, [no], f"payment_{p}", "apply_unique")
+        if duplicate:
             dup = f"{txn}-DUP"
             events.append(((date.fromisoformat(pay) + timedelta(days=3)).isoformat(), 2, "bank_txn", {"txnId": dup, "date": pay, "type": "ach_credit_in", "amountCents": owed, "counterpartyName": payer,
                                                                                                     "counterpartyAccount": acct(inv["customer_code"]), "reference": inv["invoice_no"]}))
@@ -169,7 +212,9 @@ def answer(admin, dana, truth):
                 dana.call("answer_ask", a["id"], "leave unapplied", "nothing open matches; this looks like a second payment of an invoice already paid")
                 continue
             match = next((o for o in opts if set(o.split(" + ")) == set(t.get("invoices", []))), None)
-            dana.call("answer_ask", a["id"], match or "apply oldest first", "the customer's remittance lists these invoices" if match else "apply to the oldest")
+            why = {"on_account": "called the customer: the money on account was for this invoice", "bank_charge": "the customer named the invoice; the difference is the banks' charges",
+                   "fx_difference": "the customer named the invoice; the difference is the exchange rate"}.get(t.get("profile"), "the customer's remittance lists these invoices")
+            dana.call("answer_ask", a["id"], match or "apply oldest first", why if match else "apply to the oldest")
         elif k == "identify_payer":
             dana.call("answer_ask", a["id"], t.get("customer", opts[0] if opts else ""), "parent company pays for this customer")
         elif k == "misapplied":
