@@ -5,7 +5,7 @@
 // proposal, and its own controller decides.
 //   npx tsx tools/evolve/transfer.ts --from charter-a --to charter-b --domain allocation
 import { createHash } from 'node:crypto';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { canonical } from '../../module/spacetimedb/src/core/hash';
 import type { SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
@@ -40,9 +40,13 @@ async function main(): Promise<void> {
     return;
   }
   const current = JSON.parse(active.program) as SkillProgram;
-  const examples = examplesFor(h, DOMAIN, new Set());
+  // The target's locked test and live splits stay hidden, as for its own evolver.
+  const keyPath = `${TO === 'charter-a' ? 'data/companyA' : TO === 'charter-b' ? 'data/companyB' : 'data/dev'}/answer_key.json`;
+  const keyRaw = existsSync(keyPath) ? JSON.parse(readFileSync(keyPath, 'utf8')) : [];
+  const hidden = new Set(((Array.isArray(keyRaw) ? keyRaw : keyRaw.entries ?? []) as { split: string; subject: string }[]).filter(e => e.split === 'test' || e.split === 'live').map(e => e.subject));
+  const examples = examplesFor(h, DOMAIN, hidden);
   const { required, optional } = splitLessons(DOMAIN, current, examples);
-  const ev = evaluate(DOMAIN, current, program, examples, required, h, new Set(), optional);
+  const ev = evaluate(DOMAIN, current, program, examples, required, h, hidden, optional);
   const proof = {
     gate: ev.gate,
     transfer: true,
