@@ -1,6 +1,6 @@
 """Read the demo's preset bank-change email once, before the table, and carry both readings into
 company A's model cache, so step 4 does not wait on a live model call. The draft is built the way
-the Security screen builds it (web/src/screens/Security.tsx, the first preset) and the prompt the way
+the Security screen builds it (web/src/lib/presets.ts, vendorPreset) and the prompt the way
 the mailroom builds it (module seats.ts triage), so the cache key is the one the seat will look up.
 A judge's own email is still read live; if a reader does not answer, the email waits for a person.
   STDB_URL=http://127.0.0.1:3100 STDB_DB=charter-a python3 tools/demo/warm_readers.py"""
