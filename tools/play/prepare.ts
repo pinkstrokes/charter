@@ -177,21 +177,19 @@ async function steps(): Promise<unknown> {
   const used = (await sql(DB_A, 'SELECT id, used FROM activity')).filter(a => (JSON.parse(a.used || '[]') as string[]).includes(`decision:${hold}`));
   const pushback = Math.max(...used.map(a => Number(a.id)));
   if (![rightAlone, moment, hold, pushback].every(Number.isFinite)) throw new Error(`the demo's beats are not in these runs (right alone ${rightAlone}, moment ${moment}, hold ${hold}, push back ${pushback})`);
-  // The pitch's beats in order, then the visitor's own payment. Row ids change with every rebuild, so the
-  // page finds the rows of the beats marked `find` again in the live tables (web/src/components/DemoBar.tsx).
-  return {
-    persona: 'dana',
-    steps: [
-      { label: 'Right alone', db: DB_B, hash: `#/floor?why=${rightAlone}`, find: 'right_alone' },
-      { label: 'The moment', db: DB_B, hash: `#/inbox?why=${moment}`, find: 'moment' },
-      { label: 'Try to steal', db: DB_A, hash: '#/security' },
-      { label: 'Release it', db: DB_A, hash: '#/payables' },
-      { label: 'Push back', db: DB_A, hash: `#/floor?why=${pushback}`, find: 'pushback' },
-      { label: 'Learned', db: DB_B, hash: '#/knowledge/allocation' },
-      { label: 'Proof', db: DB_B, hash: '#/proof' },
-      { label: 'Your payment', db: DB_B, hash: '#/world/payment' },
-    ],
-  };
+  const rows: Record<string, number> = { right_alone: rightAlone, moment, pushback };
+  // The beats are the demo table's, in its order and words (tools/demo/steps.py); only the rows are these
+  // databases'. Row ids change with every rebuild, so the page finds the rows of the beats marked `find`
+  // again in the live tables (web/src/components/DemoBar.tsx).
+  const src = readFileSync(path.join(REPO, 'tools/demo/steps.py'), 'utf8');
+  const block = /^steps = \[\n([\s\S]*?)\n\]/m.exec(src)?.[1] ?? '';
+  const steps = [...block.matchAll(/\{"label": "([^"]+)", "db": "charter-([ab])", "hash": f?"([^"]+)"\}/g)].map(([, label, co, hash]) => {
+    const name = /\{(\w+)\}/.exec(hash)?.[1];
+    if (name && !(name in rows)) throw new Error(`tools/demo/steps.py has a beat this script cannot find: ${label} (${name})`);
+    return { label, db: co === 'a' ? DB_A : DB_B, hash: name ? hash.replace(`{${name}}`, String(rows[name])) : hash, ...(name ? { find: name } : {}) };
+  });
+  if (steps.length < block.split('\n').filter(l => l.includes('"label"')).length || !steps.length) throw new Error('could not read the steps in tools/demo/steps.py');
+  return { persona: 'dana', steps };
 }
 
 async function main(): Promise<void> {
