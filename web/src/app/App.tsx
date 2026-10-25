@@ -221,6 +221,11 @@ function Connection() {
         <div className="empty">
           <b>Opening the books…</b>
           {info.db ? `subscribing to ${info.db}` : 'finding the database'}
+          {isPublic && info.db && (
+            <span className="faint" style={{ display: 'block', marginTop: 6, fontSize: 13 }}>
+              every row of the run comes to your browser, so the hash chain can be verified here: about 15 seconds
+            </span>
+          )}
         </div>
       </div>
     );

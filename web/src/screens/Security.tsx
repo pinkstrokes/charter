@@ -8,6 +8,7 @@ import { commandLabel, day, money, sentence } from '../lib/format';
 import { parseArr, parseLoose, parseObj } from '../lib/json';
 import { summarize } from '../lib/summary';
 import { useAction } from '../stdb/actions';
+import { isPublic } from '../stdb/api';
 import { charter } from '../stdb/client';
 import { useRows } from '../stdb/store';
 
@@ -135,82 +136,91 @@ export function Security() {
         <section className="sheet sheet-pad" aria-label="Try to steal from us">
           <div className="section-head">
             <h2 className="section-title">Try to steal from us</h2>
-            <span className="aside">sent as the Outsider, whoever you are acting as</span>
+            {!isPublic && <span className="aside">sent as the Outsider, whoever you are acting as</span>}
           </div>
-          <div className="attack-presets" style={{ marginBottom: 12 }}>
-            {options.map(o => (
-              <button key={o.label} className="btn small option" onClick={() => {
-                setDraft(o.draft);
-                setShowAttach(!!o.draft.attachmentName);
-              }} title={o.hint}>
-                {o.label}
-              </button>
-            ))}
-            <button className="btn small quiet" onClick={() => setDraft({ ...BLANK, from: 'someone@example.com' })}>
-              Blank
-            </button>
-          </div>
-          <form
-            style={{ display: 'grid', gap: 9 }}
-            onSubmit={e => {
-              e.preventDefault();
-              void send
-                .run({
-                  persona: 'outsider',
-                  call: c => c.reducers.sendEmail({ ...draft, attachmentName: showAttach ? draft.attachmentName : '', attachmentText: showAttach ? draft.attachmentText : '' }),
-                  match: r => r.command === 'email_received' && parseObj(r.params).subject === `sender:${draft.from}`,
-                })
-                .then(res => {
-                  const row = res.rows.find(r => r.command === 'email_received');
-                  const id = row ? parseObj(row.params).observation : undefined;
-                  if (typeof id === 'number') setTracked(BigInt(id));
-                });
-            }}
-          >
-            <div className="split-even" style={{ gap: 9 }}>
-              <label className="field">
-                <span>From address</span>
-                <input className="input" value={draft.from} onChange={set('from')} />
-              </label>
-              <label className="field">
-                <span>Display name</span>
-                <input className="input" value={draft.fromName} onChange={set('fromName')} />
-              </label>
-            </div>
-            <label className="field">
-              <span>Subject</span>
-              <input className="input" value={draft.subject} onChange={set('subject')} />
-            </label>
-            <label className="field">
-              <span>Body</span>
-              <textarea className="textarea" rows={8} value={draft.body} onChange={set('body')} />
-            </label>
-            {showAttach ? (
-              <div className="split-even" style={{ gap: 9, gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)' }}>
-                <label className="field">
-                  <span>Attachment name</span>
-                  <input className="input" value={draft.attachmentName} onChange={set('attachmentName')} />
-                </label>
-                <label className="field">
-                  <span>Attachment text</span>
-                  <textarea className="textarea" rows={2} style={{ minHeight: 32 }} value={draft.attachmentText} onChange={set('attachmentText')} />
-                </label>
+          {isPublic ? (
+            // The public replays have no seat running and no controller to start one: a new email would wait unread.
+            <p className="faint" style={{ margin: 0, lineHeight: 1.5 }}>
+              This page watches the finished runs, where no seat is running, so a new email would wait unread. Attack it live at the demo table, or on a local run (README, Run it). On the right is every email the runs received and what the team did with it; below, what it stopped.
+            </p>
+          ) : (
+            <>
+              <div className="attack-presets" style={{ marginBottom: 12 }}>
+                {options.map(o => (
+                  <button key={o.label} className="btn small option" onClick={() => {
+                    setDraft(o.draft);
+                    setShowAttach(!!o.draft.attachmentName);
+                  }} title={o.hint}>
+                    {o.label}
+                  </button>
+                ))}
+                <button className="btn small quiet" onClick={() => setDraft({ ...BLANK, from: 'someone@example.com' })}>
+                  Blank
+                </button>
               </div>
-            ) : (
-              <button type="button" className="btn small quiet" style={{ justifySelf: 'start' }} onClick={() => setShowAttach(true)}>
-                <Paperclip size={13} /> Add an attachment
-              </button>
-            )}
-            <div className="row">
-              <button className="btn primary" type="submit" disabled={send.pending || !draft.from}>
-                <Send size={14} /> Send to ar@ as an outsider
-              </button>
-              <span className="faint" style={{ fontSize: 12 }}>
-                then run the seats{me.isController ? '' : ' as a controller'} to have it read
-              </span>
-            </div>
-            <Result r={send.result ? { ...send.result, message: send.result.status === 'ok' ? 'Delivered and stored as untrusted' : send.result.message } : null} pending={send.pending} />
-          </form>
+              <form
+                style={{ display: 'grid', gap: 9 }}
+                onSubmit={e => {
+                  e.preventDefault();
+                  void send
+                    .run({
+                      persona: 'outsider',
+                      call: c => c.reducers.sendEmail({ ...draft, attachmentName: showAttach ? draft.attachmentName : '', attachmentText: showAttach ? draft.attachmentText : '' }),
+                      match: r => r.command === 'email_received' && parseObj(r.params).subject === `sender:${draft.from}`,
+                    })
+                    .then(res => {
+                      const row = res.rows.find(r => r.command === 'email_received');
+                      const id = row ? parseObj(row.params).observation : undefined;
+                      if (typeof id === 'number') setTracked(BigInt(id));
+                    });
+                }}
+              >
+                <div className="split-even" style={{ gap: 9 }}>
+                  <label className="field">
+                    <span>From address</span>
+                    <input className="input" value={draft.from} onChange={set('from')} />
+                  </label>
+                  <label className="field">
+                    <span>Display name</span>
+                    <input className="input" value={draft.fromName} onChange={set('fromName')} />
+                  </label>
+                </div>
+                <label className="field">
+                  <span>Subject</span>
+                  <input className="input" value={draft.subject} onChange={set('subject')} />
+                </label>
+                <label className="field">
+                  <span>Body</span>
+                  <textarea className="textarea" rows={8} value={draft.body} onChange={set('body')} />
+                </label>
+                {showAttach ? (
+                  <div className="split-even" style={{ gap: 9, gridTemplateColumns: 'minmax(0,1fr) minmax(0,2fr)' }}>
+                    <label className="field">
+                      <span>Attachment name</span>
+                      <input className="input" value={draft.attachmentName} onChange={set('attachmentName')} />
+                    </label>
+                    <label className="field">
+                      <span>Attachment text</span>
+                      <textarea className="textarea" rows={2} style={{ minHeight: 32 }} value={draft.attachmentText} onChange={set('attachmentText')} />
+                    </label>
+                  </div>
+                ) : (
+                  <button type="button" className="btn small quiet" style={{ justifySelf: 'start' }} onClick={() => setShowAttach(true)}>
+                    <Paperclip size={13} /> Add an attachment
+                  </button>
+                )}
+                <div className="row">
+                  <button className="btn primary" type="submit" disabled={send.pending || !draft.from}>
+                    <Send size={14} /> Send to ar@ as an outsider
+                  </button>
+                  <span className="faint" style={{ fontSize: 12 }}>
+                    then run the seats{me.isController ? '' : ' as a controller'} to have it read
+                  </span>
+                </div>
+                <Result r={send.result ? { ...send.result, message: send.result.status === 'ok' ? 'Delivered and stored as untrusted' : send.result.message } : null} pending={send.pending} />
+              </form>
+            </>
+          )}
         </section>
         <section className="sheet sheet-pad" aria-label="What happened to it">
           <div className="section-head">
