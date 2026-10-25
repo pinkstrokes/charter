@@ -2,7 +2,7 @@
 
 **An AI finance team that lives in one database, catches its own mistakes, pushes back when it is told something wrong, and cannot be talked into moving money.**
 
-Charter fills the receivables and payables seats of a finance team — mailroom clerk, cash-application accountant, collections specialist, refunds specialist, payables clerk, payments — beside a controller, checked by a read-only internal auditor. Built at Cal Hacks 13.0 for the Hyphenate track.
+Charter fills the receivables and payables seats of a finance team — mailroom clerk, cash-application accountant, collections specialist, refunds specialist, payables clerk, payments — beside a controller, checked by a read-only internal auditor. Built at Cal Hacks 13.0.
 
 **See it:** [pinkstrokes.github.io/charter](https://pinkstrokes.github.io/charter/) — the team drawn as a living record; give it a task (a payment, a bank change, a chase, a rule to learn) and watch it decide on the real history (the page replays a port of the seats' code in your browser over the runs' recorded data). **The live system:** [pinkstrokes.github.io/charter/app](https://pinkstrokes.github.io/charter/app/) — the three companies replayed on SpacetimeDB's maincloud, open to anyone as an outsider: every decision's Why panel, every skill version's replay proof, the hash chain verified in your browser.
 
