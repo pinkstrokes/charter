@@ -162,7 +162,8 @@ for (const variant of variants) {
   }
   results.push({ variant: variant.name, adopted: !!variant.adopted, versions, world: playOut(variant), legit: playLegit(variant) });
 }
-// Counted by the main session on the runs' own books before 4b81c48: notices sent while the counterparty's unapplied cash covered what was past due.
+// Counted on the runs' own books before 4b81c48: notices sent while the counterparty's unapplied cash covered what was
+// past due. The counts, how they were taken and where those runs are in git history: data/notices-before-fix.json.
 const realBooks = { source: 'the runs before 4b81c48', A: { sent: 5, covered: 0 }, B: { sent: 1024, covered: 72, customers: 7 }, C: { sent: 1086, covered: 34, customers: 8 }, C0: { sent: 1110, covered: 45 } };
 writeFileSync(new URL('./out/team.json', import.meta.url), JSON.stringify({ invariant: 'Never chase a counterparty with its own money: no notice and no late fee while its unapplied cash covers what is past due; and no late fee in bankruptcy; without holding a chase its cash does not cover.', properties: PROPS, axiomsCheckedOn: record.length, realBooks, results }, null, 1));
 

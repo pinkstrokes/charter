@@ -1,0 +1,33 @@
+{
+ "note": "Past-due notices sent on each company's own books in the runs before the kernel fix (4b81c48), counted on those databases on 24 Oct 2026 before they were rebuilt: a notice is 'covered' when the collections decision it followed saw unapplied_amount >= open_amount > 0, that is, the counterparty's own money waiting to be applied covered everything it had past due. Those runs' reports are in git history at 4b81c48^ (data/company*/eval/report.json); the per-notice rows lived only in the databases, which the reruns replaced.",
+ "counts": {
+  "charter-a": {
+   "notices": 5,
+   "covered": 0,
+   "any_unapplied": 0,
+   "covered_entities": 0,
+   "covered_open_cents": 0
+  },
+  "charter-b": {
+   "notices": 1024,
+   "covered": 72,
+   "any_unapplied": 135,
+   "covered_entities": 7,
+   "covered_open_cents": 1593334
+  },
+  "charter-c": {
+   "notices": 1086,
+   "covered": 34,
+   "any_unapplied": 149,
+   "covered_entities": 8,
+   "covered_open_cents": 15773764
+  },
+  "charter-c0": {
+   "notices": 1110,
+   "covered": 45,
+   "any_unapplied": 192,
+   "covered_entities": 8,
+   "covered_open_cents": 16381458
+  }
+ }
+}
