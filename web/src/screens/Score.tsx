@@ -5,7 +5,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import type { Activity, Ask } from '../module_bindings/types';
 import { openWhy } from '../app/nav';
-import { actor, askLabel, commandLabel, day, SEAT_LABEL, SEATS } from '../lib/format';
+import { actor, answerWords, askLabel, commandLabel, day, SEAT_LABEL, SEATS } from '../lib/format';
 import { parseObj } from '../lib/json';
 import { summarize } from '../lib/summary';
 import { askSeatOf, DOMAIN_SEAT } from '../lib/rules';
@@ -276,7 +276,7 @@ export function Score() {
               <path d={`M${x1},${y1} C${x1},${mid} ${x2},${mid} ${x2},${y2}`} fill="none" stroke="var(--taro)" strokeOpacity={0.45} strokeWidth={1.2} />
               <circle cx={x1} cy={y1} r={3.2} fill="var(--taro)" />
               <circle cx={x2} cy={y2} r={2.6} fill="var(--sheet)" stroke="var(--taro)" strokeWidth={1.2} />
-              <title>{`${askLabel(l.q.kind)} #${l.q.id}: asked ${day(l.q.createdAt)}, ${actor(l.q.answeredBy).label} answered “${l.q.answer}” ${day(l.q.answeredAt)}`}</title>
+              <title>{`${askLabel(l.q.kind)} #${l.q.id}: asked ${day(l.q.createdAt)}, ${actor(l.q.answeredBy).label} answered “${answerWords(l.q.answer)}” ${day(l.q.answeredAt)}`}</title>
             </g>
           );
         })}

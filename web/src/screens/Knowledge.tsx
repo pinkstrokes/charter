@@ -358,7 +358,8 @@ function VersionCard({ v, selected, onSelect }: { v: Skill; selected: boolean; o
         <StatusChip status={v.status} fraction={Number.isFinite(fractionNow) ? fractionNow : undefined} />
         {ps.gate && <Gate gate={ps.gate} />}
         <span className="faint" style={{ marginLeft: 'auto', fontSize: 12 }}>
-          {day(v.createdAt, true)}
+          {/* A hand-written starting point is seeded with the database, before any company's calendar exists. */}
+          {v.parent ? day(v.createdAt, true) : 'day one'}
         </span>
       </div>
       <div className="version-prov">

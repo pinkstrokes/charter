@@ -111,7 +111,7 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 | Locked test split: cash landed where the payer meant | **315** of 324 | 311 of 324 |
 | Test and live splits: wrong when it settled alone | **5** of 305 (95% upper bound 3.4%) | 8 of 287 (5.0%) |
 
-![Company C's cash skill: version 2 learned at company B and ratified by C's controller, versions 3 and 4 learned from C's own answers](docs/img/c1_sister.png)
+![Company C's cash skill: version 2 learned at company B and ratified by C's controller, version 3 learned from C's own answers](docs/img/c1_sister.png)
 
 *A skill that does not fit is refused.* Company B's cash skill was also offered to company A, whose history is six months long: A's gate replayed it, whole and rule by rule at every place in A's own program, over A's own history, and refused every variant before a person saw it. The whole program would get 3 of A's labeled cases wrong, and none of its rules handles the case A's people had just taught. B's best lesson, a payment naming one open invoice goes there even when short, is what A's two misapplied short payments needed; but A had no clean evidence for it (one of the two was never checked, the other's correction was contradicted by a later spot check), and a rule takes over work only on agreeing cases of the receiving company's own.
 

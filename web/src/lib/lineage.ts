@@ -3,7 +3,7 @@
 // cases it changed and the seats that inherited it. Everything is derived from
 // public tables; nothing here is stored by the UI.
 import type { Activity, Ask, Decision, Policy, Skill } from '../module_bindings/types';
-import { day } from './format';
+import { answerWords, day } from './format';
 import { parseArr, parseLoose, parseObj } from './json';
 import { parseProgram, run, skillVersion, type FeatureMap, type SkillProgram } from './rules';
 
@@ -227,7 +227,7 @@ export function buildLineage(skill: Skill, all: { skills: Skill[]; asks: Ask[]; 
   let order = 0;
   for (const o of origins) {
     const who = o.by.split(':')[1] ?? o.by;
-    steps.push({ kind: 'origin', at: o.at, order: order++, title: `${who} ${o.kind.startsWith('correction') ? 'corrected' : 'answered'} “${o.answer.replace(/_/g, ' ')}”`, detail: subjectLabel(o.subject), by: o.by });
+    steps.push({ kind: 'origin', at: o.at, order: order++, title: `${who} ${o.kind.startsWith('correction') ? 'corrected' : 'answered'} “${answerWords(o.answer)}”`, detail: subjectLabel(o.subject), by: o.by });
   }
   const transitions = skillTransitions(skill.key, all.activity);
   const proposed = transitions.find(t => t.to === 'proposed');

@@ -210,7 +210,7 @@ function AskCard({ a, entities, stores }: { a: Ask; entities: Entity[]; stores: 
                     <div style={{ fontSize: 13 }}>
                       <span className="quote">{precedent.reason ? `“${precedent.reason}”` : `“${precedent.answer}”`}</span>
                       <div className="quote-by">
-                        answered “{precedent.answer}” on question #{precedent.id}, {day(precedent.on)}
+                        answered “{answerWords(precedent.answer)}” on question #{precedent.id}, {day(precedent.on)}
                       </div>
                     </div>
                   ) : (

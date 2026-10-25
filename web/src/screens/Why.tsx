@@ -992,7 +992,7 @@ function Ref({ r }: { r: string }) {
           {q.status === 'answered' && (
             <span className="quote">
               {' '}
-              answered “{q.answer}”{q.reason ? `: ${q.reason}` : ''}
+              answered “{answerWords(q.answer)}”{q.reason ? `: ${q.reason}` : ''}
             </span>
           )}
         </span>
