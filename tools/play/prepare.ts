@@ -1,6 +1,6 @@
 // The sandbox's last step (tools/play/reset.sh), on the two play databases after their replays:
 // the people a visitor can be, the Security page's examples read ahead, and the step bar.
-//   npx tsx tools/play/prepare.ts --play ~/Developer/charter-play-stdb charter-pinkstrokes-play-a charter-pinkstrokes-play-b
+//   npx tsx tools/play/prepare.ts --play ~/Developer/charter-play-stdb charter-pinkstrokes-play-a charter-pinkstrokes-play-b [--steps-only]
 //
 // People: Dana and Sam (controllers), an Outsider (no role) and the World page's feeder (role world),
 // minted once into <play>/personas.json (mode 600, outside the repository) and bound again on every
@@ -28,6 +28,8 @@ const args = process.argv.slice(2);
 const at = args.indexOf('--play');
 const PLAY = at >= 0 ? args[at + 1] : '';
 const [DB_A, DB_B] = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--play');
+// --steps-only: read-only, just the step bar again (web/scripts/publish_pages.sh runs it before every publish).
+const STEPS_ONLY = args.includes('--steps-only');
 if (!PLAY || !DB_A || !DB_B) throw new Error('usage: prepare.ts --play DIR DB_A DB_B');
 // Never anything but the sandbox's own databases (the published replays are charter-pinkstrokes-a/b/c).
 for (const db of [DB_A, DB_B]) if (!/^charter-pinkstrokes-play-[a-z]$/.test(db)) throw new Error(`${db} is not a sandbox database`);
@@ -194,9 +196,11 @@ async function steps(): Promise<unknown> {
 
 async function main(): Promise<void> {
   if (!existsSync(path.join(REPO, 'module/spacetimedb/src/seats.ts'))) throw new Error('run from the checkout root');
-  const who = await people();
-  console.log(`people: ${Object.entries(who).map(([n, p]) => `${n} 0x${p.identity.slice(0, 10)}…`).join(', ')}, bound in ${DB_A} and ${DB_B}`);
-  for (const db of [DB_A, DB_B]) console.log(`${db}: ${await warm(db)}`);
+  if (!STEPS_ONLY) {
+    const who = await people();
+    console.log(`people: ${Object.entries(who).map(([n, p]) => `${n} 0x${p.identity.slice(0, 10)}…`).join(', ')}, bound in ${DB_A} and ${DB_B}`);
+    for (const db of [DB_A, DB_B]) console.log(`${db}: ${await warm(db)}`);
+  }
   writeFileSync(path.join(PLAY, 'steps.json'), JSON.stringify(await steps(), null, 1) + '\n');
   console.log(`steps in ${path.join(PLAY, 'steps.json')}`);
 }

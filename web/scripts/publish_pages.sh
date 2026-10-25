@@ -18,6 +18,8 @@ VITE_PUBLIC=1 CHARTER_BASE=/charter/app/ npx vite build --outDir $OUT/site/app -
 STDB_URL=https://maincloud.spacetimedb.com CHARTER_RUNS=$RUNS npx tsx scripts/export_public.ts $OUT/site/app
 PLAY=${CHARTER_PLAY_DIR:-$HOME/Developer/charter-play-stdb}
 [[ -f $PLAY/personas.json ]] || { echo "no sandbox in $PLAY: run tools/play/reset.sh first" >&2; exit 1; }
+# The step bar in the demo table's current order (tools/demo/steps.py), read from the play databases (read-only).
+(cd $REPO && npx tsx tools/play/prepare.ts --play $PLAY charter-pinkstrokes-play-a charter-pinkstrokes-play-b --steps-only > /dev/null) || exit 1
 VITE_PLAY=1 CHARTER_BASE=/charter/play/ npx vite build --outDir $OUT/site/play --emptyOutDir > $OUT/build-play.log 2>&1 || { tail -20 $OUT/build-play.log; exit 1; }
 CHARTER_PLAY_DIR=$PLAY npx tsx scripts/export_play.ts $OUT/site/play
 # The showcase is written as an Artifact (no page skeleton): give it one, and a way into the live system.
