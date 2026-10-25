@@ -30,7 +30,7 @@ assert code in src, "the showcase's Code link moved; update publish_pages.sh"
 src = src.replace(code, '<a href="app/">Live system ↗</a>\n  <a href="play/">Sandbox ↗</a>\n  ' + code, 1)
 head, sep, body = src.partition("</style>")
 # What a link to the site shows when it is shared: the Devpost elevator pitch.
-desc = "An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies."
+desc = "A safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. It accumulates experience and takes it to new companies."
 page = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
         f'<meta name="description" content="{desc}">\n<meta property="og:title" content="Charter">\n'

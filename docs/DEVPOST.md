@@ -2,7 +2,7 @@
 
 ## Elevator pitch
 
-An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies.
+A safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. It accumulates experience and takes it to new companies.
 
 ## Try it
 
