@@ -33,15 +33,16 @@ holds = [d for d in a.sql("SELECT id, domain, outcome, shadow, features FROM dec
 hold = max(holds, key=lambda d: d["id"])
 pushback = max(x["id"] for x in a.sql("SELECT id, used FROM activity") if used(x, f"decision:{hold['id']}"))
 
-# The pitch's beats in order (across agents; across time; steal, release, push back; learned; proof),
-# then the judges' own payment.
+# The pitch's beats in order: it evolves (the cash skill's lineage); from losses (steal, then release);
+# not the wrong way (push back); it doubts its own past (the moment); what evolution can't see
+# (right alone); proof. Then the judges' own payment.
 steps = [
-    {"label": "Right alone", "db": "charter-b", "hash": f"#/floor?why={right_alone}"},
-    {"label": "The moment", "db": "charter-b", "hash": f"#/inbox?why={moment}"},
+    {"label": "Learned", "db": "charter-b", "hash": "#/knowledge/allocation"},
     {"label": "Try to steal", "db": "charter-a", "hash": "#/security"},
     {"label": "Release it", "db": "charter-a", "hash": "#/payables"},
     {"label": "Push back", "db": "charter-a", "hash": f"#/floor?why={pushback}"},
-    {"label": "Learned", "db": "charter-b", "hash": "#/knowledge/allocation"},
+    {"label": "The moment", "db": "charter-b", "hash": f"#/inbox?why={moment}"},
+    {"label": "Right alone", "db": "charter-b", "hash": f"#/floor?why={right_alone}"},
     {"label": "Proof", "db": "charter-b", "hash": "#/proof"},
     {"label": "Your payment", "db": "charter-b", "hash": "#/world/payment"},
 ]
