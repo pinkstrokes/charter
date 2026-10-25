@@ -1,6 +1,6 @@
 {
  "db": "charter-a",
- "generatedAt": "2026-10-24T23:47:57.857Z",
+ "generatedAt": "2026-10-25T02:38:07.902Z",
  "answerKeyEntries": 834,
  "outcomes": {
   "val": {
@@ -16,7 +16,7 @@
    },
    "clean": {
     "n": 143,
-    "right": 133,
+    "right": 128,
     "missing": 8
    },
    "payer_alias": {
@@ -51,7 +51,7 @@
    },
    "underreported_cash": {
     "n": 3,
-    "right": 1,
+    "right": 2,
     "missing": 0
    },
    "prompt_injection": {
@@ -61,7 +61,7 @@
    },
    "clean_low_cash": {
     "n": 16,
-    "right": 16,
+    "right": 13,
     "missing": 0
    },
    "bill_clean": {
@@ -103,7 +103,7 @@
    },
    "clean": {
     "n": 295,
-    "right": 273,
+    "right": 260,
     "missing": 21
    },
    "bundled_payment": {
@@ -143,17 +143,17 @@
    },
    "underreported_cash": {
     "n": 2,
-    "right": 1,
+    "right": 2,
     "missing": 0
    },
    "revised_report": {
     "n": 3,
-    "right": 1,
+    "right": 3,
     "missing": 0
    },
    "clean_low_cash": {
     "n": 18,
-    "right": 18,
+    "right": 14,
     "missing": 0
    },
    "ach_return": {
@@ -190,7 +190,7 @@
    },
    "clean": {
     "n": 130,
-    "right": 118,
+    "right": 115,
     "missing": 9
    },
    "bundled_payment": {
@@ -200,7 +200,7 @@
    },
    "underreported_cash": {
     "n": 4,
-    "right": 1,
+    "right": 2,
     "missing": 0
    },
    "clean_bulk_buy": {
@@ -215,7 +215,7 @@
    },
    "clean_low_cash": {
     "n": 14,
-    "right": 14,
+    "right": 11,
     "missing": 0
    },
    "payment_in_transit": {
@@ -247,7 +247,7 @@
   "live": {
    "underreported_cash": {
     "n": 3,
-    "right": 0,
+    "right": 3,
     "missing": 0
    }
   }
@@ -339,7 +339,7 @@
    "approvedAt": "2026-04-19",
    "learnedFrom": [
     {
-     "activityId": 8411,
+     "activityId": 2721,
      "at": "2026-04-08",
      "why": "the debit was returned by the bank"
     }
@@ -387,9 +387,9 @@
    "upper95": 0.42913554703143497
   },
   "underreport": {
-   "handledAlone": 111,
-   "wrong": 6,
-   "upper95": 0.10389570968739878
+   "handledAlone": 101,
+   "wrong": 2,
+   "upper95": 0.06102210260854358
   },
   "pre_chase": {
    "handledAlone": 30,
@@ -614,20 +614,20 @@
   {
    "key": "underreport@2",
    "status": "retired",
-   "createdAt": "2026-03-22",
-   "activatedAt": "2026-03-22",
+   "createdAt": "2026-03-08",
+   "activatedAt": "2026-03-08",
    "test": {
     "clean": {
      "n": 88,
-     "right": 85,
-     "alone": 85,
+     "right": 88,
+     "alone": 88,
      "wrong": 0
     },
     "underreported_cash": {
      "n": 4,
-     "right": 3,
-     "alone": 1,
-     "wrong": 1
+     "right": 4,
+     "alone": 0,
+     "wrong": 0
     },
     "clean_bulk_buy": {
      "n": 5,
@@ -643,8 +643,8 @@
     },
     "clean_low_cash": {
      "n": 14,
-     "right": 14,
-     "alone": 14,
+     "right": 2,
+     "alone": 2,
      "wrong": 0
     }
    }
@@ -652,13 +652,13 @@
   {
    "key": "underreport@3",
    "status": "active",
-   "createdAt": "2026-04-19",
-   "activatedAt": "2026-04-19",
+   "createdAt": "2026-03-22",
+   "activatedAt": "2026-03-22",
    "test": {
     "clean": {
      "n": 88,
-     "right": 87,
-     "alone": 87,
+     "right": 88,
+     "alone": 88,
      "wrong": 0
     },
     "underreported_cash": {
@@ -752,8 +752,8 @@
      "aloneAccuracy": 1
     },
     "allocation": {
-     "decisions": 10,
-     "alone": 10,
+     "decisions": 11,
+     "alone": 11,
      "aloneGraded": 8,
      "aloneRight": 8,
      "questions": 1,
@@ -762,12 +762,12 @@
     },
     "underreport": {
      "decisions": 81,
-     "alone": 81,
-     "aloneGraded": 81,
+     "alone": 80,
+     "aloneGraded": 80,
      "aloneRight": 76,
-     "questions": 1,
-     "aloneShare": 1,
-     "aloneAccuracy": 0.9382716049382716
+     "questions": 2,
+     "aloneShare": 0.9876543209876543,
+     "aloneAccuracy": 0.95
     },
     "bill_match": {
      "decisions": 18,
@@ -811,31 +811,31 @@
    "month": "2026-03",
    "domains": {
     "pre_chase": {
-     "decisions": 171,
-     "alone": 170,
+     "decisions": 173,
+     "alone": 172,
      "aloneGraded": 19,
      "aloneRight": 16,
-     "questions": 1,
-     "aloneShare": 0.9941520467836257,
+     "questions": 3,
+     "aloneShare": 0.9942196531791907,
      "aloneAccuracy": 0.8421052631578947
     },
     "allocation": {
-     "decisions": 10,
-     "alone": 9,
+     "decisions": 13,
+     "alone": 12,
      "aloneGraded": 8,
      "aloneRight": 8,
      "questions": 1,
-     "aloneShare": 0.9,
+     "aloneShare": 0.9230769230769231,
      "aloneAccuracy": 1
     },
     "underreport": {
      "decisions": 109,
-     "alone": 99,
-     "aloneGraded": 99,
-     "aloneRight": 96,
-     "questions": 11,
-     "aloneShare": 0.908256880733945,
-     "aloneAccuracy": 0.9696969696969697
+     "alone": 94,
+     "aloneGraded": 94,
+     "aloneRight": 93,
+     "questions": 17,
+     "aloneShare": 0.8623853211009175,
+     "aloneAccuracy": 0.9893617021276596
     },
     "bill_match": {
      "decisions": 18,
@@ -870,31 +870,22 @@
    "month": "2026-04",
    "domains": {
     "pre_chase": {
-     "decisions": 169,
-     "alone": 168,
+     "decisions": 167,
+     "alone": 166,
      "aloneGraded": 35,
      "aloneRight": 34,
      "questions": 1,
-     "aloneShare": 0.9940828402366864,
+     "aloneShare": 0.9940119760479041,
      "aloneAccuracy": 0.9714285714285714
     },
     "underreport": {
      "decisions": 81,
-     "alone": 80,
-     "aloneGraded": 80,
-     "aloneRight": 80,
-     "questions": 2,
-     "aloneShare": 0.9876543209876543,
+     "alone": 66,
+     "aloneGraded": 66,
+     "aloneRight": 66,
+     "questions": 18,
+     "aloneShare": 0.8148148148148148,
      "aloneAccuracy": 1
-    },
-    "allocation": {
-     "decisions": 11,
-     "alone": 11,
-     "aloneGraded": 8,
-     "aloneRight": 7,
-     "questions": 1,
-     "aloneShare": 1,
-     "aloneAccuracy": 0.875
     },
     "bill_match": {
      "decisions": 19,
@@ -904,6 +895,15 @@
      "questions": 4,
      "aloneShare": 0.7894736842105263,
      "aloneAccuracy": 1
+    },
+    "allocation": {
+     "decisions": 9,
+     "alone": 9,
+     "aloneGraded": 8,
+     "aloneRight": 7,
+     "questions": 1,
+     "aloneShare": 1,
+     "aloneAccuracy": 0.875
     },
     "routing_change": {
      "decisions": 2,
@@ -957,11 +957,11 @@
     },
     "underreport": {
      "decisions": 81,
-     "alone": 81,
-     "aloneGraded": 81,
-     "aloneRight": 81,
-     "questions": 2,
-     "aloneShare": 1,
+     "alone": 69,
+     "aloneGraded": 69,
+     "aloneRight": 69,
+     "questions": 16,
+     "aloneShare": 0.8518518518518519,
      "aloneAccuracy": 1
     },
     "routing_change": {
@@ -997,26 +997,26 @@
    "month": "2026-06",
    "domains": {
     "allocation": {
-     "decisions": 7,
-     "alone": 6,
+     "decisions": 8,
+     "alone": 7,
      "aloneGraded": 6,
      "aloneRight": 6,
      "questions": 1,
-     "aloneShare": 0.8571428571428571,
+     "aloneShare": 0.875,
      "aloneAccuracy": 1
     },
     "underreport": {
      "decisions": 80,
-     "alone": 80,
-     "aloneGraded": 80,
+     "alone": 77,
+     "aloneGraded": 77,
      "aloneRight": 77,
-     "questions": 0,
-     "aloneShare": 1,
-     "aloneAccuracy": 0.9625
+     "questions": 3,
+     "aloneShare": 0.9625,
+     "aloneAccuracy": 1
     },
     "pre_chase": {
-     "decisions": 157,
-     "alone": 157,
+     "decisions": 159,
+     "alone": 159,
      "aloneGraded": 19,
      "aloneRight": 18,
      "questions": 0,
@@ -1056,8 +1056,8 @@
  "money": {
   "duplicateBillsStoppedCents": 8924200,
   "duplicateBillsPaidCents": 0,
-  "auditInvoicesCents": 117491,
-  "auditInvoices": 8,
+  "auditInvoicesCents": 179154,
+  "auditInvoices": 12,
   "refundsReleased": 2
  },
  "security": {
@@ -1066,7 +1066,7 @@
   "lookalike_sender": 4
  },
  "attempts": {
-  "total": 5191,
+  "total": 5354,
   "denied": 20,
   "rejected": 0
  },
@@ -1079,9 +1079,9 @@
   "cashEqualsBank": true
  },
  "chain": {
-  "rows": 5191,
-  "verified": 5191,
+  "rows": 5354,
+  "verified": 5354,
   "firstBreak": null,
-  "head": "adf965c3f2800d7da626604ebaa8cfae7c11111698126b21fdf0afd804a56855"
+  "head": "0cba457d8e18e2df6d65da661ca6d98814929d197e143635649785336694a92c"
  }
 }

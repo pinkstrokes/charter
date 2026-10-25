@@ -4,100 +4,12 @@
     "rules": [
       {
         "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "gt",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
-                "v": 1
-              }
-            },
-            {
-              "op": "feat",
-              "name": "exact_match"
-            },
-            {
-              "op": "cmp",
-              "c": "eq",
-              "a": {
-                "op": "feat",
-                "name": "residual_cents"
-              },
-              "b": {
-                "op": "num",
-                "v": 0
-              }
-            },
-            {
-              "op": "feat",
-              "name": "reference_names_open"
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_to_reference",
-          "note": "exact match among several subsets with zero residual and reference names open invoices; safe to apply by reference"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "not",
-              "a": {
-                "op": "feat",
-                "name": "reference_matches_open"
-              }
-            },
-            {
-              "op": "or",
-              "args": [
-                {
-                  "op": "feat",
-                  "name": "reference_paid"
-                },
-                {
-                  "op": "and",
-                  "args": [
-                    {
-                      "op": "cmp",
-                      "c": "gt",
-                      "a": {
-                        "op": "feat",
-                        "name": "solution_count"
-                      },
-                      "b": {
-                        "op": "num",
-                        "v": 1
-                      }
-                    },
-                    {
-                      "op": "feat",
-                      "name": "reference_names_open"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "op": "not",
-              "a": {
-                "op": "feat",
-                "name": "remittance_consistent"
-              }
-            }
-          ]
+          "op": "feat",
+          "name": "reference_paid"
         },
         "then": {
           "decide": "leave_unapplied_ask",
-          "note": "possible duplicate payment or ambiguous reference without payer confirmation"
+          "note": "payment reference names an already-paid invoice; likely a duplicate payment"
         }
       },
       {
@@ -199,6 +111,37 @@
       },
       {
         "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "multiple exact subsets but reference names open invoices with no gap, confirming intent"
+        }
+      },
+      {
+        "when": {
           "op": "cmp",
           "c": "eq",
           "a": {
@@ -239,34 +182,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "gt",
-              "a": {
-                "op": "feat",
-                "name": "solution_count"
-              },
-              "b": {
-                "op": "num",
-                "v": 1
-              }
-            },
-            {
-              "op": "feat",
-              "name": "reference_names_open"
-            }
-          ]
-        },
-        "then": {
-          "decide": "apply_to_reference",
-          "note": "several subsets fit but reference names open invoices"
+          "note": "no subset matches but reference names open invoices"
         }
       },
       {
@@ -347,17 +263,17 @@
     "budget": null,
     "changed": {
       "n": 1,
-      "total": 508,
-      "rate": 0.001968503937007874,
+      "total": 548,
+      "rate": 0.0018248175182481751,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 66,
+    "complexity": 46,
     "robustness": 1,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a new first rule that handles cases where multiple subsets exist but one is an exact match with zero residual and the reference names open invoices, safely applying to reference as the team demonstrated. This respects the safety constraint because reference_names_open is true and the exact match with zero residual eliminates ambiguity about which invoices are being paid.",
+    "rationale": "Added a rule for multiple exact-match subsets where the reference names open invoices with zero gap, allowing apply_to_reference instead of asking. The original safety rule was tightened to only ask when reference_gap_cents > 0, since a zero-gap reference effectively confirms the payer's intent.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
     "seconds": 0.1,
@@ -365,19 +281,19 @@
     "grading": {
       "train": {
         "payment_prompt": {
-          "n": 178,
-          "current": 178,
-          "candidate": 178
+          "n": 194,
+          "current": 194,
+          "candidate": 194
         },
         "payment_parent": {
-          "n": 25,
-          "current": 25,
-          "candidate": 25
+          "n": 28,
+          "current": 28,
+          "candidate": 28
         },
         "payment_late": {
-          "n": 39,
-          "current": 39,
-          "candidate": 39
+          "n": 42,
+          "current": 42,
+          "candidate": 42
         },
         "payment_two_invoices": {
           "n": 10,
@@ -385,9 +301,9 @@
           "candidate": 10
         },
         "payment_bank_charge": {
-          "n": 17,
-          "current": 17,
-          "candidate": 17
+          "n": 20,
+          "current": 20,
+          "candidate": 20
         },
         "payment_on_account": {
           "n": 8,
@@ -395,14 +311,14 @@
           "candidate": 7
         },
         "payment_fx_difference": {
-          "n": 10,
-          "current": 10,
-          "candidate": 10
+          "n": 11,
+          "current": 11,
+          "candidate": 11
         },
         "payment_on_account_balance": {
-          "n": 8,
-          "current": 8,
-          "candidate": 8
+          "n": 9,
+          "current": 9,
+          "candidate": 9
         },
         "payment_duplicate": {
           "n": 2,
@@ -410,9 +326,9 @@
           "candidate": 2
         },
         "payment_two_invoices_bank_charge": {
-          "n": 3,
-          "current": 3,
-          "candidate": 3
+          "n": 4,
+          "current": 4,
+          "candidate": 4
         },
         "payment_statement_with_remittance": {
           "n": 49,
@@ -422,14 +338,14 @@
       },
       "val": {
         "payment_prompt": {
-          "n": 91,
-          "current": 91,
-          "candidate": 91
+          "n": 97,
+          "current": 97,
+          "candidate": 97
         },
         "payment_parent": {
-          "n": 18,
-          "current": 18,
-          "candidate": 18
+          "n": 20,
+          "current": 20,
+          "candidate": 20
         },
         "payment_two_invoices": {
           "n": 1,
@@ -442,19 +358,19 @@
           "candidate": 1
         },
         "payment_late": {
-          "n": 13,
-          "current": 13,
-          "candidate": 13
+          "n": 15,
+          "current": 15,
+          "candidate": 15
         },
         "payment_bank_charge": {
-          "n": 6,
-          "current": 6,
-          "candidate": 6
+          "n": 7,
+          "current": 7,
+          "candidate": 7
         },
         "payment_on_account_balance": {
-          "n": 2,
-          "current": 2,
-          "candidate": 2
+          "n": 3,
+          "current": 3,
+          "candidate": 3
         },
         "payment_on_account": {
           "n": 4,
@@ -479,24 +395,24 @@
       },
       "test": {
         "payment_prompt": {
-          "n": 89,
-          "current": 87,
-          "candidate": 87
+          "n": 92,
+          "current": 90,
+          "candidate": 90
         },
         "payment_parent": {
-          "n": 18,
-          "current": 18,
-          "candidate": 18
+          "n": 21,
+          "current": 21,
+          "candidate": 21
         },
         "payment_late": {
-          "n": 18,
-          "current": 18,
-          "candidate": 18
+          "n": 21,
+          "current": 21,
+          "candidate": 21
         },
         "payment_on_account_balance": {
-          "n": 4,
-          "current": 4,
-          "candidate": 4
+          "n": 5,
+          "current": 5,
+          "candidate": 5
         },
         "payment_bank_charge": {
           "n": 8,
@@ -524,9 +440,9 @@
           "candidate": 3
         },
         "payment_on_account": {
-          "n": 5,
-          "current": 3,
-          "candidate": 3
+          "n": 6,
+          "current": 4,
+          "candidate": 4
         },
         "payment_statement_with_remittance": {
           "n": 22,
@@ -535,6 +451,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:38:57.355Z"
+    "evaluatedAt": "2026-10-25T02:24:07.223Z"
   }
 }

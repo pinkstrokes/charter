@@ -141,7 +141,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice"
+          "note": "no subset matches but reference names open invoices"
         }
       },
       {
@@ -218,7 +218,7 @@
         {
           "subject": "receipt:BACS-536792-DUP",
           "label": "leave_unapplied_ask",
-          "source": "ask #119 answered by controller:Dana",
+          "source": "ask #123 answered by controller:Dana",
           "reason": "nothing open matches; this looks like a second payment of an invoice already paid",
           "handled": false
         },
@@ -239,7 +239,7 @@
         {
           "subject": "receipt:BACS-539338",
           "label": "apply_to_reference",
-          "source": "ask #136 answered by controller:Dana",
+          "source": "ask #146 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the banks' charges",
           "handled": true
         }
@@ -271,10 +271,10 @@
     "robustness": 0.9777777777777777,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a guard to the first rule so that when reference_paid is true (duplicate payment of an already-paid invoice) we skip apply_unique and fall through to leave_unapplied_ask. Also inserted a new rule before apply_by_terms to route solution_count=0 cases with reference_names_open to apply_to_reference, fixing the three bank-charge mismatch mistakes.",
+    "rationale": "Added a guard to the first rule so exact matches where the referenced invoice is already paid fall through to leave_unapplied_ask, preventing duplicate application. Also inserted a new rule before apply_by_terms to route zero-solution cases with reference_names_open to apply_to_reference, fixing the three missed receipts.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
-    "seconds": 0,
+    "seconds": 0.1,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -399,6 +399,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:37:51.024Z"
+    "evaluatedAt": "2026-10-25T02:23:07.058Z"
   }
 }

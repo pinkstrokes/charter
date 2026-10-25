@@ -1,0 +1,499 @@
+{
+  "program": {
+    "domain": "allocation",
+    "rules": [
+      {
+        "when": {
+          "op": "feat",
+          "name": "reference_paid"
+        },
+        "then": {
+          "decide": "leave_unapplied_ask",
+          "note": "payment reference names an already-paid invoice; likely a duplicate payment"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_paid"
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "one subset sums exactly to the receipt and reference is not already paid"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "exact_match"
+              }
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "reference_names_open"
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "single inexact match with no reference guidance; apply by contract terms rather than guessing"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "single inexact match but reference names an open invoice"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "or",
+              "args": [
+                {
+                  "op": "feat",
+                  "name": "remittance_consistent"
+                },
+                {
+                  "op": "feat",
+                  "name": "reference_matches_open"
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "payer confirmed which invoices among several matching subsets"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "multiple exact subsets but reference names open invoices with no gap, confirming intent"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 1
+          }
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "one subset explains the amount within tolerance"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 0
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "no subset matches but reference names open invoices"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "gt",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "reference_names_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "multiple inexact subsets but reference names open invoices, confirming payer intent"
+        }
+      },
+      {
+        "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "solution_count"
+          },
+          "b": {
+            "op": "num",
+            "v": 0
+          }
+        },
+        "then": {
+          "decide": "apply_by_terms",
+          "note": "no subset matches; apply by contract order"
+        }
+      }
+    ],
+    "otherwise": {
+      "decide": "leave_unapplied_ask",
+      "note": "several invoice sets explain this amount with no payer guidance"
+    }
+  },
+  "proof": {
+    "gate": "pass",
+    "domain": "allocation",
+    "parent": "allocation@3",
+    "lesson": {
+      "subjects": [
+        "receipt:BACS-497369-A"
+      ],
+      "required": 1,
+      "handled": [
+        "receipt:BACS-497369-A"
+      ],
+      "optionalFixed": 0,
+      "optionalTotal": 0,
+      "cases": [
+        {
+          "subject": "receipt:BACS-497369-A",
+          "label": "apply_by_terms",
+          "source": "ask #410 answered by controller:Dana",
+          "reason": "landed on 500236, the customer paid 497369",
+          "handled": true
+        }
+      ]
+    },
+    "labeled": {
+      "n": 74,
+      "correctBefore": 73,
+      "correctAfter": 74,
+      "fixed": [
+        "receipt:BACS-497369-A"
+      ],
+      "broken": [],
+      "asksAgain": [],
+      "newAlone": 0
+    },
+    "budget": null,
+    "changed": {
+      "n": 1,
+      "total": 349,
+      "rate": 0.0028653295128939827,
+      "limit": 0.1
+    },
+    "newLeads": [],
+    "safetyViolations": 0,
+    "complexity": 61,
+    "robustness": 1,
+    "alternatives": [],
+    "origin": "qwen3.8-max style 0",
+    "rationale": "Added a rule before the generic single-match fallback so that when solution_count=1 but the match is inexact and no reference names an open invoice, we apply by terms instead of blindly applying the unique subset. This fixes BACS-497369-A where a 120-cent residual with no reference guidance should follow contract terms, while preserving all other labeled cases.",
+    "candidatesTried": 3,
+    "candidatesPassed": 1,
+    "seconds": 0,
+    "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
+    "grading": {
+      "val": {
+        "payment_parent": {
+          "n": 11,
+          "current": 11,
+          "candidate": 11
+        },
+        "payment_late": {
+          "n": 9,
+          "current": 9,
+          "candidate": 9
+        },
+        "payment_prompt": {
+          "n": 51,
+          "current": 51,
+          "candidate": 51
+        },
+        "payment_bank_charge": {
+          "n": 7,
+          "current": 7,
+          "candidate": 7
+        },
+        "payment_two_invoices": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_on_account_balance": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "payment_on_account": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "payment_fx_difference": {
+          "n": 10,
+          "current": 10,
+          "candidate": 10
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 2,
+          "current": 2,
+          "candidate": 2
+        },
+        "payment_statement_with_remittance": {
+          "n": 16,
+          "current": 15,
+          "candidate": 15
+        }
+      },
+      "train": {
+        "payment_two_invoices_bank_charge": {
+          "n": 8,
+          "current": 7,
+          "candidate": 7
+        },
+        "payment_prompt": {
+          "n": 106,
+          "current": 106,
+          "candidate": 106
+        },
+        "payment_parent": {
+          "n": 13,
+          "current": 13,
+          "candidate": 13
+        },
+        "payment_fx_difference": {
+          "n": 8,
+          "current": 8,
+          "candidate": 8
+        },
+        "payment_late": {
+          "n": 33,
+          "current": 33,
+          "candidate": 33
+        },
+        "payment_on_account": {
+          "n": 6,
+          "current": 4,
+          "candidate": 6
+        },
+        "payment_bank_charge": {
+          "n": 12,
+          "current": 12,
+          "candidate": 12
+        },
+        "payment_on_account_balance": {
+          "n": 7,
+          "current": 7,
+          "candidate": 7
+        },
+        "payment_duplicate": {
+          "n": 4,
+          "current": 4,
+          "candidate": 4
+        },
+        "payment_two_invoices": {
+          "n": 2,
+          "current": 1,
+          "candidate": 1
+        },
+        "payment_statement_with_remittance": {
+          "n": 33,
+          "current": 33,
+          "candidate": 33
+        }
+      },
+      "test": {
+        "payment_prompt": {
+          "n": 58,
+          "current": 58,
+          "candidate": 58
+        },
+        "payment_bank_charge": {
+          "n": 13,
+          "current": 13,
+          "candidate": 13
+        },
+        "payment_parent": {
+          "n": 14,
+          "current": 14,
+          "candidate": 14
+        },
+        "payment_late": {
+          "n": 12,
+          "current": 12,
+          "candidate": 12
+        },
+        "payment_two_invoices_bank_charge": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "payment_on_account_balance": {
+          "n": 3,
+          "current": 3,
+          "candidate": 3
+        },
+        "payment_fx_difference": {
+          "n": 10,
+          "current": 10,
+          "candidate": 10
+        },
+        "payment_on_account": {
+          "n": 5,
+          "current": 4,
+          "candidate": 5
+        },
+        "payment_two_invoices": {
+          "n": 6,
+          "current": 6,
+          "candidate": 6
+        },
+        "payment_duplicate": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
+        },
+        "payment_statement_with_remittance": {
+          "n": 15,
+          "current": 15,
+          "candidate": 15
+        }
+      }
+    },
+    "evaluatedAt": "2026-10-25T02:25:34.035Z"
+  }
+}

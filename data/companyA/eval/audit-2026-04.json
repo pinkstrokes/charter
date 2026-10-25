@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 3418,
+   "population": 3513,
    "exceptions": 0,
    "examples": []
   },
@@ -77,10 +77,10 @@
  "samples": [
   {
    "name": "receivables billed",
-   "population": 165,
-   "bookCents": 23717550,
-   "tolerableCents": 1185878,
-   "intervalCents": 395293,
+   "population": 164,
+   "bookCents": 23698374,
+   "tolerableCents": 1184919,
+   "intervalCents": 394973,
    "sampleSize": 60,
    "items": [
     {
@@ -93,12 +93,12 @@
      ]
     },
     {
-     "id": "SUP-24262",
+     "id": "SUP-24263",
      "kind": "invoice:supply",
-     "book": 195510,
-     "audited": 195510,
+     "book": 217750,
+     "audited": 217750,
      "notes": [
-      "traced to sup:SUP-24262, hash verified"
+      "traced to sup:SUP-24263, hash verified"
      ]
     },
     {
@@ -111,59 +111,60 @@
      ]
     },
     {
-     "id": "SUP-24265",
-     "kind": "invoice:supply",
-     "book": 184200,
-     "audited": 184200,
-     "notes": [
-      "traced to sup:SUP-24265, hash verified"
-     ]
-    },
-    {
-     "id": "SUP-24270",
-     "kind": "invoice:supply",
-     "book": 154830,
-     "audited": 154830,
-     "notes": [
-      "traced to sup:SUP-24270, hash verified"
-     ]
-    },
-    {
-     "id": "R-S26-2026-04-06",
+     "id": "R-S14-2026-04-06",
      "kind": "invoice:royalty",
-     "book": 71466,
-     "audited": 71466,
+     "book": 81470,
+     "audited": 81470,
      "notes": [
-      "traced to email:m6e8a891a4b, hash verified",
+      "traced to email:m613315331a, hash verified",
       "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
-     "id": "R-S31-2026-04-06",
-     "kind": "invoice:royalty",
-     "book": 96133,
-     "audited": 96133,
+     "id": "SUP-24269",
+     "kind": "invoice:supply",
+     "book": 165710,
+     "audited": 165710,
      "notes": [
-      "traced to email:ma45d69d77c, hash verified",
+      "traced to sup:SUP-24269, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24275",
+     "kind": "invoice:supply",
+     "book": 240880,
+     "audited": 240880,
+     "notes": [
+      "traced to sup:SUP-24275, hash verified"
+     ]
+    },
+    {
+     "id": "R-S36-2026-04-06",
+     "kind": "invoice:royalty",
+     "book": 76388,
+     "audited": 76388,
+     "notes": [
+      "traced to email:m8d1c378d7e, hash verified",
       "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
-     "id": "SUP-24272",
-     "kind": "invoice:supply",
-     "book": 251590,
-     "audited": 251590,
+     "id": "R-S34-2026-03-30",
+     "kind": "invoice:royalty",
+     "book": 88825,
+     "audited": 88825,
      "notes": [
-      "traced to sup:SUP-24272, hash verified"
+      "traced to email:mc839d93b7a, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
-     "id": "R-S18-2026-03-30",
+     "id": "R-S05-2026-03-30",
      "kind": "invoice:royalty",
-     "book": 43132,
-     "audited": 43132,
+     "book": 73326,
+     "audited": 73326,
      "notes": [
-      "traced to email:m17328374af, hash verified",
+      "traced to email:m823326b265, hash verified",
       "royalty recomputed from csv re-read: agrees"
      ]
     },
@@ -196,13 +197,12 @@
      ]
     },
     {
-     "id": "R-S22-2026-03-30",
-     "kind": "invoice:royalty",
-     "book": 69870,
-     "audited": 69870,
+     "id": "SUP-24282",
+     "kind": "invoice:supply",
+     "book": 237270,
+     "audited": 237270,
      "notes": [
-      "traced to email:mab0bd25168, hash verified",
-      "royalty recomputed from csv re-read: agrees"
+      "traced to sup:SUP-24282, hash verified"
      ]
     },
     {
@@ -215,12 +215,13 @@
      ]
     },
     {
-     "id": "SUP-24284",
-     "kind": "invoice:supply",
-     "book": 196760,
-     "audited": 196760,
+     "id": "R-S12-2026-04-06",
+     "kind": "invoice:royalty",
+     "book": 69835,
+     "audited": 69835,
      "notes": [
-      "traced to sup:SUP-24284, hash verified"
+      "traced to email:mbeb2acb8e7, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
@@ -314,21 +315,30 @@
      ]
     },
     {
-     "id": "SUP-24278",
+     "id": "SUP-24273",
      "kind": "invoice:supply",
-     "book": 261890,
-     "audited": 261890,
+     "book": 245170,
+     "audited": 245170,
      "notes": [
-      "traced to sup:SUP-24278, hash verified"
+      "traced to sup:SUP-24273, hash verified"
      ]
     },
     {
-     "id": "SUP-24300",
+     "id": "SUP-24292",
      "kind": "invoice:supply",
-     "book": 212220,
-     "audited": 212220,
+     "book": 248470,
+     "audited": 248470,
      "notes": [
-      "traced to sup:SUP-24300, hash verified"
+      "traced to sup:SUP-24292, hash verified"
+     ]
+    },
+    {
+     "id": "SUP-24285",
+     "kind": "invoice:supply",
+     "book": 169190,
+     "audited": 169190,
+     "notes": [
+      "traced to sup:SUP-24285, hash verified"
      ]
     },
     {
@@ -341,12 +351,12 @@
      ]
     },
     {
-     "id": "SUP-24291",
+     "id": "SUP-24301",
      "kind": "invoice:supply",
-     "book": 150730,
-     "audited": 150730,
+     "book": 306750,
+     "audited": 306750,
      "notes": [
-      "traced to sup:SUP-24291, hash verified"
+      "traced to sup:SUP-24301, hash verified"
      ]
     },
     {
@@ -431,21 +441,13 @@
      ]
     },
     {
-     "id": "SUP-24288",
-     "kind": "invoice:supply",
-     "book": 254490,
-     "audited": 254490,
+     "id": "R-S14-2026-04-13",
+     "kind": "invoice:royalty",
+     "book": 85955,
+     "audited": 85955,
      "notes": [
-      "traced to sup:SUP-24288, hash verified"
-     ]
-    },
-    {
-     "id": "SUP-24301",
-     "kind": "invoice:supply",
-     "book": 306750,
-     "audited": 306750,
-     "notes": [
-      "traced to sup:SUP-24301, hash verified"
+      "traced to email:m79a1911608, hash verified",
+      "royalty recomputed from csv re-read: agrees"
      ]
     },
     {
@@ -635,7 +637,7 @@
     }
    ],
    "projectedCents": 0,
-   "upperLimitCents": 1185878
+   "upperLimitCents": 1184919
   },
   {
    "name": "payables approved",

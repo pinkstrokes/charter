@@ -1,0 +1,145 @@
+{
+ "months": {
+  "2026-01": {
+   "decisions": 183,
+   "spot checks": 47,
+   "asked": 3,
+   "second looks": 1,
+   "answered": 47,
+   "money released": 1
+  },
+  "2026-02": {
+   "decisions": 279,
+   "spot checks": 58,
+   "second looks": 3,
+   "asked": 26,
+   "corrections": 2,
+   "answered": 93,
+   "months closed": 1,
+   "money released": 19,
+   "versions and policies approved": 1
+  },
+  "2026-03": {
+   "decisions": 315,
+   "spot checks": 68,
+   "corrections": 2,
+   "asked": 41,
+   "second looks": 3,
+   "answered": 116,
+   "months closed": 1,
+   "money released": 16,
+   "versions and policies approved": 3,
+   "bank changes endorsed": 2
+  },
+  "2026-04": {
+   "decisions": 278,
+   "asked": 39,
+   "spot checks": 92,
+   "second looks": 3,
+   "corrections": 1,
+   "answered": 149,
+   "months closed": 1,
+   "money released": 14,
+   "bank changes endorsed": 1,
+   "write-offs, waivers, reversals": 1,
+   "versions and policies approved": 4
+  },
+  "2026-05": {
+   "decisions": 297,
+   "spot checks": 96,
+   "asked": 41,
+   "second looks": 4,
+   "corrections": 1,
+   "answered": 141,
+   "money released": 22,
+   "write-offs, waivers, reversals": 2,
+   "months closed": 1
+  },
+  "2026-06": {
+   "decisions": 266,
+   "spot checks": 72,
+   "asked": 23,
+   "answered": 101,
+   "months closed": 1,
+   "money released": 15,
+   "versions and policies approved": 1
+  }
+ },
+ "total": {
+  "decisions": 1618,
+  "spot checks": 433,
+  "asked": 173,
+  "second looks": 14,
+  "answered": 647,
+  "money released": 87,
+  "corrections": 6,
+  "months closed": 5,
+  "versions and policies approved": 9,
+  "bank changes endorsed": 3,
+  "write-offs, waivers, reversals": 3
+ },
+ "askedByKind": {
+  "bill_exception": {
+   "2026-01": 1,
+   "2026-02": 2,
+   "2026-03": 2,
+   "2026-04": 4,
+   "2026-05": 2,
+   "2026-06": 2
+  },
+  "identify_payer": {
+   "2026-01": 1,
+   "2026-04": 1
+  },
+  "payment_release": {
+   "2026-01": 1,
+   "2026-02": 18,
+   "2026-03": 17,
+   "2026-04": 15,
+   "2026-05": 21,
+   "2026-06": 16
+  },
+  "callback": {
+   "2026-02": 1,
+   "2026-03": 2,
+   "2026-04": 1,
+   "2026-06": 1
+  },
+  "audit": {
+   "2026-02": 1,
+   "2026-03": 16,
+   "2026-04": 15,
+   "2026-05": 12,
+   "2026-06": 3
+  },
+  "dispute": {
+   "2026-02": 2,
+   "2026-04": 1,
+   "2026-05": 2
+  },
+  "unapplied_cash": {
+   "2026-02": 1,
+   "2026-05": 1
+  },
+  "refund_release": {
+   "2026-02": 1,
+   "2026-05": 1
+  },
+  "finding": {
+   "2026-03": 1,
+   "2026-04": 1
+  },
+  "collections": {
+   "2026-03": 1,
+   "2026-04": 1
+  },
+  "allocation": {
+   "2026-03": 1,
+   "2026-05": 2,
+   "2026-06": 1
+  },
+  "royalty_decrease": {
+   "2026-03": 1
+  }
+ }
+}

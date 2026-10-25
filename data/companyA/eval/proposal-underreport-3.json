@@ -30,43 +30,10 @@
             },
             {
               "op": "cmp",
-              "c": "gt",
-              "a": {
-                "op": "arith",
-                "f": "sub",
-                "args": [
-                  {
-                    "op": "feat",
-                    "name": "own_cash_share_history"
-                  },
-                  {
-                    "op": "feat",
-                    "name": "cash_share"
-                  }
-                ]
-              },
-              "b": {
-                "op": "num",
-                "v": 0.15
-              }
-            }
-          ]
-        },
-        "then": {
-          "decide": "flag_audit",
-          "note": "Supply-implied gross exceeds reported by over 10% and cash share dropped sharply from this store's own history"
-        }
-      },
-      {
-        "when": {
-          "op": "and",
-          "args": [
-            {
-              "op": "cmp",
-              "c": "gt",
+              "c": "lt",
               "a": {
                 "op": "feat",
-                "name": "supply_implied_gross"
+                "name": "cash_share"
               },
               "b": {
                 "op": "arith",
@@ -74,35 +41,13 @@
                 "args": [
                   {
                     "op": "feat",
-                    "name": "reported_gross"
+                    "name": "own_cash_share_history"
                   },
                   {
                     "op": "num",
-                    "v": 1.03
+                    "v": 0.6
                   }
                 ]
-              }
-            },
-            {
-              "op": "cmp",
-              "c": "gt",
-              "a": {
-                "op": "arith",
-                "f": "sub",
-                "args": [
-                  {
-                    "op": "feat",
-                    "name": "cash_share"
-                  },
-                  {
-                    "op": "feat",
-                    "name": "own_cash_share_history"
-                  }
-                ]
-              },
-              "b": {
-                "op": "num",
-                "v": 0.1
               }
             },
             {
@@ -114,14 +59,14 @@
               },
               "b": {
                 "op": "num",
-                "v": 4
+                "v": 3
               }
             }
           ]
         },
         "then": {
           "decide": "flag_audit",
-          "note": "Supplies imply higher gross, cash share spiked versus own history, with sufficient data to confirm the pattern"
+          "note": "Supply-implied gross exceeds reported by over 10% and cash share is abnormally low versus this store's own history with sufficient data"
         }
       },
       {
@@ -149,7 +94,7 @@
         },
         "then": {
           "decide": "flag_audit",
-          "note": "Reported card sales significantly below processor-settled amount"
+          "note": "Reported card sales are below what the processor settled"
         }
       },
       {
@@ -173,68 +118,50 @@
                   },
                   {
                     "op": "num",
-                    "v": 1.18
+                    "v": 1.227
                   }
                 ]
               }
             },
             {
               "op": "cmp",
-              "c": "gt",
+              "c": "lt",
               "a": {
+                "op": "feat",
+                "name": "cash_share"
+              },
+              "b": {
                 "op": "arith",
-                "f": "sub",
+                "f": "mul",
                 "args": [
                   {
                     "op": "feat",
-                    "name": "cash_share"
+                    "name": "peer_cash_share"
                   },
                   {
-                    "op": "feat",
-                    "name": "peer_cash_share"
+                    "op": "num",
+                    "v": 0.6
                   }
                 ]
-              },
-              "b": {
-                "op": "num",
-                "v": 0.06
               }
             },
             {
               "op": "cmp",
-              "c": "ge",
+              "c": "lt",
               "a": {
                 "op": "feat",
                 "name": "weeks_of_history"
               },
               "b": {
                 "op": "num",
-                "v": 4
+                "v": 3
               }
             }
           ]
         },
         "then": {
           "decide": "ask_consultant",
-          "note": "Supplies imply much higher gross and cash share elevated versus peers; needs consultant review given sufficient history"
-        }
-      },
-      {
-        "when": {
-          "op": "cmp",
-          "c": "eq",
-          "a": {
-            "op": "feat",
-            "name": "report_revised"
-          },
-          "b": {
-            "op": "bool",
-            "v": true
-          }
-        },
-        "then": {
-          "decide": "accept",
-          "note": "Minor revised reports without significant supply discrepancy are accepted as routine corrections"
+          "note": "Large supply gap and low cash share vs peers but insufficient own history to confirm pattern"
         }
       }
     ],
@@ -248,113 +175,156 @@
     "parent": "underreport@2",
     "lesson": {
       "subjects": [
-        "store:S09:2026-01-26",
-        "store:S03:2026-03-02",
-        "store:S34:2026-02-09",
-        "store:S03:2026-02-23",
-        "store:S16:2026-03-16"
+        "store:S36:2026-02-16",
+        "store:S23:2026-02-23",
+        "store:S36:2026-01-26",
+        "store:S36:2026-02-02",
+        "store:S23:2026-02-16",
+        "store:S36:2026-03-02",
+        "store:S36:2026-03-09",
+        "store:S23:2026-03-09"
       ],
       "required": 0,
       "handled": [],
-      "optionalFixed": 3,
-      "optionalTotal": 5,
+      "optionalFixed": 8,
+      "optionalTotal": 8,
       "cases": [
         {
-          "subject": "store:S09:2026-01-26",
+          "subject": "store:S36:2026-02-16",
           "label": "accept",
-          "source": "ask #213 answered by consultant:Lee",
-          "reason": "I know Pearl Lane’s numbers are honest, so this small gap is just ordinary noise from a bulk buy; I accept the report without an audit.",
+          "source": "ask #167 answered by consultant:Priya",
+          "reason": "The reported figures align with historical patterns for this low-cash office location, so the variance is expected and no audit is needed.",
           "handled": false
         },
         {
-          "subject": "store:S03:2026-03-02",
+          "subject": "store:S23:2026-02-23",
           "label": "accept",
           "source": "field audit by consultant:Lee",
-          "reason": "Actual sales and owner-reported figures match perfectly at $10,291.45 for the week of 2026-03-02, confirming accurate reporting by our Oakland Chinatown store.",
+          "reason": "The owner’s reported sales of $12,311.62 match the POS and bank deposit records exactly at $12,311.62, so we’re good to go.",
           "handled": false
         },
         {
-          "subject": "store:S34:2026-02-09",
+          "subject": "store:S36:2026-01-26",
           "label": "accept",
-          "source": "ask #214 answered by consultant:Lee",
-          "reason": "I know Pearl Lane’s numbers are honest, so this small gap is just ordinary noise from a bulk buy or promo; let’s accept the report and skip the audit.",
+          "source": "ask #163 answered by consultant:Priya",
+          "reason": "The 2.8% variance and minor cash share deviation are immaterial for this office-district location, so the report is accurate.",
           "handled": false
         },
         {
-          "subject": "store:S03:2026-02-23",
+          "subject": "store:S36:2026-02-02",
           "label": "accept",
-          "source": "ask #218 answered by consultant:Lee",
-          "reason": "I know Pearl Lane’s numbers are honest, so this gap is just a bulk buy or promo noise rather than fraud.",
+          "source": "ask #165 answered by consultant:Priya",
+          "reason": "The supply variance is negligible, and the low cash share aligns perfectly with this office-district location’s historical pattern of minimal card usage.",
           "handled": false
         },
         {
-          "subject": "store:S16:2026-03-16",
+          "subject": "store:S23:2026-02-16",
           "label": "accept",
-          "source": "ask #234 answered by consultant:Priya",
-          "reason": "The gap between reported sales and supply estimates is minor, consistent with normal operational noise or a bulk purchase, so I accept the report without an audit.",
+          "source": "ask #168 answered by consultant:Lee",
+          "reason": "The supply gap is just rounding noise, and the low cash share matches this office store’s historical pattern of minimal card transactions.",
+          "handled": false
+        },
+        {
+          "subject": "store:S36:2026-03-02",
+          "label": "accept",
+          "source": "ask #174 answered by consultant:Priya",
+          "reason": "The $20 variance is immaterial and the cash share aligns with historical norms for this office-district location, so no audit is required.",
+          "handled": false
+        },
+        {
+          "subject": "store:S36:2026-03-09",
+          "label": "accept",
+          "source": "ask #198 answered by consultant:Priya",
+          "reason": "The 4% gap is within normal variance for an office-district location, and the low cash share aligns with its historical profile.",
+          "handled": false
+        },
+        {
+          "subject": "store:S23:2026-03-09",
+          "label": "accept",
+          "source": "ask #205 answered by consultant:Lee",
+          "reason": "I know Pearl Lane #23 barely takes cash, so that 8% is normal noise, and the tiny supply gap isn't worth an audit.",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 68,
-      "correctBefore": 63,
-      "correctAfter": 66,
+      "n": 41,
+      "correctBefore": 33,
+      "correctAfter": 41,
       "fixed": [
-        "store:S09:2026-01-26",
-        "store:S34:2026-02-09",
-        "store:S16:2026-03-16"
+        "store:S36:2026-02-16",
+        "store:S23:2026-02-23",
+        "store:S36:2026-01-26",
+        "store:S36:2026-02-02",
+        "store:S23:2026-02-16",
+        "store:S36:2026-03-02",
+        "store:S36:2026-03-09",
+        "store:S23:2026-03-09"
       ],
       "broken": [],
       "asksAgain": [],
-      "newAlone": 3
+      "newAlone": 8
     },
     "budget": {
-      "flagged": 6,
-      "total": 216,
-      "rate": 0.027777777777777776,
+      "flagged": 5,
+      "total": 148,
+      "rate": 0.033783783783783786,
       "limit": 0.06
     },
     "changed": {
-      "n": 0,
-      "total": 216,
-      "rate": 0,
+      "n": 1,
+      "total": 148,
+      "rate": 0.006756756756756757,
       "limit": 0.1
     },
-    "newLeads": [],
+    "newLeads": [
+      "store:S03:2026-01-19"
+    ],
     "safetyViolations": 0,
-    "complexity": 53,
-    "robustness": 0.6011029411764706,
+    "complexity": 37,
+    "robustness": 0.6321138211382114,
     "alternatives": [
       {
-        "origin": "qwen3.8-max style 0",
-        "robustness": 0.5894607843137255,
+        "origin": "qwen3.8-max style 0, constants tuned by replay, thresholds centred by replay",
+        "robustness": 0.6310975609756098,
         "newLeads": 0,
-        "complexity": 63
+        "complexity": 27
+      },
+      {
+        "origin": "qwen3.8-max style 2, thresholds centred by replay",
+        "robustness": 0.6290650406504065,
+        "newLeads": 0,
+        "complexity": 22
+      },
+      {
+        "origin": "qwen3.8-max style 1",
+        "robustness": 0.6270325203252033,
+        "newLeads": 1,
+        "complexity": 37
       }
     ],
-    "origin": "qwen3.8-max style 1",
-    "rationale": "The revised-report rule was split so that minor revisions (like bulk-buy noise) auto-accept while those paired with a >5% supply gap still escalate to a consultant, matching all human overrides. All other existing audit rules were preserved because they correctly require two independent signals before flagging.",
-    "candidatesTried": 3,
-    "candidatesPassed": 2,
-    "seconds": 0.1,
+    "origin": "qwen3.8-max style 1, thresholds centred by replay",
+    "rationale": "The original rule falsely flagged stores whose cash share was consistently low for their location type by comparing only to peers; the fix requires both a material supply gap (>10%) and a cash share far below the store's own historical median (two independent signals) before auditing, while routing new stores with peer-deviant patterns to a consultant.",
+    "candidatesTried": 8,
+    "candidatesPassed": 7,
+    "seconds": 12.9,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
         "clean": {
-          "n": 57,
-          "current": 54,
-          "candidate": 55
+          "n": 42,
+          "current": 42,
+          "candidate": 42
         },
         "underreported_cash": {
           "n": 3,
           "current": 2,
-          "candidate": 2
+          "candidate": 3
         },
         "clean_low_cash": {
-          "n": 8,
-          "current": 8,
-          "candidate": 8
+          "n": 5,
+          "current": 2,
+          "candidate": 5
         },
         "prompt_injection": {
           "n": 1,
@@ -364,44 +334,44 @@
       },
       "train": {
         "clean": {
-          "n": 129,
-          "current": 129,
-          "candidate": 129
+          "n": 84,
+          "current": 84,
+          "candidate": 84
         },
         "underreported_cash": {
           "n": 2,
           "current": 2,
           "candidate": 2
         },
-        "revised_report": {
-          "n": 2,
-          "current": 0,
-          "candidate": 2
-        },
         "clean_low_cash": {
-          "n": 14,
-          "current": 14,
-          "candidate": 14
+          "n": 10,
+          "current": 5,
+          "candidate": 10
+        },
+        "revised_report": {
+          "n": 1,
+          "current": 1,
+          "candidate": 1
         }
       },
       "test": {
         "clean": {
-          "n": 54,
-          "current": 51,
-          "candidate": 53
+          "n": 43,
+          "current": 43,
+          "candidate": 43
         },
         "underreported_cash": {
           "n": 4,
-          "current": 3,
+          "current": 4,
           "candidate": 3
         },
         "clean_low_cash": {
-          "n": 6,
-          "current": 6,
-          "candidate": 6
+          "n": 5,
+          "current": 2,
+          "candidate": 5
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:38:59.077Z"
+    "evaluatedAt": "2026-10-25T02:26:36.725Z"
   }
 }

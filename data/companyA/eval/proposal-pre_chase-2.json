@@ -35,7 +35,7 @@
         },
         "then": {
           "decide": "hold",
-          "note": "trusted payment announced and in transit"
+          "note": "payment announced and in transit, hold per agreement notice provision"
         }
       },
       {
@@ -45,6 +45,7 @@
         },
         "then": {
           "decide": "ask_consultant",
+          "askRole": "consultant",
           "note": "balance is disputed"
         }
       }
@@ -71,16 +72,16 @@
         {
           "subject": "entity:F08:2026-03-04",
           "label": "hold",
-          "source": "ask #143 answered by controller:Dana",
+          "source": "ask #150 answered by controller:Dana",
           "reason": "The ledger confirms check #4410 is in transit, so per the agreement’s notice provision, we hold collection for seven days.",
           "handled": true
         }
       ]
     },
     "labeled": {
-      "n": 40,
-      "correctBefore": 39,
-      "correctAfter": 40,
+      "n": 43,
+      "correctBefore": 42,
+      "correctAfter": 43,
       "fixed": [
         "entity:F08:2026-03-04"
       ],
@@ -102,22 +103,22 @@
     "alternatives": [
       {
         "origin": "qwen3.8-max style 2",
-        "robustness": 0.990625,
+        "robustness": 1,
         "newLeads": 0,
         "complexity": 11
       },
       {
         "origin": "qwen3.8-max style 1",
-        "robustness": 0.990625,
+        "robustness": 0.9912790697674418,
         "newLeads": 0,
-        "complexity": 15
+        "complexity": 17
       }
     ],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule to hold collection when an announced payment is greater than zero, reflecting the controller's guidance that trusted in-transit payments warrant a hold. This single addition fixes the F08 mistake while preserving the safety rule and all previously labeled cases.",
+    "rationale": "Added a rule to hold collection when an announced payment is in transit, matching the controller's guidance for entity F08. This rule is placed after the grace-period check so the safety rule is never violated.",
     "candidatesTried": 3,
     "candidatesPassed": 3,
-    "seconds": 0,
+    "seconds": 10.9,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -157,6 +158,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:38:17.217Z"
+    "evaluatedAt": "2026-10-25T02:24:39.610Z"
   }
 }

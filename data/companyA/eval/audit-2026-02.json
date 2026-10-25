@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 1496,
+   "population": 1510,
    "exceptions": 0,
    "examples": []
   },
@@ -77,10 +77,10 @@
  "samples": [
   {
    "name": "receivables billed",
-   "population": 166,
-   "bookCents": 21576112,
-   "tolerableCents": 1078806,
-   "intervalCents": 359602,
+   "population": 167,
+   "bookCents": 21588173,
+   "tolerableCents": 1079409,
+   "intervalCents": 359803,
    "sampleSize": 60,
    "items": [
     {
@@ -205,12 +205,12 @@
      ]
     },
     {
-     "id": "SUP-24119",
+     "id": "SUP-24112",
      "kind": "invoice:supply",
-     "book": 209540,
-     "audited": 209540,
+     "book": 245840,
+     "audited": 245840,
      "notes": [
-      "traced to sup:SUP-24119, hash verified"
+      "traced to sup:SUP-24112, hash verified"
      ]
     },
     {
@@ -262,12 +262,12 @@
      ]
     },
     {
-     "id": "R-S09-2026-02-16",
+     "id": "R-S14-2026-02-16",
      "kind": "invoice:royalty",
-     "book": 49032,
-     "audited": 49032,
+     "book": 79030,
+     "audited": 79030,
      "notes": [
-      "traced to email:mee7d47d052, hash verified",
+      "traced to email:m2f19445940, hash verified",
       "royalty recomputed from csv re-read: agrees"
      ]
     },
@@ -310,12 +310,12 @@
      ]
     },
     {
-     "id": "R-S34-2026-02-09",
+     "id": "R-S31-2026-02-09",
      "kind": "invoice:royalty",
-     "book": 77816,
-     "audited": 77816,
+     "book": 86981,
+     "audited": 86981,
      "notes": [
-      "traced to email:m6f008c1f28, hash verified",
+      "traced to email:m2bfd41e761, hash verified",
       "royalty recomputed from csv re-read: agrees"
      ]
     },
@@ -638,7 +638,7 @@
     }
    ],
    "projectedCents": 0,
-   "upperLimitCents": 1078806
+   "upperLimitCents": 1079409
   },
   {
    "name": "payables approved",

@@ -52,7 +52,7 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "one subset within tolerance but reference names an open invoice; trust the payer's reference"
+          "note": "one subset within tolerance but not exact; reference names an open invoice so follow the payer's pointer"
         }
       },
       {
@@ -155,7 +155,7 @@
         {
           "subject": "receipt:BACS-492737",
           "label": "apply_to_reference",
-          "source": "ask #124 answered by controller:Dana",
+          "source": "ask #134 answered by controller:Dana",
           "reason": "landed on 492792, the customer paid 492737",
           "handled": true
         }
@@ -185,17 +185,23 @@
     "robustness": 1,
     "alternatives": [
       {
+        "origin": "qwen3.8-max style 2",
+        "robustness": 1,
+        "newLeads": 0,
+        "complexity": 30
+      },
+      {
         "origin": "qwen3.8-max style 1",
         "robustness": 1,
         "newLeads": 0,
-        "complexity": 44
+        "complexity": 35
       }
     ],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a rule before the generic solution_count=1 fallback: when there is one inexact subset but the reference names an open invoice, trust the payer's reference and apply_to_reference. This fixes BACS-492737 where the controller confirmed the customer intended to pay the referenced invoice despite the near-match subset.",
+    "rationale": "Added a rule before the generic solution_count=1 catch-all: when there is one inexact subset but the reference names an open invoice, prefer apply_to_reference because the payer's pointer is more reliable than a fuzzy match. This fixes BACS-492737 while keeping all other labeled cases correct.",
     "candidatesTried": 3,
-    "candidatesPassed": 2,
-    "seconds": 0.1,
+    "candidatesPassed": 3,
+    "seconds": 0,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "val": {
@@ -315,6 +321,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:37:50.952Z"
+    "evaluatedAt": "2026-10-25T02:23:07.050Z"
   }
 }

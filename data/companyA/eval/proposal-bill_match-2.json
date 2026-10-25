@@ -5,14 +5,14 @@
       {
         "when": {
           "op": "cmp",
-          "c": "ge",
+          "c": "gt",
           "a": {
             "op": "feat",
             "name": "duplicate_score"
           },
           "b": {
             "op": "num",
-            "v": 0.9
+            "v": 0.5
           }
         },
         "then": {
@@ -105,7 +105,7 @@
         {
           "subject": "bill:V04:BAD-34842",
           "label": "reject",
-          "source": "ask #327 answered by controller:Dana",
+          "source": "ask #359 answered by controller:Dana",
           "reason": "The ledger confirms this is a duplicate of V02:PC-38355, so reject it immediately.",
           "handled": true
         },
@@ -126,42 +126,42 @@
         {
           "subject": "bill:V03:GT35276",
           "label": "approve",
-          "source": "ask #122 answered by controller:Dana",
+          "source": "ask #125 answered by controller:Dana",
           "reason": "The ledger confirms purchasing agreed to this price increase with Golden Tapioca, so the variance is authorized.",
           "handled": false
         },
         {
           "subject": "bill:V05:INV-36645",
           "label": "approve",
-          "source": "ask #141 answered by controller:Dana",
+          "source": "ask #148 answered by controller:Dana",
           "reason": "CleanPro’s monthly service requires no PO by design, and the amount matches the contract rate.",
           "handled": false
         },
         {
           "subject": "bill:V02:PC-38354",
           "label": "reject",
-          "source": "ask #151 answered by controller:Dana",
+          "source": "ask #160 answered by controller:Dana",
           "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount; reject this bill.",
           "handled": false
         },
         {
           "subject": "bill:V03:GT35294",
           "label": "reject",
-          "source": "ask #260 answered by controller:Dana",
+          "source": "ask #267 answered by controller:Dana",
           "reason": "Reject GT35294 because the unit price exceeds the PO and lacks mutual agreement.",
           "handled": false
         },
         {
           "subject": "bill:V05:INV-36647",
           "label": "approve",
-          "source": "ask #280 answered by controller:Dana",
+          "source": "ask #295 answered by controller:Dana",
           "reason": "CleanPro’s monthly service requires no purchase order and the amount matches the contract rate, so approve it.",
           "handled": false
         },
         {
           "subject": "bill:V02:PC-38366",
           "label": "reject",
-          "source": "ask #330 answered by controller:Dana",
+          "source": "ask #362 answered by controller:Dana",
           "reason": "The receiving log confirms a short shipment, so we cannot pay the full PO amount as billed.",
           "handled": false
         }
@@ -210,10 +210,10 @@
       }
     ],
     "origin": "qwen3.8-max style 2, constants tuned by replay",
-    "rationale": "Added a rule to reject bills with a very high duplicate score (>=0.9) and raised the over-billing rejection threshold above 5% to correctly reject short shipments while still approving authorized price increases like Golden Tapioca's 8% variance. The hold exception at >2% remains to catch smaller discrepancies that need review.",
+    "rationale": "Added a leading rule to reject bills with a high duplicate score and tightened over-billing thresholds so amounts exceeding received goods by more than 5% are rejected while smaller overages are held for review. Kept the no-PO hold rule intact to satisfy the safety requirement while allowing authorized price increases within tolerance to pass.",
     "candidatesTried": 8,
     "candidatesPassed": 6,
-    "seconds": 0,
+    "seconds": 11,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -273,6 +273,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:39:04.754Z"
+    "evaluatedAt": "2026-10-25T02:31:22.680Z"
   }
 }

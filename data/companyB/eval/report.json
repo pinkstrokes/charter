@@ -1,6 +1,6 @@
 {
  "db": "charter-b",
- "generatedAt": "2026-10-24T23:47:58.591Z",
+ "generatedAt": "2026-10-25T02:38:08.790Z",
  "answerKeyEntries": 1292,
  "outcomes": {
   "train": {
@@ -63,7 +63,7 @@
   "val": {
    "payment_prompt": {
     "n": 164,
-    "right": 161,
+    "right": 162,
     "missing": 2
    },
    "payment_parent": {
@@ -165,7 +165,7 @@
    },
    "payment_on_account": {
     "n": 12,
-    "right": 9,
+    "right": 10,
     "missing": 0
    },
    "payment_statement_with_remittance": {
@@ -225,7 +225,7 @@
   "val": {
    "payment_prompt": {
     "n": 162,
-    "right": 161
+    "right": 162
    },
    "payment_parent": {
     "n": 30,
@@ -307,7 +307,7 @@
    },
    "payment_on_account": {
     "n": 12,
-    "right": 9
+    "right": 10
    },
    "payment_statement_with_remittance": {
     "n": 40,
@@ -319,8 +319,8 @@
  "knowingWhenToAsk": {
   "allocation": {
    "handledAlone": 304,
-   "wrong": 4,
-   "upper95": 0.02985574787481818
+   "wrong": 3,
+   "upper95": 0.0253066487314968
   }
  },
  "generations": [
@@ -386,9 +386,9 @@
     },
     "payment_on_account": {
      "n": 12,
-     "right": 9,
+     "right": 10,
      "alone": 12,
-     "wrong": 3
+     "wrong": 2
     },
     "payment_statement_with_remittance": {
      "n": 40,
@@ -460,9 +460,9 @@
     },
     "payment_on_account": {
      "n": 12,
-     "right": 9,
+     "right": 10,
      "alone": 12,
-     "wrong": 3
+     "wrong": 2
     },
     "payment_statement_with_remittance": {
      "n": 40,
@@ -534,9 +534,9 @@
     },
     "payment_on_account": {
      "n": 12,
-     "right": 9,
+     "right": 10,
      "alone": 12,
-     "wrong": 3
+     "wrong": 2
     },
     "payment_statement_with_remittance": {
      "n": 40,
@@ -549,8 +549,8 @@
   {
    "key": "allocation@4",
    "status": "retired",
-   "createdAt": "2011-04-03",
-   "activatedAt": "2011-04-03",
+   "createdAt": "2011-03-27",
+   "activatedAt": "2011-03-27",
    "test": {
     "payment_prompt": {
      "n": 146,
@@ -608,9 +608,9 @@
     },
     "payment_on_account": {
      "n": 12,
-     "right": 9,
+     "right": 10,
      "alone": 12,
-     "wrong": 3
+     "wrong": 2
     },
     "payment_statement_with_remittance": {
      "n": 40,
@@ -623,8 +623,8 @@
   {
    "key": "allocation@5",
    "status": "active",
-   "createdAt": "2011-04-17",
-   "activatedAt": "2011-04-17",
+   "createdAt": "2011-04-24",
+   "activatedAt": "2011-04-24",
    "test": {
     "payment_prompt": {
      "n": 146,
@@ -682,9 +682,9 @@
     },
     "payment_on_account": {
      "n": 12,
-     "right": 9,
+     "right": 10,
      "alone": 12,
-     "wrong": 3
+     "wrong": 2
     },
     "payment_statement_with_remittance": {
      "n": 40,
@@ -835,12 +835,12 @@
    "domains": {
     "allocation": {
      "decisions": 206,
-     "alone": 201,
-     "aloneGraded": 201,
-     "aloneRight": 200,
-     "questions": 8,
-     "aloneShare": 0.9757281553398058,
-     "aloneAccuracy": 0.9950248756218906
+     "alone": 202,
+     "aloneGraded": 202,
+     "aloneRight": 202,
+     "questions": 7,
+     "aloneShare": 0.9805825242718447,
+     "aloneAccuracy": 1
     },
     "pre_chase": {
      "decisions": 1614,
@@ -886,8 +886,8 @@
  },
  "security": {},
  "attempts": {
-  "total": 9765,
-  "denied": 439,
+  "total": 10001,
+  "denied": 7,
   "rejected": 2
  },
  "invariants": {
@@ -899,9 +899,9 @@
   "cashEqualsBank": true
  },
  "chain": {
-  "rows": 9765,
-  "verified": 9765,
+  "rows": 10001,
+  "verified": 10001,
   "firstBreak": null,
-  "head": "6d7614d99073a1aaab19c3992cff6f2cc4b4dd48c96a782f4f3b3eb3aae31776"
+  "head": "1d6e1bc8ee979a9b3dc0c47bda921ecb2baa998830339166b91725c686db6404"
  }
 }

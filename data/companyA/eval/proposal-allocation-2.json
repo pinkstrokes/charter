@@ -4,6 +4,24 @@
     "rules": [
       {
         "when": {
+          "op": "cmp",
+          "c": "eq",
+          "a": {
+            "op": "feat",
+            "name": "reference_paid"
+          },
+          "b": {
+            "op": "bool",
+            "v": true
+          }
+        },
+        "then": {
+          "decide": "leave_unapplied_ask",
+          "note": "reference names an already-paid invoice; hold for manual review"
+        }
+      },
+      {
+        "when": {
           "op": "and",
           "args": [
             {
@@ -23,13 +41,6 @@
               "name": "exact_match"
             },
             {
-              "op": "not",
-              "a": {
-                "op": "feat",
-                "name": "reference_paid"
-              }
-            },
-            {
               "op": "or",
               "args": [
                 {
@@ -39,18 +50,6 @@
                 {
                   "op": "feat",
                   "name": "reference_matches_open"
-                },
-                {
-                  "op": "cmp",
-                  "c": "le",
-                  "a": {
-                    "op": "feat",
-                    "name": "open_items"
-                  },
-                  "b": {
-                    "op": "num",
-                    "v": 2
-                  }
                 }
               ]
             }
@@ -58,7 +57,46 @@
         },
         "then": {
           "decide": "apply_unique",
-          "note": "unique exact match with confirmation or few open items"
+          "note": "unique exact subset confirmed by payer remittance or matching reference"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            },
+            {
+              "op": "cmp",
+              "c": "le",
+              "a": {
+                "op": "feat",
+                "name": "open_items"
+              },
+              "b": {
+                "op": "num",
+                "v": 2
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "unique exact match with very few open items confirms intent"
         }
       },
       {
@@ -76,13 +114,43 @@
         },
         "then": {
           "decide": "apply_by_terms",
-          "note": "no subset matches; apply by contract order"
+          "note": "no subset matches the amount; apply by contract order"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "not",
+              "a": {
+                "op": "feat",
+                "name": "exact_match"
+              }
+            }
+          ]
+        },
+        "then": {
+          "decide": "leave_unapplied_ask",
+          "note": "inexact match without independent confirmation requires review"
         }
       }
     ],
     "otherwise": {
       "decide": "leave_unapplied_ask",
-      "note": "ambiguous allocation requires manual review"
+      "note": "ambiguous allocation without two confirming signals; ask controller"
     }
   },
   "proof": {
@@ -115,37 +183,37 @@
         {
           "subject": "receipt:WIRE-260424-5099",
           "label": "leave_unapplied_ask",
-          "source": "ask #356 answered by controller:Dana",
+          "source": "ask #395 answered by controller:Dana",
           "reason": "Per the ledger, this wire duplicates a debit already collected, so it must remain unapplied pending refund.",
           "handled": true
         },
         {
           "subject": "receipt:WIRE-260512-5321",
           "label": "leave_unapplied_ask",
-          "source": "ask #388 answered by controller:Dana",
+          "source": "ask #439 answered by controller:Dana",
           "reason": "The ledger shows conflicting beneficiary details, so the seat violated the agreement by auto-applying instead of holding for manual review.",
           "handled": true
         },
         {
           "subject": "receipt:WIRE-260602-5543",
           "label": "leave_unapplied_ask",
-          "source": "ask #471 answered by controller:Dana",
+          "source": "ask #536 answered by controller:Dana",
           "reason": "I misread the case and thought 'leave_unapplied_ask'.",
           "handled": true
         },
         {
           "subject": "receipt:WIRE-260505-5247",
           "label": "apply_by_terms",
-          "source": "ask #367 answered by controller:Dana",
+          "source": "ask #409 answered by controller:Dana",
           "reason": "The ledger shows PATEL BREWS INC remitted $3,578.13 under the contract-order option, so apply oldest first per standard allocation rules.",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 20,
-      "correctBefore": 15,
-      "correctAfter": 17,
+      "n": 22,
+      "correctBefore": 17,
+      "correctAfter": 18,
       "fixed": [
         "receipt:WIRE-260424-5099",
         "receipt:WIRE-260512-5321",
@@ -153,46 +221,47 @@
       ],
       "broken": [],
       "asksAgain": [
+        "receipt:CHK-260417-2207",
         "receipt:WIRE-260526-5469"
       ],
       "newAlone": 0
     },
     "budget": null,
     "changed": {
-      "n": 4,
-      "total": 42,
-      "rate": 0.09523809523809523,
+      "n": 3,
+      "total": 44,
+      "rate": 0.06818181818181818,
       "limit": 0.1
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 19,
-    "robustness": 0.85,
+    "complexity": 34,
+    "robustness": 0.8181818181818182,
     "alternatives": [
       {
-        "origin": "qwen3.8-max style 2, unsupported rules removed by replay, thresholds centred by replay",
-        "robustness": 0.85,
+        "origin": "qwen3.8-max style 1, unsupported rules removed by replay, thresholds centred by replay",
+        "robustness": 0.8181818181818182,
         "newLeads": 0,
-        "complexity": 19
+        "complexity": 34
       },
       {
-        "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
-        "robustness": 0.85,
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.8181818181818182,
         "newLeads": 0,
-        "complexity": 27
+        "complexity": 42
       },
       {
-        "origin": "qwen3.8-max style 2, constants tuned by replay",
-        "robustness": 0.85,
+        "origin": "qwen3.8-max style 1, constants tuned by replay",
+        "robustness": 0.8181818181818182,
         "newLeads": 0,
-        "complexity": 27
+        "complexity": 42
       }
     ],
-    "origin": "qwen3.8-max style 2, unsupported rules removed by replay",
-    "rationale": "Added guards against auto-applying when the payment reference is already paid, when there is no exact match, or when multiple invoices are open without any confirming signal like remittance or a matching reference. Safe takeovers only occur when remittance_consistent or reference_matches_open confirms intent for ambiguous cases, otherwise we ask.",
-    "candidatesTried": 12,
-    "candidatesPassed": 9,
-    "seconds": 0,
+    "origin": "qwen3.8-max style 1, unsupported rules removed by replay",
+    "rationale": "The updated skill now requires two independent signals (e.g., exact unique match plus consistent remittance or a matching reference, or very few open items) before auto-applying, and explicitly holds receipts that reference already-paid invoices or lack any confirming signal. This prevents misapplication on ambiguous wires while safely taking over cases where the payer's instructions clearly resolve multiple matching subsets.",
+    "candidatesTried": 9,
+    "candidatesPassed": 7,
+    "seconds": 12.5,
     "selection": "chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver",
     "grading": {
       "train": {
@@ -246,7 +315,7 @@
         "duplicate_payment": {
           "n": 1,
           "current": 0,
-          "candidate": 0
+          "candidate": 1
         },
         "bundled_payment": {
           "n": 1,
@@ -277,6 +346,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:39:36.837Z"
+    "evaluatedAt": "2026-10-25T02:36:18.373Z"
   }
 }

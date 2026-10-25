@@ -5,100 +5,12 @@
       "rules": [
         {
           "when": {
-            "op": "and",
-            "args": [
-              {
-                "op": "cmp",
-                "c": "gt",
-                "a": {
-                  "op": "feat",
-                  "name": "solution_count"
-                },
-                "b": {
-                  "op": "num",
-                  "v": 1
-                }
-              },
-              {
-                "op": "feat",
-                "name": "exact_match"
-              },
-              {
-                "op": "cmp",
-                "c": "eq",
-                "a": {
-                  "op": "feat",
-                  "name": "residual_cents"
-                },
-                "b": {
-                  "op": "num",
-                  "v": 0
-                }
-              },
-              {
-                "op": "feat",
-                "name": "reference_names_open"
-              }
-            ]
-          },
-          "then": {
-            "decide": "apply_to_reference",
-            "note": "exact match among several subsets with zero residual and reference names open invoices; safe to apply by reference"
-          }
-        },
-        {
-          "when": {
-            "op": "and",
-            "args": [
-              {
-                "op": "not",
-                "a": {
-                  "op": "feat",
-                  "name": "reference_matches_open"
-                }
-              },
-              {
-                "op": "or",
-                "args": [
-                  {
-                    "op": "feat",
-                    "name": "reference_paid"
-                  },
-                  {
-                    "op": "and",
-                    "args": [
-                      {
-                        "op": "cmp",
-                        "c": "gt",
-                        "a": {
-                          "op": "feat",
-                          "name": "solution_count"
-                        },
-                        "b": {
-                          "op": "num",
-                          "v": 1
-                        }
-                      },
-                      {
-                        "op": "feat",
-                        "name": "reference_names_open"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "op": "not",
-                "a": {
-                  "op": "feat",
-                  "name": "remittance_consistent"
-                }
-              }
-            ]
+            "op": "feat",
+            "name": "reference_paid"
           },
           "then": {
             "decide": "leave_unapplied_ask",
-            "note": "possible duplicate payment or ambiguous reference without payer confirmation"
+            "note": "payment reference names an already-paid invoice; likely a duplicate payment"
           }
         },
         {
@@ -200,6 +112,37 @@
         },
         {
           "when": {
+            "op": "and",
+            "args": [
+              {
+                "op": "cmp",
+                "c": "gt",
+                "a": {
+                  "op": "feat",
+                  "name": "solution_count"
+                },
+                "b": {
+                  "op": "num",
+                  "v": 1
+                }
+              },
+              {
+                "op": "feat",
+                "name": "exact_match"
+              },
+              {
+                "op": "feat",
+                "name": "reference_names_open"
+              }
+            ]
+          },
+          "then": {
+            "decide": "apply_to_reference",
+            "note": "multiple exact subsets but reference names open invoices with no gap, confirming intent"
+          }
+        },
+        {
+          "when": {
             "op": "cmp",
             "c": "eq",
             "a": {
@@ -240,34 +183,7 @@
           },
           "then": {
             "decide": "apply_to_reference",
-            "note": "no subset matches but reference names an open invoice"
-          }
-        },
-        {
-          "when": {
-            "op": "and",
-            "args": [
-              {
-                "op": "cmp",
-                "c": "gt",
-                "a": {
-                  "op": "feat",
-                  "name": "solution_count"
-                },
-                "b": {
-                  "op": "num",
-                  "v": 1
-                }
-              },
-              {
-                "op": "feat",
-                "name": "reference_names_open"
-              }
-            ]
-          },
-          "then": {
-            "decide": "apply_to_reference",
-            "note": "several subsets fit but reference names open invoices"
+            "note": "no subset matches but reference names open invoices"
           }
         },
         {
@@ -294,7 +210,7 @@
         "note": "several invoice sets explain this amount with no payer guidance"
       }
     },
-    "programHash": "df3856c33906a83ce4e01b80cb96d45ab33849bc8611f4e6ab8fb4ec7ffdfadf",
+    "programHash": "2a6f5a281af7b154d158e4c6d48ec53ac5320ac61af15abf9fed2c03404695b9",
     "source": {
       "company": "UK giftware wholesaler (UCI Online Retail II)",
       "skill": "allocation@5",
@@ -306,7 +222,7 @@
     "gate": "fail",
     "transfer": true,
     "crossed": {
-      "programHash": "df3856c33906a83ce4e01b80cb96d45ab33849bc8611f4e6ab8fb4ec7ffdfadf",
+      "programHash": "2a6f5a281af7b154d158e4c6d48ec53ac5320ac61af15abf9fed2c03404695b9",
       "source": {
         "company": "UK giftware wholesaler (UCI Online Retail II)",
         "skill": "allocation@5",
@@ -324,20 +240,16 @@
         "why": [
           "handles none of the cases people just taught",
           "gets 3 case(s) wrong that the current version gets right",
-          "rule 4 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-          "rule 5 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-          "rule 2 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
+          "changes or drops rule 0 (\"reference names an already-paid invoice; hold for manual review\") of the current version though no labeled case shows it was wrong",
+          "changes or drops rule 2 (\"unique exact match with very few open items confirms intent\") of the current version though no labeled case shows it was wrong",
+          "changes or drops rule 4 (\"inexact match without independent confirmation requires review\") of the current version though no labeled case shows it was wrong",
+          "rule 1 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+          "rule 3 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+          "rule 5 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
         ]
       },
       {
-        "what": "rule \"exact match among several subsets with zero residual and reference names open invoices; safe to apply by reference\" as rule 1",
-        "gate": "fail",
-        "why": [
-          "handles none of the cases people just taught"
-        ]
-      },
-      {
-        "what": "rule \"possible duplicate payment or ambiguous reference without payer confirmation\" as rule 1",
+        "what": "rule \"payment reference names an already-paid invoice; likely a duplicate payment\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
@@ -349,7 +261,7 @@
         "why": [
           "handles none of the cases people just taught",
           "gets 1 case(s) wrong that the current version gets right",
-          "rule 0 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
+          "rule 0 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
         ]
       },
       {
@@ -369,23 +281,23 @@
         ]
       },
       {
-        "what": "rule \"one subset explains the amount within tolerance\" as rule 1",
-        "gate": "fail",
-        "why": [
-          "handles none of the cases people just taught",
-          "gets 3 case(s) wrong that the current version gets right",
-          "rule 0 would take over work people did on the strength of 5 labeled case(s), 3 of which disagree (needs 3, and disagreements provably under 2%)"
-        ]
-      },
-      {
-        "what": "rule \"no subset matches but reference names an open invoice\" as rule 1",
+        "what": "rule \"multiple exact subsets but reference names open invoices with no gap, confirming intent\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
         ]
       },
       {
-        "what": "rule \"several subsets fit but reference names open invoices\" as rule 1",
+        "what": "rule \"one subset explains the amount within tolerance\" as rule 6",
+        "gate": "fail",
+        "why": [
+          "handles none of the cases people just taught",
+          "gets 1 case(s) wrong that the current version gets right",
+          "rule 5 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
+        ]
+      },
+      {
+        "what": "rule \"no subset matches but reference names open invoices\" as rule 1",
         "gate": "fail",
         "why": [
           "handles none of the cases people just taught"
@@ -393,10 +305,11 @@
       }
     ],
     "labeled": {
-      "n": 21,
-      "correctBefore": 17,
-      "correctAfter": 17,
+      "n": 23,
+      "correctBefore": 18,
+      "correctAfter": 19,
       "fixed": [
+        "receipt:CHK-260417-2207",
         "receipt:WIRE-260526-5469",
         "receipt:CHK-260609-1185"
       ],
@@ -406,36 +319,40 @@
         "receipt:WIRE-260602-5543"
       ],
       "asksAgain": [],
-      "newAlone": 5
+      "newAlone": 6
     },
     "lesson": {
       "subjects": [
         "receipt:WIRE-260105-4137",
+        "receipt:CHK-260417-2207",
         "receipt:WIRE-260505-5247",
         "receipt:WIRE-260526-5469",
         "receipt:CHK-260609-1185"
       ],
       "required": 1,
       "handled": [],
-      "optionalFixed": 2,
-      "optionalTotal": 3
+      "optionalFixed": 3,
+      "optionalTotal": 4
     },
     "changed": {
-      "n": 4,
-      "total": 44,
-      "rate": 0.09090909090909091,
+      "n": 3,
+      "total": 47,
+      "rate": 0.06382978723404255,
       "limit": 0.1
     },
     "safetyViolations": 0,
-    "robustness": 0.8095238095238095,
+    "robustness": 0.8260869565217391,
     "why": [
       "handles none of the cases people just taught",
       "gets 3 case(s) wrong that the current version gets right",
-      "rule 4 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-      "rule 5 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
-      "rule 2 would take over work people did on the strength of 3 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
+      "changes or drops rule 0 (\"reference names an already-paid invoice; hold for manual review\") of the current version though no labeled case shows it was wrong",
+      "changes or drops rule 2 (\"unique exact match with very few open items confirms intent\") of the current version though no labeled case shows it was wrong",
+      "changes or drops rule 4 (\"inexact match without independent confirmation requires review\") of the current version though no labeled case shows it was wrong",
+      "rule 1 would take over work people did on the strength of 4 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+      "rule 3 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)",
+      "rule 5 would take over work people did on the strength of 1 labeled case(s), 1 of which disagree (needs 3, and disagreements provably under 2%)"
     ],
     "selection": "replayed over charter-a's own history and answers; nothing from charter-b but the program and the numbers above",
-    "evaluatedAt": "2026-10-24T21:42:28.314Z"
+    "evaluatedAt": "2026-10-25T02:40:45.425Z"
   }
 }

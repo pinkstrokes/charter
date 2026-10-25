@@ -1,0 +1,106 @@
+{
+ "months": {
+  "2010-12": {
+   "decisions": 18,
+   "spot checks": 6,
+   "asked": 5,
+   "corrections": 1,
+   "answered": 11
+  },
+  "2011-01": {
+   "decisions": 1484,
+   "spot checks": 205,
+   "asked": 26,
+   "corrections": 1,
+   "months closed": 1,
+   "answered": 233,
+   "write-offs, waivers, reversals": 21,
+   "versions and policies approved": 2
+  },
+  "2011-02": {
+   "decisions": 1413,
+   "spot checks": 121,
+   "asked": 8,
+   "corrections": 2,
+   "months closed": 1,
+   "answered": 131,
+   "write-offs, waivers, reversals": 19
+  },
+  "2011-03": {
+   "decisions": 1715,
+   "spot checks": 97,
+   "asked": 6,
+   "corrections": 1,
+   "months closed": 1,
+   "answered": 104,
+   "write-offs, waivers, reversals": 19,
+   "versions and policies approved": 1
+  },
+  "2011-04": {
+   "decisions": 1725,
+   "asked": 11,
+   "spot checks": 89,
+   "months closed": 1,
+   "answered": 100,
+   "write-offs, waivers, reversals": 18,
+   "versions and policies approved": 1
+  },
+  "2011-05": {
+   "decisions": 1820,
+   "asked": 12,
+   "spot checks": 83,
+   "months closed": 1,
+   "answered": 95,
+   "write-offs, waivers, reversals": 15
+  },
+  "2011-06": {
+   "decisions": 1729,
+   "spot checks": 70,
+   "asked": 8,
+   "corrections": 1,
+   "months closed": 1,
+   "answered": 79,
+   "write-offs, waivers, reversals": 13
+  }
+ },
+ "total": {
+  "decisions": 9904,
+  "spot checks": 671,
+  "asked": 76,
+  "corrections": 6,
+  "answered": 753,
+  "months closed": 6,
+  "write-offs, waivers, reversals": 105,
+  "versions and policies approved": 4
+ },
+ "askedByKind": {
+  "allocation": {
+   "2010-12": 5,
+   "2011-01": 18,
+   "2011-02": 2,
+   "2011-03": 1,
+   "2011-04": 4,
+   "2011-05": 4,
+   "2011-06": 3
+  },
+  "misapplied": {
+   "2011-01": 1,
+   "2011-06": 1
+  },
+  "write_off": {
+   "2011-01": 5,
+   "2011-02": 4,
+   "2011-03": 4,
+   "2011-04": 4,
+   "2011-05": 5,
+   "2011-06": 4
+  },
+  "unapplied_cash": {
+   "2011-01": 2,
+   "2011-02": 2,
+   "2011-03": 1,
+   "2011-04": 3,
+   "2011-05": 3
+  }
+ }
+}

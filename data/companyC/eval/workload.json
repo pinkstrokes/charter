@@ -1,0 +1,103 @@
+{
+ "months": {
+  "2009-12": {
+   "decisions": 12,
+   "spot checks": 2,
+   "asked": 1,
+   "versions and policies approved": 1,
+   "answered": 3,
+   "write-offs, waivers, reversals": 1
+  },
+  "2010-01": {
+   "decisions": 1649,
+   "spot checks": 225,
+   "asked": 8,
+   "months closed": 1,
+   "answered": 233,
+   "write-offs, waivers, reversals": 17
+  },
+  "2010-02": {
+   "decisions": 1457,
+   "spot checks": 101,
+   "asked": 13,
+   "months closed": 1,
+   "answered": 114,
+   "versions and policies approved": 1,
+   "write-offs, waivers, reversals": 19
+  },
+  "2010-03": {
+   "decisions": 1778,
+   "spot checks": 104,
+   "asked": 11,
+   "corrections": 2,
+   "months closed": 1,
+   "answered": 116,
+   "write-offs, waivers, reversals": 46,
+   "versions and policies approved": 1
+  },
+  "2010-04": {
+   "decisions": 1821,
+   "spot checks": 89,
+   "asked": 10,
+   "months closed": 1,
+   "answered": 100,
+   "write-offs, waivers, reversals": 34
+  },
+  "2010-05": {
+   "decisions": 1822,
+   "spot checks": 85,
+   "asked": 7,
+   "months closed": 1,
+   "answered": 92,
+   "write-offs, waivers, reversals": 31
+  },
+  "2010-06": {
+   "decisions": 1788,
+   "asked": 10,
+   "spot checks": 62,
+   "months closed": 1,
+   "answered": 72,
+   "write-offs, waivers, reversals": 25
+  }
+ },
+ "total": {
+  "decisions": 10327,
+  "spot checks": 668,
+  "asked": 60,
+  "versions and policies approved": 3,
+  "answered": 730,
+  "write-offs, waivers, reversals": 173,
+  "months closed": 6,
+  "corrections": 2
+ },
+ "askedByKind": {
+  "write_off": {
+   "2009-12": 1,
+   "2010-01": 4,
+   "2010-06": 4,
+   "2010-02": 3,
+   "2010-03": 5,
+   "2010-04": 4,
+   "2010-05": 5
+  },
+  "unapplied_cash": {
+   "2010-01": 2,
+   "2010-02": 4,
+   "2010-03": 1,
+   "2010-04": 2,
+   "2010-06": 1
+  },
+  "allocation": {
+   "2010-01": 2,
+   "2010-02": 6,
+   "2010-03": 4,
+   "2010-04": 3,
+   "2010-05": 2,
+   "2010-06": 5
+  },
+  "misapplied": {
+   "2010-03": 1,
+   "2010-04": 1
+  }
+ }
+}

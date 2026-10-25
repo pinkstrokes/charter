@@ -27,7 +27,7 @@
   {
    "id": "HUMAN_ONLY",
    "name": "only people endorsed bank changes, activated knowledge or closed books",
-   "population": 106,
+   "population": 122,
    "exceptions": 0,
    "examples": []
   },
@@ -41,7 +41,7 @@
   {
    "id": "CHAIN",
    "name": "the activity record is complete and unaltered",
-   "population": 6892,
+   "population": 7176,
    "exceptions": 0,
    "examples": []
   },
@@ -63,13 +63,8 @@
    "id": "CHANGE",
    "name": "every new skill version and promoted policy passed its gate before going live",
    "population": 1,
-   "exceptions": 1,
-   "examples": [
-    {
-     "subject": "allocation@2",
-     "detail": "allocation@2 went live without a passing proof"
-    }
-   ]
+   "exceptions": 0,
+   "examples": []
   },
   {
    "id": "DECISIONS",
@@ -608,6 +603,6 @@
    "upperLimitCents": 0
   }
  ],
- "opinion": "qualified",
+ "opinion": "clean",
  "method": "monetary-unit sampling at 95% confidence, tolerable misstatement 5% of each population, Poisson factors; controls tested over 100% of the population"
 }

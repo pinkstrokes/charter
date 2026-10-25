@@ -25,25 +25,8 @@
             {
               "op": "not",
               "a": {
-                "op": "and",
-                "args": [
-                  {
-                    "op": "feat",
-                    "name": "reference_names_open"
-                  },
-                  {
-                    "op": "cmp",
-                    "c": "gt",
-                    "a": {
-                      "op": "feat",
-                      "name": "open_items"
-                    },
-                    "b": {
-                      "op": "num",
-                      "v": 2
-                    }
-                  }
-                ]
+                "op": "feat",
+                "name": "reference_names_open"
               }
             }
           ]
@@ -76,7 +59,34 @@
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "one subset within tolerance but reference names an open invoice; trust the payer's reference"
+          "note": "one subset within tolerance but not exact; reference names an open invoice so follow the payer's pointer"
+        }
+      },
+      {
+        "when": {
+          "op": "and",
+          "args": [
+            {
+              "op": "cmp",
+              "c": "eq",
+              "a": {
+                "op": "feat",
+                "name": "solution_count"
+              },
+              "b": {
+                "op": "num",
+                "v": 1
+              }
+            },
+            {
+              "op": "feat",
+              "name": "exact_match"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_to_reference",
+          "note": "exact match but reference names an open invoice so follow the payer's pointer"
         }
       },
       {
@@ -122,18 +132,30 @@
               "c": "gt",
               "a": {
                 "op": "feat",
-                "name": "open_items"
+                "name": "reference_gap_cents"
               },
               "b": {
                 "op": "num",
-                "v": 2
+                "v": 0
+              }
+            },
+            {
+              "op": "cmp",
+              "c": "le",
+              "a": {
+                "op": "feat",
+                "name": "reference_gap_cents"
+              },
+              "b": {
+                "op": "num",
+                "v": 2200
               }
             }
           ]
         },
         "then": {
           "decide": "apply_to_reference",
-          "note": "no subset matches but reference names an open invoice among many; trust the payer's reference over blind terms order"
+          "note": "no subset matches but reference names an open invoice and the short-pay gap is small enough to trust the pointer"
         }
       },
       {
@@ -192,6 +214,25 @@
           "decide": "apply_by_terms",
           "note": "no subset matches; apply by contract order"
         }
+      },
+      {
+        "when": {
+          "op": "or",
+          "args": [
+            {
+              "op": "feat",
+              "name": "remittance_consistent"
+            },
+            {
+              "op": "feat",
+              "name": "reference_matches_open"
+            }
+          ]
+        },
+        "then": {
+          "decide": "apply_unique",
+          "note": "multiple subsets fit but the payer confirmed which invoices are paid"
+        }
       }
     ],
     "otherwise": {
@@ -213,98 +254,49 @@
         "receipt:BACS-490941"
       ],
       "optionalFixed": 0,
-      "optionalTotal": 11,
+      "optionalTotal": 4,
       "cases": [
         {
           "subject": "receipt:BACS-490941",
           "label": "apply_to_reference",
-          "source": "ask #232 answered by controller:Dana",
+          "source": "ask #311 answered by controller:Dana",
           "reason": "landed on 490941, 491750, the customer paid 490941",
           "handled": true
         },
         {
           "subject": "receipt:BACS-489792",
           "label": "apply_to_reference",
-          "source": "ask #177 answered by controller:Dana",
+          "source": "ask #216 answered by controller:Dana",
           "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-490563",
           "label": "apply_to_reference",
-          "source": "ask #187 answered by controller:Dana",
+          "source": "ask #232 answered by controller:Dana",
           "reason": "the customer named both invoices; the difference is the banks' charges",
           "handled": false
         },
         {
           "subject": "receipt:BACS-493877",
           "label": "apply_to_reference",
-          "source": "ask #199 answered by controller:Dana",
+          "source": "ask #273 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the banks' charges",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-C-13694-2010-01",
-          "label": "apply_unique",
-          "source": "ask #205 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:BACS-492711",
-          "label": "apply_unique",
-          "source": "ask #209 answered by controller:Dana",
-          "reason": "the customer named the invoice; the difference is the exchange rate",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-C-17850-2010-01",
-          "label": "apply_unique",
-          "source": "ask #211 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-C-17841-2010-01",
-          "label": "apply_unique",
-          "source": "ask #214 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-C-17949-2010-01",
-          "label": "apply_unique",
-          "source": "ask #222 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-C-15311-2010-01",
-          "label": "apply_unique",
-          "source": "ask #223 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
-          "handled": false
-        },
-        {
-          "subject": "receipt:STMT-C-16029-2010-01",
-          "label": "apply_unique",
-          "source": "ask #225 answered by controller:Dana",
-          "reason": "the customer's remittance lists these invoices",
           "handled": false
         },
         {
           "subject": "receipt:BACS-494120",
           "label": "apply_to_reference",
-          "source": "ask #227 answered by controller:Dana",
+          "source": "ask #302 answered by controller:Dana",
           "reason": "the customer named the invoice; the difference is the banks' charges",
           "handled": false
         }
       ]
     },
     "labeled": {
-      "n": 65,
-      "correctBefore": 53,
-      "correctAfter": 54,
+      "n": 63,
+      "correctBefore": 58,
+      "correctAfter": 59,
       "fixed": [
         "receipt:BACS-490941"
       ],
@@ -321,11 +313,11 @@
     },
     "newLeads": [],
     "safetyViolations": 0,
-    "complexity": 45,
-    "robustness": 0.8307692307692308,
+    "complexity": 54,
+    "robustness": 0.9365079365079365,
     "alternatives": [],
     "origin": "qwen3.8-max style 0",
-    "rationale": "Added a guard to the first rule so that when there is exactly one exact-matching subset but the reference names an open invoice among many open items, we skip straight to trusting the payer's reference instead of blindly applying unique. This fixes BACS-490941 where the controller confirmed the customer paid the specifically referenced invoice despite another subset also matching.",
+    "rationale": "Split the first rule so that when there is an exact unique match but the reference also names an open invoice, we follow the payer's pointer (apply_to_reference) instead of blindly applying the subset. This fixes BACS-490941 where the customer overpaid a single referenced invoice among many open items.",
     "candidatesTried": 3,
     "candidatesPassed": 1,
     "seconds": 0.1,
@@ -369,13 +361,13 @@
         },
         "payment_fx_difference": {
           "n": 4,
-          "current": 3,
-          "candidate": 3
+          "current": 4,
+          "candidate": 4
         },
         "payment_statement_with_remittance": {
           "n": 8,
-          "current": 6,
-          "candidate": 6
+          "current": 8,
+          "candidate": 8
         }
       },
       "train": {
@@ -396,8 +388,8 @@
         },
         "payment_late": {
           "n": 19,
-          "current": 17,
-          "candidate": 18
+          "current": 16,
+          "candidate": 17
         },
         "payment_fx_difference": {
           "n": 5,
@@ -431,8 +423,8 @@
         },
         "payment_statement_with_remittance": {
           "n": 21,
-          "current": 17,
-          "candidate": 17
+          "current": 21,
+          "candidate": 21
         }
       },
       "test": {
@@ -488,6 +480,6 @@
         }
       }
     },
-    "evaluatedAt": "2026-10-24T23:38:12.071Z"
+    "evaluatedAt": "2026-10-25T02:23:24.113Z"
   }
 }
