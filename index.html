@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Charter is a safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. What it learns transfers to new companies.">
+<meta name="description" content="A safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. It accumulates experience and takes it to new companies.">
 <meta property="og:title" content="Charter">
-<meta property="og:description" content="Charter is a safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. What it learns transfers to new companies.">
+<meta property="og:description" content="A safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. It accumulates experience and takes it to new companies.">
 <meta name="twitter:card" content="summary">
 <title>Charter at work</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -2471,15 +2471,15 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
       big: b => gbp(b.decision.features.unapplied_amount), label: () => 'of the customer’s own money, waiting to be applied',
       cap: b => `Each agent was right on its own. Together they went to chase this customer for ${gbp(b.decision.features.open_amount)}. A solver caught the gap. Now the kernel refuses it: ${b.refusedCustomers.length} customers in this run.`,
       details: b => { const f = b.decision.features; return [stack([['Cash application, 10 Jan', b.cashAsks.map(a => `#${a.id} ${askAmount(a.question)} → ${a.answer}`).join(' · ')], ['Collections, 14 Jan', `${f.days_past_due} days past due, ${f.grace_days} days of grace, ${gbp(f.open_amount)} open`], ['The kernel', `refused under C16; collections then held ${n0(b.holds)} times instead of asking again`], ['The proof', 'two lines of constitution (C16, C17), proved by Z3 for every situation, over the same TypeScript the system runs']])]; } },
-    { id: 'time', kicker: 'Across time', title: 'It owns its mistakes.',
+    { id: 'time', kicker: 'Across time', title: 'It undoes its own mistakes.',
       focus: () => [cash(), dana(), kernel], path: () => viaIf(dana(), cash()),
       big: () => '£2,149.30', label: () => 'matched to three invoices that merely added up',
       cap: () => 'Five days later, £30 named one of them. Charter knew which of its own guesses to doubt, showed Dana the evidence and, on her yes, undid it.',
       details: b => [stack([['Charter asked, 2 Jan', b.ask.params.question], [`${b.answer.principal.split(':')[1]} answered`, `“${b.answer.params.answer}”, because ${b.answer.params.reason}`]])] },
-    { id: 'stranger', kicker: 'A stranger’s email', title: 'It just can’t move a cent.',
+    { id: 'stranger', kicker: 'The kernel', title: 'Money moves only through the kernel.',
       focus: () => [seat('mailroom'), seat('payments'), kernel], path: () => viaIf(seat('mailroom'), seat('payments')),
       big: b => String((b.security.routing_fraud_stopped || {}).count || 0), label: () => 'bank-detail frauds in the run, each stopped by a call to the number on file',
-      cap: () => 'Our AI can be fooled by a scam email. But the readers hold no tools, and the kernel holds the money: no call, no new account; no second approver, no payment.',
+      cap: b => `The two readers hold no tools; the kernel holds the money. No callback, no new account. No second approver, no payment. In the run: ${(b.security.routing_fraud_stopped || {}).count || 0} bank-detail frauds stopped, ${b.c14Denied} single-approval releases refused.`,
       more: () => [small(h('button', { type: 'button', class: 'opt', text: 'Send the $92,400 email yourself', onclick: () => go('Formosa Leaf sends new bank details') }), 'as at the demo table')],
       details: b => { const s = b.security, ex = k => (s[k] && s[k].examples[0]) || null, rf = ex('routing_fraud_stopped'), la = ex('lookalike_sender'); return [stack([rf && [dt(rf.at), `${rf.subject}: ${rf.detail}; stopped by ${rf.stopped_by}`], la && [dt(la.at), `${la.subject}: ${la.detail}; stopped by ${la.stopped_by}`], ['Lookalike senders caught', String((s.lookalike_sender || {}).count || 0)], ['Instructions in emails read as data', String((s.prompt_injection_ignored || {}).count || 0)], ['Releases refused for a second approver (C14)', String(b.c14Denied)]])]; } },
     { id: 'people', kicker: 'People and rules', title: 'It checks people too.',
@@ -2499,7 +2499,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
       label: () => 'mistakes in a sister company’s first three months: with B’s lessons, and from scratch',
       cap: () => 'Only the program crossed, never the data. Company A was offered the same skill, and its own gate said no.',
       details: b => { const c = D.c.compare.runs, s3 = (x, k) => x.months.slice(0, 3).reduce((s, m) => s + m[k], 0); return [stack([['Questions to people, first three months', `${s3(c['data/companyC'], 'questions')} vs ${s3(c['data/companyC-alone'], 'questions')}`], ['What crossed', b.proposal.params.provenance]])]; } },
-    { id: 'proof', kicker: 'Proof', title: 'Now try to break it.',
+    { id: 'proof', kicker: 'Proof', title: 'The results.',
       focus: () => [kernel], path: null,
       big: () => `${D.b.landed.right}/${D.b.landed.n}`, label: () => 'payments against real invoices landed where the payer meant',
       cap: () => `36 attack emails, none got through. A real bank’s lines, ${pct(D.benchrec.learned.eval.matchRate)} matched at ${pct(D.benchrec.learned.eval.precision, 2)}. ${n0(D.b.chainVerified)} records on one hash chain, every link verified.`,
