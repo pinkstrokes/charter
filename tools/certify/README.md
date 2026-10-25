@@ -10,6 +10,7 @@ python3 tools/certify/export_decisions.py    # read-only: every B, C and C-from-
 npx tsx tools/certify/certify.ts             # the cash skill's coverage map, and what each version change covers
 npx tsx tools/certify/timeline.ts B          # a replay: autonomy earned by situation on B's recorded decisions (and C)
 npx tsx tools/certify/team.ts                # the team invariant across collections, cash application and the kernel
+npx tsx tools/certify/learned_gate.ts B --all # a replay: gating every behaviour by situation, or only learned ones (no --all)
 npx tsx tools/certify/site.ts                # the compact payload the public page shows
 ```
 
