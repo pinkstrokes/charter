@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies.">
+<meta name="description" content="Charter is a safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. What it learns transfers to new companies.">
 <meta property="og:title" content="Charter">
-<meta property="og:description" content="An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies.">
+<meta property="og:description" content="Charter is a safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. What it learns transfers to new companies.">
 <meta name="twitter:card" content="summary">
 <title>Charter at work</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -56,7 +56,22 @@ h1 { margin: 26px 0 0; font: 300 clamp(34px, 3.5vw, 50px)/1 var(--sans); letter-
 .layers { margin: 14px 0 0; max-width: 34ch; font-size: 12.5px; line-height: 1.6; color: var(--ink-2); }
 .cta { display: flex; gap: 8px; margin-top: 18px; pointer-events: auto; }
 .cta .opt { font-size: 13px; padding: 9px 16px; }
-body.open .cta { pointer-events: none; }
+body.open .cta, body.open .tlink { pointer-events: none; }
+.tlink { display: block; margin-top: 12px; padding: 0; border: 0; background: none; font-size: 12.5px; color: var(--ink-2); cursor: pointer; pointer-events: auto; text-decoration: underline; text-underline-offset: 3px; }
+.tlink:hover { color: var(--ink); }
+.hero::before { content: ''; position: fixed; z-index: -1; left: 0; top: 0; bottom: 0; width: calc(var(--gl) + 430px); pointer-events: none; background: linear-gradient(90deg, rgba(0, 0, 0, .94) 64%, rgba(0, 0, 0, 0)); }
+.kcard { margin-top: 16px; outline: none; transition: border-color .2s, background .2s; }
+.kcard.on { border-color: var(--ink-3); background: rgba(255, 255, 255, .05); }
+.lens { margin-top: 18px; }
+.lrows { margin-top: 10px; }
+.lrow { padding: 10px 12px; border: 1px solid transparent; border-radius: 12px; outline: none; cursor: default; transition: background .2s, border-color .2s; }
+.lrow + .lrow { margin-top: 2px; }
+.lrow.on, .lrow:focus-visible { border-color: var(--line-2); background: rgba(255, 255, 255, .045); }
+.lrow .lt { font-size: 13.5px; color: var(--ink); }
+.lrow .lx { margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); }
+.lnum { font: 400 11px/1.6 var(--mono); color: var(--ink-2); }
+.evo { margin-top: 14px; min-height: 3.3em; font: 400 11px/1.65 var(--mono); color: var(--ink-2); }
+.evo div:first-child { color: var(--ink); }
 .result { margin-top: 16px; padding: 16px 16px 14px; border: 1px solid var(--line-2); border-radius: 14px; background: rgba(255, 255, 255, .03); animation: rise .6s var(--ease) both; }
 .rbig { font: 400 18px/1.32 var(--sans); letter-spacing: -.02em; color: var(--ink); text-wrap: balance; }
 .rnums { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 12px; margin-top: 14px; }
@@ -300,6 +315,8 @@ body.open .chips { left: calc((100vw - var(--dw) - 18px) / 2); width: min(720px,
   .meta { display: none; }
   .replay { margin-top: 8px; max-width: 40ch; font-size: 11px; }
   .hook, .layers { display: none; }
+  .hero::before { display: none; }
+  .tlink { margin-top: 8px; font-size: 12px; }
   .pre { margin-top: 12px; font-size: 13px; }
   .cta { margin-top: 12px; }
   .cta .opt { padding: 8px 14px; font-size: 12.5px; }
@@ -344,7 +361,8 @@ body.open .chips { left: calc((100vw - var(--dw) - 18px) / 2); width: min(720px,
     <p class="pre in d1">Agents get tested one at a time. Money gets lost between them.</p>
     <h1 class="in d2">Charter checks<br>between them.</h1>
     <p class="layers in d2">Models read. Programs decide. A kernel enforces. A solver checks the team.</p>
-    <div class="cta in d3"><button type="button" id="watchBtn" class="opt pri">Watch it work</button><button type="button" id="tryBtn" class="opt">Try it yourself</button></div>
+    <div class="cta in d3"><button type="button" id="watchBtn" class="opt pri">Watch it work</button><button type="button" id="designBtn" class="opt">How it’s built</button></div>
+    <button type="button" id="tryBtn" class="tlink in d3">or try it yourself →</button>
     <p class="meta in d3" id="meta"></p>
     <p class="replay in d3">A replay in your browser: a port of the seats’ code (seats.ts) running over the runs’ recorded data. The live system is at <a href="https://pinkstrokes.github.io/charter/app/" target="_blank" rel="noopener">/app/</a>.</p>
   </div>
@@ -693,6 +711,9 @@ function correctedPrecedent(P, domain, features, outcome, treatments) {
 <script>(() => {
   'use strict';
   const D = DATA;
+  // Nodes the evolve showpiece regrows: node -> animation time its growth starts.
+  const regrow = new Map();
+  let clock = 0;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = id => document.getElementById(id);
   // The Charter mark as the tab's icon.
@@ -957,7 +978,7 @@ function correctedPrecedent(P, domain, features, outcome, treatments) {
       if (open) { y0 = 52; y1 = $('drawer').getBoundingClientRect().top - 6; if (y1 - y0 < 120) y1 = y0 + 120; }
       else { y0 = document.querySelector('.brand').getBoundingClientRect().bottom + 4; y1 = low() - 4; }
     } else if (open) { x0 = 24; x1 = W - dw - 44; y0 = 64; y1 = H - 96; }
-    else { const hero = Math.max(...[...document.querySelectorAll('.hero > *')].map(c => c.getBoundingClientRect().right)); x0 = Math.max(Math.min(W * 0.27, 400), hero + 18); x1 = W - 34; y0 = 26; y1 = low() - 10; }
+    else { const hero = Math.max(...[...document.querySelectorAll('.hero > *')].map(c => c.getBoundingClientRect().right)); x0 = Math.max(Math.min(W * 0.27, 400), hero + 140); x1 = W - 34; y0 = 66; y1 = low() - 10; }
     const b = bounds();
     const s = Math.min((x1 - x0) / (b.x1 - b.x0), (y1 - y0) / (b.y1 - b.y0), 1.6);
     view.ts = s;
@@ -1163,9 +1184,12 @@ function correctedPrecedent(P, domain, features, outcome, treatments) {
     for (const n of nodes) { if (n.drag || n === kernel) continue; n.vx *= damp; n.vy *= damp; n.x += n.vx * dt; n.y += n.vy * dt; }
   }
   function update(dt, t) {
+    clock = t;
     const pin = pointer.in && !pointer.touch;
     for (const n of nodes) {
-      if (!reduced) n.g = clamp((t - n.born * 1.35) / 560, 0, 1);
+      const rg = regrow.get(n);
+      if (rg != null) n.g = clamp((t - rg) / 650, 0, 1);
+      else if (!reduced) n.g = clamp((t - n.born * 1.35) / 560, 0, 1);
       let p = 0;
       if (pin) { const d = Math.hypot(pointer.x - sx(n), pointer.y - sy(n)); if (d < 170) p = Math.pow(1 - d / 170, 2); }
       n.prox = lerp(n.prox, p, 0.16);
@@ -1173,7 +1197,7 @@ function correctedPrecedent(P, domain, features, outcome, treatments) {
       n.hot = lerp(n.hot, focus && focus.has(n) ? 1 : 0, 0.1);
       n.flash *= Math.pow(0.95, dt);
     }
-    if (!reduced) for (const e of edges) e.g = clamp((t - (e.b.born * 1.35 - 420)) / 420, 0, 1);
+    if (!reduced) for (const e of edges) { const rg = regrow.get(e.b); e.g = rg != null ? clamp((t - rg + 260) / 420, 0, 1) : clamp((t - (e.b.born * 1.35 - 420)) / 420, 0, 1); }
     view.s = lerp(view.s, view.ts, 0.06); view.cx = lerp(view.cx, view.tcx, 0.06); view.cy = lerp(view.cy, view.tcy, 0.06);
   }
 
@@ -2483,7 +2507,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
   ];
   var tourAuto = false, tourTimer = 0, tourLoop = 0;
   const BEAT_MS = 9000;
-  function stopTourTimers() { clearTimeout(tourTimer); clearInterval(tourLoop); }
+  function stopTourTimers() { clearTimeout(tourTimer); clearInterval(tourLoop); evoTimers.forEach(clearTimeout); evoTimers.length = 0; regrow.clear(); }
   function tryIt() {
     tourAuto = false;
     if (document.body.classList.contains('open')) closePanel();
@@ -2518,13 +2542,14 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
       d && d.verify ? recChip(d) : null,
       beat.more ? h('div', { class: 'bmore' }, beat.more(d)) : null,
       beat.details ? h('details', { class: 'bev' }, h('summary', { text: 'The evidence' }), beat.details(d)) : null), tourNav(i));
-    countUp(big);
+    if (beat.run) beat.run(db.querySelector('.beat'), d); else countUp(big);
     const p = beat.path && beat.path();
     if (p) { pulse(p); tourLoop = setInterval(() => { if (document.body.classList.contains('open') && !document.hidden) pulse(p); }, 2600); }
     if (tourAuto && i < BEATS.length - 1) {
       const bar = db.querySelector('.tprog i');
-      requestAnimationFrame(() => { bar.style.transition = `width ${BEAT_MS}ms linear`; bar.style.width = '100%'; });
-      tourTimer = setTimeout(() => taskTour(i + 1), BEAT_MS);
+      const ms = beat.ms || BEAT_MS;
+      requestAnimationFrame(() => { bar.style.transition = `width ${ms}ms linear`; bar.style.width = '100%'; });
+      tourTimer = setTimeout(() => taskTour(i + 1), ms);
     }
   }
   document.addEventListener('keydown', e => {
@@ -2532,6 +2557,103 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
     if (e.key === 'ArrowRight') { tourAuto = false; taskTour(+db.dataset.tour + 1); }
     if (e.key === 'ArrowLeft') { tourAuto = false; taskTour(+db.dataset.tour - 1); }
   });
+
+  // ---------- watch it evolve: company B's seven months, grown on the network ----------
+  const evoTimers = [];
+  const later = (ms, f) => evoTimers.push(setTimeout(f, ms));
+  function tween(el, a, b) {
+    if (reduced || a === b) { el.textContent = String(b); return; }
+    const t0 = performance.now(), dur = 800;
+    const tick = now => { const k = Math.min(1, (now - t0) / dur); el.textContent = String(Math.round(a + (b - a) * (1 - Math.pow(1 - k, 3)))); if (k < 1 && el.isConnected) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
+  const compareC = () => { const c = D.c.compare.runs, withB = c['data/companyC'], alone = c['data/companyC-alone'], s = (x, k, n = 3) => x.months.slice(0, n).reduce((a, m) => a + m[k], 0), learned = x => x.versions.filter(v => v.liveFrom && v.liveFrom > x.months[0].month + '-01').length;
+    return { m3: [s(withB, 'wrongAlone'), s(alone, 'wrongAlone')], q: [s(withB, 'questions', withB.months.length), s(alone, 'questions', alone.months.length)], v: [learned(withB), learned(alone)] }; };
+  function runEvolve(root, d) {
+    if (reduced) return;
+    const vs = D.b.versions, vnode = k => byId.get('v:B:allocation:' + k), ev = seat('evolver');
+    const lessonsOf = k => nodes.filter(n => n.kind === 'lesson' && n.version === vnode(k));
+    const cNodes = nodes.filter(n => n.chain && n.chain.id === 'C:allocation'), far = clock + 1e9;
+    for (let k = 2; k <= vs.length; k++) { if (vnode(k)) regrow.set(vnode(k), far); lessonsOf(k).forEach(n => regrow.set(n, far)); }
+    cNodes.forEach(n => regrow.set(n, far));
+    const big = root.querySelector('.bbig'), status = h('div', { class: 'evo' });
+    root.querySelector('.blabel').after(status);
+    const say = lines => status.replaceChildren(...lines.map(x => h('div', { text: x })));
+    say(['allocation@1 · day one · written by hand']);
+    for (let k = 2; k <= vs.length; k++) {
+      const t0 = 1000 + (k - 2) * 2700, v = vs[k - 1];
+      later(t0, () => { lessonsOf(k).forEach(n => regrow.set(n, clock)); const p = viaIf(dana(), ev); if (p) pulse(p); });
+      later(t0 + 850, () => { ev.flash = 1.8; });
+      later(t0 + 1300, () => { ev.flash = 1.8; });
+      later(t0 + 1750, () => {
+        if (vnode(k)) regrow.set(vnode(k), clock);
+        const p = viaIf(ev, vnode(k)); if (p) pulse(p);
+        tween(big, +big.textContent || 0, v.test.wrong);
+        say([`allocation@${k} · live ${dt(v.liveFrom)}`, 'replayed over every past decision, switched on by a person']);
+      });
+    }
+    const end = 1000 + (vs.length - 1) * 2700, c = compareC();
+    later(end + 300, () => { cNodes.forEach(n => regrow.set(n, clock + 250)); const p = viaIf(vnode(vs.length), byId.get('v:C:allocation:2')); if (p) pulse(p, { speed: 420 }); say([`Company C inherits it: ${c.m3[0]} mistakes in its first three months instead of ${c.m3[1]}`, 'only the program crossed, never the data']); });
+    later(end + 2800, () => { const p3 = byId.get('rule:P-3'); if (p3) p3.flash = 2.2; const p = viaIf(seat('payments'), kernel); if (p) pulse(p); say(['In company A, after April’s bounced debit, a replay of every past payment found P-3; a controller ratified it.', 'It now stands in front of every payment.']); });
+    later(end + 5400, () => { const g = d.gate; say([`${vs.length} versions; 18 of 22 attempts refused at the gate`, `v${vs.length}: “${d.danaAsks[0].reason}” · ${g.fixed} fixed, ${g.broken} broken, ${g.changed} of ${n0(g.of)} changed · ${n0(d.liveDecisions)} payments since`]); });
+  }
+  {
+    const i = BEATS.findIndex(b => b.id === 'lesson');
+    BEATS.splice(i, 1);
+    BEATS.unshift({ id: 'lesson', kicker: 'Self-evolution', title: 'Watch it evolve.', ms: 19000,
+      focus: () => [seat('evolver'), dana(), cash(), byId.get('rule:P-3'), seat('payments'), ...nodes.filter(n => n.chain && (n.chain.id === 'B:allocation' || n.chain.id === 'C:allocation'))], path: null,
+      big: () => String(D.b.versions[0].test.wrong), label: () => 'mistakes made alone, replayed on the locked test payments',
+      cap: () => 'Seven months at company B. People’s answers become lessons, the evolver writes a new version, the gate replays it over every past decision, and a person switches it on.',
+      run: runEvolve });
+  }
+
+  // ---------- how it's built: the kernel at the centre, three lenses around it ----------
+  const chainNodes = id => nodes.filter(n => n.chain && n.chain.id === id);
+  const LENSES = {
+    does: { name: 'What it does', focus: () => SEATS.map(s => seat(s.id)), rows: () => [
+      ['Mailroom', `Two model families read every email, with no tools; when they disagree, a person decides. ${D.a.security.prompt_injection_ignored} injections ignored, ${D.a.security.lookalike_sender} look-alike senders caught.`, () => [seat('mailroom')], () => viaIf(seat('mailroom'), kernel)],
+      ['Cash application', 'Exact matching that counts the solutions; the payer found by vote; bank charges, split and on-account payments; it records its inferences, so it can doubt and undo its own guess.', () => [cash()], () => viaIf(cash(), kernel)],
+      ['Collections', 'Respects grace periods; no notice or fee while the customer’s own money covers it (C16, C17), no fee in bankruptcy (C18); reads its own refusals.', () => [seat('collections'), byId.get('rule:C16'), byId.get('rule:C17'), byId.get('rule:C18')], () => viaIf(seat('collections'), kernel)],
+      ['Payables clerk', `Matches order, receipt and bill: ${usd0(D.a.money.duplicateBillsStoppedCents)} of duplicate bills rejected. Holds a bank change until a callback: ${D.a.security.routing_fraud_stopped} frauds stopped.`, () => [seat('ap_clerk')], () => viaIf(seat('ap_clerk'), kernel)],
+      ['Payments', 'Two people above $25,000 (C14), and the policies it learned, P-1 to P-3.', () => [seat('payments'), byId.get('rule:C14'), byId.get('rule:P-1'), byId.get('rule:P-2'), byId.get('rule:P-3')], () => viaIf(seat('payments'), kernel)],
+      ['Refunds', 'Prepares only; someone else releases.', () => [seat('refunds')], () => viaIf(seat('refunds'), kernel)],
+      ['Internal auditor', 'A third model family re-reads samples; monetary-unit sampling every month; each month closes into a certificate anchored in git.', () => [seat('auditor')], () => viaIf(seat('auditor'), kernel)],
+      ['Bank desk', `Real bank data (BenchRec): ${pct(D.benchrec.learned.eval.matchRate)} of lines matched at ${pct(D.benchrec.learned.eval.precision, 2)} precision.`, () => [seat('bank'), ...chainNodes('R:bankmatch')], () => viaIf(seat('bank'), kernel)],
+    ] },
+    evolves: { name: 'How it evolves', focus: () => [seat('evolver'), ...nodes.filter(n => n.kind === 'person' || n.kind === 'lesson'), ...chainNodes('B:allocation')], rows: () => [
+      ['People answer', 'Every question a seat asks, and every spot check, becomes a lesson.', () => [...nodes.filter(n => n.kind === 'person'), ...nodes.filter(n => n.kind === 'lesson')], () => viaIf(dana(), cash())],
+      ['The evolver writes', 'A model turns the lessons into a candidate version of the rule program.', () => [seat('evolver'), dana()], () => viaIf(dana(), seat('evolver'))],
+      ['The replay gate', 'The candidate replays every past decision under three statistical tests; nothing people checked may break.', () => [seat('evolver'), kernel, ...chainNodes('B:allocation')], () => viaIf(seat('evolver'), kernel)],
+      ['A person switches it on', 'Shadow, then canary, then active.', () => [dana(), byId.get('v:B:allocation:' + D.b.versions.length)], () => viaIf(dana(), byId.get('v:B:allocation:' + D.b.versions.length))],
+      ['Earned autonomy', 'Spot checks start at 25% and fall to 3% only when the record proves it; an error raises them to 40%.', () => [cash(), ...chainNodes('B:allocation')], null],
+      ['Losses become policy', 'After a bounced debit in April, a replay of every past payment found P-3; a controller ratified it, and it stands in front of every payment.', () => [byId.get('rule:P-3'), seat('payments'), seat('ap_clerk')], () => viaIf(seat('payments'), kernel)],
+    ], extra: () => h('div', { class: 'bmore' }, h('span', { class: 'lnum', text: `Company B: v1 → v${D.b.versions.length} · ${D.b.versions[0].test.wrong} → ${D.b.versions[D.b.versions.length - 1].test.wrong} mistakes on the locked test payments · 18 of 22 attempts refused` }), h('button', { type: 'button', class: 'opt pri', text: 'Watch it evolve ▸', onclick: () => taskTour(0, false) })) },
+    goes: { name: 'Where it goes', focus: () => [...chainNodes('A:allocation'), ...chainNodes('B:allocation'), ...chainNodes('C:allocation')], rows: () => { const c = compareC(), bt = byId.get('v:B:allocation:' + D.b.versions.length), cf = byId.get('v:C:allocation:2'); return [
+      ['Only programs cross', 'A skill is a small rule program. It moves between companies; the data never does.', () => [bt, cf], () => viaIf(bt, cf)],
+      ['B → C', `Company C started from B’s skill: ${c.m3[0]} vs ${c.m3[1]} mistakes in its first three months, ${c.q[0]} vs ${c.q[1]} questions over seven, ${c.v[0]} vs ${c.v[1]} new versions.`, () => [bt, ...chainNodes('C:allocation')], () => viaIf(bt, cf)],
+      ['On probation', 'C’s controller ratified it, and every rule started on probation.', () => [cf], null],
+      ['A said no', 'Offered to franchisor A, the same skill was refused by A’s own gate: the receiver decides on its own evidence.', () => [bt, ...chainNodes('A:allocation')], () => viaIf(bt, byId.get('v:A:allocation:1'))],
+    ]; } },
+  };
+  function hoverLight(el, nf, pf) {
+    const on = () => { const ns = nf().filter(Boolean); taskFocus = lit(...ns); refocus(); const p = pf && pf(); if (p) pulse(p); else ns.forEach(n => (n.flash = 1)); el.classList.add('on'); };
+    el.addEventListener('mouseenter', on); el.addEventListener('focus', on); el.addEventListener('click', on);
+    el.addEventListener('mouseleave', () => el.classList.remove('on')); el.addEventListener('blur', () => el.classList.remove('on'));
+  }
+  function taskDesign(lens = 'does') {
+    const L = LENSES[lens] || LENSES.does;
+    openPanel('How it’s built');
+    selected = null; taskFocus = lit(...L.focus().filter(Boolean)); refocus();
+    db.append(h('h2', { class: 'dt', text: 'How it’s built' }), h('p', { class: 'ds', text: 'Models read. Programs decide. A kernel enforces. A solver checks the team.' }));
+    const kcard = h('div', { class: 'card kcard', tabindex: '0' }, h('div', { class: 'rk' }, h('span', { text: 'The kernel' }), h('span', { text: `C1–C${constitution.length}` })),
+      h('div', { class: 'rn', text: 'Every action by every agent and every person passes here: the constitution, permissions, one hash chain.' }),
+      h('div', { class: 'src', text: 'A solver (Z3) proves C16–C18 across seats, over the same TypeScript the system runs.' }));
+    hoverLight(kcard, () => [kernel, ...nodes.filter(n => n.kind === 'rule')], null);
+    const seg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Lens' }, Object.entries(LENSES).map(([k, x]) => h('button', { type: 'button', 'aria-pressed': String(L === x), text: x.name, onclick: () => taskDesign(k) })));
+    const rows = h('div', { class: 'lrows' }, L.rows().map(([t, txt, nf, pf]) => { const r = h('div', { class: 'lrow', tabindex: '0' }, h('div', { class: 'lt', text: t }), h('div', { class: 'lx', text: txt })); hoverLight(r, nf, pf); return r; }));
+    db.append(...[kcard, h('div', { class: 'lens' }, seg), rows, L.extra && L.extra()].filter(Boolean));
+    if (lens === 'goes') { const p = viaIf(byId.get('v:B:allocation:' + D.b.versions.length), byId.get('v:C:allocation:2')); if (p) pulse(p, { speed: 420 }); }
+  }
 
   // ---------- reading a task ----------
   function parseAmount(raw) {
@@ -2549,6 +2671,8 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
     const s = raw.toLowerCase().replace(/\s+/g, ' ').trim();
     if (!s) return null;
     if (/^(teach|lesson|rule|learn)\b/.test(s) || /^(from now on|always|never)\b/.test(s)) return { kind: 'teach', text: raw.replace(/^\s*(teach|lesson|rule|learn)( charter)?( that)?\s*[:\-–—,]?\s*/i, '').trim() || raw };
+    if (/\b(how it['’]?s built|how is it built|design|architecture|layers?|lens(es)?)\b/.test(s)) return { kind: 'design' };
+    if (/\b(evolve|evolution|self-evolv\w*)\b/.test(s)) return { kind: 'evolve' };
     if (/\b(watch|tour|walk me through|show me how)\b/.test(s)) return { kind: 'tour' };
     if (/\b(verify|tamper|hash|the record|audit trail)\b/.test(s)) return { kind: 'verify' };
     if (/\bpatel\b|june supplies|its own money|team check/.test(s)) return { kind: 'team' };
@@ -2566,6 +2690,8 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
     $('chips').classList.add('hide');
     hover = null; refocus(); hideTip();
     if (r.kind === 'tour') return taskTour(0, true);
+    if (r.kind === 'design') return taskDesign('does');
+    if (r.kind === 'evolve') return taskTour(0, false);
     if (r.kind === 'payment') return taskPayment(r);
     if (r.kind === 'teach') return taskTeach(r.text);
     if (r.kind === 'verify') return taskVerify();
@@ -2625,6 +2751,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
   window.__charter = { go, nodes, view, mine, tour: taskTour };
   $('watchBtn').addEventListener('click', () => taskTour(0, true));
   $('tryBtn').addEventListener('click', tryIt);
+  $('designBtn').addEventListener('click', () => taskDesign('does'));
 })();
 </script>
 
