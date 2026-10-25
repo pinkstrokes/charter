@@ -13,6 +13,7 @@ import { factText, template } from '../lib/policies';
 import { askDomain, DOMAINS, domainOf, explainComparisons, exprText, featureLabel, outcomeText, parseProgram, parseTreatments, run, sameTreatment, type FeatureMap } from '../lib/rules';
 import { summarize } from '../lib/summary';
 import { useAction } from '../stdb/actions';
+import { isPlay } from '../stdb/api';
 import { charter } from '../stdb/client';
 import { useRows } from '../stdb/store';
 
@@ -856,6 +857,9 @@ function CorrectDecision({ d, a }: { d: Decision; a?: Activity }) {
                   : {reply.outcome === 'pass' ? '' : 'refused, '}
                   {String(parseObj(reply.params).summary ?? '')}
                 </span>
+              ) : isPlay ? (
+                // No evolver watches the sandbox: it would spend a model call on anyone's correction.
+                'Recorded as a labeled case. The evolution engine does not run in this sandbox (it calls a model), so no new version is proposed from it here; at the demo table it answers within a minute.'
               ) : (
                 'Waiting for the evolution engine to read this correction…'
               )}

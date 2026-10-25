@@ -2,10 +2,11 @@
 // bill in the AP inbox. The dev server's world feeder delivers it through the same
 // door as every event the simulation delivers (ingest_obs), so the seats treat it
 // like any other; then this page follows it to what the seat decided, with which
-// skill, or whom it asked. The public page has no feeder and no World screen.
+// skill, or whom it asked. The public replays have no World screen; the sandbox build
+// delivers from the browser, as its databases' own feeder.
 import { Check, Clock, FileText, Landmark, Loader2, Send, ShieldAlert } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { Activity, Ask, Decision, Entity, Invoice } from '../module_bindings/types';
+import type { Activity, Ask, Config, Decision, Entity, Invoice } from '../module_bindings/types';
 import { Empty } from '../components/ui';
 import { useConfig } from '../app/data';
 import { go, openWhy, setSub, useNav } from '../app/nav';
@@ -13,7 +14,8 @@ import { currencySymbol, day, money } from '../lib/format';
 import { parseLoose, parseObj } from '../lib/json';
 import { actionsOf } from '../lib/lineage';
 import { outcomeText } from '../lib/rules';
-import { charterApi } from '../stdb/api';
+import { worldDelivery, type WorldEvent } from '../lib/world';
+import { charterApi, isPlay } from '../stdb/api';
 import { charter } from '../stdb/client';
 import { useRows } from '../stdb/store';
 
@@ -24,7 +26,15 @@ const fromCents = (c: number) => (c / 100).toFixed(2);
 const newAccount = () => `****${String(Math.floor(1000 + Math.random() * 9000))}`;
 const isOpen = (i: Invoice) => i.openCents > 0n && (i.status === 'open' || i.status === 'disputed');
 
-async function deliver(event: Record<string, unknown>): Promise<{ id: string; existed: boolean }> {
+async function deliver(event: WorldEvent, cfg: Config | undefined, billIds: Set<string> = new Set()): Promise<{ id: string; existed: boolean }> {
+  if (isPlay) {
+    // No dev server behind the sandbox: the same delivery, from here, as the play database's own feeder.
+    const d = worldDelivery(event, cfg?.simDate ?? '');
+    const conn = await charter.worldConnection();
+    await conn.reducers.ingestObs({ kind: d.kind, source: d.source, validAt: cfg!.simDate, refKey: d.refKey, subject: d.subject, payload: JSON.stringify(d.payload) });
+    if (!cfg!.autopilot) await conn.procedures.runSeats({});
+    return { id: d.id, existed: billIds.has(d.id) };
+  }
   const res = await fetch(charterApi('world', charter.info.db), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(event) });
   const body = (await res.json()) as { id?: string; existed?: boolean; error?: string };
   if (!res.ok || !body.id) throw new Error(body.error ?? `the dev server answered ${res.status}`);
@@ -182,7 +192,7 @@ function PaymentForm({ onSent }: { onSent: (id: string) => void }) {
       onSubmit={e => {
         e.preventDefault();
         setState({ pending: true, error: '', note: '' });
-        deliver({ kind: 'payment', amountCents: toCents(amount), type, counterpartyName: name, counterpartyAccount: account, reference })
+        deliver({ kind: 'payment', amountCents: toCents(amount), type, counterpartyName: name, counterpartyAccount: account, reference }, cfg)
           .then(r => {
             setState({ pending: false, error: '', note: `In the bank feed as ${r.id}` });
             onSent(r.id);
@@ -311,7 +321,7 @@ function BillForm({ onSent }: { onSent: (id: string) => void }) {
       onSubmit={e => {
         e.preventDefault();
         setState({ pending: true, error: '', note: '' });
-        deliver({ kind: 'bill', vendorCode: vendor, billNo, amountCents: toCents(amount), poNo, dueDate: due })
+        deliver({ kind: 'bill', vendorCode: vendor, billNo, amountCents: toCents(amount), poNo, dueDate: due }, cfg, new Set(bills.map(b => b.id)))
           .then(r => {
             setState({ pending: false, error: '', note: r.existed ? `The AP inbox already had ${r.id}: the same vendor and number are one document` : `In the AP inbox as ${r.id}` });
             onSent(r.id);
