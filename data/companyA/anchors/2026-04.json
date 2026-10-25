@@ -2,8 +2,10 @@
  "period": "2026-04",
  "closedAt": "2026-05-01",
  "closedBy": "controller:Dana",
- "certificateHash": "8f3d72baaa1974109ab46858c64b919e35984cf4b47560c560309a3452183c95",
- "chainHead": "0cec8b4893a2bfd36b7dab6e137eed1bdb4efef2c542183e66cc525e01c161af",
- "lastActivityId": 3421,
- "auditorOpinion": "clean"
+ "certificateHash": "834cf51aadde7dc8981dff6654500db163ee362853f7d28856265fb534706a66",
+ "chainHead": "41aa9212385466a87de4d2e6dba1371cce65de507b8cb2c6ad5c074b0fdc2e11",
+ "lastActivityId": 3516,
+ "auditorOpinion": "clean",
+ "programHash": "0x86c6988e61ee0777062f46adf592f4d796a93475d639160f3c3503711471ed0a",
+ "programSha256": "ed23e968d8b43f58df6a4ac6b055026449127e4a362ae66d357a21cf4d8151d8"
 }
