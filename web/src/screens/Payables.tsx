@@ -193,7 +193,7 @@ function PaymentRow({ p, vendor, vendorName, stopped }: { p: Payment; vendor?: E
                     .map(r => {
                       const pid = /^([A-Z][A-Za-z]*-?[A-Za-z0-9]*):/.exec(r)?.[1];
                       const pol = pid ? policyOf(pid) : undefined;
-                      return pol ? `${pid}: ${pol.text}` : r;
+                      return pol ? `${pid}: ${pol.text.replace(/\.$/, '')}` : r;
                     })
                     .join('; ')}
                 </span>
