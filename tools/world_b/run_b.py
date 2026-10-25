@@ -192,7 +192,9 @@ def main():
         who[name] = Client(tok, name)
         ids[name] = {"identity": ident, "token": tok, "role": role}
     json.dump(ids, open(os.path.join(ROOT, a.out, "identities.json"), "w"), indent=1)
-    admin.call("set_secret", "MODELSTUDIO_API_KEY", load_key())
+    # A database the public can write to (tools/play) gets no model key; this company's remittances are CSVs the mailroom parses itself.
+    if not os.environ.get("CHARTER_NO_MODEL_KEY"):
+        admin.call("set_secret", "MODELSTUDIO_API_KEY", load_key())
     dana, world = who["Dana"], who["feeder"]
     world.call("load_company", json.dumps({"company": {"name": a.name, "kind": "wholesaler", "currency": "GBP", "startDate": a.start},
                                            "contracts": [{"version": "TRADE-30", "terms": TERMS}], "entities": entities, "stores": []}))

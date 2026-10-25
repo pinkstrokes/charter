@@ -101,7 +101,9 @@ class Runner:
         self.ids = identities(self.admin, bind=self.args.reset)
         self.c = {name: Person(v["token"], f"{v['role'] or 'unbound'}:{name}") for name, v in self.ids.items()}
         if self.args.reset:
-            self.admin.call("set_secret", "MODELSTUDIO_API_KEY", load_key())
+            # A database the public can write to (tools/play) gets no model key: every reading there comes from the cache below.
+            if not os.environ.get("CHARTER_NO_MODEL_KEY"):
+                self.admin.call("set_secret", "MODELSTUDIO_API_KEY", load_key())
             # The final run's email readings, so a replay on a fresh database reads every email the same way.
             carried = read_json(DATA / "module_llm_cache.json", {}).get("calls", [])
             if carried:

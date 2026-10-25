@@ -4,7 +4,7 @@
 // exists only so that reducers are called as that person and the kernel judges
 // that identity, not ours.
 import { useSyncExternalStore } from 'react';
-import { charterApi, isPublic, type Company } from './api';
+import { charterApi, isPlay, isPublic, type Company } from './api';
 import { setGlobalLogLevel } from 'spacetimedb';
 import { DbConnection } from '../module_bindings';
 
@@ -120,7 +120,8 @@ class Charter {
       const env = (await (await fetch(charterApi('env'))).json()) as { defaultDb: string; wsBase: string; httpBase: string; companies?: Company[]; demo?: boolean };
       const db = params.get('db') || (import.meta.env.VITE_CHARTER_DB as string | undefined) || env.defaultDb;
       const wsBase = params.get('ws') || (import.meta.env.VITE_STDB_WS as string | undefined) || env.wsBase;
-      this.set({ db, wsBase, httpBase: env.httpBase, companies: env.companies ?? [], demo: !isPublic && !!env.demo });
+      // The step bar: the live demo's server, and the sandbox (which has the steps but no reset).
+      this.set({ db, wsBase, httpBase: env.httpBase, companies: env.companies ?? [], demo: (isPlay || !isPublic) && !!env.demo });
       document.title = `Charter · ${db}`;
       await this.loadPersonas(db, false);
     } catch (e) {
@@ -231,6 +232,35 @@ class Charter {
     if (this.extra.has(key) || !this.observer) return;
     this.extra.add(key);
     this.observer.subscriptionBuilder().subscribe(`SELECT * FROM ${table} WHERE id = ${id.toString()}`);
+  }
+
+  // The sandbox's World screen delivers as the play databases' own world feeder, the way the dev
+  // server's middleware delivers with the feeder of a run's identities file (plugins/charter-core.ts).
+  private world: Promise<DbConnection> | null = null;
+
+  worldConnection(): Promise<DbConnection> {
+    if (!isPlay) return Promise.reject(new Error('only the sandbox delivers from the browser'));
+    this.world ??= (async () => {
+      const res = await fetch(charterApi('world'));
+      const body = (await res.json()) as { token?: string };
+      if (!res.ok || !body.token) throw new Error(`the World screen's feeder: HTTP ${res.status}`);
+      return await new Promise<DbConnection>((resolve, reject) => {
+        DbConnection.builder()
+          .withUri(this.info.wsBase)
+          .withDatabaseName(this.info.db)
+          .withToken(body.token)
+          .onConnect(c => resolve(c))
+          .onConnectError((_ctx, error) => reject(new Error(describeConnError(error, this.info.db))))
+          .onDisconnect(() => {
+            this.world = null;
+          })
+          .build();
+      });
+    })().catch(e => {
+      this.world = null;
+      throw e;
+    });
+    return this.world;
   }
 
   setActive(key: string): void {

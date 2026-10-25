@@ -21,6 +21,9 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { worldDelivery, type WorldEvent } from '../src/lib/world';
+
+export type { WorldEvent };
 
 interface IdentityEntry {
   identity: string;
@@ -45,20 +48,6 @@ const SELF_MANAGED: { name: string; role: string }[] = [
 ];
 const ORDER = ['Dana', 'Sam', 'Lee', 'Priya'];
 const NEVER_BIND = new Set(['charter-iqwfr']);
-
-// A payment or a bill made up on the World screen (amounts in cents).
-export interface WorldEvent {
-  kind: 'payment' | 'bill';
-  amountCents: number;
-  type?: string;
-  counterpartyName?: string;
-  counterpartyAccount?: string;
-  reference?: string;
-  vendorCode?: string;
-  billNo?: string;
-  poNo?: string;
-  dueDate?: string;
-}
 
 export interface CoreOptions {
   repoRoot: string;
@@ -206,10 +195,9 @@ export function createCharterCore(opts: CoreOptions) {
   }
 
   // Something arriving from outside, made up on the World screen: a payment in the
-  // bank feed or a bill in the AP inbox. The database's own world feeder delivers it
-  // through ingest_obs, exactly as the simulation delivers its events; nothing about
-  // it tells a seat it was made up except the LIVE- prefix the bank gives it. With
-  // autopilot off the seats run once so the page sees what they did.
+  // bank feed or a bill in the AP inbox (src/lib/world.ts). The database's own world
+  // feeder delivers it through ingest_obs, exactly as the simulation delivers its
+  // events. With autopilot off the seats run once so the page sees what they did.
   async function world(db: string, body: WorldEvent): Promise<{ id: string; date: string; existed: boolean; ran: string | null }> {
     const ext = externalFile(db);
     const ids = ext ? readJson<Record<string, IdentityEntry>>(ext) : null;
@@ -225,37 +213,7 @@ export function createCharterCore(opts: CoreOptions) {
     const [cfg] = await query('SELECT sim_date, autopilot FROM config');
     const date = String(cfg?.sim_date ?? '');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`${db} has no business date yet`);
-    const cents = Number(body.amountCents);
-    if (!Number.isSafeInteger(cents) || cents <= 0 || cents > 10_000_000_000) throw new Error('the amount must be positive');
-    const text = (v: unknown, max: number) => String(v ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max);
-    let kind: string, source: string, refKey: string, subject: string, id: string, payload: Record<string, unknown>;
-    if (body.kind === 'payment') {
-      const type = ['wire_in', 'ach_credit_in', 'check_deposit'].includes(String(body.type)) ? String(body.type) : 'wire_in';
-      const account = text(body.counterpartyAccount, 8);
-      if (!/^\*{4}\d{4}$/.test(account)) throw new Error('the paying account is written ****1234');
-      const name = text(body.counterpartyName, 80);
-      if (!name) throw new Error('who is paying?');
-      id = `LIVE-${date.slice(2).replace(/-/g, '')}-${String(Math.floor(1000 + Math.random() * 9000))}`;
-      kind = 'bank_txn';
-      source = 'bank';
-      refKey = `bank:${id}`;
-      subject = `account:${account}`;
-      payload = { txnId: id, date, type, amountCents: cents, counterpartyName: name, counterpartyAccount: account, reference: text(body.reference, 140) };
-    } else if (body.kind === 'bill') {
-      const vendorCode = text(body.vendorCode, 20);
-      const billNo = text(body.billNo, 40);
-      const dueDate = text(body.dueDate, 10);
-      if (!vendorCode || !billNo) throw new Error('a bill needs a vendor and the vendor’s bill number');
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) throw new Error('the due date is written YYYY-MM-DD');
-      id = `${vendorCode}:${billNo}`;
-      kind = 'vendor_invoice';
-      source = 'erp';
-      refKey = `bill:${id}`;
-      subject = `vendor:${vendorCode}`;
-      payload = { billNo, vendorCode, poNo: text(body.poNo, 40), date, dueDate, amountCents: cents };
-    } else {
-      throw new Error('a made-up event is a payment or a bill');
-    }
+    const { id, kind, source, refKey, subject, payload } = worldDelivery(body, date);
     const existed = (await query(`SELECT id FROM observation WHERE ref_key = '${refKey.replace(/'/g, "''")}'`)).length > 0;
     const call = async (fn: string, args: unknown[]) => {
       const r = await stdb('POST', `/v1/database/${encodeURIComponent(db)}/call/${fn}`, args, feeder.token);

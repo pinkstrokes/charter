@@ -3071,3 +3071,23 @@ label.pick:hover {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+
+/* ---------- sandbox ---------- */
+
+/* One line on every screen of the sandbox build (VITE_PLAY=1). */
+.sandbox-note {
+  margin: 0;
+  padding: 7px 18px;
+  border-bottom: 1px solid var(--taro-line);
+  background: var(--taro-wash);
+  color: var(--taro-ink);
+  font-size: var(--fs-meta);
+  line-height: 1.45;
+  text-align: center;
+}
+
+.sandbox-note a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

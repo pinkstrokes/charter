@@ -1,9 +1,11 @@
-// The live demo's step bar (only on the demo server, tools/demo/demo.sh up): one
-// button per beat, each opening the company, screen and Why panel it needs, and a
-// reset back to the prepared morning between judges.
+// The live demo's step bar (on the demo server, tools/demo/demo.sh up, and in the
+// sandbox build): one button per beat, each opening the company, screen and Why panel
+// it needs, and, at the demo table only, a reset back to the prepared morning between
+// judges (the sandbox is rebuilt by tools/play/reset.sh instead).
 import { RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNav } from '../app/nav';
+import { charterApi, isPlay } from '../stdb/api';
 import { useCharter } from '../stdb/client';
 
 interface Step {
@@ -27,7 +29,7 @@ export function DemoBar() {
   const [busy, setBusy] = useState('');
   useEffect(() => {
     if (!info.demo) return;
-    fetch('/__charter/demo/steps')
+    fetch(charterApi('steps'))
       .then(r => r.json())
       .then((b: { steps: Step[]; persona?: string }) => {
         setSteps(b.steps ?? []);
@@ -74,9 +76,11 @@ export function DemoBar() {
           {s.label}
         </button>
       ))}
-      <button type="button" className="demostep quiet" onClick={() => void reset()} disabled={!!busy} title="Back to the prepared morning (between judges)">
-        <RotateCcw size={12} /> {busy || 'Reset'}
-      </button>
+      {!isPlay && (
+        <button type="button" className="demostep quiet" onClick={() => void reset()} disabled={!!busy} title="Back to the prepared morning (between judges)">
+          <RotateCcw size={12} /> {busy || 'Reset'}
+        </button>
+      )}
     </nav>
   );
 }

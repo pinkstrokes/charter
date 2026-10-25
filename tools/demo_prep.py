@@ -21,7 +21,8 @@ BILLS = [("V01", "INV-77001", 4_800_000, "2026-07-01", "2026-07-08"),
 
 
 def people():
-    ids = json.load(open(os.path.join(ROOT, "data/companyA/identities.json") if DB == "charter-a" else os.path.join(ROOT, "data/dev/identities.json")))
+    # CHARTER_IDENTITIES: company A's run on another database name (tools/play/reset.sh)
+    ids = json.load(open(os.environ.get("CHARTER_IDENTITIES") or (os.path.join(ROOT, "data/companyA/identities.json") if DB == "charter-a" else os.path.join(ROOT, "data/dev/identities.json"))))
     feeder = Client(ids.get("feeder", {}).get("token") or next(v["token"] for v in ids.values() if v["role"] == "world"), "feeder")
     return feeder, Client(admin_token(), "admin")
 

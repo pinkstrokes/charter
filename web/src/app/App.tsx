@@ -14,7 +14,7 @@ import { Security } from '../screens/Security';
 import { Proof } from '../screens/Proof';
 import { Payables } from '../screens/Payables';
 import { World } from '../screens/World';
-import { isPublic } from '../stdb/api';
+import { isPlay, isPublic, watchOnly } from '../stdb/api';
 import { Why } from '../screens/Why';
 import { Toasts } from '../components/Toast';
 import { DemoBar } from '../components/DemoBar';
@@ -45,13 +45,18 @@ export function App() {
     <div className="shell">
       <Header screen={nav.screen} />
       <main className="page" id="main">
+        {isPlay && (
+          <p className="sandbox-note">
+            A shared sandbox: everyone who opens this page acts on the same two companies, and it is rebuilt from scratch now and then. The finished runs are untouched, <a href="../app/">here</a>.
+          </p>
+        )}
         <Connection />
         {ready && nav.screen === 'floor' && <Floor />}
         {ready && nav.screen === 'inbox' && <Inbox />}
         {ready && nav.screen === 'knowledge' && <Knowledge />}
         {ready && nav.screen === 'ledger' && <Ledger />}
         {ready && nav.screen === 'payables' && <Payables />}
-        {ready && nav.screen === 'world' && !isPublic && <World />}
+        {ready && nav.screen === 'world' && !watchOnly && <World />}
         {ready && nav.screen === 'security' && <Security />}
         {nav.screen === 'proof' && <Proof />}
       </main>
@@ -83,8 +88,8 @@ function Header({ screen }: { screen: Screen }) {
       </div>
       <CompanySwitcher />
       <nav className="nav" aria-label="Screens">
-        {/* The public page has no world feeder, so no World screen. */}
-        {SCREENS.filter(s => s !== 'world' || !isPublic).map(s => (
+        {/* The public replays have no world feeder, so no World screen. */}
+        {SCREENS.filter(s => s !== 'world' || !watchOnly).map(s => (
           <button key={s} className="nav-item" aria-current={screen === s ? 'page' : undefined} onClick={() => go(s)}>
             {TITLES[s]}
             {s === 'inbox' && <span className={`count ${askCount ? '' : 'zero'}`}>{askCount}</span>}
