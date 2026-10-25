@@ -119,8 +119,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -163,11 +162,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -217,11 +211,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -265,11 +254,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -368,8 +352,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -420,11 +403,6 @@
        "right": 12,
        "alone": 12,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 12,
-       "alone": 12,
-       "wrongAlone": 0
       }
      }
     },
@@ -471,11 +449,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 4,
-       "alone": 4,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 4,
        "alone": 4,
        "wrongAlone": 0
@@ -530,11 +503,6 @@
        "right": 8,
        "alone": 8,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 8,
-       "alone": 8,
-       "wrongAlone": 0
       }
      }
     }
@@ -546,8 +514,8 @@
      "first": "2010-12-28"
     },
     "C": {
-     "decided": 31,
-     "labeled": 6,
+     "decided": 30,
+     "labeled": 5,
      "first": "2010-01-03"
     }
    },
@@ -645,8 +613,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -696,11 +663,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 64,
-       "alone": 64,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 64,
        "alone": 64,
        "wrongAlone": 0
@@ -757,11 +719,6 @@
        "right": 31,
        "alone": 31,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 31,
-       "alone": 31,
-       "wrongAlone": 0
       }
      }
     },
@@ -815,11 +772,6 @@
        "right": 33,
        "alone": 33,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 33,
-       "alone": 33,
-       "wrongAlone": 0
       }
      }
     }
@@ -832,7 +784,7 @@
     },
     "C": {
      "decided": 132,
-     "labeled": 27,
+     "labeled": 24,
      "first": "2009-12-27"
     }
    },
@@ -983,8 +935,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -1029,11 +980,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 1,
-       "alone": 1,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 1,
        "alone": 1,
        "wrongAlone": 0
@@ -1083,11 +1029,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -1133,11 +1074,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 1,
-       "alone": 1,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 1,
        "alone": 1,
        "wrongAlone": 0
@@ -1243,8 +1179,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -1287,11 +1222,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -1341,11 +1271,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -1389,11 +1314,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -1495,8 +1415,7 @@
     "B:allocation@5": "apply_by_terms",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_by_terms",
-    "C:allocation@3": "apply_by_terms",
-    "C:allocation@4": "apply_by_terms"
+    "C:allocation@3": "apply_by_terms"
    },
    "record": {
     "all": {
@@ -1506,49 +1425,44 @@
      ],
      "byVersion": {
       "B:allocation@1": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "B:allocation@2": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "B:allocation@3": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "B:allocation@4": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "B:allocation@5": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "C:allocation@1": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "C:allocation@2": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       },
       "C:allocation@3": {
-       "right": 16,
+       "right": 15,
        "alone": 20,
-       "wrongAlone": 4
-      },
-      "C:allocation@4": {
-       "right": 16,
-       "alone": 20,
-       "wrongAlone": 4
+       "wrongAlone": 5
       }
      }
     },
@@ -1559,49 +1473,44 @@
      ],
      "byVersion": {
       "B:allocation@1": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "B:allocation@2": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "B:allocation@3": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "B:allocation@4": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "B:allocation@5": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "C:allocation@1": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "C:allocation@2": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       },
       "C:allocation@3": {
-       "right": 10,
+       "right": 9,
        "alone": 11,
-       "wrongAlone": 1
-      },
-      "C:allocation@4": {
-       "right": 10,
-       "alone": 11,
-       "wrongAlone": 1
+       "wrongAlone": 2
       }
      }
     },
@@ -1650,11 +1559,6 @@
        "right": 6,
        "alone": 9,
        "wrongAlone": 3
-      },
-      "C:allocation@4": {
-       "right": 6,
-       "alone": 9,
-       "wrongAlone": 3
       }
      }
     }
@@ -1667,7 +1571,7 @@
     },
     "C": {
      "decided": 30,
-     "labeled": 6,
+     "labeled": 5,
      "first": "2010-01-04"
     }
    },
@@ -1777,8 +1681,7 @@
     "B:allocation@5": "apply_by_terms",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_by_terms",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -1823,11 +1726,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 4,
-       "alone": 4,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 4,
        "alone": 4,
        "wrongAlone": 0
@@ -1879,11 +1777,6 @@
        "right": 2,
        "alone": 2,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 2,
-       "alone": 2,
-       "wrongAlone": 0
       }
      }
     },
@@ -1929,11 +1822,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 2,
-       "alone": 2,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 2,
        "alone": 2,
        "wrongAlone": 0
@@ -2046,8 +1934,7 @@
     "B:allocation@5": "apply_by_terms",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_by_terms",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -2090,11 +1977,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2144,11 +2026,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -2192,11 +2069,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2301,8 +2173,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -2345,11 +2216,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2399,11 +2265,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -2447,11 +2308,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2552,8 +2408,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -2596,11 +2451,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2650,11 +2500,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -2698,11 +2543,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2807,8 +2647,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -2851,11 +2690,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -2905,11 +2739,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -2953,11 +2782,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -3062,8 +2886,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -3106,11 +2929,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -3160,11 +2978,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -3208,11 +3021,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -3314,8 +3122,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -3358,11 +3165,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -3412,11 +3214,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -3460,11 +3257,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -3570,8 +3362,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -3616,11 +3407,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 2,
-       "alone": 2,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 2,
        "alone": 2,
        "wrongAlone": 0
@@ -3672,11 +3458,6 @@
        "right": 1,
        "alone": 1,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 1,
-       "alone": 1,
-       "wrongAlone": 0
       }
      }
     },
@@ -3722,11 +3503,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 1,
-       "alone": 1,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 1,
        "alone": 1,
        "wrongAlone": 0
@@ -3832,8 +3608,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -3876,11 +3651,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -3930,11 +3700,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -3978,11 +3743,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -4088,8 +3848,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -4132,11 +3891,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -4186,11 +3940,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -4234,11 +3983,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -4339,8 +4083,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -4391,11 +4134,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -4441,11 +4179,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -4499,11 +4232,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     }
@@ -4515,8 +4243,8 @@
      "first": "2010-12-30"
     },
     "C": {
-     "decided": 61,
-     "labeled": 61,
+     "decided": 62,
+     "labeled": 62,
      "first": "2010-01-24"
     }
    },
@@ -4621,8 +4349,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "apply_by_terms",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -4668,11 +4395,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 5,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 5,
        "alone": 0,
        "wrongAlone": 0
@@ -4725,11 +4447,6 @@
        "right": 4,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 4,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -4778,19 +4495,14 @@
        "right": 1,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 1,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     }
    },
    "history": {
     "B": {
-     "decided": 10,
-     "labeled": 9,
+     "decided": 11,
+     "labeled": 10,
      "first": "2011-01-05"
     },
     "C": {
@@ -4886,8 +4598,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -4935,11 +4646,6 @@
        "right": 0,
        "alone": 3,
        "wrongAlone": 3
-      },
-      "C:allocation@4": {
-       "right": 2,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -4988,11 +4694,6 @@
        "right": 0,
        "alone": 1,
        "wrongAlone": 1
-      },
-      "C:allocation@4": {
-       "right": 1,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -5041,11 +4742,6 @@
        "right": 0,
        "alone": 2,
        "wrongAlone": 2
-      },
-      "C:allocation@4": {
-       "right": 1,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     }
@@ -5148,8 +4844,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -5194,11 +4889,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 2,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 2,
        "alone": 0,
        "wrongAlone": 0
@@ -5250,11 +4940,6 @@
        "right": 1,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 1,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -5300,11 +4985,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 1,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 1,
        "alone": 0,
        "wrongAlone": 0
@@ -5412,8 +5092,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -5456,11 +5135,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -5510,11 +5184,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -5558,11 +5227,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -5670,8 +5334,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -5714,11 +5377,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -5768,11 +5426,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -5816,11 +5469,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -5924,8 +5572,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -5968,11 +5615,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -6022,11 +5664,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -6070,11 +5707,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -6176,8 +5808,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -6223,11 +5854,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 3,
-       "alone": 3,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 3,
        "alone": 3,
        "wrongAlone": 0
@@ -6280,11 +5906,6 @@
        "right": 2,
        "alone": 2,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 2,
-       "alone": 2,
-       "wrongAlone": 0
       }
      }
     },
@@ -6330,11 +5951,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 1,
-       "alone": 1,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 1,
        "alone": 1,
        "wrongAlone": 0
@@ -6440,8 +6056,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -6484,11 +6099,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -6538,11 +6148,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -6586,11 +6191,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -6693,8 +6293,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -6737,11 +6336,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -6791,11 +6385,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -6839,11 +6428,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -6947,8 +6531,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -6991,11 +6574,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -7045,11 +6623,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -7093,11 +6666,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -7203,8 +6771,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -7249,11 +6816,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 8,
-       "alone": 8,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 8,
        "alone": 8,
        "wrongAlone": 0
@@ -7305,11 +6867,6 @@
        "right": 4,
        "alone": 4,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 4,
-       "alone": 4,
-       "wrongAlone": 0
       }
      }
     },
@@ -7355,11 +6912,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 4,
-       "alone": 4,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 4,
        "alone": 4,
        "wrongAlone": 0
@@ -7475,8 +7027,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -7519,11 +7070,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -7573,11 +7119,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -7621,11 +7162,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -7727,8 +7263,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -7771,11 +7306,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -7825,11 +7355,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -7873,11 +7398,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -7982,8 +7502,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -8026,11 +7545,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -8080,11 +7594,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -8128,11 +7637,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -8234,8 +7738,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -8281,11 +7784,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 6,
-       "alone": 6,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 6,
        "alone": 6,
        "wrongAlone": 0
@@ -8337,11 +7835,6 @@
        "right": 5,
        "alone": 5,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 5,
-       "alone": 5,
-       "wrongAlone": 0
       }
      }
     },
@@ -8387,11 +7880,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 1,
-       "alone": 1,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 1,
        "alone": 1,
        "wrongAlone": 0
@@ -8504,8 +7992,7 @@
     "B:allocation@5": "apply_to_reference",
     "C:allocation@1": "leave_unapplied_ask",
     "C:allocation@2": "apply_to_reference",
-    "C:allocation@3": "apply_to_reference",
-    "C:allocation@4": "apply_to_reference"
+    "C:allocation@3": "apply_to_reference"
    },
    "record": {
     "all": {
@@ -8548,11 +8035,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -8602,11 +8084,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -8650,11 +8127,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -8757,8 +8229,7 @@
     "B:allocation@5": "leave_unapplied_ask",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "leave_unapplied_ask",
-    "C:allocation@3": "leave_unapplied_ask",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "leave_unapplied_ask"
    },
    "record": {
     "all": {
@@ -8801,11 +8272,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -8855,11 +8321,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -8903,11 +8364,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -9012,8 +8468,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -9058,11 +8513,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 69,
-       "alone": 69,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 69,
        "alone": 69,
        "wrongAlone": 0
@@ -9114,11 +8564,6 @@
        "right": 33,
        "alone": 33,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 33,
-       "alone": 33,
-       "wrongAlone": 0
       }
      }
     },
@@ -9167,11 +8612,6 @@
        "right": 36,
        "alone": 36,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 36,
-       "alone": 36,
-       "wrongAlone": 0
       }
      }
     }
@@ -9184,7 +8624,7 @@
     },
     "C": {
      "decided": 118,
-     "labeled": 13,
+     "labeled": 16,
      "first": "2010-01-05"
     }
    },
@@ -9344,8 +8784,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "leave_unapplied_ask"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -9388,11 +8827,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -9442,11 +8876,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -9490,11 +8919,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -9595,8 +9019,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -9641,11 +9064,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 13,
-       "alone": 13,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 13,
        "alone": 13,
        "wrongAlone": 0
@@ -9697,11 +9115,6 @@
        "right": 5,
        "alone": 5,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 5,
-       "alone": 5,
-       "wrongAlone": 0
       }
      }
     },
@@ -9750,11 +9163,6 @@
        "right": 8,
        "alone": 8,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 8,
-       "alone": 8,
-       "wrongAlone": 0
       }
      }
     }
@@ -9767,7 +9175,7 @@
     },
     "C": {
      "decided": 17,
-     "labeled": 1,
+     "labeled": 0,
      "first": "2009-12-31"
     }
    },
@@ -9869,8 +9277,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -9913,11 +9320,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -9967,11 +9369,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -10015,11 +9412,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -10120,8 +9512,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -10169,11 +9560,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 406,
-       "alone": 406,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 406,
        "alone": 406,
        "wrongAlone": 0
@@ -10228,11 +9614,6 @@
        "right": 207,
        "alone": 207,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 207,
-       "alone": 207,
-       "wrongAlone": 0
       }
      }
     },
@@ -10284,24 +9665,19 @@
        "right": 199,
        "alone": 199,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 199,
-       "alone": 199,
-       "wrongAlone": 0
       }
      }
     }
    },
    "history": {
     "B": {
-     "decided": 843,
+     "decided": 842,
      "labeled": 126,
      "first": "2010-12-27"
     },
     "C": {
      "decided": 741,
-     "labeled": 104,
+     "labeled": 86,
      "first": "2009-12-28"
     }
    },
@@ -10797,8 +10173,7 @@
     "B:allocation@5": "apply_unique",
     "C:allocation@1": "apply_unique",
     "C:allocation@2": "apply_unique",
-    "C:allocation@3": "apply_unique",
-    "C:allocation@4": "apply_unique"
+    "C:allocation@3": "apply_unique"
    },
    "record": {
     "all": {
@@ -10841,11 +10216,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -10895,11 +10265,6 @@
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
-      },
-      "C:allocation@4": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
       }
      }
     },
@@ -10943,11 +10308,6 @@
        "wrongAlone": 0
       },
       "C:allocation@3": {
-       "right": 0,
-       "alone": 0,
-       "wrongAlone": 0
-      },
-      "C:allocation@4": {
        "right": 0,
        "alone": 0,
        "wrongAlone": 0
@@ -11413,8 +10773,8 @@
      "fixed": 4,
      "newlyWrongAlone": 0,
      "handedBack": 0,
-     "everDecided": 10,
-     "labeledByPeople": 9,
+     "everDecided": 11,
+     "labeledByPeople": 10,
      "actsAloneOnNoEvidence": false
     },
     {
@@ -11654,8 +11014,8 @@
      "fixed": 3,
      "newlyWrongAlone": 0,
      "handedBack": 0,
-     "everDecided": 31,
-     "labeledByPeople": 6,
+     "everDecided": 30,
+     "labeledByPeople": 5,
      "actsAloneOnNoEvidence": false
     },
     {
@@ -11670,7 +11030,7 @@
      "newlyWrongAlone": 0,
      "handedBack": 0,
      "everDecided": 132,
-     "labeledByPeople": 27,
+     "labeledByPeople": 24,
      "actsAloneOnNoEvidence": false
     },
     {
@@ -12003,6 +11363,7 @@
     "S31",
     "S33",
     "S36",
+    "S37",
     "S38",
     "S40"
    ]
@@ -12011,7 +11372,7 @@
    "company": "C",
    "from": "allocation@2",
    "to": "allocation@3",
-   "liveFrom": "2010-05-09",
+   "liveFrom": "2010-06-06",
    "changes": [
     {
      "situation": "S5",
@@ -12118,115 +11479,7 @@
     "S31",
     "S33",
     "S36",
-    "S38",
-    "S40"
-   ]
-  },
-  {
-   "company": "C",
-   "from": "allocation@3",
-   "to": "allocation@4",
-   "liveFrom": "2010-06-13",
-   "changes": [
-    {
-     "situation": "S19",
-     "says": "one set adds up within £25, not exactly; the reference names no open invoice",
-     "from": "apply_unique",
-     "to": "leave_unapplied_ask",
-     "recorded": 2,
-     "rightBefore": 0,
-     "rightAfter": 1,
-     "fixed": 1,
-     "newlyWrongAlone": 0,
-     "handedBack": 0,
-     "everDecided": 8,
-     "labeledByPeople": 7,
-     "actsAloneOnNoEvidence": false
-    },
-    {
-     "situation": "S21",
-     "says": "one set adds up within £25, not exactly; the reference names no open invoice; a remittance lists invoices that add up",
-     "from": "apply_unique",
-     "to": "leave_unapplied_ask",
-     "recorded": 0,
-     "rightBefore": 0,
-     "rightAfter": 0,
-     "fixed": 0,
-     "newlyWrongAlone": 0,
-     "handedBack": 0,
-     "everDecided": 0,
-     "labeledByPeople": 0,
-     "actsAloneOnNoEvidence": false
-    },
-    {
-     "situation": "S22",
-     "says": "one set adds up within £25, not exactly; what the reference names is already paid; a remittance lists invoices that add up",
-     "from": "apply_unique",
-     "to": "leave_unapplied_ask",
-     "recorded": 0,
-     "rightBefore": 0,
-     "rightAfter": 0,
-     "fixed": 0,
-     "newlyWrongAlone": 0,
-     "handedBack": 0,
-     "everDecided": 0,
-     "labeledByPeople": 0,
-     "actsAloneOnNoEvidence": false
-    },
-    {
-     "situation": "S36",
-     "says": "one set of open invoices adds up exactly; what the reference names is already paid; a remittance lists invoices that add up",
-     "from": "apply_unique",
-     "to": "leave_unapplied_ask",
-     "recorded": 0,
-     "rightBefore": 0,
-     "rightAfter": 0,
-     "fixed": 0,
-     "newlyWrongAlone": 0,
-     "handedBack": 0,
-     "everDecided": 0,
-     "labeledByPeople": 0,
-     "actsAloneOnNoEvidence": false
-    }
-   ],
-   "fixedOnRecord": 1,
-   "newlyWrongAlone": 0,
-   "handedBack": 0,
-   "brokenOnRecord": 0,
-   "changesWithNoEvidence": 3,
-   "actsAloneWhereUnseen": [
-    "S1",
-    "S5",
-    "S8",
-    "S9",
-    "S11",
-    "S12",
-    "S16",
-    "S23",
-    "S25",
-    "S29",
-    "S30",
-    "S31",
-    "S33",
-    "S38",
-    "S40"
-   ],
-   "actsAloneWhereUnlabeled": [
-    "S1",
-    "S5",
-    "S8",
-    "S9",
-    "S10",
-    "S11",
-    "S12",
-    "S14",
-    "S16",
-    "S23",
-    "S25",
-    "S29",
-    "S30",
-    "S31",
-    "S33",
+    "S37",
     "S38",
     "S40"
    ]

@@ -3,7 +3,7 @@
 // run through dsl.ts and through the Z3 formula; any disagreement fails the check.
 
 import { init } from 'z3-solver';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { DOMAINS, run, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Encoder } from './encode';
 
@@ -54,4 +54,5 @@ for (const [name, dom, p] of programs) {
   }
 }
 console.log(`${checked} decisions checked across ${programs.length} skill versions: ${bad} disagreements`);
+writeFileSync(new URL('./out/encoding.json', import.meta.url), JSON.stringify({ checked, versions: programs.length, disagreements: bad }));
 process.exit(bad ? 1 : 0);

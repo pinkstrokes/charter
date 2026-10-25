@@ -309,14 +309,14 @@
        "notices_last_30d": 0
       },
       "facts": {
-       "routing_verified": true,
+       "routing_verified": false,
        "routing_changed_unverified": true,
        "payment_in_transit": true,
        "unapplied_covers_past_due": true,
        "open_dispute": false,
        "recent_return": false,
        "within_grace": false,
-       "bankruptcy_flag": true,
+       "bankruptcy_flag": false,
        "audit_open": false
       }
      },
@@ -335,7 +335,7 @@
        "notices_last_30d": 0
       },
       "facts": {
-       "routing_verified": true,
+       "routing_verified": false,
        "routing_changed_unverified": true,
        "payment_in_transit": true,
        "unapplied_covers_past_due": false,
@@ -387,20 +387,20 @@
        "announced_payment": 0,
        "open_credit_notes": 0,
        "open_dispute": false,
-       "recent_return": true,
+       "recent_return": false,
        "bank_change_recent": false,
        "notices_last_30d": 0
       },
       "facts": {
-       "routing_verified": false,
-       "routing_changed_unverified": false,
+       "routing_verified": true,
+       "routing_changed_unverified": true,
        "payment_in_transit": true,
        "unapplied_covers_past_due": true,
        "open_dispute": false,
-       "recent_return": true,
+       "recent_return": false,
        "within_grace": false,
        "bankruptcy_flag": false,
-       "audit_open": true
+       "audit_open": false
       }
      },
      "bankruptcyFee": {
@@ -805,20 +805,20 @@
        "announced_payment": 0,
        "open_credit_notes": 0,
        "open_dispute": false,
-       "recent_return": true,
+       "recent_return": false,
        "bank_change_recent": false,
        "notices_last_30d": 0
       },
       "facts": {
-       "routing_verified": true,
+       "routing_verified": false,
        "routing_changed_unverified": true,
        "payment_in_transit": false,
        "unapplied_covers_past_due": false,
        "open_dispute": false,
-       "recent_return": true,
+       "recent_return": false,
        "within_grace": false,
        "bankruptcy_flag": true,
-       "audit_open": true
+       "audit_open": false
       }
      },
      "overholds": {
@@ -831,7 +831,7 @@
        "announced_payment": 0,
        "open_credit_notes": 0,
        "open_dispute": false,
-       "recent_return": true,
+       "recent_return": false,
        "bank_change_recent": false,
        "notices_last_30d": 0
       },
@@ -841,7 +841,7 @@
        "payment_in_transit": true,
        "unapplied_covers_past_due": false,
        "open_dispute": false,
-       "recent_return": true,
+       "recent_return": false,
        "within_grace": false,
        "bankruptcy_flag": false,
        "audit_open": true
@@ -871,14 +871,14 @@
       },
       "facts": {
        "routing_verified": false,
-       "routing_changed_unverified": true,
+       "routing_changed_unverified": false,
        "payment_in_transit": false,
        "unapplied_covers_past_due": false,
        "open_dispute": false,
        "recent_return": false,
        "within_grace": false,
        "bankruptcy_flag": true,
-       "audit_open": true
+       "audit_open": false
       }
      },
      "overholds": {
@@ -891,20 +891,20 @@
        "announced_payment": 0,
        "open_credit_notes": 0,
        "open_dispute": false,
-       "recent_return": false,
+       "recent_return": true,
        "bank_change_recent": false,
        "notices_last_30d": 0
       },
       "facts": {
-       "routing_verified": false,
-       "routing_changed_unverified": true,
+       "routing_verified": true,
+       "routing_changed_unverified": false,
        "payment_in_transit": true,
        "unapplied_covers_past_due": false,
        "open_dispute": false,
-       "recent_return": false,
+       "recent_return": true,
        "within_grace": false,
        "bankruptcy_flag": false,
-       "audit_open": true
+       "audit_open": false
       }
      }
     }
@@ -1052,7 +1052,7 @@
        "notices_last_30d": 0
       },
       "facts": {
-       "routing_verified": true,
+       "routing_verified": false,
        "routing_changed_unverified": true,
        "payment_in_transit": true,
        "unapplied_covers_past_due": false,

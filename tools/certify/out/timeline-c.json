@@ -6,51 +6,51 @@
  "situations": 40,
  "asRun": {
   "wrongAlone": 18,
-  "asks": 77,
-  "checks": 170,
-  "rightAlone": 1106,
+  "asks": 78,
+  "checks": 149,
+  "rightAlone": 1105,
   "firstAsks": 0
  },
  "situations_1": {
   "wrongAlone": 11,
-  "asks": 100,
-  "checks": 164,
-  "rightAlone": 1090,
+  "asks": 99,
+  "checks": 143,
+  "rightAlone": 1091,
   "firstAsks": 19
  },
  "situations_2": {
   "wrongAlone": 11,
-  "asks": 112,
-  "checks": 161,
-  "rightAlone": 1078,
+  "asks": 111,
+  "checks": 140,
+  "rightAlone": 1079,
   "firstAsks": 19
  },
  "situations_3": {
   "wrongAlone": 8,
-  "asks": 129,
-  "checks": 157,
-  "rightAlone": 1064,
+  "asks": 128,
+  "checks": 136,
+  "rightAlone": 1065,
   "firstAsks": 19
  },
  "noHindsight_1": {
   "wrongAlone": 11,
-  "asks": 100,
-  "checks": 164,
-  "rightAlone": 1090,
+  "asks": 99,
+  "checks": 143,
+  "rightAlone": 1091,
   "firstAsks": 19
  },
  "noHindsight_2": {
   "wrongAlone": 11,
-  "asks": 112,
-  "checks": 161,
-  "rightAlone": 1078,
+  "asks": 111,
+  "checks": 140,
+  "rightAlone": 1079,
   "firstAsks": 19
  },
  "noHindsight_3": {
   "wrongAlone": 8,
-  "asks": 129,
-  "checks": 157,
-  "rightAlone": 1064,
+  "asks": 128,
+  "checks": 136,
+  "rightAlone": 1065,
   "firstAsks": 19
  },
  "mistakesAlone": 18,
@@ -112,20 +112,20 @@
   },
   {
    "at": "2010-04-02",
-   "subject": "receipt:BACS-499505-A",
-   "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
-   "outcome": "apply_by_terms",
-   "labeledBefore": true
-  },
-  {
-   "at": "2010-04-02",
    "subject": "receipt:BACS-499795-A",
    "family": "on_account",
    "situation": "S19",
    "skill": "allocation@2",
    "outcome": "apply_unique",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-04-02",
+   "subject": "receipt:BACS-499505-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
    "labeledBefore": true
   },
   {
@@ -169,16 +169,7 @@
    "subject": "receipt:BACS-504730-A",
    "family": "on_account",
    "situation": "S6",
-   "skill": "allocation@3",
-   "outcome": "apply_by_terms",
-   "labeledBefore": true
-  },
-  {
-   "at": "2010-05-18",
-   "subject": "receipt:BACS-504635-A",
-   "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@3",
+   "skill": "allocation@2",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -187,7 +178,16 @@
    "subject": "receipt:BACS-505447-A",
    "family": "on_account",
    "situation": "S6",
-   "skill": "allocation@3",
+   "skill": "allocation@2",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-05-18",
+   "subject": "receipt:BACS-504635-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@2",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -196,7 +196,7 @@
    "subject": "receipt:BACS-505994-A",
    "family": "on_account",
    "situation": "S19",
-   "skill": "allocation@3",
+   "skill": "allocation@2",
    "outcome": "apply_unique",
    "labeledBefore": true
   },
@@ -205,7 +205,7 @@
    "subject": "receipt:BACS-507374-A",
    "family": "on_account",
    "situation": "S6",
-   "skill": "allocation@3",
+   "skill": "allocation@2",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -223,10 +223,10 @@
   {
    "version": "allocation@2",
    "live": "2009-12-27",
-   "decisions": 854,
+   "decisions": 1028,
    "flagged": 32,
-   "decisionsInFlagged": 804,
-   "mistakesInFlagged": 12,
+   "decisionsInFlagged": 960,
+   "mistakesInFlagged": 17,
    "flaggedWithMistakes": [
     "S19",
     "S7",
@@ -237,18 +237,9 @@
   },
   {
    "version": "allocation@3",
-   "live": "2010-05-10",
-   "decisions": 265,
+   "live": "2010-06-07",
+   "decisions": 173,
    "flagged": 21,
-   "decisionsInFlagged": 2,
-   "mistakesInFlagged": 0,
-   "flaggedWithMistakes": []
-  },
-  {
-   "version": "allocation@4",
-   "live": "2010-06-14",
-   "decisions": 82,
-   "flagged": 17,
    "decisionsInFlagged": 0,
    "mistakesInFlagged": 0,
    "flaggedWithMistakes": []

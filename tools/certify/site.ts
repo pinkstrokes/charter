@@ -6,10 +6,11 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { CONSTITUTION, ROLE_MATRIX, FACT_LIBRARY } from '../../module/spacetimedb/src/core/policy';
 
 const read = (f: string) => JSON.parse(readFileSync(new URL(`./out/${f}`, import.meta.url), 'utf8'));
-const map = read('allocation-map.json'), tb = read('timeline-b.json'), tc = read('timeline-c.json'), team = read('team.json');
+const map = read('allocation-map.json'), tb = read('timeline-b.json'), tc = read('timeline-c.json'), team = read('team.json'), encoding = read('encoding.json');
 const A = JSON.parse(readFileSync(new URL('./data/a-f02.json', import.meta.url), 'utf8'));
 const site = {
   generated: new Date().toISOString().slice(0, 16),
+  encoding,
   map: {
     vocabulary: map.vocabulary, axioms: map.axioms.length, situations: map.map.map((s: any) => ({
       id: s.id, says: s.says, decide: s.decide, witness: s.world.features, edits: s.world.edits, payment: s.world.payment, lands: s.world.lands,

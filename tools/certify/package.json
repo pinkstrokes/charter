@@ -7,11 +7,11 @@
     "z3-solver": "^4.13.0"
   },
   "scripts": {
-    "check": "tsx check_encoding.ts",
-    "map": "tsx certify.ts",
-    "timeline": "tsx timeline.ts B && tsx timeline.ts C",
-    "team": "tsx team.ts",
-    "site": "tsx site.ts",
-    "all": "tsx check_encoding.ts && tsx certify.ts && tsx timeline.ts B && tsx timeline.ts C && tsx team.ts && tsx site.ts"
+    "check": "npx tsx check_encoding.ts",
+    "map": "npx tsx certify.ts",
+    "timeline": "npx tsx timeline.ts B && npx tsx timeline.ts C",
+    "team": "npx tsx team.ts",
+    "site": "npx tsx site.ts",
+    "all": "npx tsx check_encoding.ts && npx tsx certify.ts && npx tsx timeline.ts B && npx tsx timeline.ts C && npx tsx team.ts && npx tsx site.ts"
   }
 }

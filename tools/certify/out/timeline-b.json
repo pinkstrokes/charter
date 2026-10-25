@@ -5,55 +5,55 @@
  "to": "2011-06-30",
  "situations": 40,
  "asRun": {
-  "wrongAlone": 14,
-  "asks": 32,
+  "wrongAlone": 15,
+  "asks": 33,
   "checks": 204,
-  "rightAlone": 1179,
+  "rightAlone": 1177,
   "firstAsks": 0
  },
  "situations_1": {
-  "wrongAlone": 7,
-  "asks": 53,
+  "wrongAlone": 8,
+  "asks": 54,
   "checks": 198,
-  "rightAlone": 1165,
+  "rightAlone": 1163,
   "firstAsks": 21
  },
  "situations_2": {
-  "wrongAlone": 4,
-  "asks": 69,
+  "wrongAlone": 5,
+  "asks": 70,
   "checks": 193,
-  "rightAlone": 1152,
+  "rightAlone": 1150,
   "firstAsks": 21
  },
  "situations_3": {
-  "wrongAlone": 3,
-  "asks": 75,
+  "wrongAlone": 4,
+  "asks": 76,
   "checks": 193,
-  "rightAlone": 1147,
+  "rightAlone": 1145,
   "firstAsks": 21
  },
  "noHindsight_1": {
-  "wrongAlone": 7,
-  "asks": 53,
+  "wrongAlone": 8,
+  "asks": 54,
   "checks": 198,
-  "rightAlone": 1165,
+  "rightAlone": 1163,
   "firstAsks": 25
  },
  "noHindsight_2": {
-  "wrongAlone": 4,
-  "asks": 69,
+  "wrongAlone": 5,
+  "asks": 70,
   "checks": 193,
-  "rightAlone": 1152,
+  "rightAlone": 1150,
   "firstAsks": 29
  },
  "noHindsight_3": {
-  "wrongAlone": 3,
-  "asks": 75,
+  "wrongAlone": 4,
+  "asks": 76,
   "checks": 193,
-  "rightAlone": 1147,
+  "rightAlone": 1145,
   "firstAsks": 29
  },
- "mistakesAlone": 14,
+ "mistakesAlone": 15,
  "mistakesInUnlabeledSituations": 6,
  "mistakes": [
   {
@@ -170,6 +170,15 @@
    "family": "on_account",
    "situation": "S6",
    "skill": "allocation@4",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2011-05-16",
+   "subject": "receipt:BACS-550362-A",
+   "family": "on_account",
+   "situation": "S6",
+   "skill": "allocation@5",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },

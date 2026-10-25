@@ -1,6 +1,8 @@
 """Read-only: every cash-application decision of companies B and C with when it was made,
 what the seat saw, what each outcome would have done, the label a person gave if any, and the
-answer key's truth and split. Only SELECTs. Writes tools/certify/data/decisions-<co>.json."""
+answer key's truth and split. Only SELECTs. Writes tools/certify/data/decisions-<co>.json.
+For the team check it also writes company A's collections decisions (decisions-a-prechase.json)
+and Patel Brews's open invoices, contract terms and the ratified policies (a-f02.json)."""
 import json
 import os
 import sys
@@ -28,3 +30,14 @@ for db, key in (("charter-b", "data/companyB/answer_key.json"), ("charter-c", "d
     path = os.path.join(OUT, f"decisions-{db.split('-', 1)[1]}.json")
     json.dump(rows, open(path, "w"), separators=(",", ":"))
     print(db, len(rows), "decisions;", sum(1 for r in rows if r["label"]), "labeled;", sum(1 for r in rows if r["shadow"]), "shadow;", "splits", {s: sum(1 for r in rows if r["split"] == s) for s in ("train", "val", "test", "live", None)}, os.path.getsize(path) // 1024, "KB")
+
+stdb.DB = "charter-a"
+a = Client(admin_token(), "admin")
+rows = [{"id": d["id"], "at": d["at"], "subject": d["subject"], "f": json.loads(d["features"]), "skill": d["skill_key"], "outcome": d["outcome"], "label": d["label"]}
+        for d in sorted(a.sql("SELECT id, at, domain, subject, features, skill_key, outcome, label FROM decision"), key=lambda d: d["id"]) if d["domain"] == "pre_chase"]
+inv = [i for i in a.sql("SELECT id, entity_code, kind, amount_cents, open_cents, due_at, issued_at, status FROM invoice") if i["entity_code"] == "F02" and i["open_cents"] > 0]
+pol = [{"id": p["policy_id"], "template": json.loads(p["template"]), "text": p["text"], "status": p["status"]} for p in a.sql("SELECT policy_id, template, text, status FROM policy") if p["status"] == "active" and p["policy_id"].startswith("P-")]
+terms = {x["version"]: json.loads(x["terms_json"]) for x in a.sql("SELECT version, terms_json FROM contract_version")}
+json.dump(rows, open(os.path.join(OUT, "decisions-a-prechase.json"), "w"), separators=(",", ":"))
+json.dump({"party": "F02", "name": "Patel Brews Inc", "contract": "FA-2025", "terms": terms["FA-2025"], "open": inv, "policies": pol}, open(os.path.join(OUT, "a-f02.json"), "w"), indent=1)
+print("charter-a", len(rows), "pre_chase decisions;", len(inv), "open F02 invoices; policies", [p["id"] for p in pol])
