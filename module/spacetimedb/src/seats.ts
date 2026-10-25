@@ -53,18 +53,27 @@ export interface Decided {
 // routing_change `routing:{entity}:{refKey}`.
 // When a person has corrected a near-identical case, the seat does not repeat
 // the mistake: it takes the case to a person instead (the precedent tier). A spot
-// check that found the seat wrong is a correction too, once it counted (a verdict
-// the person withdrew as a slip never labels the decision). The nearest case is cited.
+// check that found the seat wrong is a correction too, but only once the person
+// stood by it on a second look: a verdict nobody looked at again may be a slip, and
+// one slip must not send every near-identical case to a person (in company A, one
+// misread collections check escalated near-identical balances across franchisees
+// for months). The nearest case is cited.
 const ASK_OUTCOME: Record<string, string> = { underreport: 'ask_consultant', pre_chase: 'escalate_controller', allocation: 'leave_unapplied_ask', bill_match: 'hold_exception' };
 
 function correctedPrecedent(tx: Tx, domain: string, features: FeatureMap, outcome: string, treatments: Treatments): { id: bigint; text: string } | null {
   if (!ASK_OUTCOME[domain]) return null;
+  const stood = new Set<number>();
+  for (const a of tx.db.ask.status.filter('answered')) {
+    if (a.kind !== 'label_check' || !a.answer.endsWith(' stands')) continue;
+    const ev = JSON.parse(a.evidence || '{}') as { domain?: string; spotCheck?: number };
+    if (ev.domain === domain && ev.spotCheck !== undefined) stood.add(ev.spotCheck);
+  }
   let best: { d: number; id: bigint; text: string } | null = null;
   for (const a of tx.db.ask.status.filter('answered')) {
     const spot = a.kind === `spot_check:${domain}`;
     if ((a.kind !== `correction:${domain}` && !spot) || a.answer === 'correct' || sameTreatment(domain, a.answer, outcome, treatments)) continue;
     const ev = JSON.parse(a.evidence || '{}') as { features?: FeatureMap; decision?: number };
-    if (!ev.features || (spot && !countedAgainst(tx, domain, ev.decision))) continue;
+    if (!ev.features || (spot && (!stood.has(Number(a.id)) || !countedAgainst(tx, domain, ev.decision)))) continue;
     const d = featureDistance(features, ev.features);
     if (d >= 0.08 || (best && (d > best.d || (d === best.d && a.id < best.id)))) continue;
     best = { d, id: a.id, text: spot ? `${a.answeredBy} found a near-identical case wrong on ${a.answeredAt}: it should have been "${a.answer}"` : `${a.answeredBy} corrected a near-identical case on ${a.answeredAt} to "${a.answer}": ${a.reason}` };
