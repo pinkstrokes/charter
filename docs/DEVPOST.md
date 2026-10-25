@@ -2,7 +2,7 @@
 
 ## Elevator pitch
 
-Charter is a safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. What it learns transfers to new companies.
+A safe, self-improving AI finance team: it applies payments, chases overdue invoices, pays vendors, blocks fraud and catches its own mistakes. It accumulates experience and takes it to new companies.
 
 ## Try it
 
