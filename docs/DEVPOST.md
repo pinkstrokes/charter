@@ -2,7 +2,7 @@
 
 ## Elevator pitch
 
-An AI finance team that lives in one database: it catches and undoes its own mistakes when later evidence contradicts them, pushes back when a person's verdict would break an agreement, learns binding policies from its losses, and cannot move a cent outside a kernel the AI cannot change. Models only read email and write candidate rules; every decision is a rule program the kernel runs.
+An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies.
 
 ## Try it
 
@@ -16,7 +16,9 @@ Cash-application accountant, collections specialist and refunds specialist (rece
 
 ## Inspiration
 
-Hyphenate asks what it takes to hire an AI seat: limited access, a clean record, knowing when to ask, and catching what others missed. Finance already answers that for humans with the three lines of defence. We built the AI version, and asked what an AI team must do that a rules engine with a memory of corrections does not: notice when something it decided weeks ago was wrong, say no to a person who is wrong, and turn a loss into a rule that binds every desk.
+Between 2013 and 2015 one man took Google and Facebook for over $120 million, with invoices from a company named like their real supplier and bank accounts in Latvia and Cyprus. Everyone who paid did their job. The fraud lived between the invoice, the vendor and the bank account. Now that work is going to AI agents, and agents get tested one at a time. Money gets lost between them.
+
+Hyphenate asks what it takes to hire an AI seat: limited access, a clean record, knowing when to ask, and catching what others missed. We built a team that is checked as a team. Models read, programs decide, a kernel enforces, and a solver checks what no single agent owns. And we asked what an AI team must do that a rules engine with a memory of corrections does not: notice when something it decided weeks ago was wrong, say no to a person who is wrong, and turn a loss into a rule that binds every desk.
 
 ## Where the AI is
 
@@ -24,9 +26,10 @@ Three jobs, none of them a decision. Two model families read every email that co
 
 ## What it does
 
+- **Checks what no seat owns.** In the run, cash application rightly asked a person about customer B-15061's payments, and collections rightly went to chase B-15061's £30 overdue invoice, while £397.50 of B-15061's own money waited to be applied. The kernel refused the notice. A solver found this failure across seats; the constitution now forbids it, proved for every situation (details below).
 - **Catches its own mistakes.** When a payment names an invoice the team already paid by inference, it works out that its earlier application was a guess, asks the controller with the evidence, reverses it, re-applies both payments and puts the rule that guessed under tightened inspection.
 - **Defends the agreement.** A spot check or correction that would chase a counterparty inside its contractual grace period is declined with the reason, never counted against the seat and never learned. A spot-check verdict that contradicts a rule with a clean record is put back to the person (a slip, or does it stand?) before it counts.
-- **Checks what no seat owns.** A solver takes the collections skill, the kernel's rules and the grace guard together, over every possible situation. It found that a customer whose own money was waiting to be applied could still be sent a past-due notice, and charged late fees where the contract has them. Two constitution articles now forbid the notice and the fee (C16, C17), and a third forbids fees in bankruptcy (C18), proved for every situation. In the final runs that stopped collections from chasing 7 of company B's customers and 8 of C's with their own money: the kernel refused each notice, collections then held on its own, citing the refusal, and every other chase went through. Runs before the fix, since replaced, had sent those customers 106 such notices.
+- **Proves the fix across seats.** A solver takes the collections skill, the kernel's rules and the grace guard together, over every possible situation. It found that a customer whose own money was waiting to be applied could still be sent a past-due notice, and charged late fees where the contract has them. Two constitution articles now forbid the notice and the fee (C16, C17), and a third forbids fees in bankruptcy (C18), proved for every situation. In the final runs that stopped collections from chasing 7 of company B's customers and 8 of C's with their own money: the kernel refused each notice, collections then held on its own, citing the refusal, and every other chase went through. Runs before the fix, since replaced, had sent those customers 106 such notices.
 - **Learns policies from losses.** After a debit bounced during an unverified bank change, an exhaustive replay of every past money movement found the one rule that would have stopped it without holding back anything legitimate; the controller ratified it and it now also stops refunds and vendor payments — for the controller too.
 - **Shares what it learns.** A new company can start from the skill a sister company learned, ratified by its own controller; a company with a history replays an offered skill through its own gate and refuses what does not fit.
 - **Learns skills from one sentence, safely.** A correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision. Unsupported rules are dropped, failing candidates repaired, new thresholds centred between the nearest known cases; while nothing passes, the gate's counterexamples go back to the model for another try, and such a revision may only fix a mistake, never take work from people; a person approves.

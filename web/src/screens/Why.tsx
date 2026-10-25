@@ -84,6 +84,13 @@ function WhyBody({ a }: { a: Activity }) {
   const used = parseArr<string>(a.used);
   const stopped = a.outcome === 'denied' || a.outcome === 'rejected';
   const decision = useMemo(() => decisionFor(a, decisions), [a, decisions]);
+  // A notice refused because the counterparty's own money covers what is past due: the two sums, from what the seat saw.
+  const ownMoney = useMemo(() => {
+    const f = decision ? parseLoose<FeatureMap>(decision.features, {}) : {};
+    const unapplied = Number(f.unapplied_amount);
+    const open = Number(f.open_amount);
+    return unapplied > 0 && open > 0 ? { unapplied, open } : null;
+  }, [decision]);
   const policyIds = planPolicies(a.plan);
   const hitIds = new Set(reasons.map(r => /^([A-Z][A-Za-z]*-?[A-Za-z0-9]*):/.exec(r)?.[1]).filter(Boolean) as string[]);
   const principalKind = String(context.principalKind ?? (a.principal.startsWith('seat:') ? 'seat' : ''));
@@ -126,6 +133,11 @@ function WhyBody({ a }: { a: Activity }) {
                 <li key={i}>
                   {r}
                   {p && <div className="policy-text">{p.text}</div>}
+                  {/unapplied_covers_past_due/.test(r) && ownMoney && (
+                    <div className="policy-text">
+                      Here: <b style={{ fontWeight: 600 }}><Money cents={ownMoney.unapplied} /></b> of {String(params.entity ?? 'the customer')}'s own money was waiting to be applied, against <b style={{ fontWeight: 600 }}><Money cents={ownMoney.open} /></b> past due.
+                    </div>
+                  )}
                 </li>
               );
             })}
