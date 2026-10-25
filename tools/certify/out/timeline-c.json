@@ -1,76 +1,85 @@
 {
  "company": "C",
- "decisions": 1201,
+ "decisions": 1202,
  "from": "2009-12-27",
  "to": "2010-06-30",
  "situations": 40,
  "asRun": {
-  "wrongAlone": 18,
-  "asks": 78,
-  "checks": 149,
-  "rightAlone": 1105,
+  "wrongAlone": 17,
+  "asks": 20,
+  "checks": 206,
+  "rightAlone": 1165,
   "firstAsks": 0
  },
  "situations_1": {
-  "wrongAlone": 11,
-  "asks": 99,
-  "checks": 143,
-  "rightAlone": 1091,
+  "wrongAlone": 8,
+  "asks": 50,
+  "checks": 197,
+  "rightAlone": 1144,
   "firstAsks": 19
  },
  "situations_2": {
-  "wrongAlone": 11,
-  "asks": 111,
-  "checks": 140,
-  "rightAlone": 1079,
+  "wrongAlone": 8,
+  "asks": 62,
+  "checks": 195,
+  "rightAlone": 1132,
   "firstAsks": 19
  },
  "situations_3": {
-  "wrongAlone": 8,
-  "asks": 128,
-  "checks": 136,
-  "rightAlone": 1065,
+  "wrongAlone": 5,
+  "asks": 80,
+  "checks": 190,
+  "rightAlone": 1117,
   "firstAsks": 19
  },
  "noHindsight_1": {
-  "wrongAlone": 11,
-  "asks": 99,
-  "checks": 143,
-  "rightAlone": 1091,
+  "wrongAlone": 8,
+  "asks": 50,
+  "checks": 197,
+  "rightAlone": 1144,
   "firstAsks": 19
  },
  "noHindsight_2": {
-  "wrongAlone": 11,
-  "asks": 111,
-  "checks": 140,
-  "rightAlone": 1079,
+  "wrongAlone": 8,
+  "asks": 62,
+  "checks": 195,
+  "rightAlone": 1132,
   "firstAsks": 19
  },
  "noHindsight_3": {
-  "wrongAlone": 8,
-  "asks": 128,
-  "checks": 136,
-  "rightAlone": 1065,
+  "wrongAlone": 5,
+  "asks": 80,
+  "checks": 190,
+  "rightAlone": 1117,
   "firstAsks": 19
  },
- "mistakesAlone": 18,
- "mistakesInUnlabeledSituations": 5,
+ "mistakesAlone": 17,
+ "mistakesInUnlabeledSituations": 4,
  "mistakes": [
   {
    "at": "2010-01-31",
    "subject": "receipt:BACS-493695-A",
    "family": "on_account",
-   "situation": "S19",
+   "situation": "S5",
    "skill": "allocation@2",
    "outcome": "apply_unique",
    "labeledBefore": false
   },
   {
+   "at": "2010-02-22",
+   "subject": "receipt:BACS-495193",
+   "family": "two_invoices",
+   "situation": "S21",
+   "skill": "allocation@3",
+   "outcome": "apply_to_reference",
+   "labeledBefore": true
+  },
+  {
    "at": "2010-03-04",
    "subject": "receipt:BACS-496315-A",
    "family": "on_account",
-   "situation": "S19",
-   "skill": "allocation@2",
+   "situation": "S5",
+   "skill": "allocation@3",
    "outcome": "apply_unique",
    "labeledBefore": false
   },
@@ -78,8 +87,8 @@
    "at": "2010-03-06",
    "subject": "receipt:STMT-C-13081-2010-02",
    "family": "statement_with_remittance",
-   "situation": "S7",
-   "skill": "allocation@2",
+   "situation": "S36",
+   "skill": "allocation@3",
    "outcome": "apply_by_terms",
    "labeledBefore": false
   },
@@ -87,8 +96,8 @@
    "at": "2010-03-10",
    "subject": "receipt:BACS-497384",
    "family": "two_invoices_bank_charge",
-   "situation": "S4",
-   "skill": "allocation@2",
+   "situation": "S3",
+   "skill": "allocation@3",
    "outcome": "apply_to_reference",
    "labeledBefore": false
   },
@@ -96,35 +105,35 @@
    "at": "2010-03-16",
    "subject": "receipt:BACS-497369-A",
    "family": "on_account",
-   "situation": "S19",
-   "skill": "allocation@2",
+   "situation": "S5",
+   "skill": "allocation@3",
    "outcome": "apply_unique",
    "labeledBefore": true
   },
   {
-   "at": "2010-03-23",
-   "subject": "receipt:BACS-498935",
-   "family": "two_invoices_bank_charge",
-   "situation": "S37",
-   "skill": "allocation@2",
-   "outcome": "apply_unique",
-   "labeledBefore": false
-  },
-  {
-   "at": "2010-04-02",
-   "subject": "receipt:BACS-499795-A",
+   "at": "2010-03-30",
+   "subject": "receipt:BACS-499220-A",
    "family": "on_account",
-   "situation": "S19",
-   "skill": "allocation@2",
-   "outcome": "apply_unique",
+   "situation": "S4",
+   "skill": "allocation@4",
+   "outcome": "apply_by_terms",
    "labeledBefore": true
   },
   {
    "at": "2010-04-02",
    "subject": "receipt:BACS-499505-A",
    "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
+   "situation": "S4",
+   "skill": "allocation@4",
+   "outcome": "apply_by_terms",
+   "labeledBefore": true
+  },
+  {
+   "at": "2010-04-02",
+   "subject": "receipt:BACS-499795-A",
+   "family": "on_account",
+   "situation": "S5",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -132,8 +141,8 @@
    "at": "2010-04-08",
    "subject": "receipt:BACS-500867-A",
    "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
+   "situation": "S4",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -141,17 +150,17 @@
    "at": "2010-04-18",
    "subject": "receipt:BACS-502219-A",
    "family": "on_account",
-   "situation": "S19",
-   "skill": "allocation@2",
-   "outcome": "apply_unique",
+   "situation": "S5",
+   "skill": "allocation@4",
+   "outcome": "apply_by_terms",
    "labeledBefore": true
   },
   {
    "at": "2010-04-30",
    "subject": "receipt:BACS-502875-A",
    "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
+   "situation": "S4",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -159,8 +168,8 @@
    "at": "2010-05-06",
    "subject": "receipt:STMT-C-13081-2010-04",
    "family": "statement_with_remittance",
-   "situation": "S7",
-   "skill": "allocation@2",
+   "situation": "S36",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -168,17 +177,8 @@
    "at": "2010-05-13",
    "subject": "receipt:BACS-504730-A",
    "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
-   "outcome": "apply_by_terms",
-   "labeledBefore": true
-  },
-  {
-   "at": "2010-05-18",
-   "subject": "receipt:BACS-505447-A",
-   "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
+   "situation": "S4",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -186,26 +186,17 @@
    "at": "2010-05-18",
    "subject": "receipt:BACS-504635-A",
    "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
+   "situation": "S4",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
   {
-   "at": "2010-06-01",
-   "subject": "receipt:BACS-505994-A",
+   "at": "2010-05-18",
+   "subject": "receipt:BACS-505447-A",
    "family": "on_account",
-   "situation": "S19",
-   "skill": "allocation@2",
-   "outcome": "apply_unique",
-   "labeledBefore": true
-  },
-  {
-   "at": "2010-06-04",
-   "subject": "receipt:BACS-507374-A",
-   "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@2",
+   "situation": "S4",
+   "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -213,9 +204,9 @@
    "at": "2010-06-09",
    "subject": "receipt:BACS-508045-A",
    "family": "on_account",
-   "situation": "S19",
-   "skill": "allocation@3",
-   "outcome": "apply_unique",
+   "situation": "S5",
+   "skill": "allocation@4",
+   "outcome": "apply_by_terms",
    "labeledBefore": true
   }
  ],
@@ -223,24 +214,33 @@
   {
    "version": "allocation@2",
    "live": "2009-12-27",
-   "decisions": 1028,
-   "flagged": 32,
-   "decisionsInFlagged": 960,
-   "mistakesInFlagged": 17,
+   "decisions": 222,
+   "flagged": 27,
+   "decisionsInFlagged": 218,
+   "mistakesInFlagged": 1,
    "flaggedWithMistakes": [
-    "S19",
-    "S7",
-    "S4",
-    "S37",
-    "S6"
+    "S5"
    ]
   },
   {
    "version": "allocation@3",
-   "live": "2010-06-07",
-   "decisions": 173,
-   "flagged": 21,
-   "decisionsInFlagged": 0,
+   "live": "2010-02-08",
+   "decisions": 265,
+   "flagged": 20,
+   "decisionsInFlagged": 17,
+   "mistakesInFlagged": 4,
+   "flaggedWithMistakes": [
+    "S5",
+    "S36",
+    "S3"
+   ]
+  },
+  {
+   "version": "allocation@4",
+   "live": "2010-03-22",
+   "decisions": 715,
+   "flagged": 17,
+   "decisionsInFlagged": 8,
    "mistakesInFlagged": 0,
    "flaggedWithMistakes": []
   }

@@ -5,62 +5,62 @@
  "to": "2011-06-30",
  "situations": 40,
  "asRun": {
-  "wrongAlone": 15,
-  "asks": 33,
-  "checks": 204,
-  "rightAlone": 1177,
+  "wrongAlone": 14,
+  "asks": 32,
+  "checks": 197,
+  "rightAlone": 1179,
   "firstAsks": 0
  },
  "situations_1": {
-  "wrongAlone": 8,
-  "asks": 54,
-  "checks": 198,
-  "rightAlone": 1163,
+  "wrongAlone": 7,
+  "asks": 53,
+  "checks": 192,
+  "rightAlone": 1165,
   "firstAsks": 21
  },
  "situations_2": {
-  "wrongAlone": 5,
-  "asks": 70,
-  "checks": 193,
-  "rightAlone": 1150,
+  "wrongAlone": 4,
+  "asks": 69,
+  "checks": 185,
+  "rightAlone": 1152,
   "firstAsks": 21
  },
  "situations_3": {
-  "wrongAlone": 4,
-  "asks": 76,
-  "checks": 193,
-  "rightAlone": 1145,
+  "wrongAlone": 3,
+  "asks": 75,
+  "checks": 185,
+  "rightAlone": 1147,
   "firstAsks": 21
  },
  "noHindsight_1": {
-  "wrongAlone": 8,
-  "asks": 54,
-  "checks": 198,
-  "rightAlone": 1163,
-  "firstAsks": 25
+  "wrongAlone": 7,
+  "asks": 53,
+  "checks": 192,
+  "rightAlone": 1165,
+  "firstAsks": 24
  },
  "noHindsight_2": {
-  "wrongAlone": 5,
-  "asks": 70,
-  "checks": 193,
-  "rightAlone": 1150,
-  "firstAsks": 29
+  "wrongAlone": 4,
+  "asks": 69,
+  "checks": 185,
+  "rightAlone": 1152,
+  "firstAsks": 26
  },
  "noHindsight_3": {
-  "wrongAlone": 4,
-  "asks": 76,
-  "checks": 193,
-  "rightAlone": 1145,
-  "firstAsks": 29
+  "wrongAlone": 3,
+  "asks": 75,
+  "checks": 185,
+  "rightAlone": 1147,
+  "firstAsks": 26
  },
- "mistakesAlone": 15,
+ "mistakesAlone": 14,
  "mistakesInUnlabeledSituations": 6,
  "mistakes": [
   {
    "at": "2010-12-28",
    "subject": "receipt:BACS-536784",
    "family": "parent",
-   "situation": "S2",
+   "situation": "S9",
    "skill": "allocation@1",
    "outcome": "apply_unique",
    "labeledBefore": false
@@ -69,7 +69,7 @@
    "at": "2011-01-02",
    "subject": "receipt:BACS-537457",
    "family": "prompt",
-   "situation": "S3",
+   "situation": "S2",
    "skill": "allocation@1",
    "outcome": "apply_by_terms",
    "labeledBefore": false
@@ -78,7 +78,7 @@
    "at": "2011-01-04",
    "subject": "receipt:BACS-536789",
    "family": "prompt",
-   "situation": "S3",
+   "situation": "S2",
    "skill": "allocation@2",
    "outcome": "apply_by_terms",
    "labeledBefore": false
@@ -87,7 +87,7 @@
    "at": "2011-01-05",
    "subject": "receipt:BACS-536792-DUP",
    "family": "duplicate",
-   "situation": "S18",
+   "situation": "S38",
    "skill": "allocation@2",
    "outcome": "apply_by_terms",
    "labeledBefore": false
@@ -96,7 +96,7 @@
    "at": "2011-01-08",
    "subject": "receipt:BACS-538175",
    "family": "two_invoices_bank_charge",
-   "situation": "S3",
+   "situation": "S2",
    "skill": "allocation@2",
    "outcome": "apply_by_terms",
    "labeledBefore": true
@@ -105,7 +105,7 @@
    "at": "2011-01-14",
    "subject": "receipt:BACS-539331-A",
    "family": "on_account",
-   "situation": "S19",
+   "situation": "S5",
    "skill": "allocation@2",
    "outcome": "apply_unique",
    "labeledBefore": false
@@ -114,7 +114,7 @@
    "at": "2011-01-20",
    "subject": "receipt:BACS-539108",
    "family": "on_account_balance",
-   "situation": "S18",
+   "situation": "S38",
    "skill": "allocation@3",
    "outcome": "apply_by_terms",
    "labeledBefore": true
@@ -123,7 +123,7 @@
    "at": "2011-02-11",
    "subject": "receipt:BACS-540157-DUP",
    "family": "duplicate",
-   "situation": "S17",
+   "situation": "S21",
    "skill": "allocation@3",
    "outcome": "apply_to_reference",
    "labeledBefore": true
@@ -132,7 +132,7 @@
    "at": "2011-02-17",
    "subject": "receipt:BACS-538995-DUP",
    "family": "duplicate",
-   "situation": "S18",
+   "situation": "S38",
    "skill": "allocation@3",
    "outcome": "apply_by_terms",
    "labeledBefore": true
@@ -141,7 +141,7 @@
    "at": "2011-03-18",
    "subject": "receipt:BACS-544282-DUP",
    "family": "duplicate",
-   "situation": "S18",
+   "situation": "S38",
    "skill": "allocation@3",
    "outcome": "apply_by_terms",
    "labeledBefore": true
@@ -150,7 +150,7 @@
    "at": "2011-03-22",
    "subject": "receipt:BACS-544642-A",
    "family": "on_account",
-   "situation": "S6",
+   "situation": "S4",
    "skill": "allocation@3",
    "outcome": "apply_by_terms",
    "labeledBefore": true
@@ -159,7 +159,7 @@
    "at": "2011-04-04",
    "subject": "receipt:BACS-545288-A",
    "family": "on_account",
-   "situation": "S6",
+   "situation": "S4",
    "skill": "allocation@4",
    "outcome": "apply_by_terms",
    "labeledBefore": true
@@ -168,17 +168,8 @@
    "at": "2011-04-15",
    "subject": "receipt:BACS-547036-A",
    "family": "on_account",
-   "situation": "S6",
+   "situation": "S4",
    "skill": "allocation@4",
-   "outcome": "apply_by_terms",
-   "labeledBefore": true
-  },
-  {
-   "at": "2011-05-16",
-   "subject": "receipt:BACS-550362-A",
-   "family": "on_account",
-   "situation": "S6",
-   "skill": "allocation@5",
    "outcome": "apply_by_terms",
    "labeledBefore": true
   },
@@ -186,7 +177,7 @@
    "at": "2011-06-05",
    "subject": "receipt:BACS-552574-A",
    "family": "on_account",
-   "situation": "S19",
+   "situation": "S5",
    "skill": "allocation@5",
    "outcome": "apply_unique",
    "labeledBefore": false
@@ -201,8 +192,8 @@
    "decisionsInFlagged": 23,
    "mistakesInFlagged": 2,
    "flaggedWithMistakes": [
-    "S2",
-    "S3"
+    "S9",
+    "S2"
    ]
   },
   {
@@ -213,15 +204,15 @@
    "decisionsInFlagged": 36,
    "mistakesInFlagged": 4,
    "flaggedWithMistakes": [
-    "S3",
-    "S18",
-    "S19"
+    "S2",
+    "S38",
+    "S5"
    ]
   },
   {
    "version": "allocation@3",
    "live": "2011-01-17",
-   "decisions": 390,
+   "decisions": 355,
    "flagged": 27,
    "decisionsInFlagged": 5,
    "mistakesInFlagged": 0,
@@ -229,22 +220,22 @@
   },
   {
    "version": "allocation@4",
-   "live": "2011-04-04",
-   "decisions": 108,
-   "flagged": 25,
-   "decisionsInFlagged": 8,
+   "live": "2011-03-28",
+   "decisions": 194,
+   "flagged": 20,
+   "decisionsInFlagged": 9,
    "mistakesInFlagged": 0,
    "flaggedWithMistakes": []
   },
   {
    "version": "allocation@5",
-   "live": "2011-04-18",
-   "decisions": 538,
-   "flagged": 23,
-   "decisionsInFlagged": 9,
+   "live": "2011-04-25",
+   "decisions": 487,
+   "flagged": 18,
+   "decisionsInFlagged": 18,
    "mistakesInFlagged": 1,
    "flaggedWithMistakes": [
-    "S19"
+    "S5"
    ]
   }
  ]

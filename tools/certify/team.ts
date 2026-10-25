@@ -133,7 +133,7 @@ function playOut(variant: Variant) {
   const fee = feesFor.length ? evaluate(variant.rules, { principal: COLL, action: 'assess_fee', amountCents: A.terms.lateFeeCents, facts: variant.feeFacts ? facts : undefined }) : null;
   return {
     today, party: `${A.name} (${A.party}, ${A.contract}: ${A.terms.graceDays} days of grace, ${money(A.terms.lateFeeCents)} late fee per invoice)`,
-    payment: `${money(owed)} arrives, reference "${payment.reference}": exactly the ${pastDue.length} invoices due ${oldest} (${pastDue.map((i: any) => i.id).join(', ')}); ${ledger.invoices.length - pastDue.length} more invoices are open, not yet due`,
+    payment: `${money(owed)} arrives, reference "${payment.reference}": exactly what is past due, ${pastDue.length} invoices (${pastDue.map((i: any) => `${i.id} due ${i.dueDate}`).join(', ')}); ${ledger.invoices.length - pastDue.length} more invoices are open, not yet due`,
     cash: { skill: cashSkill.key, features: cash.features, decides: cashDecides },
     collections: { skill: current, features: f, decides: collDecides },
     notice: notice ? { allowed: notice.allowed, by: notice.permittedBy, refused: notice.reasons } : null,

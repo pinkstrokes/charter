@@ -52,6 +52,16 @@
    "status": "open"
   },
   {
+   "id": "A-S31-2026-06-08",
+   "entity_code": "F02",
+   "kind": "audit",
+   "amount_cents": 16685,
+   "open_cents": 16685,
+   "due_at": "2026-06-26",
+   "issued_at": "2026-06-24",
+   "status": "open"
+  },
+  {
    "id": "SUP-24516",
    "entity_code": "F02",
    "kind": "supply",
