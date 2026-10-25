@@ -1,0 +1,17 @@
+{
+  "name": "charter-certify",
+  "private": true,
+  "type": "module",
+  "description": "Competence maps and certificates for Charter's skills: every situation a skill can tell apart, realized as a concrete world and graded",
+  "dependencies": {
+    "z3-solver": "^4.13.0"
+  },
+  "scripts": {
+    "check": "npx tsx check_encoding.ts",
+    "map": "npx tsx certify.ts",
+    "timeline": "npx tsx timeline.ts B && npx tsx timeline.ts C",
+    "team": "npx tsx team.ts",
+    "site": "npx tsx site.ts",
+    "all": "npx tsx check_encoding.ts && npx tsx certify.ts && npx tsx timeline.ts B && npx tsx timeline.ts C && npx tsx team.ts && npx tsx site.ts"
+  }
+}
