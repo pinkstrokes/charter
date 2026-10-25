@@ -3,7 +3,8 @@
 // the source company crosses. The target replays it — whole, and rule by rule
 // on top of its own program — over its own history and its own people's
 // answers, through the same gate as any proposal, and its own controller decides.
-//   npx tsx tools/evolve/transfer.ts --from charter-a --to charter-b --domain allocation
+//   npx tsx tools/evolve/transfer.ts --from charter-a --to charter-b --domain allocation [--dry]
+// --dry judges and writes the proof file but proposes nothing at the target.
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { canonical } from '../../module/spacetimedb/src/core/hash';
@@ -90,6 +91,10 @@ async function main(): Promise<void> {
   for (const t of tried) console.log(`  ${t.what}: ${t.ev.gate}${t.ev.gate === 'pass' ? '' : ` (${t.ev.why.join('; ')})`}`);
   if (ev.gate !== 'pass') {
     console.log(`${DOMAIN}: nothing from ${crossing.source.company}'s ${chosen.key} passes at ${proof.targetCompany}`);
+    return;
+  }
+  if (args.has('dry')) {
+    console.log(`${DOMAIN}: ${best.what} from ${crossing.source.company}'s ${chosen.key} passes at ${proof.targetCompany} (--dry: not proposed)`);
     return;
   }
   await dst.call('propose_skill', DOMAIN, JSON.stringify(best.program), active.key, `${best.what} transferred from ${crossing.source.company} (${chosen.key}); no records crossed`, JSON.stringify(proof));

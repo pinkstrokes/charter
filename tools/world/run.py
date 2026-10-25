@@ -179,7 +179,9 @@ class Runner:
         if evolve.exists() and not self.args.no_evolve:
             t0 = time.time()
             try:
-                p = subprocess.run(["npx", "tsx", "tools/evolve/evolve.ts", "--once", "--db", self.args.db], cwd=REPO, capture_output=True, text=True,
+                # --data always: on any database name other than charter-a the evolver would read another folder's
+                # answer key, so the locked test and live splits would not be hidden from it.
+                p = subprocess.run(["npx", "tsx", "tools/evolve/evolve.ts", "--once", "--db", self.args.db, "--data", str(DATA.relative_to(REPO))], cwd=REPO, capture_output=True, text=True,
                                    timeout=1800, env={**os.environ, "STDB_DB": self.args.db})
                 lines = [x for x in (p.stdout + p.stderr).splitlines() if x.strip()]
                 status = "ok" if p.returncode == 0 else f"exit {p.returncode}"
@@ -214,7 +216,7 @@ class Runner:
         auditor = REPO / "tools" / "audit" / "auditor.ts"
         if auditor.exists():
             try:
-                p = subprocess.run(["npx", "tsx", "tools/audit/auditor.ts", "--db", self.args.db, "--period", period], cwd=REPO, capture_output=True, text=True,
+                p = subprocess.run(["npx", "tsx", "tools/audit/auditor.ts", "--db", self.args.db, "--period", period, "--data", str(DATA.relative_to(REPO))], cwd=REPO, capture_output=True, text=True,
                                    timeout=900, env={**os.environ, "STDB_DB": self.args.db})
                 for x in (p.stdout + p.stderr).splitlines()[-15:]:
                     log(f"  auditor: {x}")

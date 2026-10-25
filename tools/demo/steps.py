@@ -30,12 +30,13 @@ holds = [d for d in a.sql("SELECT id, domain, outcome, shadow, features FROM dec
 hold = max(holds, key=lambda d: d["id"])
 pushback = max(x["id"] for x in a.sql("SELECT id, used FROM activity") if used(x, f"decision:{hold['id']}"))
 
+# Four beats in two minutes (the moment; steal, then release; push back; proof), then the judges' own payment.
 steps = [
     {"label": "The moment", "db": "charter-b", "hash": f"#/inbox?why={moment}"},
-    {"label": "Your payment", "db": "charter-b", "hash": "#/world/payment"},
-    {"label": "Push back", "db": "charter-a", "hash": f"#/floor?why={pushback}"},
     {"label": "Try to steal", "db": "charter-a", "hash": "#/security"},
     {"label": "Release it", "db": "charter-a", "hash": "#/payables"},
+    {"label": "Push back", "db": "charter-a", "hash": f"#/floor?why={pushback}"},
     {"label": "Proof", "db": "charter-b", "hash": "#/proof"},
+    {"label": "Your payment", "db": "charter-b", "hash": "#/world/payment"},
 ]
 print(json.dumps({"persona": "dana", "steps": steps}, indent=1))
