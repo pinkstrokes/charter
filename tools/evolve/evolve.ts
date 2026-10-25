@@ -20,9 +20,11 @@ for (let i = 2; i < process.argv.length; i++) {
 const DB = args.get('db') ?? process.env.STDB_DB ?? 'charter-iqwfr';
 const COMPANY_DIR = args.get('data') ?? (DB === 'charter-a' ? 'data/companyA' : DB === 'charter-b' ? 'data/companyB' : 'data/dev');
 const MODEL = args.get('model') ?? 'qwen3.8-max';
-// --rounds 0 (or EVOLVE_ROUNDS=0 through the world runners) proposes as the engine
-// did before counterexamples went back to the model.
-const ROUNDS = Number(args.get('rounds') ?? process.env.EVOLVE_ROUNDS ?? COUNTEREXAMPLE_ROUNDS);
+// Counterexample rounds run only when asked for: --rounds (COUNTEREXAMPLE_ROUNDS of
+// them), --rounds N, or EVOLVE_ROUNDS=N through the world runners. Without them it
+// proposes as the engine did for the final runs.
+const askedRounds = args.get('rounds') ?? process.env.EVOLVE_ROUNDS;
+const ROUNDS = askedRounds === undefined ? 0 : askedRounds === 'true' ? COUNTEREXAMPLE_ROUNDS : Number(askedRounds);
 const DOMAINS_TO_EVOLVE: Domain[] = args.has('domain') ? [args.get('domain') as Domain] : ['underreport', 'pre_chase', 'allocation', 'routing_change', 'bill_match'];
 
 interface KeyEntry {

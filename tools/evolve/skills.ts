@@ -410,7 +410,10 @@ const rank = (a: Scored, b: Scored) =>
 // Revisions fix the mistakes people found and never take work from them: on
 // company A's final history the one revision that passed had narrowed a takeover
 // just enough to step around the case where people disagreed, and the answer key
-// says its new rejections were wrong.
+// says its new rejections were wrong. Even so restricted, run through the whole of
+// company A's history they rescued one collections version that the answer key
+// scores worse than the one it would have replaced, so they run only when asked
+// for; the final runs were made without them.
 export const COUNTEREXAMPLE_ROUNDS = 2;
 
 // The model proposes; each candidate loses the new rules no case supports and is
@@ -418,7 +421,7 @@ export const COUNTEREXAMPLE_ROUNDS = 2;
 // the rules behind the failure removed, and, while nothing passes, revised by the
 // model from the gate's counterexamples; the leading passing ones get their new
 // thresholds centred. Passing candidates come back best first.
-export async function improve(model: string, domain: Domain, current: SkillProgram, examples: Example[], lesson: Example[], optional: Example[], h: History, hidden: Set<string>, rounds = COUNTEREXAMPLE_ROUNDS): Promise<{ scored: Scored[]; passing: Scored[]; rounds: number }> {
+export async function improve(model: string, domain: Domain, current: SkillProgram, examples: Example[], lesson: Example[], optional: Example[], h: History, hidden: Set<string>, rounds = 0): Promise<{ scored: Scored[]; passing: Scored[]; rounds: number }> {
   const scored: Scored[] = [];
   const REVISED = 'revised from the replay';
   // A revision that takes work over from people fails, whatever the gate said.
