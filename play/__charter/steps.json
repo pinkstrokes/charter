@@ -1,0 +1,48 @@
+{
+ "persona": "dana",
+ "steps": [
+  {
+   "label": "Learned",
+   "db": "charter-pinkstrokes-play-b",
+   "hash": "#/knowledge/allocation"
+  },
+  {
+   "label": "Try to steal",
+   "db": "charter-pinkstrokes-play-a",
+   "hash": "#/security"
+  },
+  {
+   "label": "Release it",
+   "db": "charter-pinkstrokes-play-a",
+   "hash": "#/payables"
+  },
+  {
+   "label": "Push back",
+   "db": "charter-pinkstrokes-play-a",
+   "hash": "#/floor?why=5389",
+   "find": "pushback"
+  },
+  {
+   "label": "The moment",
+   "db": "charter-pinkstrokes-play-b",
+   "hash": "#/inbox?why=552",
+   "find": "moment"
+  },
+  {
+   "label": "Right alone",
+   "db": "charter-pinkstrokes-play-b",
+   "hash": "#/floor?why=4761",
+   "find": "right_alone"
+  },
+  {
+   "label": "Proof",
+   "db": "charter-pinkstrokes-play-b",
+   "hash": "#/proof"
+  },
+  {
+   "label": "Your payment",
+   "db": "charter-pinkstrokes-play-b",
+   "hash": "#/world/payment"
+  }
+ ]
+}
