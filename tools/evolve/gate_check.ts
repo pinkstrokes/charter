@@ -2,7 +2,7 @@
 // database, no model. Each check is a way the gate was once fooled or could be.
 //   npx tsx tools/evolve/gate_check.ts
 import { outcomeFor, run, settlesAlone, type Expr, type FeatureMap, type SkillProgram, type Treatments } from '../../module/spacetimedb/src/core/dsl';
-import { agrees, cleanestFirst, evaluate, splitLessons, type Domain, type Example, type History } from './skills';
+import { agrees, cleanestFirst, counterexamples, evaluate, splitLessons, type Domain, type Example, type History } from './skills';
 
 const feat = (name: string): Expr => ({ op: 'feat', name });
 const num = (v: number): Expr => ({ op: 'num', v });
@@ -47,6 +47,7 @@ const repeat = <T>(n: number, x: T): T[] => Array.from({ length: n }, () => x);
   const candidate: SkillProgram = { domain: 'pre_chase', rules: [{ when: cmp('gt', feat('days_past_due'), feat('grace_days')), then: { decide: 'chase' } }], otherwise: { decide: 'escalate_controller' } };
   const long = gate('pre_chase', current, candidate, [...repeat(2000, { features: overdue, label: 'chase' }), { features: overdue, label: 'escalate_controller' }]);
   check('one disagreement in 2,001 takeovers passes at a 10% tolerable rate', long.gate === 'pass', long.why.join('; '));
+  check('...and all 2,001, the disagreeing one too, count as work taken over', long.cases.takeovers === 2001, String(long.cases.takeovers));
   const short = gate('pre_chase', current, candidate, [...repeat(10, { features: overdue, label: 'chase' }), { features: overdue, label: 'escalate_controller' }]);
   check('one disagreement in 11 takeovers fails', short.gate === 'fail', short.why.join('; '));
 }
@@ -107,6 +108,29 @@ const repeat = <T>(n: number, x: T): T[] => Array.from({ length: n }, () => x);
     return a.decide === b.decide && (a.askRole ?? '') === (b.askRole ?? '');
   });
   check('reordering interchangeable rules changes no decision and no one who is asked', same, ordered.rules.map(r => `${r.then.decide}/${r.then.askRole ?? '-'}`).join(', '));
+}
+
+// ---- 6. What goes back to the model is what the gate found, and only what the organization knows ----
+// A candidate that drops a rule nothing showed wrong, settles a labeled case wrongly
+// and changes many unlabeled decisions; one past decision is hidden (a test case).
+{
+  const base: FeatureMap = { days_past_due: 20, grace_days: 10, open_amount: 50000, unapplied_amount: 0, announced_payment: 0, open_credit_notes: 0, open_dispute: false, recent_return: false, bank_change_recent: false, notices_last_30d: 0 };
+  const returned = { ...base, recent_return: true };
+  const disputed = { ...base, open_dispute: true };
+  const keepDisputes = { when: feat('open_dispute'), then: { decide: 'hold', note: 'disputes wait' } };
+  const current: SkillProgram = { domain: 'pre_chase', rules: [keepDisputes], otherwise: { decide: 'chase' } };
+  const candidate: SkillProgram = { domain: 'pre_chase', rules: [{ when: feat('recent_return'), then: { decide: 'hold' } }], otherwise: { decide: 'chase' } };
+  const { examples, h } = world('pre_chase', [...repeat(4, { features: base, label: 'chase' }), { features: returned, label: 'chase' }, { features: disputed, label: 'hold' }]);
+  const unlabeled = (subject: string, f: FeatureMap) => ({ id: h.decisions.length + 1, at: '2026-01-02', seat: 'check', domain: 'pre_chase', subject, features: JSON.stringify(f), skill_key: 'x@1', outcome: '', shadow: false, treatments: '{}' });
+  for (let i = 0; i < 4; i++) h.decisions.push(unlabeled(`past:${i}`, returned));
+  h.decisions.push(unlabeled('test:hidden', returned));
+  const hidden = new Set(['test:hidden']);
+  const { required, optional } = splitLessons('pre_chase', current, examples);
+  const ev = evaluate('pre_chase', current, candidate, examples, required, h, hidden, optional, false);
+  const text = counterexamples('pre_chase', current, candidate, examples, required, h, optional, ev);
+  check('the gate refuses it for the dropped rule, the broken case and the changed decisions', ev.gate === 'fail' && ev.cases.dropped.includes(0) && ev.labeled.broken.includes('case:4') && ev.changed.n === 4, ev.why.join('; '));
+  check('the counterexamples name the case it breaks and quote the rule it dropped', text.includes('case:4') && text.includes(JSON.stringify(keepDisputes)) && text.includes('past:'), text.slice(0, 200));
+  check('...and never a hidden case', !text.includes('test:hidden') && !ev.cases.changed.includes('test:hidden'));
 }
 
 console.log(failed ? `\n${failed} FAILED` : '\nALL PASSED');

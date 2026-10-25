@@ -9,7 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { parseTreatments, run, type FeatureMap, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Db, evolverToken, parseJson } from './lib';
-import { examplesFor, graded, improve, latestBySubject, loadHistory, splitLessons, type Domain, type Example, type History } from './skills';
+import { COUNTEREXAMPLE_ROUNDS, examplesFor, graded, improve, latestBySubject, loadHistory, splitLessons, type Domain, type Example, type History } from './skills';
 import { searchPolicies } from './policies';
 
 const args = new Map<string, string>();
@@ -20,6 +20,9 @@ for (let i = 2; i < process.argv.length; i++) {
 const DB = args.get('db') ?? process.env.STDB_DB ?? 'charter-iqwfr';
 const COMPANY_DIR = args.get('data') ?? (DB === 'charter-a' ? 'data/companyA' : DB === 'charter-b' ? 'data/companyB' : 'data/dev');
 const MODEL = args.get('model') ?? 'qwen3.8-max';
+// --rounds 0 (or EVOLVE_ROUNDS=0 through the world runners) proposes as the engine
+// did before counterexamples went back to the model.
+const ROUNDS = Number(args.get('rounds') ?? process.env.EVOLVE_ROUNDS ?? COUNTEREXAMPLE_ROUNDS);
 const DOMAINS_TO_EVOLVE: Domain[] = args.has('domain') ? [args.get('domain') as Domain] : ['underreport', 'pre_chase', 'allocation', 'routing_change', 'bill_match'];
 
 interface KeyEntry {
@@ -85,12 +88,13 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
   }
 
   const t0 = Date.now();
-  const { scored, passing } = await improve(MODEL, domain, current, examples, lesson, optional, h, hidden);
+  const { scored, passing, rounds } = await improve(MODEL, domain, current, examples, lesson, optional, h, hidden, ROUNDS);
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
-  log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), optional: optional.length, candidates: scored.length, passing: passing.length, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
+  const after = rounds ? `, after ${rounds} counterexample round${rounds > 1 ? 's' : ''}` : '';
+  log({ at: new Date().toISOString(), db: DB, domain, lesson: lesson.map(e => e.subject), optional: optional.length, candidates: scored.length, passing: passing.length, rounds, failures: scored.filter(s => s.ev.gate === 'fail').map(s => s.ev.why) });
   if (!passing.length) {
     const best = scored[0];
-    const summary = `${scored.length} candidates in ${secs}s, none passed: ${best ? best.ev.why.join('; ') : 'model returned nothing usable'}`;
+    const summary = `${scored.length} candidates in ${secs}s${after}, none passed: ${best ? best.ev.why.join('; ') : 'model returned nothing usable'}`;
     if (!args.has('dry-run')) await db.call('record_evolution', domain, 'fail', summary, JSON.stringify({ lesson: lesson.map(e => e.subject).slice(0, 20), optional: optional.length, reasons: scored.slice(0, 6).map(s => ({ origin: s.origin, why: s.ev.why })) })).catch(() => undefined);
     return `${domain}: ${summary}`;
   }
@@ -112,6 +116,7 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     rationale: best.rationale,
     candidatesTried: scored.length,
     candidatesPassed: passing.length,
+    counterexampleRounds: rounds,
     seconds: Number(secs),
     selection: 'chosen on what the organization knows (answers and field audits); test and live cases were hidden from the evolver',
     grading: key.length ? grade(domain, current, best.program, key, h) : null,
@@ -123,9 +128,9 @@ async function evolveDomain(db: Db, h: History, domain: Domain, hidden: Set<stri
     return `${domain}: dry run, best candidate written`;
   }
   await db.call('propose_skill', domain, JSON.stringify(best.program), active.key, provenance, JSON.stringify(proof));
-  await db.call('record_evolution', domain, 'pass', `proposed ${domain}@${active.version + 1}: fixes ${best.ev.labeled.fixed.length}, takes over ${best.ev.lesson.optionalFixed}, breaks ${best.ev.labeled.broken.length}`, JSON.stringify({ candidatesTried: scored.length, candidatesPassed: passing.length, seconds: Number(secs) })).catch(() => undefined);
+  await db.call('record_evolution', domain, 'pass', `proposed ${domain}@${active.version + 1}${after}: fixes ${best.ev.labeled.fixed.length}, takes over ${best.ev.lesson.optionalFixed}, breaks ${best.ev.labeled.broken.length}`, JSON.stringify({ candidatesTried: scored.length, candidatesPassed: passing.length, counterexampleRounds: rounds, seconds: Number(secs) })).catch(() => undefined);
   writeFileSync(`${COMPANY_DIR}/eval/proposal-${domain}-${active.version + 1}.json`, JSON.stringify({ program: best.program, proof }, null, 2));
-  return `${domain}: proposed v${active.version + 1} in ${secs}s (${passing.length}/${scored.length} candidates passed; handles ${best.ev.lesson.handled.length}/${lesson.length} lessons, fixes ${best.ev.labeled.fixed.length}, breaks ${best.ev.labeled.broken.length}, new leads ${best.ev.newLeads.length})`;
+  return `${domain}: proposed v${active.version + 1} in ${secs}s${after} (${passing.length}/${scored.length} candidates passed; handles ${best.ev.lesson.handled.length}/${lesson.length} lessons, fixes ${best.ev.labeled.fixed.length}, breaks ${best.ev.labeled.broken.length}, new leads ${best.ev.newLeads.length})`;
 }
 
 async function once(db: Db): Promise<void> {

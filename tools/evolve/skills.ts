@@ -182,6 +182,9 @@ export interface Evaluation {
   gate: 'pass' | 'fail';
   why: string[];
   offenders: number[]; // candidate rules behind a failure: thin takeovers, broken cases, safety violations
+  // The cases behind the reasons, which a failing candidate goes back to the model with;
+  // takeovers counts the labeled cases it settles alone where the current version asked.
+  cases: { handedBack: string[]; thin: { rule: number; subjects: string[] }[]; takeovers: number; changed: string[]; dropped: number[] };
 }
 
 // Continuous features only: money amounts and shares, not counts or flags.
@@ -236,6 +239,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   let handedBackWrong = 0;
   let takenOver = 0;
   let newAlone = 0; // where a new mistake could be: settled alone, not as the current version did, where it was right or asked
+  const handedBackCases: string[] = [];
   for (const e of examples) {
     const cur = decide(current, e.features);
     const cand = decide(candidate, e.features);
@@ -252,20 +256,21 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     if (!a && candAlone && (b || !curAlone)) broken.push(e.subject);
     else if (b && !a) asksAgain.push(e.subject);
     if (curAlone && !b && (a || !candAlone)) stopped++;
-    if (curAlone && !candAlone) (handedBack++, (handedBackWrong += b ? 0 : 1));
+    if (curAlone && !candAlone) (handedBack++, (handedBackWrong += b ? 0 : 1), handedBackCases.push(e.subject));
     if (!curAlone && candAlone && a) takenOver++;
     if (candAlone && (b || !curAlone) && !(curAlone && agrees(domain, cand, cur, e.treatments))) newAlone++;
   }
   const tolerable = TOLERABLE[domain];
   const optionalFixed = optional.filter(e => agrees(domain, decide(candidate, e.features), e.label, e.treatments)).length;
   // Takeovers grouped by the candidate rule that settles them.
-  const takeovers = new Map<number, { n: number; disagree: number }>();
+  const takeovers = new Map<number, { n: number; disagree: number; subjects: string[] }>();
   for (const e of examples) {
     if (settlesAlone(domain, decide(current, e.features), e.treatments)) continue;
     const r = runRule(candidate, e.features);
     if (!r || !settlesAlone(domain, r.decide, e.treatments)) continue;
-    const t = takeovers.get(r.rule) ?? { n: 0, disagree: 0 };
+    const t = takeovers.get(r.rule) ?? { n: 0, disagree: 0, subjects: [] };
     t.n++;
+    t.subjects.push(e.subject);
     if (!agrees(domain, r.decide, e.label, e.treatments)) t.disagree++;
     takeovers.set(r.rule, t);
   }
@@ -280,8 +285,9 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     const r = runRule(current, e.features);
     if (r && !agrees(domain, r.decide, e.label, e.treatments)) wrongBy.add(r.rule);
   }
-  const dropped = current.rules.flatMap((r, i) => (!keptRules.has(sig(r)) && !wrongBy.has(i) ? [`rule ${i} ("${r.then.note ?? r.then.decide}")`] : []));
-  if (candidate.otherwise?.decide !== current.otherwise.decide && !wrongBy.has(-1)) dropped.push(`the default ("${current.otherwise.decide}")`);
+  const droppedRules = current.rules.flatMap((r, i) => (!keptRules.has(sig(r)) && !wrongBy.has(i) ? [i] : []));
+  if (candidate.otherwise?.decide !== current.otherwise.decide && !wrongBy.has(-1)) droppedRules.push(-1);
+  const dropped = droppedRules.map(i => (i < 0 ? `the default ("${current.otherwise.decide}")` : `rule ${i} ("${current.rules[i].then.note ?? current.rules[i].then.decide}")`));
   const offenders = new Set<number>(thin.map(([rule]) => rule));
   for (const e of examples) if (broken.includes(e.subject)) offenders.add(runRule(candidate, e.features)?.rule ?? -1);
   // People's answers carry slips: a candidate must handle at least one case they
@@ -295,12 +301,13 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
   let flagged = 0;
   const newLeads: string[] = [];
   const safety: string[] = [];
+  const changedCases: string[] = [];
   for (const d of past) {
     const f = parseJson<FeatureMap>(d.features, {});
     const o = decide(candidate, f);
     const c = decide(current, f);
     // Labeled cases are judged by fixed/broken; the budget guards unknown territory.
-    if (!agrees(domain, o, c, parseTreatments(d.treatments)) && !labeledSubjects.has(d.subject)) changedN++;
+    if (!agrees(domain, o, c, parseTreatments(d.treatments)) && !labeledSubjects.has(d.subject)) (changedN++, changedCases.length < 200 && changedCases.push(d.subject));
     if (domain === 'underreport' && ESCALATE.has(o)) flagged++;
     if (domain === 'underreport' && ESCALATE.has(o) && !ESCALATE.has(c) && !labeledSubjects.has(d.subject)) newLeads.push(d.subject);
     const s = SAFETY[domain](f, o);
@@ -341,6 +348,7 @@ export function evaluate(domain: Domain, current: SkillProgram, candidate: Skill
     gate: why.length === 0 ? 'pass' : 'fail',
     why,
     offenders: [...offenders].filter(r => r >= 0).sort((a, b) => a - b),
+    cases: { handedBack: handedBackCases, thin: thin.map(([rule, t]) => ({ rule, subjects: t.subjects })), takeovers: [...takeovers.values()].reduce((n, t) => n + t.n, 0), changed: changedCases, dropped: droppedRules },
   };
 }
 
@@ -396,40 +404,80 @@ export interface Scored {
 const rank = (a: Scored, b: Scored) =>
   b.ev.value - a.ev.value || b.ev.labeled.correctAfter - a.ev.labeled.correctAfter || b.ev.robustness - a.ev.robustness || a.ev.changed.n - b.ev.changed.n || a.ev.complexity - b.ev.complexity;
 
+// Rounds of counterexample-guided synthesis: while no candidate passes, the one
+// closest to passing goes back to the model with the cases the gate found against
+// it. A history whose first proposals pass is evolved exactly as without them.
+// Revisions fix the mistakes people found and never take work from them: on
+// company A's final history the one revision that passed had narrowed a takeover
+// just enough to step around the case where people disagreed, and the answer key
+// says its new rejections were wrong.
+export const COUNTEREXAMPLE_ROUNDS = 2;
+
 // The model proposes; each candidate loses the new rules no case supports and is
 // replayed through the gate. A failing one is retried with its constants tuned or
-// the rules behind the failure removed; the leading passing ones get their new
+// the rules behind the failure removed, and, while nothing passes, revised by the
+// model from the gate's counterexamples; the leading passing ones get their new
 // thresholds centred. Passing candidates come back best first.
-export async function improve(model: string, domain: Domain, current: SkillProgram, examples: Example[], lesson: Example[], optional: Example[], h: History, hidden: Set<string>): Promise<{ scored: Scored[]; passing: Scored[] }> {
+export async function improve(model: string, domain: Domain, current: SkillProgram, examples: Example[], lesson: Example[], optional: Example[], h: History, hidden: Set<string>, rounds = COUNTEREXAMPLE_ROUNDS): Promise<{ scored: Scored[]; passing: Scored[]; rounds: number }> {
   const scored: Scored[] = [];
-  for (const proposal of await propose(model, domain, current, lesson, examples, h, optional)) {
-    const origin = `${model} style ${proposal.style}`;
+  const REVISED = 'revised from the replay';
+  // A revision that takes work over from people fails, whatever the gate said.
+  const restrain = (s: Scored): Scored => {
+    if (s.origin.includes(REVISED) && s.ev.cases.takeovers > 0) {
+      s.ev.gate = 'fail';
+      s.ev.why.push(`a revision settles ${s.ev.cases.takeovers} labeled case(s) alone that the current version asked about; revisions may only fix mistakes`);
+    }
+    return s;
+  };
+  const consider = (proposal: { program: SkillProgram; rationale: string }, origin: string): Scored | null => {
     let program: SkillProgram;
     let ev: Evaluation;
     try {
       ({ program, ev } = ordered(domain, current, prune(domain, current, proposal.program, examples, h, hidden), examples, lesson, h, hidden, optional));
     } catch {
-      continue; // a candidate the evaluator cannot even read is simply not a candidate
+      return null; // a candidate the evaluator cannot even read is simply not a candidate
     }
-    scored.push({ program, ev, origin, rationale: proposal.rationale });
+    const s = restrain({ program, ev, origin, rationale: proposal.rationale });
+    scored.push(s);
     // Constants are tuned only to rescue a candidate that fails, never to shave flags:
     // a threshold fitted tightly around one case is exactly how a skill overfits.
-    if (ev.gate === 'fail') {
-      for (const v of tune(domain, current, program, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${origin}, constants tuned by replay`, rationale: proposal.rationale });
-      for (const v of repair(domain, current, program, ev, examples, lesson, h, hidden, optional)) scored.push({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${origin}, unsupported rules removed by replay`, rationale: proposal.rationale });
+    if (s.ev.gate === 'fail') {
+      for (const v of tune(domain, current, program, examples, lesson, h, hidden, optional)) scored.push(restrain({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${origin}, constants tuned by replay`, rationale: proposal.rationale }));
+      for (const v of repair(domain, current, program, ev, examples, lesson, h, hidden, optional)) scored.push(restrain({ program: v, ev: evaluate(domain, current, v, examples, lesson, h, hidden, optional), origin: `${origin}, unsupported rules removed by replay`, rationale: proposal.rationale }));
     }
+    return s;
+  };
+  let tries: { s: Scored; style: number }[] = [];
+  for (const proposal of await propose(model, domain, current, lesson, examples, h, optional)) {
+    const s = consider(proposal, `${model} style ${proposal.style}`);
+    if (s) tries.push({ s, style: proposal.style });
+  }
+  // Rounds only where a revision can win: there is a mistake to fix, and fixing it
+  // needs no evidence a rewrite cannot supply (a mistake fixed only by asking a
+  // person hands work back, which needs MIN_SUPPORT such mistakes).
+  const handsBack = (e: Example) => settlesAlone(domain, run(current, e.features).outcome.decide, e.treatments) && !settlesAlone(domain, e.label, e.treatments);
+  const winnable = lesson.some(e => !handsBack(e)) || lesson.filter(handsBack).length >= MIN_SUPPORT;
+  const earlier: string[] = [];
+  let round = 0;
+  while (round < rounds && winnable && tries.length && !scored.some(s => s.ev.gate === 'pass')) {
+    round++;
+    const closest = [...tries].sort((a, b) => a.s.ev.why.length - b.s.ev.why.length || rank(a.s, b.s))[0];
+    const revised = await revise(model, domain, current, lesson, examples, h, optional, { ...closest.s, style: closest.style }, earlier);
+    for (const w of closest.s.ev.why) if (!earlier.includes(w)) earlier.push(w);
+    const s = revised && consider(revised, `${model} style ${closest.style}, ${REVISED}'s counterexamples (round ${round})`);
+    tries = s ? [{ s, style: closest.style }] : [];
   }
   const passing = scored.filter(s => s.ev.gate === 'pass').sort(rank);
   for (const c of passing.slice(0, 3)) {
     const moved = center(domain, current, c.program, examples, lesson, h, hidden, optional);
     if (JSON.stringify(moved) === JSON.stringify(c.program)) continue;
     const { program, ev } = ordered(domain, current, moved, examples, lesson, h, hidden, optional);
-    if (ev.gate !== 'pass') continue;
-    const centred = { program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale };
+    const centred = restrain({ program, ev, origin: `${c.origin}, thresholds centred by replay`, rationale: c.rationale });
+    if (centred.ev.gate !== 'pass') continue;
     scored.push(centred);
     passing.push(centred);
   }
-  return { scored, passing: passing.sort(rank) };
+  return { scored, passing: passing.sort(rank), rounds: round };
 }
 
 // A candidate with its interchangeable rules ordered cleanest first, unless that
@@ -506,10 +554,12 @@ function digest(current: SkillProgram, cases: Example[], limit: number): { e: Ex
 
 const more = (n: number) => (n ? ` (${n} more like it)` : '');
 
-export async function propose(model: string, domain: Domain, current: SkillProgram, lesson: Example[], examples: Example[], h: History, optional: Example[] = []): Promise<{ program: SkillProgram; rationale: string; style: number; cached: boolean }[]> {
+// What the model is told about the domain, the current skill, the lessons and the
+// cases to keep right.
+function brief(domain: Domain, current: SkillProgram, lesson: Example[], examples: Example[], h: History, optional: Example[]): string {
   const taught = new Set([...lesson, ...optional].map(e => e.subject));
   const keep = digest(current, examples.filter(e => !taught.has(e.subject)), 12);
-  const user = [
+  return [
     describeDomain(domain),
     `\nCurrent team skill:\n${JSON.stringify(current)}`,
     lesson.length ? `\nMistakes people found (the current skill settled these alone and was wrong; the new version must get them right):\n${digest(current, lesson, 30).map(({ e, more: n }) => `- ${e.subject}${more(n)}: correct outcome "${e.label}"${alike(domain, e)}. ${e.source}: "${e.reason}"\n  features: ${show(e.features)}`).join('\n')}` : '',
@@ -517,20 +567,84 @@ export async function propose(model: string, domain: Domain, current: SkillProgr
     `\nSafety rule that must never be broken: ${SAFETY_TEXT[domain]}.`,
     keep.length ? `\nOther cases people have labeled (keep these right):\n${keep.map(({ e, more: n }) => `- ${e.subject}${more(n)}: "${e.label}"${alike(domain, e)}; ${show(e.features)}`).join('\n')}` : '',
     `\nHow the features are distributed over all past cases:\n${percentiles(h, domain)}`,
-    `\nReturn JSON: {"program": <skill>, "rationale": "<two sentences>"}`,
   ].join('\n');
+}
+
+const RETURN = `\nReturn JSON: {"program": <skill>, "rationale": "<two sentences>"}`;
+const SYSTEM = (style: number) => `You improve a finance team's decision skill from what its people taught it.\n${GRAMMAR}\n${STYLES[style].hint}`;
+
+export async function propose(model: string, domain: Domain, current: SkillProgram, lesson: Example[], examples: Example[], h: History, optional: Example[] = []): Promise<{ program: SkillProgram; rationale: string; style: number; cached: boolean }[]> {
+  const user = `${brief(domain, current, lesson, examples, h, optional)}\n${RETURN}`;
   const out: { program: SkillProgram; rationale: string; style: number; cached: boolean }[] = [];
-  const results = await Promise.allSettled(
-    STYLES.map((s, i) =>
-      llmJson(model, `You improve a finance team's decision skill from what its people taught it.\n${GRAMMAR}\n${s.hint}`, user, s.temperature).then(r => ({ r, i }))
-    )
-  );
+  const results = await Promise.allSettled(STYLES.map((s, i) => llmJson(model, SYSTEM(i), user, s.temperature).then(r => ({ r, i }))));
   for (const res of results) {
     if (res.status !== 'fulfilled') continue;
     const p = res.value.r.json?.program as SkillProgram | undefined;
     if (p && Array.isArray(p.rules)) out.push({ program: { ...p, domain }, rationale: String(res.value.r.json?.rationale ?? ''), style: res.value.i, cached: res.value.r.cached });
   }
   return out;
+}
+
+// The cases behind the gate's reasons, written for the model: lessons the
+// candidate still gets wrong, labeled cases it now settles wrongly or hands back,
+// work it takes over on too little precedent, unlabeled past decisions it would
+// change, safety violations, and the current rules it changed without evidence.
+// Only what the organization knows: hidden subjects never reach an evaluation.
+export function counterexamples(domain: Domain, current: SkillProgram, candidate: SkillProgram, examples: Example[], lesson: Example[], h: History, optional: Example[], ev: Evaluation): string {
+  const decide = (p: SkillProgram, f: FeatureMap) => {
+    try {
+      return run(p, f).outcome.decide;
+    } catch (e) {
+      return `error: ${(e as Error).message}`;
+    }
+  };
+  const bySubject = new Map(examples.map(e => [e.subject, e]));
+  const labeled = (subjects: string[]) => subjects.flatMap(s => bySubject.get(s) ?? []);
+  const block = (title: string, cases: Example[]) =>
+    cases.length ? `${title}\n${digest(current, cases, 6).map(({ e, more: n }) => `- ${e.subject}${more(n)}: people said "${e.label}"${alike(domain, e)}; the current skill decides "${decide(current, e.features)}", yours "${decide(candidate, e.features)}"\n  features: ${show(e.features)}`).join('\n')}` : '';
+  const out: string[] = [];
+  if (!ev.lesson.fixed)
+    out.push(lesson.length ? block('Lessons your candidate still gets wrong:', lesson.filter(e => !ev.lesson.handled.includes(e.subject))) : block('Cases people settled that your candidate does not settle as they did:', optional));
+  out.push(block('Labeled cases your candidate settles alone and wrongly:', labeled(ev.labeled.broken)));
+  if (ev.why.some(w => w.startsWith('hands '))) out.push(block(`Cases the current skill settles that yours hands back to people (handing work back needs at least ${MIN_SUPPORT} of its mistakes among them):`, labeled(ev.cases.handedBack)));
+  for (const t of ev.cases.thin) out.push(block(`Work ${t.rule < 0 ? 'your default' : `your rule ${t.rule}`} takes over from people, which a revision may not do (the current skill asks about these; keep asking):`, labeled(t.subjects)));
+  if (ev.changed.rate > ev.changed.limit) {
+    const latest = latestBySubject(h, domain);
+    const groups = new Map<string, { subject: string; f: FeatureMap; n: number }>();
+    for (const s of ev.cases.changed) {
+      const f = parseJson<FeatureMap>(latest.get(s)?.features ?? '{}', {});
+      const k = `the current skill decides "${decide(current, f)}", yours "${decide(candidate, f)}"`;
+      const g = groups.get(k);
+      if (g) g.n++;
+      else groups.set(k, { subject: s, f, n: 1 });
+    }
+    out.push(`Past decisions nobody labeled that yours would change (${ev.changed.n} of ${ev.changed.total}; at most ${ev.changed.limit * 100}% may change):\n${[...groups.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 6).map(([k, g]) => `- ${g.subject}${more(g.n - 1)}: ${k}\n  features: ${show(g.f)}`).join('\n')}`);
+  }
+  if (ev.safety.length) out.push(`Safety violations:\n${ev.safety.slice(0, 6).map(s => `- ${s}`).join('\n')}`);
+  if (ev.cases.dropped.length) out.push(`Rules of the current skill no labeled case shows wrong, which must stay exactly as written:\n${ev.cases.dropped.map(i => `- ${JSON.stringify(i < 0 ? { otherwise: current.otherwise } : current.rules[i])}`).join('\n')}`);
+  if (ev.problems.length) out.push(`Problems with the program itself:\n${ev.problems.map(p => `- ${p}`).join('\n')}`);
+  return out.filter(Boolean).join('\n\n');
+}
+
+// One more try: the failing candidate goes back to the model, in its own style,
+// with the gate's reasons, the cases behind them, and what failed the tries before.
+async function revise(model: string, domain: Domain, current: SkillProgram, lesson: Example[], examples: Example[], h: History, optional: Example[], failed: { program: SkillProgram; ev: Evaluation; style: number }, earlier: string[]): Promise<{ program: SkillProgram; rationale: string } | null> {
+  const user = [
+    brief(domain, current, lesson, examples, h, optional),
+    `\nYour candidate, replayed over every past decision, failed the gate:\n${JSON.stringify(failed.program)}`,
+    `\nThe gate's reasons:\n${failed.ev.why.map(w => `- ${w}`).join('\n')}`,
+    earlier.length ? `\nEarlier tries failed because:\n${earlier.map(w => `- ${w}`).join('\n')}` : '',
+    `\n${counterexamples(domain, current, failed.program, examples, lesson, h, optional, failed.ev)}`,
+    `\nRevise the candidate so it passes: get the lessons right, keep every rule the evidence does not show wrong exactly as written, settle nothing alone that the current skill asks a person about, hand work back only where the cases give that evidence, and leave other past decisions alone. Rules must still describe patterns, never particular cases.`,
+    RETURN,
+  ].join('\n');
+  try {
+    const r = await llmJson(model, SYSTEM(failed.style), user, STYLES[failed.style].temperature);
+    const p = r.json?.program as SkillProgram | undefined;
+    return p && Array.isArray(p.rules) ? { program: { ...p, domain }, rationale: String(r.json?.rationale ?? '') } : null;
+  } catch {
+    return null; // no answer from the model is no candidate
+  }
 }
 
 // The constants a rule compares against with <, <=, > or >=: thresholds that can
