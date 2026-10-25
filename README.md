@@ -16,7 +16,7 @@ Charter does not file the £30 as a duplicate. It works out that 536792 was paid
 
 Three moments the judges can trigger themselves:
 
-- **It pushes back.** Tell it, on a spot check, that it should have chased a franchisee on day 5 of a 10-day grace period. It keeps its decision, says the agreement forbids that, does not count your verdict against the rule, and does not learn from it.
+- **It pushes back.** Tell it, on a spot check, that it should have chased a franchisee on day 4 of a 10-day grace period. It keeps its decision, says the agreement forbids that, does not count your verdict against the rule, and does not learn from it.
 - **It cannot be talked into moving money.** Email new bank details from Formosa Leaf's own address hours before its $92,400 payment run. Two models read it, the change is held, the controller is asked to call the number already on file, and the release is refused — for both controllers — by a policy nobody wrote: the team learned it in April from a debit that bounced during an unverified bank change, and extended it from debits to refunds and vendor payments.
 
 - **Give it your own payment.** On the World screen, make up a payment — any payer, any invoices, any reference, from any account — and it arrives through the bank feed like everything else. A transfer from abroad paying two invoices, £12 short for the banks' charges, is applied alone to exactly the two invoices the customer named, by a rule the team learned from the controller's answers in January; the £12 waits for Monday's write-off list. A bill made up the same way goes to the payables clerk.
@@ -27,7 +27,7 @@ Three moments the judges can trigger themselves:
 
 ## Would you hire it?
 
-**Limited access.** Every action of every seat and every person goes through one kernel inside SpacetimeDB: role permissions, a constitution nobody can edit (whoever prepares a payment cannot release it; two people above $25,000; money moves only to bank accounts from a trusted source; no notices or debits against a counterparty in bankruptcy), ledger-checked claims and balanced books. Seats never call each other; they coordinate through records the kernel writes. The model reads email; it never holds a tool.
+**Limited access.** Every action of every seat and every person goes through one kernel inside SpacetimeDB: role permissions, a constitution nobody can edit (whoever prepares a payment cannot release it; two people above $25,000; money moves only to bank accounts from a trusted source; no notices, fees or debits against a counterparty in bankruptcy; no past-due notice or late fee while the counterparty's own money, waiting to be applied, covers everything it has past due), ledger-checked claims and balanced books. Seats never call each other; they coordinate through records the kernel writes. The model reads email; it never holds a tool.
 
 **A clean record of its work.** Every attempt, allowed or refused, is hash-chained and re-verifies outside the database. Each decision stores the features it saw, the skill version and rule that decided, and the question it raised. An audit packet for any transaction re-verifies offline. Each month closes into a hashed certificate anchored in git; a closed month is never written to, and what is learned later is booked in the open month and disclosed.
 
@@ -52,22 +52,22 @@ Three moments the judges can trigger themselves:
 |---|---|---|---|---|
 | Charter, learned (4 versions) | 81.5% (26,119 of 32,048) | 12 | 99.95% | yes |
 | Charter, day 0 (one rule) | 84.4% | 48 | 99.82% | yes, by 0.02 points |
-| Six rules written by hand (three suspended) | 83.9% | 31 | 99.89% | yes |
+| Six rules written by hand (three suspended) | 83.9% | 31 | 99.88% | yes |
 | Matcher shipped with the dataset (written with ChatGPT) | 64.9% | 114 | 99.45% | no |
 
 By the benchmark's own ranking (clear the floor, then match the most) day 0 places higher, and that ranking is exactly what Charter will not play to. On the locked eval split the 918 lines the learned desk hands to people instead were wrong 36 times when day 0 matched them alone, one in 25: day 0 clears the floor only by averaging that pattern into clean matches. Every rule earns its autonomy on its own record, so a pattern wrong 4% of the time never acts alone, whatever the average around it. Month by month (`tools/benchrec/monthly.ts`), the learned desk clears the floor in each of the eval split's three full months (its worst, April, 99.90%); day 0 misses it in April and May (99.75%, 99.77%) and clears it overall only because March and a late August batch were clean. Resampling whole days, day 0 falls under the floor in 28% of resamples and the learned desk in 0.1%. The price is 2.9 points of match rate: by the benchmark's own pick, day 0 still wins most resamples.
 
 ![BenchRec on the locked eval split: the learned desk, its day-0 rule, rules written by hand and the matcher shipped with the dataset; and how it learned, month by month](docs/img/p1_benchrec.png)
 
-**Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate, sometimes paying two invoices in one transfer; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **310 of 314** payments, and the team was wrong on **3 of the 304** it settled without a person (95% upper bound 2.5%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
+**Real invoices (company B).** Real customers pay messily, so the simulated payments carry the long tail of cash application: from abroad, short by bank charges or off by the exchange rate, sometimes paying two invoices in one transfer; money sent "on account" without a reference; one payment for two invoices; duplicates. On the locked test split, which the evolver never saw, the cash landed on the invoices the payer meant for **309 of 314** payments, and the team was wrong on **4 of the 304** it settled without a person (95% upper bound 3.0%). The controller's answers became four new versions of the cash-application skill, each replayed over every past decision before it went live. On the same test payments:
 
 | Version | What it learned | Live from | Settled alone | Wrong when alone | Right |
 |---|---|---|---|---|---|
-| Day one | — | 1 Dec 2010 | 301 | 18 | 283 of 313 |
-| v2 | the invoices a reference names come first, even when the amount is short or several sets fit; when several fit, the one the payer confirms | 2 Jan | 313 | 17 | 296 |
-| v3 | no set fits, but the reference names open invoices → those, even short; an exact match only when its reference is not already paid | 16 Jan | 313 | 7 | 306 |
-| v4 | a reference to an invoice already paid, or several sets that fit with nothing to choose between them → ask: it may be a duplicate | 3 Apr | 306 | 2 | 309 |
-| v5 | several sets fit exactly and the reference names open invoices → those | 17 Apr | 306 | 2 | 309 |
+| Day one | — | 1 Dec 2010 | 301 | 19 | 282 of 313 |
+| v2 | the invoices a reference names come first, even when the amount is short or several sets fit; when several fit, the one the payer confirms | 2 Jan | 313 | 18 | 295 |
+| v3 | no set fits, but the reference names open invoices → those, even short; an exact match only when its reference is not already paid | 16 Jan | 313 | 8 | 305 |
+| v4 | a reference to an invoice already paid, or several sets that fit with nothing to choose between them → ask: it may be a duplicate | 3 Apr | 306 | 3 | 308 |
+| v5 | several sets fit exactly and the reference names open invoices → those | 17 Apr | 306 | 3 | 308 |
 
 | Month | Settled without a person | Questions to people | Right when settled alone |
 |---|---|---|---|
@@ -76,7 +76,7 @@ By the benchmark's own ranking (clear the floor, then match the most) day 0 plac
 | Feb 2011 | 100% | 4 | 98.7% (156/158) |
 | Mar 2011 | 100% | 2 | 98.9% (188/190) |
 | Apr 2011 | 98% | 7 | 99.0% (202/204) |
-| May 2011 | 98% | 7 | 100% (202/202) |
+| May 2011 | 98% | 8 | 99.5% (200/201) |
 | Jun 2011 | 99% | 4 | 99.6% (238/239) |
 
 Twice — on 2 January and again in June — a later payment exposed an earlier application as a guess and the team undid it; after the first, the team learned that the invoices a payer names come first, and stopped guessing over them. The pennies bank charges leave are not chased: every Monday the cash seat lists them and the controller writes them off (99 invoices, £1,052.42 over seven months).
@@ -84,6 +84,8 @@ Twice — on 2 January and again in June — a later payment exposed an earlier 
 ![Company B month by month: settled alone 72% to 99%, questions to people while it learned in January, then four to ten a month](docs/img/b6_proof.png)
 
 ![The cash-application skill's lineage: the controller's answer, the proposal, the replay gate, and the decisions it changed](docs/img/b7_lineage.png)
+
+**Never chasing a customer with its own money (B and C).** Cash application leaves money it cannot place unapplied and asks a person; collections chases what is past due. Each is right on its own. Together, before the kernel fix, company B sent 72 past-due notices to 7 customers whose own money, waiting to be applied, already covered everything they had past due, and company C sent 34 to 8. The constitution now forbids it (C16–C18). On the same books the kernel refused the notice on every day the skill still said chase (439 times in B, 170 in C); no notice reached a customer whose money covered what was past due, and every other chase went ahead.
 
 **A franchisor's six months (company A).** Twenty stores, six vendors, and people who make mistakes on purpose. On the locked test split, from the day-0 skills to the versions people approved:
 
@@ -103,11 +105,11 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 | Company C | Started from B's skill | Started from scratch |
 |---|---|---|
 | First three months: wrong when it settled alone | **1** of 337 | 21 of 334 |
-| Seven months: wrong when it settled alone | **18** of 1,124 | 31 of 1,058 |
-| Seven months: questions to people | **95** | 167 |
-| New versions it needed | 2 | 6 |
+| Seven months: wrong when it settled alone | **18** of 1,123 | 31 of 1,052 |
+| Seven months: questions to people | **96** | 173 |
+| New versions it needed | 1 | 7 |
 | Locked test split: cash landed where the payer meant | **315** of 324 | 311 of 324 |
-| Test and live splits: wrong when it settled alone | **5** of 305 (95% upper bound 3.4%) | 8 of 290 (4.9%) |
+| Test and live splits: wrong when it settled alone | **5** of 305 (95% upper bound 3.4%) | 8 of 287 (5.0%) |
 
 ![Company C's cash skill: version 2 learned at company B and ratified by C's controller, versions 3 and 4 learned from C's own answers](docs/img/c1_sister.png)
 
@@ -117,7 +119,7 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 
 **Books.** Trial balance, receivables and payables controls, unapplied cash and cash-to-bank tie after every run; every row of every activity chain re-verifies.
 
-**How stable these numbers are.** Each number above is one run, and each run replays exactly on the same engine: the committed caches of model calls (the evolver's proposals, company A's email readings) make a replay on a fresh database reproduce it row for row, which we checked for company A. Change anything upstream and the run takes another path, because the model is asked again wherever a prompt reads differently. Company A's under-reporting desk is the most sensitive: across three runs (this one, a replay whose only difference was its row ids, and the replay on maincloud) its final rule caught 3, 1 and 4 of the 4 test weeks, while the collections and payables desks ended at 3 of 3 and 2 of 2 every time. The public page watches the maincloud replays, which process some same-day work in another order than the local engine: there company B landed the same 310 of 314 test payments (wrong on 4 of the 298 it settled alone, with three new versions instead of four), and company C, started from that B's skill, landed 320 of 324.
+**How stable these numbers are.** Each number above is one run, and each run replays exactly on the same engine: the committed caches of model calls (the evolver's proposals, company A's email readings) make a replay on a fresh database reproduce it row for row, which we checked for company A. Change anything upstream and the run takes another path: the model is asked again wherever a prompt reads differently, and the seats take a day's work in the order it is stored. The kernel fix that stopped chasing customers with their own money (C16–C18) redid every run and showed both. Company A replayed decision for decision. Company B learned the same five versions on the same days, but two of its same-day payments were taken in the other order and one more test payment landed wrong (309 of 314, from 310). Company C's path changed from May, when one more collections spot check moved the numbers of later questions, which the evolver's prompts cite. Company A's under-reporting desk is the most sensitive: across four runs (this one, a replay whose only difference was its row ids, and two replays on maincloud) its final rule caught 3, 1, 4 and 3 of the 4 test weeks, while the collections and payables desks ended at 3 of 3 and 2 of 2 every time. The public page watches the maincloud replays, which store and so order some same-day work differently from the local engine. There company B landed 310 of 314 test payments (wrong on 4 of the 298 it settled alone, with three new versions instead of four), and company C, started from that B's skill, landed 321 of 324 (wrong on 3 of 303, with six new versions). In both, no notice reached a customer whose own money covered what was past due: the kernel refused 415 attempts in B and 347 in C.
 
 ## What is new here
 
@@ -126,8 +128,9 @@ Audits recovered $1,120.40 of $1,864.04 in hidden royalties; $89,242 of duplicat
 3. **Policies are learned from losses and bind every desk.** An exhaustive search replays every past money movement with the facts the kernel saw at the time; a rule is offered only if it stops a loss no rule in force stops and holds back little that was legitimate, and it extends to every other way money leaves.
 4. **A lesson is a pull request with a replay proof.** A person's one-line correction becomes a candidate version of the team's skill, written by a model and judged by a deterministic replay over every past decision: it must handle what people taught, never break a safety rule, stay inside a change budget, and pass three statistical tests that use the same arithmetic as earned autonomy — a new mistake on a labeled case fails it unless the record proves such mistakes rarer than the domain tolerates (impossible on a few dozen cases, possible on 69,000 bank lines); taking work from people needs three agreeing precedents; handing work back to people needs the evidence that would suspend a rule, so a few slips cannot teach it to ask. Candidates are ranked by value: one mistake stopped is worth 1/tolerable questions, because at that error rate acting alone and asking cost the same. New rules no known case supports are dropped, failing candidates are repaired, and new thresholds are searched over the values the cases actually take and centred between the nearest known cases.
 5. **Sources disagree; the team weighs them.** Who paid is voted by the account on file, the invoice the payer named and the payer's name; masked account numbers collide, so one source loses to two and a tie goes to a person with every reading. Two model families read every email that could move money; a disagreement waits for a person.
-6. **Skills travel, data does not — and the target decides.** A new ledger can start from the skill a sister company learned: the program crosses, its controller ratifies it, and every rule starts on probation; started that way, company C made 3 mistakes in its first three months instead of 22. A company with a history replays an offered skill, whole and rule by rule at every place in its own program, over its own history, and adopts only what handles something its own people taught and passes its own gate.
+6. **Skills travel, data does not — and the target decides.** A new ledger can start from the skill a sister company learned: the program crosses, its controller ratifies it, and every rule starts on probation; started that way, company C made 1 mistake in its first three months instead of 21. A company with a history replays an offered skill, whole and rule by rule at every place in its own program, over its own history, and adopts only what handles something its own people taught and passes its own gate.
 7. **The same action under another name is the same decision.** Every decision records what each outcome would have done with that case — for cash, which invoices each would pay. Checks, the gate and the grading compare where the money goes, not what the outcome is called. Without it, "apply to the invoice the payer named" and "apply oldest first" looked like contradictory answers for a customer with one open invoice, and no candidate could learn bank charges.
+8. **It checks what no seat owns, before it happens.** A replay shows how a skill did on what it has seen. A solver (Z3, over the same TypeScript the module runs; its encoding agrees with the interpreter on all 3,540 recorded decisions) also enumerates every situation the cash skill's versions can tell apart (40, none missing), realizes each as a concrete payment (a few edits of a real ledger, read by the seat's own code) and gives each version a certificate listing the situations it decides differently and how many people's labels each has (`tools/certify`). Company B's current version would act alone in 16 situations none of its 1,225 payments ever fell into. Replayed without hindsight, earning autonomy situation by situation instead of rule by rule nearly halves B's mistakes made alone (15 to 8) for 21 more questions in six months. Taken across seats and the kernel, the same check found what no seat owns: a customer pays everything it owes under a vague reference, cash application rightly asks a person, and collections sends a past-due notice and late fees the same day. Company A's six months never produced it; company B's and C's books had, 72 and 34 times. The kernel now computes that fact and the constitution forbids the notice and the fee (C16–C18). Of the five fixes checked, it is the only one proved, for every situation, to send no notice and charge no fee while a customer's own money covers what is past due, to charge no fee in bankruptcy, and never to hold back a chase the cash does not cover; the others let the late fees through, hold a chase a person confirmed was right, or still charge fees in bankruptcy.
 
 ![One consultant's answer becomes a new version, replayed over every past decision, that catches weeks the old one accepted](docs/img/a5_skill.png)
 
@@ -158,6 +161,7 @@ python3 tools/evolve/compare.py data/companyC data/companyC-alone   # against th
 npx tsx tools/evolve/report.ts --db charter-a      # proof numbers from the database and the answer key
 npx tsx tools/benchrec/benchrec.ts --data <folder with the BenchRec CSVs>
 npx tsx tools/evolve/gate_check.ts                 # the gate's regression checks, offline
+npm install --prefix tools/certify && npm run all --prefix tools/certify   # the competence map, certificates and team checks (see tools/certify/README.md)
 cd tools && python3 smoke.py && python3 smoke_ap.py
 cd web && npm install && npm run dev
 tools/demo/demo.sh clone && tools/demo/demo.sh build   # the live demo's own server (main server stopped first), prepared and snapshotted
