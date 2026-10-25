@@ -6,11 +6,15 @@
 #
 # No model key goes into either database. A's email readings come from the final run's cache
 # (data/companyA/module_llm_cache.json), B's remittances are CSVs the mailroom parses itself, and the
-# Security page's preset emails are read here ahead of time (tools/play/warm.py, with the key that
+# Security page's preset emails are read here ahead of time (tools/play/prepare.ts, with the key that
 # stays on this machine). Any other email waits for a person.
 #
-#   tools/play/reset.sh          all of it: publish, replay both companies (about 20 minutes), prepare
-#   tools/play/reset.sh prep     only the preparation, on databases already replayed
+#   tools/play/reset.sh          all of it: publish, replay both companies, prepare (about 15 minutes)
+#   tools/play/reset.sh replay   only the publish and the replays
+#   tools/play/reset.sh prep     only the preparation, once, on databases just replayed
+#
+# The page needs no new publish after a reset: its people are kept, and the step bar finds the rows
+# its beats open in the live tables. While this runs, the sandbox is down.
 #
 # It runs in a copy of data/, module/ and tools/ under $CHARTER_PLAY_DIR (default
 # ~/Developer/charter-play-stdb), so the checkout's data folders are never written. The page's people
@@ -61,5 +65,5 @@ case ${1:-all} in
   all) replay && prep ;;
   replay) replay ;;
   prep) prep ;;
-  *) sed -n '2,18p' $0; exit 1 ;;
+  *) sed -n '2,22p' $0; exit 1 ;;
 esac

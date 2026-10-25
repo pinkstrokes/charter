@@ -177,15 +177,16 @@ async function steps(): Promise<unknown> {
   const used = (await sql(DB_A, 'SELECT id, used FROM activity')).filter(a => (JSON.parse(a.used || '[]') as string[]).includes(`decision:${hold}`));
   const pushback = Math.max(...used.map(a => Number(a.id)));
   if (![rightAlone, moment, hold, pushback].every(Number.isFinite)) throw new Error(`the demo's beats are not in these runs (right alone ${rightAlone}, moment ${moment}, hold ${hold}, push back ${pushback})`);
-  // The pitch's beats in order, then the visitor's own payment.
+  // The pitch's beats in order, then the visitor's own payment. Row ids change with every rebuild, so the
+  // page finds the rows of the beats marked `find` again in the live tables (web/src/components/DemoBar.tsx).
   return {
     persona: 'dana',
     steps: [
-      { label: 'Right alone', db: DB_B, hash: `#/floor?why=${rightAlone}` },
-      { label: 'The moment', db: DB_B, hash: `#/inbox?why=${moment}` },
+      { label: 'Right alone', db: DB_B, hash: `#/floor?why=${rightAlone}`, find: 'right_alone' },
+      { label: 'The moment', db: DB_B, hash: `#/inbox?why=${moment}`, find: 'moment' },
       { label: 'Try to steal', db: DB_A, hash: '#/security' },
       { label: 'Release it', db: DB_A, hash: '#/payables' },
-      { label: 'Push back', db: DB_A, hash: `#/floor?why=${pushback}` },
+      { label: 'Push back', db: DB_A, hash: `#/floor?why=${pushback}`, find: 'pushback' },
       { label: 'Learned', db: DB_B, hash: '#/knowledge/allocation' },
       { label: 'Proof', db: DB_B, hash: '#/proof' },
       { label: 'Your payment', db: DB_B, hash: '#/world/payment' },
