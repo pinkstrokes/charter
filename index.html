@@ -2165,7 +2165,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
       para(`Replayed in order on every decision of companies B and C, with the run's own versions and dates and situations as they could be told apart on the day: the seat acts alone in a situation only once a person has confirmed what it does there and nobody has said otherwise. People answer as they did in the run.`),
       tbl([[`B as run, ${n0(T.B.decisions)} payments`, T.B.asRun], ['B by situation, 1 confirmation', T.B.byDay[0]], ['B by situation, 3 confirmations', T.B.byDay[2]], [`C as run, ${n0(T.C.decisions)} payments`, T.C.asRun], ['C by situation, 1 confirmation', T.C.byDay[0]]]),
       para(`Of B's ${T.B.mistakesAlone} mistakes made alone as run, ${T.B.inUnlabeled} came in situations no person had ever looked at. The first question in each situation can be asked before any payment waits for it.`));
-    nextChips([['Patel Brews pays all it owes', () => taskTeam()], ['Teach a rule and see what it changes', 'Teach: a payment naming one invoice goes there, even short']]);
+    nextChips([['Patel Brews pays everything past due', () => taskTeam()], ['Teach a rule and see what it changes', 'Teach: a payment naming one invoice goes there, even short']]);
     // The map is the point of this view: start at the top, not at the last step.
     setTimeout(() => db.scrollTo({ top: 0, behavior: 'auto' }), 700);
   }
@@ -2218,7 +2218,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
     const coll = seat('collections'), T = CERT.team, L = T.ledger, V = taskTeamVariants(), NOW = V[V.length - 1], BEFORE = V[0];
     taskFocus = lit(cash(), coll, byId.get('rule:C9'), dana()); refocus();
     const r = playTeam(NOW), feeTotal = x => usd(x.feesFor.length * L.terms.lateFeeCents);
-    db.append(h('h2', { class: 'dt', text: `${L.name} pays all it owes` }));
+    db.append(h('h2', { class: 'dt', text: `${L.name} pays everything past due` }));
     db.append(h('p', { class: 'ds', text: `Monday ${dt(r.today)} on company A's books. ${L.name} (${L.contract}: ${L.terms.graceDays} days of grace, ${usd(L.terms.lateFeeCents)} late fee per invoice) pays ${usd(r.owed)}, reference “JUNE SUPPLIES”: exactly the ${r.pastDue.length} invoices due ${dt(r.pastDue[0].dueDate)}. ${L.open.length - r.pastDue.length} more are open, not yet due.` }));
     await pulse(via(kernel, cash())); if (!live()) return;
     step('Cash application', kv([['Open invoices', String(r.rp.f.open_items)], ['Sets that add up', r.rp.f.solution_count + (r.rp.f.exact_match ? ', exactly' : '')], ['The reference names', r.rp.f.reference_names_open ? 'an open invoice' : 'no invoice'], ['Remittance', r.rp.f.remittance_present ? 'yes' : 'none']]), ruleCard(r.cashSkill.program, r.cashSkill.key, 'cash application', r.cashD),
@@ -2322,7 +2322,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
   try { if (window.claude && typeof window.claude.use === 'function') window.claude.use('sample').then(setClaude, () => setClaude(null)); } catch (e) { setClaude(null); }
 
   // ---------- task bar ----------
-  const CHIPS = ['£2,149.30 arrives naming 536784', 'Formosa Leaf sends new bank details', 'Chase Oakland Leaf & Pearl', 'Patel Brews pays all it owes', 'Teach: a payment naming one invoice goes there, even short', 'What the cash skill knows', 'Verify the record', 'What is Charter?'];
+  const CHIPS = ['£2,149.30 arrives naming 536784', 'Formosa Leaf sends new bank details', 'Chase Oakland Leaf & Pearl', 'Patel Brews pays everything past due', 'Teach: a payment naming one invoice goes there, even short', 'What the cash skill knows', 'Verify the record', 'What is Charter?'];
   const input = $('task'), goBtn = $('go');
   $('chips').append(...CHIPS.map(c => h('button', { type: 'button', class: 'chip', text: c, onclick: () => { input.value = ''; goBtn.disabled = true; go(c); } })));
   input.addEventListener('input', () => (goBtn.disabled = !input.value.trim()));
