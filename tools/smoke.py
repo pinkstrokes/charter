@@ -151,6 +151,24 @@ def main():
     notices = [x for x in admin.sql("SELECT command, outcome, reasons, params FROM activity WHERE command = 'send_notice'") if '"F01"' in x["params"]]
     check("no collection notice reaches a bankrupt franchisee (C9)", notices and all(x["outcome"] == "denied" for x in notices) and any("C9" in x["reasons"] for x in notices), str([(x["outcome"], x["reasons"][:60]) for x in notices][:2]))
 
+    # Raj pays exactly what is past due, but $600 also fits an invoice not yet due: cash
+    # application asks where it goes, and nobody may chase him with his own money meanwhile.
+    for no, date, due, cents in (("SUP-2001", "2026-04-10", "2026-04-13", 30_000), ("SUP-2002", "2026-04-10", "2026-04-13", 30_000), ("SUP-2003", "2026-04-25", "2026-05-20", 60_000)):
+        world.call("ingest_obs", "supply_invoice", "erp", date, f"sup:{no}", "store:S31",
+                   json.dumps({"invoiceNo": no, "storeCode": "S31", "entityCode": "F02", "date": date, "dueDate": due,
+                               "lines": [{"sku": "TEA-BASE", "qty": cents // 9000 or 1, "unitCents": 9000}], "totalCents": cents, "impliedDrinks": cents // 100}))
+    world.call("ingest_obs", "bank_txn", "bank", "2026-04-30", "bank:WIRE-777", "entity:F02",
+               json.dumps({"txnId": "WIRE-777", "date": "2026-04-30", "type": "wire_in", "amountCents": 60_000,
+                           "counterpartyName": "PATEL BREWS INC", "counterpartyAccount": "****7310", "reference": "APRIL SUPPLIES"}))
+    world.call("set_sim_date", "2026-05-01")
+    world.call("run_seats")
+    wire = {r["id"]: r for r in admin.sql("SELECT id, unapplied_cents FROM receipt")}.get("WIRE-777", {})
+    notices = [x for x in admin.sql("SELECT command, outcome, reasons, params FROM activity WHERE command = 'send_notice'") if '"F02"' in x["params"]]
+    fees = [i for i in admin.sql("SELECT id FROM invoice") if i["id"] in ("LF-SUP-2001", "LF-SUP-2002")]
+    check("no notice or late fee while his own unapplied cash covers what is past due (C16, C17)",
+          wire.get("unapplied_cents") == 60_000 and notices and all(x["outcome"] == "denied" for x in notices) and any("C16" in x["reasons"] for x in notices) and not fees,
+          f"unapplied {wire.get('unapplied_cents')}; notices {[(x['outcome'], x['reasons'][:50]) for x in notices][:2]}; fees {fees}")
+
     # The chain links up row by row.
     acts = admin.sql("SELECT id, prev_hash, hash, kind, command, outcome FROM activity")
     acts.sort(key=lambda a: a["id"])
