@@ -1,4 +1,6 @@
 {
- "chainHead": "f4da11d5dd5384ff9f10428f08b8aee02f8611e2359ea3ceb6a9dca4627fce56",
- "lastActivityId": 9391
+ "chainHead": "1d6e1bc8ee979a9b3dc0c47bda921ecb2baa998830339166b91725c686db6404",
+ "lastActivityId": 17900,
+ "programHash": "0x86c6988e61ee0777062f46adf592f4d796a93475d639160f3c3503711471ed0a",
+ "programSha256": "ed23e968d8b43f58df6a4ac6b055026449127e4a362ae66d357a21cf4d8151d8"
 }
