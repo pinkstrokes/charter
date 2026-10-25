@@ -9,7 +9,8 @@
 // once for each payment waiting for release, since the first example names the biggest one), read
 // here by both mailroom models with the key on this machine and carried into the database's model
 // cache under the hash the mailroom will look up (module seats.ts triage). The key never goes in.
-// Steps: the demo table's beats (tools/demo/steps.py), resolved against these databases.
+// Steps: the demo table's beats (tools/demo/steps.py), resolved against these databases. Run once after
+// each replay (reset.sh prep); people and readings are kept or skipped when already there.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { chmodSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
@@ -165,6 +166,9 @@ async function warm(db: string): Promise<string> {
 async function steps(): Promise<unknown> {
   const misapplied = await sql(DB_B, "SELECT id, kind FROM activity WHERE command = 'misapplied'");
   const moment = Math.min(...misapplied.filter(a => a.kind === 'ask').map(a => Number(a.id)));
+  // The first notice the kernel refused because the customer's own money covered it (C16).
+  const refusals = (await sql(DB_B, "SELECT id, value, valid_from FROM fact WHERE attr = 'notice_refused'")).sort((x, y) => (x.valid_from < y.valid_from ? -1 : x.valid_from > y.valid_from ? 1 : Number(x.id) - Number(y.id)));
+  const rightAlone = Number(refusals.length ? JSON.parse(refusals[0].value).activity : NaN);
   const holds = (await sql(DB_A, "SELECT id, outcome, shadow, features FROM decision WHERE domain = 'pre_chase'")).filter(d => {
     const f = JSON.parse(d.features || '{}');
     return d.outcome === 'hold' && !d.shadow && f.days_past_due > 0 && f.days_past_due <= (f.grace_days ?? 0);
@@ -172,14 +176,17 @@ async function steps(): Promise<unknown> {
   const hold = Math.max(...holds.map(d => Number(d.id)));
   const used = (await sql(DB_A, 'SELECT id, used FROM activity')).filter(a => (JSON.parse(a.used || '[]') as string[]).includes(`decision:${hold}`));
   const pushback = Math.max(...used.map(a => Number(a.id)));
-  if (![moment, hold, pushback].every(Number.isFinite)) throw new Error(`the demo's beats are not in these runs (moment ${moment}, hold ${hold}, push back ${pushback})`);
+  if (![rightAlone, moment, hold, pushback].every(Number.isFinite)) throw new Error(`the demo's beats are not in these runs (right alone ${rightAlone}, moment ${moment}, hold ${hold}, push back ${pushback})`);
+  // The pitch's beats in order, then the visitor's own payment.
   return {
     persona: 'dana',
     steps: [
+      { label: 'Right alone', db: DB_B, hash: `#/floor?why=${rightAlone}` },
       { label: 'The moment', db: DB_B, hash: `#/inbox?why=${moment}` },
       { label: 'Try to steal', db: DB_A, hash: '#/security' },
       { label: 'Release it', db: DB_A, hash: '#/payables' },
       { label: 'Push back', db: DB_A, hash: `#/floor?why=${pushback}` },
+      { label: 'Learned', db: DB_B, hash: '#/knowledge/allocation' },
       { label: 'Proof', db: DB_B, hash: '#/proof' },
       { label: 'Your payment', db: DB_B, hash: '#/world/payment' },
     ],

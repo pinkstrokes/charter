@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Activity, Entity, Observation, RoutingRequest } from '../module_bindings/types';
 import { ActorTag, Empty, Result } from '../components/ui';
 import { useMe } from '../app/data';
-import { openWhy } from '../app/nav';
+import { go, openWhy } from '../app/nav';
 import { commandLabel, day, money, sentence } from '../lib/format';
 import { parseArr, parseLoose, parseObj } from '../lib/json';
 import { presets, type Draft } from '../lib/presets';
@@ -303,6 +303,7 @@ function Tracker({ o }: { o: Observation }) {
   const x = extracted ? parseLoose<Record<string, unknown>>(extracted.value, {}) : null;
   const evs = events.filter(e => e.observationId === o.id);
   const rrs = routing.filter(r => r.sourceObs === o.id);
+  const held = asks.filter(a => a.kind === 'reading_conflict' && a.subject === ref).sort((a, b) => (a.id < b.id ? 1 : -1))[0];
   const steps: Step[] = [];
   const received = touched.find(a => a.command === 'email_received');
   steps.push({ key: 'in', state: 'done', title: 'Received and stored as untrusted', detail: `observation #${o.id.toString()}, sha ${o.sha.slice(0, 10)}…; nothing in it is trusted`, activity: received });
@@ -322,6 +323,28 @@ function Tracker({ o }: { o: Observation }) {
           <Result r={run.result && run.result.status === 'ok' ? { ...run.result, rows: [], message: 'Seats ran' } : run.result} pending={run.pending} />
         </div>
       ),
+    });
+  } else if (o.status === 'held' && held) {
+    // Held for a person (module seats.ts holdUnread, holdForReading): the readers disagreed, or one or both did not answer.
+    const unread = parseLoose<{ diff?: string[] }>(held.evidence, {}).diff?.some(d => /did not answer|neither reader/.test(d)) ?? false;
+    steps.push({
+      key: 'triage',
+      state: held.status === 'open' ? 'wait' : 'done',
+      title: held.status === 'open' ? `Held: nothing is done with it until the ${held.toRole} decides` : `The ${held.toRole} decided: ${held.answer}`,
+      detail: (
+        <div style={{ display: 'grid', gap: 6 }}>
+          <span>{held.question}</span>
+          {isPlay && unread && <span className="faint">This sandbox holds no model key, so only the examples above have readings.</span>}
+          {held.status === 'open' && (
+            <div className="row">
+              <button className="btn small" onClick={() => go('inbox')}>
+                Answer it in the Inbox
+              </button>
+            </div>
+          )}
+        </div>
+      ),
+      activity: touched.find(a => a.kind === 'ask' && parseObj(a.params).ask === Number(held.id)),
     });
   } else {
     steps.push({
