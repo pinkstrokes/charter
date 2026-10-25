@@ -2,11 +2,14 @@
 // a person's answer, a field audit, a correction, an internal-audit finding.
 // The inspection rate follows switching rules from acceptance sampling: a new
 // rule starts on probation, a proven one gets reduced inspection, a recent error
-// tightens it, and a rule we are 95% sure is worse than the tolerable error rate
-// is suspended, so its cases go to a person until a new version replaces it.
+// tightens it, and a rule whose record shows it worse than the tolerable error
+// rate is suspended, so its cases go to a person until a new version replaces it.
+// The bounds are checked after every check, so each errs toward inspecting:
+// suspension uses the plain 95% bound (repeated looks make it suspend sooner),
+// reduced inspection needs a bound that stays valid under repeated looks.
 import { parseTreatments, sameTreatment, settlesAlone, TOLERABLE } from './core/dsl';
 import { labelBreach } from './core/labels';
-import { lower95, upper95 } from './core/stats';
+import { lower95, upper95, upperAnytime } from './core/stats';
 
 export { lower95, upper95 };
 import { appendActivity, simDate, type Tx } from './kernel';
@@ -31,14 +34,21 @@ export function nextState(s: { domain: string; checked: number; errors: number; 
   const tolerable = (TOLERABLE as Record<string, number>)[s.domain] ?? 0.05;
   if (s.checked >= 5 && lower95(s.errors, s.checked) > tolerable) return 'suspended';
   if (recent.slice(-5).includes(1)) return 'tightened';
-  // Tightened inspection ends after ten correct checks in a row.
   let clean = 0;
   for (let i = recent.length - 1; i >= 0 && recent[i] === 0; i--) clean++;
-  if (s.state === 'tightened' && clean < 10) return 'tightened';
+  if (s.state === 'tightened' && clean < cleanRunToRecover(tolerable)) return 'tightened';
   if (s.checked < 20) return 'probation';
-  if (s.checked >= 40 && upper95(s.errors, s.checked) <= tolerable) return 'reduced';
+  if (s.checked >= 40 && upperAnytime(s.errors, s.checked) <= tolerable) return 'reduced';
   return 'normal';
 }
+
+// Tightened inspection ends after a run of correct checks long enough that a rule
+// erring at twice the tolerable rate ends it by luck less than one time in 20
+// (74 checks at the cash desk's 2%, 14 for collections at 10%).
+export function cleanRunToRecover(tolerable: number): number {
+  return Math.ceil(Math.log(0.05) / Math.log(1 - 2 * tolerable));
+}
+export const RECENT_KEPT = 100;
 
 // Record that a person or an audit established the right outcome for a past decision.
 // A spot-check verdict against a rule whose every checked decision so far was
@@ -88,7 +98,7 @@ export function recordCheck(tx: Tx, domain: string, subject: string, correct: st
     recent.push(wrong);
   }
   tx.db.decision.id.update({ ...d, label: correct, labelSource: `${source}:${by}` });
-  const next = { ...stat, checked, errors, recent: JSON.stringify(recent.slice(-20)) };
+  const next = { ...stat, checked, errors, recent: JSON.stringify(recent.slice(-RECENT_KEPT)) };
   const state = nextState(next);
   tx.db.ruleStat.key.update({ ...next, state, sampleRate: SAMPLE_RATE[state], updatedAt: simDate(tx) });
   if (state !== stat.state) {

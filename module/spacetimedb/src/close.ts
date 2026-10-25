@@ -4,7 +4,7 @@
 // booked in the open month and disclosed as a prior-period item.
 import { canonical, sha256Hex } from './core/hash';
 import type { Principal } from './core/policy';
-import { checkInvariants, exec, Rejection, simDate, type ExecResult, type Tx } from './kernel';
+import { byId, checkInvariants, exec, Rejection, simDate, type ExecResult, type Tx } from './kernel';
 
 function monthOf(dateOrPeriod: string): string {
   return dateOrPeriod.slice(0, 7);
@@ -36,6 +36,7 @@ export function closePeriod(tx: Tx, who: Principal, period: string): ExecResult 
     // Recognised this month but belonging to an earlier, closed month.
     const priorPeriodItems = [...tx.db.invoice.iter()]
       .filter(i => monthOf(i.issuedAt) === period && i.period && monthOf(i.period) < period && (i.kind === 'audit' || i.kind === 'royalty'))
+      .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
       .map(i => ({ invoice: i.id, kind: i.kind, amountCents: Number(i.amountCents), relatesTo: i.period, source: i.source }));
     const head = tx.db.chainHead.id.find(0)!;
     const certificate = {
@@ -45,11 +46,13 @@ export function closePeriod(tx: Tx, who: Principal, period: string): ExecResult 
       trialBalance: Object.entries(balances).sort().map(([account, b]) => ({ account, debitCents: b.debit, creditCents: b.credit })),
       invariantsHold: true,
       auditorOpinion: { opinion: opinion.opinion, projectedMisstatementCents: Number(opinion.projectedMisstatementCents), upperLimitCents: Number(opinion.upperLimitCents), tolerableCents: Number(opinion.tolerableCents), sampleSize: opinion.sampleSize },
-      openFindings: [...tx.db.finding.iter()].filter(f => f.status === 'open' && f.period <= period).map(f => ({ id: Number(f.id), severity: f.severity, test: f.test })),
+      openFindings: [...tx.db.finding.iter()].filter(f => f.status === 'open' && f.period <= period).sort(byId).map(f => ({ id: Number(f.id), severity: f.severity, test: f.test })),
       openQuestionsCarried: [...tx.db.ask.status.filter('open')].length,
       priorPeriodItems,
       activeSkills: [...tx.db.skill.iter()].filter(s => s.status === 'active').map(s => s.key).sort(),
       activePolicies: [...tx.db.policy.iter()].filter(p => p.status === 'active').map(p => p.key).sort(),
+      // What those rules said, not only their names: the rules in force are part of what is certified.
+      rulesHash: sha256Hex(canonical([...tx.db.policy.iter()].filter(p => p.status === 'active').sort((a, b) => (a.key < b.key ? -1 : 1)).map(p => ({ key: p.key, template: p.template, text: p.text })))),
       chain: { lastActivityId: Number(head.lastActivityId), head: head.hash },
     };
     const text = canonical(certificate);

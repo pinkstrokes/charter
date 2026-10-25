@@ -6,7 +6,7 @@
 import type { FeatureMap } from '../core/dsl';
 import { addDays, daysBetween } from '../core/money';
 import type { Principal } from '../core/policy';
-import { bumpControl, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from '../kernel';
+import { bumpControl, byCode, byId, exec, factsFor, post, Rejection, simDate, type ExecResult, type Tx } from '../kernel';
 import type { ProcCtx } from '../llm';
 import { recordCheck } from '../reliability';
 import { closeWork, decide, money, openAsk, useCurrency } from '../seats';
@@ -129,7 +129,7 @@ export function apClerkCycle(ctx: ProcCtx): string {
   return ctx.withTx(tx => {
     useCurrency(tx);
     let n = 0;
-    for (const w of [...tx.db.workItem.seat.filter('ap_clerk')]) {
+    for (const w of [...tx.db.workItem.seat.filter('ap_clerk')].sort(byId)) {
       if (w.state !== 'open' || w.kind !== 'match_bill') continue;
       matchBill(tx, w.id, JSON.parse(w.payload).billId);
       n++;
@@ -145,7 +145,7 @@ export function paymentsCycle(ctx: ProcCtx): string {
     const today = simDate(tx);
     if (new Date(`${today}T00:00:00Z`).getUTCDay() !== 5) return 'not a payment day';
     let prepared = 0;
-    for (const v of [...tx.db.entity.iter()]) {
+    for (const v of [...tx.db.entity.iter()].sort(byCode)) {
       if (v.kind !== 'vendor') continue;
       const due = [...tx.db.bill.vendorCode.filter(v.code)].filter(b => b.status === 'approved' && b.openCents > 0n && b.dueAt <= addDays(today, 7));
       if (!due.length) continue;

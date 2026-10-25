@@ -1,14 +1,14 @@
 // The seats. Each seat is code that gathers features, runs the team's active
 // skill for the decision, and asks the kernel to act. The LLM only reads email.
 import type { ContractTerms, EmailPayload, InvoiceKind } from './core/contracts';
-import { DOMAINS, run, sameTreatment, settlesAlone, type FeatureMap, type SkillProgram, type Treatments } from './core/dsl';
+import { DOMAINS, parseTreatments, run, sameTreatment, settlesAlone, type FeatureMap, type SkillProgram, type Treatments } from './core/dsl';
 import { sha256Hex } from './core/hash';
 import { labelBreach, landing } from './core/labels';
 import { allocationsForSubset, applyByTerms, findSubsets, type OpenItem } from './core/matching';
 import { nameTokens } from './core/names';
 import { addDays, bpOf, daysBetween } from './core/money';
 import type { Principal } from './core/policy';
-import { appendActivity, exec, factsFor, factsOf, isDifference, pastDueInvoices, Rejection, simDate, termsForEntity, type Tx } from './kernel';
+import { appendActivity, byCode, byId, exec, factsFor, factsOf, isDifference, pastDueInvoices, Rejection, simDate, termsForEntity, type Tx } from './kernel';
 import { llmJson, type ProcCtx } from './llm';
 import { addFact, applyToInvoice, createInvoice, openWork } from './world';
 import { statFor } from './reliability';
@@ -52,17 +52,29 @@ export interface Decided {
 // allocation `receipt:{txnId}`, pre_chase `entity:{code}:{date}`,
 // routing_change `routing:{entity}:{refKey}`.
 // When a person has corrected a near-identical case, the seat does not repeat
-// the mistake: it takes the case to a person instead (the precedent tier).
+// the mistake: it takes the case to a person instead (the precedent tier). A spot
+// check that found the seat wrong is a correction too, once it counted (a verdict
+// the person withdrew as a slip never labels the decision). The nearest case is cited.
 const ASK_OUTCOME: Record<string, string> = { underreport: 'ask_consultant', pre_chase: 'escalate_controller', allocation: 'leave_unapplied_ask', bill_match: 'hold_exception' };
 
 function correctedPrecedent(tx: Tx, domain: string, features: FeatureMap, outcome: string, treatments: Treatments): { id: bigint; text: string } | null {
   if (!ASK_OUTCOME[domain]) return null;
+  let best: { d: number; id: bigint; text: string } | null = null;
   for (const a of tx.db.ask.status.filter('answered')) {
-    if (a.kind !== `correction:${domain}` || sameTreatment(domain, a.answer, outcome, treatments)) continue;
-    const past = (JSON.parse(a.evidence || '{}') as { features?: FeatureMap }).features;
-    if (past && featureDistance(features, past) < 0.08) return { id: a.id, text: `${a.answeredBy} corrected a near-identical case on ${a.answeredAt} to "${a.answer}": ${a.reason}` };
+    const spot = a.kind === `spot_check:${domain}`;
+    if ((a.kind !== `correction:${domain}` && !spot) || a.answer === 'correct' || sameTreatment(domain, a.answer, outcome, treatments)) continue;
+    const ev = JSON.parse(a.evidence || '{}') as { features?: FeatureMap; decision?: number };
+    if (!ev.features || (spot && !countedAgainst(tx, domain, ev.decision))) continue;
+    const d = featureDistance(features, ev.features);
+    if (d >= 0.08 || (best && (d > best.d || (d === best.d && a.id < best.id)))) continue;
+    best = { d, id: a.id, text: spot ? `${a.answeredBy} found a near-identical case wrong on ${a.answeredAt}: it should have been "${a.answer}"` : `${a.answeredBy} corrected a near-identical case on ${a.answeredAt} to "${a.answer}": ${a.reason}` };
   }
-  return null;
+  return best && { id: best.id, text: best.text };
+}
+
+function countedAgainst(tx: Tx, domain: string, decisionId: number | undefined): boolean {
+  const d = decisionId === undefined ? undefined : tx.db.decision.id.find(BigInt(decisionId));
+  return !!d && !!d.label && !sameTreatment(domain, d.outcome, d.label, parseTreatments(d.treatments));
 }
 
 export function decide(tx: Tx, seat: string, domain: string, subject: string, features: FeatureMap, treatments: Treatments = {}): Decided {
@@ -151,13 +163,13 @@ export function openAsk(
 // the team decided a similar case before.
 function findPrecedent(tx: Tx, kind: string, features: FeatureMap | undefined): string {
   if (!features) return '';
-  let best: { d: number; text: string } | null = null;
+  let best: { d: number; id: bigint; text: string } | null = null;
   for (const a of tx.db.ask.status.filter('answered')) {
     if (a.kind !== kind) continue;
     const past = (JSON.parse(a.evidence || '{}') as { features?: FeatureMap }).features;
     if (!past) continue;
     const d = featureDistance(features, past);
-    if (!best || d < best.d) best = { d, text: `ask #${a.id} on ${a.answeredAt}: "${a.answer}"${a.reason ? ` because ${a.reason}` : ''}` };
+    if (!best || d < best.d || (d === best.d && a.id < best.id)) best = { d, id: a.id, text: `ask #${a.id} on ${a.answeredAt}: "${a.answer}"${a.reason ? ` because ${a.reason}` : ''}` };
   }
   return best && best.d < 0.35 ? best.text : '';
 }
@@ -291,7 +303,7 @@ function parseReportCsv(p: EmailPayload): Extracted | null {
 
 export function triage(ctx: ProcCtx, limit = 15): number {
   const emails = ctx.withTx(tx =>
-    [...tx.db.observation.status.filter('new')].filter(o => o.kind === 'email').slice(0, limit).map(o => ({ id: o.id as bigint, payload: o.payload as string }))
+    [...tx.db.observation.status.filter('new')].filter(o => o.kind === 'email').sort(byId).slice(0, limit).map(o => ({ id: o.id as bigint, payload: o.payload as string }))
   );
   for (const em of emails) {
     const p = JSON.parse(em.payload) as EmailPayload;
@@ -529,7 +541,7 @@ function requestRoutingChange(tx: Tx, who: Principal, entityCode: string, x: Ext
 export function cashAppCycle(ctx: ProcCtx): string {
   const done = { weekly_report: 0, apply_receipt: 0, identify_payer: 0 } as Record<string, number>;
   let setAside = 0;
-  const open = ctx.withTx(tx => [...tx.db.workItem.seat.filter('cash_app')].filter(w => w.state === 'open' && w.kind in done).map(w => w.id));
+  const open = ctx.withTx(tx => [...tx.db.workItem.seat.filter('cash_app')].filter(w => w.state === 'open' && w.kind in done).sort(byId).map(w => w.id));
   for (const id of open) {
     // Each item in its own transaction: one that cannot be handled is set aside
     // on the record for a person, and the rest of the desk keeps working.
@@ -557,7 +569,7 @@ export function cashAppCycle(ctx: ProcCtx): string {
 function listDifferences(tx: Tx): number {
   const today = simDate(tx);
   if (new Date(`${today}T00:00:00Z`).getUTCDay() !== 1 || [...tx.db.ask.iter()].some(a => a.kind === 'write_off' && (a.status === 'open' || a.createdAt === today))) return 0;
-  const items = [...tx.db.invoice.iter()].filter(i => isDifference(tx, i)).map(i => ({ invoice: i.id, entity: i.entityCode, cents: Number(i.openCents) }));
+  const items = [...tx.db.invoice.iter()].filter(i => isDifference(tx, i)).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)).map(i => ({ invoice: i.id, entity: i.entityCode, cents: Number(i.openCents) }));
   if (!items.length) return 0;
   const total = items.reduce((s, i) => s + i.cents, 0);
   openAsk(tx, {
@@ -602,7 +614,7 @@ export function underreportFeatures(tx: Tx, store: string, week: string): { feat
   const r = latest.value;
   const { card, supplyImplied } = weekFacts(tx, store, week);
   const peerShares: number[] = [];
-  for (const s of tx.db.store.iter()) {
+  for (const s of [...tx.db.store.iter()].sort(byCode)) {
     if (s.code === store) continue;
     const pr = factsOf(tx, `store:${s.code}`, 'sales_report').filter(f => f.value.week === week).pop();
     if (pr && pr.value.gross > 0) peerShares.push(pr.value.cash / pr.value.gross);
@@ -862,7 +874,7 @@ function scheduleDebits(tx: Tx): number {
   const weekday = new Date(`${today}T00:00:00Z`).getUTCDay();
   if (weekday !== 3) return 0; // Wednesdays
   let count = 0;
-  for (const e of [...tx.db.entity.iter()]) {
+  for (const e of [...tx.db.entity.iter()].sort(byCode)) {
     if (e.kind !== 'franchisee') continue;
     const id = `D-${e.code}-${today}`;
     if (tx.db.debitInstruction.id.find(id)) continue;
@@ -936,7 +948,7 @@ export function collectionsCycle(ctx: ProcCtx): string {
     const today = simDate(tx);
     let notices = 0;
     let fees = 0;
-    for (const w of [...tx.db.workItem.seat.filter('collections')]) {
+    for (const w of [...tx.db.workItem.seat.filter('collections')].sort(byId)) {
       if (w.state !== 'open') continue;
       const payload = JSON.parse(w.payload);
       const entityCode = w.subject.replace('entity:', '');
@@ -952,25 +964,32 @@ export function collectionsCycle(ctx: ProcCtx): string {
         closeWork(tx, w.id, 'waiting');
       }
     }
-    for (const e of [...tx.db.entity.iter()]) {
+    for (const e of [...tx.db.entity.iter()].sort(byCode)) {
       // One decision per counterparty per business day, however often the seats run.
       if ([...tx.db.decision.subject.filter(`entity:${e.code}:${today}`)].some(x => x.domain === 'pre_chase')) continue;
       const features = preChaseFeatures(tx, e.code, today);
       if (!features) continue;
       if (holdUntil(tx, e.code) > today) continue;
       const d = decide(tx, COLL.id, 'pre_chase', `entity:${e.code}:${today}`, features);
-      let noticed = false;
       if (d.decide === 'chase') {
         if (Number(features.notices_last_30d) >= 1 && daysBetween(lastNotice(tx, e.code), today) < 7) continue;
-        noticed = sendNotice(tx, e.code, features, [d.key], [`decision:${d.id}`]);
-        if (noticed) notices++;
+        // The kernel refused this notice before and nothing it looked at has changed:
+        // asking again would only be refused again, so the seat waits for the facts to move.
+        const refused = standingRefusal(tx, e.code);
+        if (refused) {
+          appendActivity(tx, { principal: COLL.id, role: COLL.role, kind: 'decision', command: 'hold_collection', params: { entity: e.code, features }, used: [`decision:${d.id}`, `activity:${refused.activity}`], plan: [d.key], outcome: 'held', reasons: [`the kernel refused this notice on ${refused.at} (${refused.rules.join(', ')}) and what it checked has not changed`] });
+          continue;
+        }
+        if (sendNotice(tx, e.code, features, [d.key], [`decision:${d.id}`])) notices++;
       } else if (d.decide === 'ask_consultant' || d.decide === 'escalate_controller') {
         openAsk(tx, { kind: 'collections', subject: `entity:${e.code}`, toRole: d.askRole, question: `${e.name} is ${features.days_past_due} days past due on ${money(Number(features.open_amount))}. ${d.note} How should we proceed?`, options: ['chase', 'hold 7 days', 'escalate'], evidence: { features, skill: d.key, decision: Number(d.id) }, confidence: 0.4, by: COLL.id });
       } else {
         appendActivity(tx, { principal: COLL.id, role: COLL.role, kind: 'decision', command: 'hold_collection', params: { entity: e.code, features }, used: [`decision:${d.id}`], plan: [d.key], outcome: d.decide, reasons: [d.note] });
       }
-      // Late fees go out with a notice the kernel let through, never after one it refused.
-      fees += assessLateFees(tx, e.code, today, noticed);
+      // Late fees are the contract's, assessed when collections pursues an invoice past
+      // its grace period; the kernel refuses them while the counterparty's own money
+      // covers what is past due (C17) or in bankruptcy (C18).
+      fees += assessLateFees(tx, e.code, today, d.decide === 'chase');
     }
     return `notices ${notices}, fees ${fees}`;
   });
@@ -980,13 +999,31 @@ export function sendNotice(tx: Tx, entityCode: string, features: FeatureMap, pla
   const e = tx.db.entity.code.find(entityCode);
   if (!e) return false;
   const today = simDate(tx);
-  const res = exec(tx, { principal: COLL, action: 'send_notice', params: { entity: e.code, open: features.open_amount, daysPastDue: features.days_past_due }, used: [`entity:${e.code}`, ...extraUsed], plan, facts: factsFor(tx, e.code) }, activityId => {
+  const facts = factsFor(tx, e.code);
+  const res = exec(tx, { principal: COLL, action: 'send_notice', params: { entity: e.code, open: features.open_amount, daysPastDue: features.days_past_due }, used: [`entity:${e.code}`, ...extraUsed], plan, facts }, activityId => {
     const breach = labelBreach('pre_chase', features, 'chase');
     if (breach) throw new Rejection(breach);
     addFact(tx, `entity:${e.code}`, 'notice_sent', { open: features.open_amount, daysPastDue: features.days_past_due, plan }, today, 0n, true, activityId);
     return `past-due notice to ${e.name} for ${money(Number(features.open_amount))}`;
   });
+  // A refusal that rests on the kernel's facts stands until one of those facts changes.
+  const resting = refusalFacts(res.reasons);
+  if (!res.ok && resting.facts.length) addFact(tx, `entity:${e.code}`, 'notice_refused', { facts: Object.fromEntries(resting.facts.map(f => [f, facts[f]])), rules: resting.rules, activity: Number(res.activityId) }, today, 0n, true, res.activityId);
   return res.ok;
+}
+
+// "C16: forbidden while unapplied_covers_past_due" -> the rule and the fact it rests on.
+function refusalFacts(reasons: string[]): { rules: string[]; facts: string[] } {
+  const hits = reasons.map(r => /^([A-Z][\w-]*): (?:forbidden while|requires) (\w+)$/.exec(r)).filter((m): m is RegExpExecArray => !!m);
+  return { rules: hits.map(m => m[1]), facts: hits.map(m => m[2]) };
+}
+
+function standingRefusal(tx: Tx, entityCode: string): { at: string; rules: string[]; activity: number } | null {
+  const last = factsOf(tx, `entity:${entityCode}`, 'notice_refused').pop();
+  if (!last) return null;
+  const now = factsFor(tx, entityCode);
+  const v = last.value as { facts: Record<string, boolean>; rules: string[]; activity: number };
+  return Object.entries(v.facts).every(([f, was]) => now[f] === was) ? { at: last.validFrom, rules: v.rules, activity: v.activity } : null;
 }
 
 function lastNotice(tx: Tx, entityCode: string): string {
@@ -1023,7 +1060,7 @@ export function refundsCycle(ctx: ProcCtx): string {
     useCurrency(tx);
     if (tx.db.seatState.seat.find('refunds')?.status !== 'active') return 'not hired';
     let prepared = 0;
-    for (const w of [...tx.db.workItem.seat.filter('refunds')]) {
+    for (const w of [...tx.db.workItem.seat.filter('refunds')].sort(byId)) {
       if (w.state !== 'open') continue;
       const p = JSON.parse(w.payload) as { amount: number; obs: number; newAccount: string };
       const entityCode = w.subject.replace('entity:', '');

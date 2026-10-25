@@ -282,6 +282,13 @@ export function checkInvariants(tx: Tx): string[] {
   return out;
 }
 
+// ---------- order ----------
+
+// Work is taken in the order it arrived (ids) or by code, never in storage order:
+// a run then replays the same on any engine, and no unrelated write reorders it.
+export const byId = <T extends { id: bigint }>(a: T, b: T): number => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+export const byCode = <T extends { code: string }>(a: T, b: T): number => (a.code < b.code ? -1 : a.code > b.code ? 1 : 0);
+
 // ---------- ledger questions the seats and the fact library share ----------
 
 export function termsForEntity(tx: Tx, entityCode: string): ContractTerms | null {

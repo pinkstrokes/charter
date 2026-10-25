@@ -11,17 +11,29 @@ function binomTail(errors: number, n: number, p: number): number {
   return s;
 }
 
-// One-sided exact (Clopper-Pearson) 95% bounds on an error rate.
-export function upper95(errors: number, n: number): number {
+// One-sided exact (Clopper-Pearson) upper bound on an error rate at level alpha.
+function upperAt(errors: number, n: number, alpha: number): number {
   if (n === 0) return 1;
   let lo = errors / n;
   let hi = 1;
   for (let i = 0; i < 50; i++) {
     const mid = (lo + hi) / 2;
-    if (binomTail(errors, n, mid) > 0.05) lo = mid;
+    if (binomTail(errors, n, mid) > alpha) lo = mid;
     else hi = mid;
   }
   return hi;
+}
+
+// For one test made once (the gate, a benchmark score): the plain 95% bound.
+export function upper95(errors: number, n: number): number {
+  return upperAt(errors, n, 0.05);
+}
+
+// For a bound looked at after every check: the n-th look spends 5% x 6/(pi^2 n^2),
+// so all looks together spend at most 5% and stopping whenever it first passes
+// is still a 95% statement (a union bound; conservative, never optimistic).
+export function upperAnytime(errors: number, n: number): number {
+  return upperAt(errors, n, (0.05 * 6) / (Math.PI * Math.PI * n * n));
 }
 
 export function lower95(errors: number, n: number): number {

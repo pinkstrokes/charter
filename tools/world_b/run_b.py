@@ -256,7 +256,8 @@ def onboard(source_db, evolver, dana):
 
 
 def answer(admin, dana, truth):
-    for a in admin.sql("SELECT id, kind, subject, status, options, evidence FROM ask WHERE status = 'open'"):
+    # In the order the questions were asked, so a replay answers them the same on any engine.
+    for a in sorted(admin.sql("SELECT id, kind, subject, status, options, evidence FROM ask WHERE status = 'open'"), key=lambda a: int(a["id"])):
         k, subj = a["kind"], a["subject"]
         t = truth.get(subj.replace("receipt:", ""), {})
         opts = json.loads(a["options"] or "[]")

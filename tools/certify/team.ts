@@ -50,7 +50,8 @@ function allowedTable(rules: PolicyRule[], action: 'send_notice' | 'assess_fee',
 }
 
 // feeFacts: a late-fee request carries the kernel's facts (4b81c48 world.ts); noticeGated: fees go out only with a
-// notice the kernel let through (4b81c48 seats.ts). Before 4b81c48 neither held.
+// notice the kernel let through. 4b81c48 gated fees on the notice; late fees now follow the chase decision as the
+// contract does, and the constitution alone (C17, C18) must stop them, so the adopted variant is checked ungated.
 interface Variant { name: string; rules: PolicyRule[]; skill: (p: SkillProgram) => SkillProgram; feeFacts?: boolean; noticeGated?: boolean; adopted?: boolean }
 const variants: Variant[] = [
   { name: 'before the fix', rules: rulesBefore, skill: p => p },
@@ -58,7 +59,7 @@ const variants: Variant[] = [
   { name: 'P-4 and P-5: no notice, no fee while cash is unapplied', rules: [...rulesBefore, P4, P5], skill: p => p },
   { name: 'P-4 and P-5, and a late-fee request carries the kernel\'s facts', rules: [...rulesBefore, P4, P5], skill: p => p, feeFacts: true },
   { name: 'collections learns: hold while unapplied cash covers the balance', rules: rulesBefore, skill: withHold },
-  { name: 'the constitution now: C16, C17, C18 (4b81c48)', rules: rulesNow, skill: p => p, feeFacts: true, noticeGated: true, adopted: true },
+  { name: 'the constitution now: C16, C17, C18', rules: rulesNow, skill: p => p, feeFacts: true, adopted: true },
 ];
 const base = variants[0];
 
