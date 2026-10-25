@@ -322,6 +322,8 @@ class Staff:
         truth = self.k["mail"].get(ref) or (self.ap.get("emails", {}).get(ref) or {}).get("reading")
         if not truth:
             return "Dana", "ignore the email", "you could not match the email to anything you expected", None
+        if not ev.get("readingA") and not ev.get("readingB"):
+            return "Dana", "read it again", "neither model answered; send it back to the readers", None
         sa, sb = mismatches(ev.get("readingA") or {}, truth), mismatches(ev.get("readingB") or {}, truth)
         if min(len(sa), len(sb)) and truth.get("type") == "other":
             return "Dana", "ignore the email", "the email asks for nothing that touches the ledger", None

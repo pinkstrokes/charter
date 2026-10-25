@@ -311,6 +311,7 @@ export function triage(ctx: ProcCtx, limit = 15): number {
     const heuristicInjection = INJECTION.test(text);
     let x: Extracted | null = parseReportCsv(p) ?? parseRemittanceCsv(p);
     let conflict: { a: Extracted; b: Extracted; diff: string[]; checker: string } | null = null;
+    let unread: { a: Extracted | null; b: Extracted | null; checker: string } | null = null;
     let injection = heuristicInjection;
     if (!x) {
       // Maker and checker: two readers from different model families read the
@@ -319,18 +320,24 @@ export function triage(ctx: ProcCtx, limit = 15): number {
       const checker = ctx.withTx(tx => tx.db.config.id.find(0)?.checkerModel ?? '');
       const a = llmJson(ctx, 'mailroom', 'extract', EXTRACT_SYSTEM, text) as Extracted | null;
       const b = checker ? (llmJson(ctx, 'mailroom', 'extract-check', EXTRACT_SYSTEM, text, 600, checker) as Extracted | null) : null;
-      x = a ?? b ?? { type: 'other', reason: 'model unavailable' };
       injection = injection || a?.contains_instructions_to_ai === true || b?.contains_instructions_to_ai === true;
       if (a && b) {
         const diff = disagreements(a, b);
         if (diff.length) conflict = { a, b, diff, checker };
-      }
+        x = a;
+      } else if (a && !checker) x = a;
+      // A reader that did not answer (timed out, unavailable) has not read the
+      // email, so it is not filed on the other reading alone: it waits for a person.
+      else unread = { a, b, checker };
     } else {
       injection = injection || x.contains_instructions_to_ai === true;
     }
     if (conflict) {
       const c = conflict;
       ctx.withTx(tx => holdForReading(tx, em.id, p, c));
+    } else if (unread) {
+      const u = unread;
+      ctx.withTx(tx => holdUnread(tx, em.id, p, u));
     } else ctx.withTx(tx => routeEmail(tx, em.id, p, x!, injection));
   }
   return emails.length;
@@ -365,6 +372,28 @@ function holdForReading(tx: Tx, obsId: bigint, p: EmailPayload, c: { a: Extracte
     options: ['reading A', 'reading B', 'ignore the email'],
     evidence: { observation: Number(obsId), readingA: c.a, readingB: c.b, checker: c.checker, diff: c.diff },
     confidence: 0.3,
+    by: 'seat:mailroom',
+  });
+}
+
+// Nothing is done with an email a reader did not answer about until a person
+// decides: take the one reading there is, send it back to the readers, or set it aside.
+function holdUnread(tx: Tx, obsId: bigint, p: EmailPayload, u: { a: Extracted | null; b: Extracted | null; checker: string }): void {
+  const obs = tx.db.observation.id.find(obsId);
+  if (!obs || obs.status !== 'new') return;
+  tx.db.observation.id.update({ ...obs, status: 'held' });
+  const one = u.a ? 'reading A' : u.b ? 'reading B' : '';
+  const read = u.a ?? u.b;
+  openAsk(tx, {
+    kind: 'reading_conflict',
+    subject: `obs:${obsId}`,
+    toRole: 'controller',
+    question: read
+      ? `Only one reader answered about "${p.subject}" from ${p.from} (it read a ${read.type.replace(/_/g, ' ')}); the other did not, so nothing was done with it. Use that reading, read it again, or set it aside?`
+      : `Neither reader answered about "${p.subject}" from ${p.from}, so nothing was done with it. Read it again, or set it aside?`,
+    options: [...(one ? [one] : []), 'read it again', 'ignore the email'],
+    evidence: { observation: Number(obsId), readingA: u.a, readingB: u.b, checker: u.checker, diff: [read ? 'one reader did not answer' : 'neither reader answered'] },
+    confidence: 0.2,
     by: 'seat:mailroom',
   });
 }

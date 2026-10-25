@@ -217,6 +217,11 @@ function applyAnswer(tx: Tx, who: Principal, a: AskRow, answer: string): string 
         if (obs) tx.db.observation.id.update({ ...obs, status: 'done' });
         return 'email set aside';
       }
+      if (answer === 'read it again') {
+        const obs = tx.db.observation.id.find(obsId);
+        if (obs && obs.status === 'held') tx.db.observation.id.update({ ...obs, status: 'new' });
+        return 'email sent back to the readers';
+      }
       routeHeldEmail(tx, obsId, (answer === 'reading A' ? evidence.readingA : evidence.readingB) as Extracted);
       return `email handled with ${answer}`;
     }

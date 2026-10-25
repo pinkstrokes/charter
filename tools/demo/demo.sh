@@ -71,6 +71,7 @@ case ${1:-} in
     server_start || exit 1
     (cd $REPO/tools && STDB_URL=$URL STDB_DB=charter-a python3 demo_prep.py && STDB_URL=$URL STDB_DB=charter-a python3 demo_prep.py --friday) || exit 1
     (cd $REPO && STDB_URL=$URL python3 tools/demo/steps.py > $DIR/steps.json) || exit 1
+    (cd $REPO/tools && STDB_URL=$URL STDB_DB=charter-a python3 demo/warm_readers.py) || echo "the preset email was not read ahead; step 4 will call the readers live" >&2
     server_stop
     rm -rf $SNAP $WORK $WORK.snap && cp -cR $DATA $SNAP
     mkdir -p $WORK && cp -cR $REPO/data $WORK/data && cp -cR $WORK $WORK.snap

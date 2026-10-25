@@ -297,7 +297,7 @@ def answer(admin, dana, truth):
         elif k == "collections":
             dana.call("answer_ask", a["id"], "chase", "overdue")
         elif k == "reading_conflict":
-            dana.call("answer_ask", a["id"], "reading A", "matches the email")
+            dana.call("answer_ask", a["id"], *(("reading A", "matches the email") if "reading A" in opts else ("read it again", "the readers did not answer")))
         elif k == "write_off":
             dana.call("answer_ask", a["id"], "write off", "bank charges and exchange differences on payments from abroad; not worth a letter")
         elif k == "finding":
