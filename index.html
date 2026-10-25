@@ -2507,6 +2507,8 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
   ];
   var tourAuto = false, tourTimer = 0, tourLoop = 0;
   const BEAT_MS = 9000;
+  // ?present: the tour waits for the presenter (Next or →) instead of advancing on its own.
+  const PRESENT = /[?&#]present\b/.test(location.search + location.hash);
   function stopTourTimers() { clearTimeout(tourTimer); clearInterval(tourLoop); evoTimers.forEach(clearTimeout); evoTimers.length = 0; regrow.clear(); }
   function tryIt() {
     tourAuto = false;
@@ -2518,7 +2520,14 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
     const go1 = j => () => { tourAuto = false; taskTour(j); };
     const back = h('button', { type: 'button', class: 'opt', text: '←', 'aria-label': 'Back', onclick: go1(i - 1) });
     back.disabled = i === 0;
-    const play = h('button', { type: 'button', class: 'opt tplay', text: tourAuto ? 'Pause' : 'Play', onclick: () => { tourAuto = !tourAuto; taskTour(i); } });
+    // Pause and Play keep the beat on screen (and its animation running); only the advance stops or starts.
+    const play = h('button', { type: 'button', class: 'opt tplay', text: tourAuto ? 'Pause' : 'Play', onclick: e => {
+      const bar = db.querySelector('.tprog i'), ms = BEATS[i].ms || BEAT_MS;
+      if (tourAuto) { tourAuto = false; clearTimeout(tourTimer); if (bar) { const w = getComputedStyle(bar).width; bar.style.transition = 'none'; bar.style.width = w; } e.currentTarget.textContent = 'Play'; return; }
+      tourAuto = true; e.currentTarget.textContent = 'Pause';
+      if (bar) { bar.style.transition = 'none'; bar.style.width = '0'; requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transition = `width ${ms}ms linear`; bar.style.width = '100%'; })); }
+      tourTimer = setTimeout(() => taskTour(i + 1), ms);
+    } });
     return h('div', { class: 'tfoot' }, h('div', { class: 'tprog' }, h('i')), h('div', { class: 'tnav' }, back,
       h('div', { class: 'tdots' }, BEATS.map((b, j) => h('button', { type: 'button', class: 'tdot' + (j === i ? ' on' : ''), 'aria-label': `${j + 1}. ${b.title}`, title: b.title, onclick: go1(j) }))),
       i < BEATS.length - 1 ? play : null,
@@ -2689,7 +2698,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
     if (!r) return;
     $('chips').classList.add('hide');
     hover = null; refocus(); hideTip();
-    if (r.kind === 'tour') return taskTour(0, true);
+    if (r.kind === 'tour') return taskTour(0, !PRESENT);
     if (r.kind === 'design') return taskDesign('does');
     if (r.kind === 'evolve') return taskTour(0, false);
     if (r.kind === 'payment') return taskPayment(r);
@@ -2749,7 +2758,7 @@ Request: ${JSON.stringify(text)}`, { modelTier: 'quick' });
   requestAnimationFrame(frame);
   // For checking the page headless: run a task by its words.
   window.__charter = { go, nodes, view, mine, tour: taskTour };
-  $('watchBtn').addEventListener('click', () => taskTour(0, true));
+  $('watchBtn').addEventListener('click', () => taskTour(0, !PRESENT));
   $('tryBtn').addEventListener('click', tryIt);
   $('designBtn').addEventListener('click', () => taskDesign('does'));
 })();
