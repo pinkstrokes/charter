@@ -15,7 +15,7 @@ import { realize, type World } from './worlds';
 import type { Expr } from '../../module/spacetimedb/src/core/dsl';
 
 const arg = (k: string, d: string) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
-const DATA = arg('--data', `${process.env.HOME}/Developer/charter-showcase/data.json`);
+const DATA = arg('--data', new URL('./data/inputs.json', import.meta.url).pathname);
 const OUT = arg('--out', new URL('./out', import.meta.url).pathname);
 const D = JSON.parse(readFileSync(DATA, 'utf8'));
 const { Context } = await init();

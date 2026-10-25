@@ -15,6 +15,14 @@ npx tsx tools/certify/site.ts                # the compact payload the public pa
 
 Outputs are in `out/`: `allocation-map.md` and `.json`, `timeline-b.md`, `timeline-c.md`, `team.md`, and `certify-site.json`.
 
+Everything the steps read is committed in `data/`, so `npm run all` reproduces `out/` from a fresh clone, with no database. The decisions come from `export_decisions.py`. `data/inputs.json` holds the rest: A's skill versions, B's and C's cash versions with their test payments, and the ledger of the moment the worlds are built from. It is cut from the public page's export; after new runs and a new export, refresh it with:
+
+```
+python3 -c "import json; d = json.load(open('$HOME/Developer/charter-showcase/data.json')); json.dump({'a': {'skills': d['a']['skills']}, 'b': {k: d['b'][k] for k in ('versions', 'cases')}, 'c': {k: d['c'][k] for k in ('versions', 'cases')}, 'sandbox': d['sandbox']}, open('tools/certify/data/inputs.json', 'w'), separators=(',', ':'))"
+```
+
+Z3 may pick a different smallest counterexample from run to run where several are equally small, so `team.md` can word one differently; whether each property is proved or refuted does not change.
+
 ## What each step proves, and how
 
 - **The encoding is the interpreter.** `encode.ts` turns a skill (a first-match rule list in Charter's DSL) into a Z3 formula, case by case after `dsl.ts`'s evaluator, including its corners: a non-boolean in a boolean position is false, `div` by zero is 0. `check_encoding.ts` runs 3,540 decisions through both (B and C test payments, plus random feature maps for all 19 skill versions of every domain): 0 disagreements.

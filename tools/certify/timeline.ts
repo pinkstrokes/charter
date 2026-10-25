@@ -17,7 +17,7 @@ import { allocationAxioms } from './axioms';
 import { competenceMap, type Case } from './map';
 import { run, settlesAlone } from '../../module/spacetimedb/src/core/dsl';
 
-const D = JSON.parse(readFileSync(`${process.env.HOME}/Developer/charter-showcase/data.json`, 'utf8'));
+const D = JSON.parse(readFileSync(new URL('./data/inputs.json', import.meta.url), 'utf8'));
 const co = (process.argv[2] ?? 'B').toUpperCase() as 'B' | 'C';
 const decisions: any[] = JSON.parse(readFileSync(new URL(`./data/decisions-${co.toLowerCase()}.json`, import.meta.url), 'utf8'));
 const { Context } = await init();

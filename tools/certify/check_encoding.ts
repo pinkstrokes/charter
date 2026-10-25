@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { DOMAINS, run, type SkillProgram } from '../../module/spacetimedb/src/core/dsl';
 import { Encoder } from './encode';
 
-const D = JSON.parse(readFileSync(process.env.CHARTER_SHOWCASE_DATA ?? `${process.env.HOME}/Developer/charter-showcase/data.json`, 'utf8'));
+const D = JSON.parse(readFileSync(process.env.CHARTER_SHOWCASE_DATA ?? new URL('./data/inputs.json', import.meta.url), 'utf8'));
 const { Context } = await init();
 const Z3 = Context('main');
 

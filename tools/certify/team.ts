@@ -17,7 +17,7 @@ import { labelBreach } from '../../module/spacetimedb/src/core/labels';
 import { Encoder } from './encode';
 import { readPayment } from './seat';
 
-const D = JSON.parse(readFileSync(`${process.env.HOME}/Developer/charter-showcase/data.json`, 'utf8'));
+const D = JSON.parse(readFileSync(new URL('./data/inputs.json', import.meta.url), 'utf8'));
 const A = JSON.parse(readFileSync(new URL('./data/a-f02.json', import.meta.url), 'utf8'));
 const record: any[] = JSON.parse(readFileSync(new URL('./data/decisions-a-prechase.json', import.meta.url), 'utf8'));
 const { Context } = await init();
