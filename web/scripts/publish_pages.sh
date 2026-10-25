@@ -23,8 +23,12 @@ code = '<a href="https://github.com/pinkstrokes/charter" target="_blank" rel="no
 assert code in src, "the showcase's Code link moved; update publish_pages.sh"
 src = src.replace(code, '<a href="app/">Live system ↗</a>\n  ' + code, 1)
 head, sep, body = src.partition("</style>")
+# What a link to the site shows when it is shared: the Devpost elevator pitch.
+desc = "An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies."
 page = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+        f'<meta name="description" content="{desc}">\n<meta property="og:title" content="Charter">\n'
+        f'<meta property="og:description" content="{desc}">\n<meta name="twitter:card" content="summary">\n'
         f"{head}{sep}\n</head>\n<body>{body}\n</body>\n</html>\n")
 open(sys.argv[2], "w").write(page)
 EOF

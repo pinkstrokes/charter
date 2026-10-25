@@ -2,7 +2,7 @@
 
 ## Elevator pitch
 
-Our AI can be fooled by a scam email. It just can't move a cent. Charter is an AI finance team where models read, programs decide, and a kernel the AI can't edit holds the money.
+An autonomous AI finance team for cash application, collections and payables that learns rules from corrections, verifies each against all past decisions, and transfers them to new companies.
 
 ## Try it
 
