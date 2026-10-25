@@ -16,9 +16,9 @@ Cash-application accountant, collections specialist and refunds specialist (rece
 
 ## Inspiration
 
-Between 2013 and 2015 one man took Google and Facebook for over $120 million, with invoices from a company named like their real supplier and bank accounts in Latvia and Cyprus. Everyone who paid did their job. The fraud lived between the invoice, the vendor and the bank account. Now that work is going to AI agents, and agents get tested one at a time. Money gets lost between them.
+People aren't good at their work because they never make mistakes. They're good because they notice them, undo them, and don't make the same one twice. A person is a long chain of corrected mistakes, and a finance team is built on that: a controller's correction becomes the team's rule, a loss becomes a policy, a new hire earns trust one check at a time.
 
-Hyphenate asks what it takes to hire an AI seat: limited access, a clean record, knowing when to ask, and catching what others missed. We built a team that is checked as a team. Models read, programs decide, a kernel enforces, and a solver checks what no single agent owns. And we asked what an AI team must do that a rules engine with a memory of corrections does not: notice when something it decided weeks ago was wrong, say no to a person who is wrong, and turn a loss into a rule that binds every desk.
+Agent systems don't work this way. An agent is frozen the day it ships: it repeats its mistakes, or it learns whatever it is told, a person's mistakes included. We wanted an AI finance team that corrects itself the way people do. It catches its own mistakes, learns from every correction, refuses the wrong lessons, and carries its experience to the next company, while a kernel it cannot edit keeps the money safe.
 
 ## Where the AI is
 
