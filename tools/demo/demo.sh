@@ -7,7 +7,7 @@
 #   tools/demo/demo.sh clone   copy the main server's data (stop the main server first)
 #   tools/demo/demo.sh build   prepare the copy for the table and take the snapshot
 #   tools/demo/demo.sh up      demo server :3100, evolvers watching A and B, UI on :5191
-#   tools/demo/demo.sh reset   back to the snapshot, about five seconds
+#   tools/demo/demo.sh reset   back to the snapshot, a second or two
 #   tools/demo/demo.sh down    stop it all
 set -u
 REPO=${0:A:h:h:h}

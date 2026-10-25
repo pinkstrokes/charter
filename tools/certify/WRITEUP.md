@@ -9,11 +9,11 @@ Charter knows every situation its skills can face, proved, and earns autonomy si
 - Each is realized as a concrete payment, a few edits of a real ledger, read by the seat's own code.
 - Company B's current version would act alone in 16 situations that none of its 1,225 payments ever fell into. B's and C's current versions disagree in 3 that neither company has seen; in one of them the reference and the remittance name different invoices.
 - Earning autonomy situation by situation instead of rule by rule, replayed on every decision without hindsight, nearly halves B's mistakes made alone (15 to 8) for 21 more questions in six months. Each of those questions is the first in its situation, so it can be asked before a payment waits.
-- Checked across seats and the kernel, the map found a team failure: a franchisee pays everything it owes with a vague reference, cash application rightly asks a person, and collections sends a past-due notice and $300 of late fees the same day. No seat is wrong on its own, and company A's six months never produced it. Companies B and C had done it: 72 and 34 such notices.
+- Checked across seats and the kernel, the map found a team failure: a franchisee pays everything it has past due with a vague reference, cash application rightly asks a person, and collections sends a past-due notice and $300 of late fees the same day. No seat is wrong on its own, and company A's six months never produced it. Companies B and C had done it: 72 and 34 such notices.
 - The fix is a constitution amendment written by people, C16 to C18, in force from day one in every company. The solver proves it on all four properties for every situation and both versions of the collections skill. It refutes the obvious policies: they let the fees through, or hold chases a person confirmed were right. Re-run with the amendment over the same months, none went out; B's kernel refused 439 attempts.
 
 ## Proof beat (one line, spoken, about 12 seconds)
-Across seats, it found Patel Brews could pay everything it owes and still get a past-due notice and $300 of fees. Company B had sent 72 of those. People wrote C16 to C18, and the solver proves they close it in every situation.
+Across seats, it found Patel Brews could pay everything it had past due and still get a past-due notice and $300 of fees. Company B had sent 72 of those. People wrote C16 to C18, and the solver proves they close it in every situation.
 
 Shorter, if the beat is tight: "Across seats, it caught Charter chasing customers with their own money, 72 times on B's books, and proves the fix people wrote."
 

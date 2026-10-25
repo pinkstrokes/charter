@@ -1,6 +1,6 @@
 # Demo: two minutes at the table, then the judges' own scenario
 
-The presenter is the controller, Dana, on a copy of the finished runs that resets in five seconds between tables: company B on its real invoices, company A on the Friday of a payment run nobody has attacked yet. A step bar at the bottom of the page opens each beat; a judge's own scenario goes in on the World screen.
+The presenter is the controller, Dana, on a copy of the finished runs that resets in a second or two between tables: company B on its real invoices, company A on the Friday of a payment run nobody has attacked yet. A step bar at the bottom of the page opens each beat; a judge's own scenario goes in on the World screen.
 
 ```bash
 tools/demo/demo.sh up        # demo server :3100, the evolver watching A and B, the UI
