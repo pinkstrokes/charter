@@ -29,7 +29,7 @@
  },
  {
   "name": "a2_refused",
-  "url": "http://127.0.0.1:5191/?bar=0&db=charter-a#/payables?why=5236",
+  "url": "http://127.0.0.1:5191/?bar=0&db=charter-a#/payables?why=10973",
   "waitFor": "P-3",
   "settle": 4000
  },
