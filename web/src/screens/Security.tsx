@@ -136,7 +136,7 @@ export function Security() {
                 </div>
                 <Result r={send.result ? { ...send.result, message: send.result.status === 'ok' ? 'Delivered and stored as untrusted' : send.result.message } : null} pending={send.pending} />
                 {isPlay && (
-                  // The sandbox holds no model key: only the examples were read ahead (tools/play/warm.ts).
+                  // The sandbox holds no model key: only the examples were read ahead (tools/play/prepare.ts).
                   <p className="faint" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>
                     The examples above were read ahead of time. This sandbox holds no model key, so an email in your own words is not read by a model: it waits for a person, and the controller is asked about it in the Inbox. That is what Charter does whenever a reader does not answer.
                   </p>

@@ -1,5 +1,5 @@
 // The Security screen's example attacks, built from the company's own rows. Pure, so
-// the sandbox's preparation (scripts/play_warm.ts) builds the very same emails and reads
+// the sandbox's preparation (tools/play/prepare.ts) builds the very same emails and reads
 // them ahead: the mailroom finds a reading by the hash of the exact text.
 import type { Entity, Payment, Store } from '../module_bindings/types';
 import { money } from './format';
